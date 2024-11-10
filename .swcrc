@@ -1,0 +1,6 @@
+{
+	"exclude": [
+		"src/core/swagger/schema/api.client.ts",
+		"src/core/swagger/schema/swagger.json"
+	]
+}

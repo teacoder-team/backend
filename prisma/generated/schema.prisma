@@ -1,0 +1,40 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("POSTGRES_URI")
+}
+
+model User {
+  id String @id @default(uuid())
+
+  email    String @unique
+  password String
+
+  username    String @unique
+  displayName String @map("display_name")
+
+  picture String?
+  points  Int     @default(0)
+
+  role UserRole @default(STUDENT)
+
+  isVerified    Boolean @default(false) @map("is_verified")
+  isTotpEnabled Boolean @default(false) @map("is_totp_enabled")
+  totpSecret    String  @default("totp_secret")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("users")
+}
+
+enum UserRole {
+  STUDENT
+  ADMIN
+
+  @@map("user_roles")
+}
