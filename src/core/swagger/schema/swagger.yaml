@@ -231,6 +231,61 @@ paths:
         "200":
           description: Двухфакторная аутентификация отключена
       tags: *a4
+  "/course/by-slug/{slug}":
+    get:
+      operationId: CourseController_findBySlug
+      parameters:
+        - name: slug
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+      tags:
+        &a5
+        - Course
+  "/course/by-id/{id}":
+    get:
+      operationId: CourseController_findById
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+      tags: *a5
+  /course/create:
+    post:
+      operationId: CourseController_create
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCourseDto"
+      responses:
+        "200":
+          description: ""
+      tags: *a5
+  "/course/change/thumbnail/{id}":
+    patch:
+      operationId: CourseController_changeThumbnail
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+      tags: *a5
 info:
   title: TeaCoder API
   description: API for Teacoder educational platform
@@ -492,3 +547,6 @@ components:
       required:
         - isTotpEnabled
         - totpSecret
+    CreateCourseDto:
+      type: object
+      properties: {}

@@ -12,7 +12,6 @@ coverage
 .env
 
 # Файлы, не требующиеся в сборке
-.editorconfig
 Dockerfile
 README.md
 .eslintrc.js

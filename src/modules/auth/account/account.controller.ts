@@ -10,9 +10,13 @@ import {
 	Patch,
 	Post,
 	Req,
+	Res,
 	UploadedFile,
+	UseGuards,
 	UseInterceptors
 } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
+import { AuthGuard } from '@nestjs/passport'
 import { FileInterceptor } from '@nestjs/platform-express'
 import {
 	ApiBadRequestResponse,
@@ -23,7 +27,7 @@ import {
 	ApiUnauthorizedResponse
 } from '@nestjs/swagger'
 import { User } from '@prisma/generated'
-import type { Request } from 'express'
+import type { Request, Response } from 'express'
 
 import { UserAgent } from '@/shared/decorators/user-agent.decorator'
 
@@ -38,7 +42,10 @@ import { UserEntity } from './entities/user.entity'
 @ApiTags('Account')
 @Controller('auth/account')
 export class AccountController {
-	public constructor(private readonly accountService: AccountService) {}
+	public constructor(
+		private readonly accountService: AccountService,
+		private readonly configService: ConfigService
+	) {}
 
 	@ApiOperation({ summary: 'Получить данные текущего пользователя' })
 	@ApiOkResponse({
@@ -74,6 +81,42 @@ export class AccountController {
 		@UserAgent() userAgent: string
 	) {
 		return this.accountService.create(req, dto, userAgent)
+	}
+
+	@UseGuards(AuthGuard('google'))
+	@Get('google')
+	public async googleAuth() {}
+
+	@UseGuards(AuthGuard('google'))
+	@Get('google/callback')
+	public async googleAuthCallback(
+		@Req() req: Request,
+		@Res() res: Response,
+		@UserAgent() userAgent: string
+	) {
+		await this.accountService.validateOAuth(req, userAgent)
+
+		return res.redirect(
+			this.configService.getOrThrow<string>('SITE_URL') + '/student'
+		)
+	}
+
+	@Get('github')
+	@UseGuards(AuthGuard('github'))
+	public async githubAuth() {}
+
+	@Get('github/callback')
+	@UseGuards(AuthGuard('github'))
+	public async githubAuthCallback(
+		@Req() req: Request,
+		@Res() res: Response,
+		@UserAgent() userAgent: string
+	) {
+		await this.accountService.validateOAuth(req, userAgent)
+
+		return res.redirect(
+			this.configService.getOrThrow<string>('SITE_URL') + '/student'
+		)
 	}
 
 	@ApiOperation({ summary: 'Изменить пароль пользователя' })
@@ -133,11 +176,11 @@ export class AccountController {
 			new ParseFilePipe({
 				validators: [
 					new FileTypeValidator({
-						fileType: /\/(jpg|jpeg|png|gif|webp|avif)$/
+						fileType: /\/(jpg|jpeg|png|gif|webp)$/
 					}),
 					new MaxFileSizeValidator({
-						maxSize: 1000 * 1000 * 5,
-						message: 'Можно загружать файлы не больше 5 МБ'
+						maxSize: 1000 * 1000 * 10,
+						message: 'Можно загружать файлы не больше 10 МБ'
 					})
 				]
 			})

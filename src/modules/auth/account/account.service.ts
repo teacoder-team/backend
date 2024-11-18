@@ -1,12 +1,10 @@
 import {
 	BadRequestException,
 	ConflictException,
-	Injectable,
-	InternalServerErrorException
+	Injectable
 } from '@nestjs/common'
-import type { User } from '@prisma/generated'
+import { AuthMethod, type User } from '@prisma/generated'
 import { hash, verify } from 'argon2'
-import { randomBytes } from 'crypto'
 import validate from 'deep-email-validator'
 import type { Request } from 'express'
 import * as sharp from 'sharp'
@@ -14,6 +12,7 @@ import * as sharp from 'sharp'
 import { PrismaService } from '@/core/prisma/prisma.service'
 import { StorageService } from '@/modules/storage/storage.service'
 import { generateSlug } from '@/shared/utils/generate-slug.util'
+import { saveSession } from '@/shared/utils/save-session.util'
 import { getSessionMetadata } from '@/shared/utils/session-metadata.util'
 
 import { ChangePasswordDto } from './dto/change-password.dto'
@@ -54,34 +53,48 @@ export class AccountService {
 				displayName: name,
 				username: generateSlug(`${email}-${name}`),
 				email,
-				password: await hash(password)
+				password: await hash(password),
+				method: AuthMethod.CREDENTIALS
 			}
 		})
 
 		const metadata = getSessionMetadata(req, userAgent)
 
-		return new Promise((resolve, reject) => {
-			req.session.createdAt = new Date()
-			req.session.userId = user.id
-			req.session.metadata = metadata
+		return saveSession(req, user, metadata)
+	}
 
-			req.session.save(err => {
-				if (err) {
-					return reject(
-						new InternalServerErrorException(
-							'Не удалось сохранить сессию'
-						)
-					)
-				}
-				resolve({ user })
-			})
+	public async validateOAuth(req: any, userAgent: string) {
+		let user = await this.prismaService.user.findUnique({
+			where: {
+				email: req.user.email
+			}
 		})
+
+		if (!user) {
+			user = await this.prismaService.user.create({
+				data: {
+					email: req.user.email,
+					displayName: req.user.name,
+					username: generateSlug(
+						`${req.user.email}-${req.user.name}`
+					),
+					picture: req.user.picture,
+					method: AuthMethod['GOOGLE']
+				}
+			})
+		}
+
+		const metadata = getSessionMetadata(req, userAgent)
+
+		return saveSession(req, user, metadata)
 	}
 
 	public async changePassword(user: User, dto: ChangePasswordDto) {
 		const { oldPassword, newPassword } = dto
 
-		if (!(await verify(user.password, oldPassword))) {
+		const isValidPassword = await verify(user.password, oldPassword)
+
+		if (!isValidPassword) {
 			throw new BadRequestException('Неверный старый пароль')
 		}
 
@@ -102,7 +115,7 @@ export class AccountService {
 			await this.storageService.deleteFile(user.picture)
 		}
 
-		const fileName = `${randomBytes(16).toString('hex')}.webp`
+		const fileName = `/users/${user.id}.webp`
 
 		if (
 			(file.originalname && file.originalname.endsWith('.gif')) ||

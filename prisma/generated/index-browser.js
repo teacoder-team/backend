@@ -127,10 +127,32 @@ exports.Prisma.UserScalarFieldEnum = {
   displayName: 'displayName',
   picture: 'picture',
   points: 'points',
+  method: 'method',
   role: 'role',
   isVerified: 'isVerified',
   isTotpEnabled: 'isTotpEnabled',
   totpSecret: 'totpSecret',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CourseScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  slug: 'slug',
+  description: 'description',
+  thumbnail: 'thumbnail',
+  youtubeUrl: 'youtubeUrl',
+  codeUrl: 'codeUrl',
+  isPublished: 'isPublished',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CategoryScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  slug: 'slug',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -149,13 +171,21 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
+exports.AuthMethod = exports.$Enums.AuthMethod = {
+  CREDENTIALS: 'CREDENTIALS',
+  GOOGLE: 'GOOGLE',
+  GITHUB: 'GITHUB'
+};
+
 exports.UserRole = exports.$Enums.UserRole = {
   STUDENT: 'STUDENT',
   ADMIN: 'ADMIN'
 };
 
 exports.Prisma.ModelName = {
-  User: 'User'
+  User: 'User',
+  Course: 'Course',
+  Category: 'Category'
 };
 
 /**

@@ -11,8 +11,8 @@ datasource db {
 model User {
   id String @id @default(uuid())
 
-  email    String @unique
-  password String
+  email    String  @unique
+  password String?
 
   username    String @unique
   displayName String @map("display_name")
@@ -20,7 +20,8 @@ model User {
   picture String?
   points  Int     @default(0)
 
-  role UserRole @default(STUDENT)
+  method AuthMethod
+  role   UserRole   @default(STUDENT)
 
   isVerified    Boolean @default(false) @map("is_verified")
   isTotpEnabled Boolean @default(false) @map("is_totp_enabled")
@@ -32,9 +33,53 @@ model User {
   @@map("users")
 }
 
+model Course {
+  id String @id @default(uuid())
+
+  title String
+  slug  String @unique
+
+  description String?
+  thumbnail   String?
+
+  youtubeUrl String? @map("youtube_url")
+  codeUrl    String? @map("code_url")
+
+  isPublished Boolean @default(false) @map("is_published")
+
+  categories Category[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("courses")
+}
+
+model Category {
+  id String @id @default(uuid())
+
+  title String
+  slug  String @unique
+
+  courses Course[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("categories")
+}
+
 enum UserRole {
   STUDENT
   ADMIN
 
   @@map("user_roles")
+}
+
+enum AuthMethod {
+  CREDENTIALS
+  GOOGLE
+  GITHUB
+
+  @@map("auth_methods")
 }

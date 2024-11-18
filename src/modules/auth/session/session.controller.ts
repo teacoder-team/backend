@@ -110,23 +110,6 @@ export class SessionController {
 		return this.sessionService.findCurrent(req)
 	}
 
-	@ApiOperation({
-		summary: 'Удалить все активные сессии для вошедшего пользователя'
-	})
-	@ApiOkResponse({
-		status: 200,
-		description: 'Все сессии удалены'
-	})
-	@ApiInternalServerErrorResponse({
-		status: 500,
-		description: 'Не удалось удалить сессии'
-	})
-	@Delete('all')
-	@HttpCode(HttpStatus.OK)
-	public async removeAll(@Req() req: Request) {
-		return this.sessionService.removeAll(req)
-	}
-
 	@ApiOperation({ summary: 'Удалить конкретную сессию по ID' })
 	@ApiParam({ name: 'id', description: 'ID сессии для удаления' })
 	@ApiOkResponse({
@@ -137,9 +120,15 @@ export class SessionController {
 		status: 409,
 		description: 'Невозможно удалить текущую сессию'
 	})
-	@Delete('by-id/:id')
+	@Delete('remove/:id')
 	@HttpCode(HttpStatus.OK)
-	public async removeById(@Req() req: Request, @Param('id') id: string) {
-		return this.sessionService.removeById(req, id)
+	public async remove(@Req() req: Request, @Param('id') id: string) {
+		return this.sessionService.remove(req, id)
+	}
+
+	@Delete('clear')
+	@HttpCode(HttpStatus.OK)
+	public async clear(@Req() req: Request) {
+		return this.sessionService.clear(req)
 	}
 }

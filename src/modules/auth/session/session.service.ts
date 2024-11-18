@@ -34,10 +34,22 @@ export class SessionService {
 			}
 		})
 
-		if (!user) throw new NotFoundException('Пользователь не найден')
+		console.log(password)
 
-		if (!(await verify(user.password, password))) {
-			throw new UnauthorizedException('Неправильный логин или пароль')
+		if (!user) {
+			throw new NotFoundException('Пользователь не найден')
+		}
+
+		if (!user.password) {
+			throw new BadRequestException(
+				'Вход через пароль недоступен, т.к. вы зарегистрированы через соц. сеть'
+			)
+		}
+
+		const isValidPassword = await verify(user.password, password)
+
+		if (!isValidPassword) {
+			throw new UnauthorizedException('Неправильный пароль')
 		}
 
 		if (user.isTotpEnabled) {
@@ -65,11 +77,7 @@ export class SessionService {
 		const metadata = getSessionMetadata(req, userAgent)
 
 		return new Promise((resolve, reject) => {
-			req.session.userId = user.id
-			req.session.createdAt = new Date()
-			req.session.metadata = metadata
-
-			req.session.save(err => {
+			req.login(user, err => {
 				if (err) {
 					return reject(
 						new InternalServerErrorException(
@@ -77,7 +85,20 @@ export class SessionService {
 						)
 					)
 				}
-				resolve(user)
+
+				req.session.createdAt = new Date()
+				req.session.metadata = metadata
+
+				req.session.save(saveErr => {
+					if (saveErr) {
+						return reject(
+							new InternalServerErrorException(
+								'Не удалось сохранить данные сессии'
+							)
+						)
+					}
+					resolve({ user })
+				})
 			})
 		})
 	}
@@ -92,9 +113,7 @@ export class SessionService {
 						)
 					)
 				}
-				req.res.clearCookie(
-					this.configService.getOrThrow<string>('SESSION_NAME')
-				)
+				this.clear(req)
 				resolve()
 			})
 		})
@@ -115,8 +134,8 @@ export class SessionService {
 
 				if (session.userId === userId) {
 					userSessions.push({
-						...session,
-						id: key.split(':')[1]
+						id: key.split(':')[1],
+						...session
 					})
 				}
 			}
@@ -137,36 +156,12 @@ export class SessionService {
 		const session = JSON.parse(sessionData)
 
 		return {
-			...session,
-			id: sessionId
+			id: sessionId,
+			...session
 		}
 	}
 
-	public async removeAll(req: Request) {
-		const userId = req.session.userId
-
-		const keys = await this.redisService.keys('*')
-
-		const sessionKeysToDelete = []
-
-		for (const key of keys) {
-			const sessionData = await this.redisService.get(key)
-
-			if (sessionData) {
-				const session = JSON.parse(sessionData)
-
-				if (session.userId === userId && key !== req.session.id) {
-					sessionKeysToDelete.push(key)
-				}
-			}
-		}
-
-		for (const key of sessionKeysToDelete) {
-			await this.redisService.del(key)
-		}
-	}
-
-	public async removeById(req: Request, id: string) {
+	public async remove(req: Request, id: string) {
 		if (req.session.id === id) {
 			throw new ConflictException('Текущую сессию удалить нельзя')
 		}
@@ -176,5 +171,11 @@ export class SessionService {
 		)
 
 		return true
+	}
+
+	public async clear(req: Request) {
+		return req.res.clearCookie(
+			this.configService.getOrThrow<string>('SESSION_NAME')
+		)
 	}
 }

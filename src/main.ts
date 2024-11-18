@@ -6,6 +6,7 @@ import cookieParser from 'cookie-parser'
 import session from 'express-session'
 import helmet from 'helmet'
 import IORedis from 'ioredis'
+import passport from 'passport'
 
 import { CoreModule } from './core/core.module'
 import { setupSwagger } from './core/swagger/swagger.setup'
@@ -50,6 +51,9 @@ async function bootstrap() {
 			})
 		})
 	)
+
+	app.use(passport.initialize())
+	app.use(passport.session())
 
 	app.enableCors({
 		origin: config.getOrThrow<string>('ALLOWED_ORIGIN'),
