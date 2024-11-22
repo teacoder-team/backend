@@ -7,6 +7,7 @@ import {
 	UnauthorizedException
 } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
+import { UserRole } from '@prisma/generated'
 import { verify } from 'argon2'
 import type { Request } from 'express'
 import { TOTP } from 'otpauth'
@@ -34,8 +35,6 @@ export class SessionService {
 			}
 		})
 
-		console.log(password)
-
 		if (!user) {
 			throw new NotFoundException('Пользователь не найден')
 		}
@@ -50,6 +49,19 @@ export class SessionService {
 
 		if (!isValidPassword) {
 			throw new UnauthorizedException('Неправильный пароль')
+		}
+
+		const referer = req.get('Referer') || req.get('Origin')
+		console.log('Referer or Origin: ', referer)
+
+		if (
+			referer &&
+			referer.includes('manage.teacoder.ru') &&
+			user.role !== UserRole.ADMIN
+		) {
+			throw new UnauthorizedException(
+				'У вас нет прав для доступа в админ-панель'
+			)
 		}
 
 		if (user.isTotpEnabled) {
@@ -120,7 +132,7 @@ export class SessionService {
 	}
 
 	public async findAll(req: Request) {
-		const userId = req.session.userId
+		const userId = req.session.passport.user
 
 		const keys = await this.redisService.keys('*')
 
@@ -132,7 +144,7 @@ export class SessionService {
 			if (sessionData) {
 				const session = JSON.parse(sessionData)
 
-				if (session.userId === userId) {
+				if (session.passport.user === userId) {
 					userSessions.push({
 						id: key.split(':')[1],
 						...session
@@ -144,6 +156,32 @@ export class SessionService {
 		userSessions.sort((a, b) => b.createdAt - a.createdAt)
 
 		return userSessions.filter(session => session.id !== req.session.id)
+	}
+
+	public async findById(id: string, req: Request) {
+		const sessionData = await this.redisService.get(
+			`${this.configService.getOrThrow<string>('SESSION_FOLDER')}${id}`
+		)
+
+		if (!sessionData) {
+			throw new NotFoundException('Сессия не найдена')
+		}
+
+		const session = JSON.parse(sessionData)
+
+		const userIdFromSession = session.passport.user
+		const currentUserId = req.session.passport.user
+
+		if (userIdFromSession !== currentUserId) {
+			throw new UnauthorizedException(
+				'Эта сессия принадлежит другому пользователю'
+			)
+		}
+
+		return {
+			id,
+			...session
+		}
 	}
 
 	public async findCurrent(req: Request) {

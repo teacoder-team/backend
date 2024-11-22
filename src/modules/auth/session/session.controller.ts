@@ -38,16 +38,13 @@ export class SessionController {
 
 	@ApiOperation({ summary: 'Войти в систему' })
 	@ApiOkResponse({
-		status: 200,
 		description: 'Пользователь успешно авторизован',
 		type: UserEntity
 	})
 	@ApiNotFoundResponse({
-		status: 404,
 		description: 'Пользователь не найден'
 	})
 	@ApiBadRequestResponse({
-		status: 400,
 		description: 'Некорректные данные для входа в систему'
 	})
 	@Post('login')
@@ -62,11 +59,9 @@ export class SessionController {
 
 	@ApiOperation({ summary: 'Выйти из системы' })
 	@ApiOkResponse({
-		status: 200,
 		description: 'Пользователь успешно вышел из системы'
 	})
 	@ApiInternalServerErrorResponse({
-		status: 500,
 		description: 'Не удалось завершить сессию'
 	})
 	@Post('logout')
@@ -79,12 +74,10 @@ export class SessionController {
 		summary: 'Получить все активные сессии для пользователя'
 	})
 	@ApiOkResponse({
-		status: 200,
 		description: 'Список всех активных сессий',
 		type: [SessionEntity]
 	})
 	@ApiUnauthorizedResponse({
-		status: 401,
 		description: 'Неавторизованный доступ'
 	})
 	@Get('all')
@@ -96,28 +89,40 @@ export class SessionController {
 
 	@ApiOperation({ summary: 'Получить данные текущей активной сессии' })
 	@ApiOkResponse({
-		status: 200,
 		description: 'Данные текущей сессии',
 		type: SessionEntity
 	})
 	@ApiNotFoundResponse({
-		status: 404,
 		description: 'Сессия не найдена'
 	})
+	@Authorization()
 	@Get('current')
 	@HttpCode(HttpStatus.OK)
 	public async findCurrent(@Req() req: Request) {
 		return this.sessionService.findCurrent(req)
 	}
 
+	@ApiOperation({ summary: 'Получить сессию по ID' })
+	@ApiParam({ name: 'id', description: 'ID искомой сессии' })
+	@ApiOkResponse({
+		description: 'Информация о сессии',
+		type: SessionEntity
+	})
+	@ApiNotFoundResponse({
+		description: 'Сессия не найдена'
+	})
+	@Get('by-id/:id')
+	@HttpCode(HttpStatus.OK)
+	public async findById(@Param('id') id: string, @Req() req: Request) {
+		return this.sessionService.findById(id, req)
+	}
+
 	@ApiOperation({ summary: 'Удалить конкретную сессию по ID' })
 	@ApiParam({ name: 'id', description: 'ID сессии для удаления' })
 	@ApiOkResponse({
-		status: 200,
 		description: 'Сессия успешно удалена'
 	})
 	@ApiConflictResponse({
-		status: 409,
 		description: 'Невозможно удалить текущую сессию'
 	})
 	@Delete('remove/:id')
@@ -126,6 +131,13 @@ export class SessionController {
 		return this.sessionService.remove(req, id)
 	}
 
+	@ApiOperation({ summary: 'Удалить серверную куки сессии' })
+	@ApiOkResponse({
+		description: 'Серверная куки сессии успешно удалена'
+	})
+	@ApiUnauthorizedResponse({
+		description: 'Неавторизованный доступ'
+	})
 	@Delete('clear')
 	@HttpCode(HttpStatus.OK)
 	public async clear(@Req() req: Request) {

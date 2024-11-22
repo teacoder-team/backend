@@ -49,12 +49,10 @@ export class AccountController {
 
 	@ApiOperation({ summary: 'Получить данные текущего пользователя' })
 	@ApiOkResponse({
-		status: 200,
 		description: 'Данные пользователя успешно получены',
 		type: UserEntity
 	})
 	@ApiUnauthorizedResponse({
-		status: 401,
 		description: 'Пользователь не авторизован'
 	})
 	@Authorization()
@@ -66,11 +64,9 @@ export class AccountController {
 
 	@ApiOperation({ summary: 'Создать нового пользователя' })
 	@ApiOkResponse({
-		status: 200,
 		description: 'Пользователь успешно создан'
 	})
 	@ApiBadRequestResponse({
-		status: 400,
 		description: 'Некорректные данные для создания пользователя'
 	})
 	@Post('create')
@@ -83,10 +79,15 @@ export class AccountController {
 		return this.accountService.create(req, dto, userAgent)
 	}
 
+	@ApiOperation({ summary: 'Google OAuth аутентификация' })
 	@UseGuards(AuthGuard('google'))
 	@Get('google')
 	public async googleAuth() {}
 
+	@ApiOperation({ summary: 'Google OAuth callback' })
+	@ApiOkResponse({
+		description: 'OAuth успешно завершен'
+	})
 	@UseGuards(AuthGuard('google'))
 	@Get('google/callback')
 	public async googleAuthCallback(
@@ -101,10 +102,15 @@ export class AccountController {
 		)
 	}
 
+	@ApiOperation({ summary: 'GitHub OAuth аутентификация' })
 	@Get('github')
 	@UseGuards(AuthGuard('github'))
 	public async githubAuth() {}
 
+	@ApiOperation({ summary: 'GitHub OAuth callback' })
+	@ApiOkResponse({
+		description: 'OAuth успешно завершен'
+	})
 	@Get('github/callback')
 	@UseGuards(AuthGuard('github'))
 	public async githubAuthCallback(
@@ -121,15 +127,12 @@ export class AccountController {
 
 	@ApiOperation({ summary: 'Изменить пароль пользователя' })
 	@ApiOkResponse({
-		status: 200,
 		description: 'Пароль успешно изменен'
 	})
 	@ApiUnauthorizedResponse({
-		status: 401,
 		description: 'Пользователь не авторизован'
 	})
 	@ApiBadRequestResponse({
-		status: 400,
 		description: 'Некорректные данные для изменения пароля'
 	})
 	@Authorization()
@@ -144,15 +147,12 @@ export class AccountController {
 
 	@ApiOperation({ summary: 'Изменить аватар пользователя' })
 	@ApiOkResponse({
-		status: 200,
 		description: 'Аватар успешно обновлен'
 	})
 	@ApiUnauthorizedResponse({
-		status: 401,
 		description: 'Пользователь не авторизован'
 	})
 	@ApiBadRequestResponse({
-		status: 400,
 		description: 'Неверный формат файла или файл слишком большой'
 	})
 	@ApiParam({

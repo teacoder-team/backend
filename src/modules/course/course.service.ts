@@ -4,7 +4,7 @@ import sharp from 'sharp'
 import { PrismaService } from '@/core/prisma/prisma.service'
 import { generateSlug } from '@/shared/utils/generate-slug.util'
 
-import { StorageService } from '../storage/storage.service'
+import { S3Service } from '../libs/s3/s3.service'
 
 import { CreateCourseDto } from './dto/create-course.dto'
 
@@ -12,7 +12,7 @@ import { CreateCourseDto } from './dto/create-course.dto'
 export class CourseService {
 	public constructor(
 		private readonly prismaService: PrismaService,
-		private readonly storageService: StorageService
+		private readonly s3Service: S3Service
 	) {}
 
 	public async findBySlug(slug: string) {
@@ -60,7 +60,7 @@ export class CourseService {
 		const course = await this.findById(id)
 
 		if (course.thumbnail) {
-			await this.storageService.deleteFile(course.thumbnail)
+			await this.s3Service.deleteFile(course.thumbnail)
 		}
 
 		const fileName = `/courses/${course.id}.webp`
@@ -70,11 +70,7 @@ export class CourseService {
 			.webp()
 			.toBuffer()
 
-		await this.storageService.uploadFile(
-			processedBuffer,
-			fileName,
-			'image/webp'
-		)
+		await this.s3Service.uploadFile(processedBuffer, fileName, 'image/webp')
 
 		await this.prismaService.course.update({
 			where: {

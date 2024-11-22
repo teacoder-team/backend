@@ -11,7 +11,6 @@ export class SwaggerController {
 
 	@ApiOperation({ summary: 'Получить Swagger JSON' })
 	@ApiOkResponse({
-		status: 200,
 		description: 'Swagger JSON успешно загружен'
 	})
 	@Get('json')
@@ -22,7 +21,6 @@ export class SwaggerController {
 
 	@ApiOperation({ summary: 'Получить Swagger TypeScript клиент' })
 	@ApiOkResponse({
-		status: 200,
 		description: 'Swagger TypeScript клиент успешно загружен'
 	})
 	@Get('typescript')

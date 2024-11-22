@@ -29,16 +29,13 @@ export class TotpController {
 
 	@ApiOperation({ summary: 'Включение двухфакторной аутентификации' })
 	@ApiOkResponse({
-		status: 200,
 		description: 'Двухфакторная аутентификация включена',
 		type: EnableTotpEntity
 	})
 	@ApiBadRequestResponse({
-		status: 400,
 		description: 'Неверный код подтверждения'
 	})
 	@ApiBadRequestResponse({
-		status: 400,
 		description: 'Некорректные данные для изменения пароля'
 	})
 	@Authorization()
@@ -52,7 +49,6 @@ export class TotpController {
 		summary: 'Генерация секретного ключа для двухфакторной аутентификации'
 	})
 	@ApiOkResponse({
-		status: 200,
 		description: 'Секрет для TOTP сгенерирован',
 		type: Object
 	})
@@ -65,7 +61,6 @@ export class TotpController {
 
 	@ApiOperation({ summary: 'Отключение двухфакторной аутентификации' })
 	@ApiOkResponse({
-		status: 200,
 		description: 'Двухфакторная аутентификация отключена'
 	})
 	@Authorization()

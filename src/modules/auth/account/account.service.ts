@@ -10,7 +10,8 @@ import type { Request } from 'express'
 import * as sharp from 'sharp'
 
 import { PrismaService } from '@/core/prisma/prisma.service'
-import { StorageService } from '@/modules/storage/storage.service'
+import { S3Service } from '@/modules/libs/s3/s3.service'
+import { TelegramService } from '@/modules/libs/telegram/telegram.service'
 import { generateSlug } from '@/shared/utils/generate-slug.util'
 import { saveSession } from '@/shared/utils/save-session.util'
 import { getSessionMetadata } from '@/shared/utils/session-metadata.util'
@@ -22,7 +23,8 @@ import { CreateUserDto } from './dto/create-user.dto'
 export class AccountService {
 	public constructor(
 		private readonly prismaService: PrismaService,
-		private readonly storageService: StorageService
+		private readonly s3Service: S3Service,
+		private readonly telegramService: TelegramService
 	) {}
 
 	public async fetch(user: User) {
@@ -60,6 +62,8 @@ export class AccountService {
 
 		const metadata = getSessionMetadata(req, userAgent)
 
+		await this.telegramService.sendNewUser(user, metadata)
+
 		return saveSession(req, user, metadata)
 	}
 
@@ -69,6 +73,8 @@ export class AccountService {
 				email: req.user.email
 			}
 		})
+
+		const metadata = getSessionMetadata(req, userAgent)
 
 		if (!user) {
 			user = await this.prismaService.user.create({
@@ -82,9 +88,9 @@ export class AccountService {
 					method: AuthMethod['GOOGLE']
 				}
 			})
-		}
 
-		const metadata = getSessionMetadata(req, userAgent)
+			await this.telegramService.sendNewUser(user, metadata)
+		}
 
 		return saveSession(req, user, metadata)
 	}
@@ -112,7 +118,7 @@ export class AccountService {
 
 	public async changeAvatar(user: User, file: Express.Multer.File) {
 		if (user.picture) {
-			await this.storageService.deleteFile(user.picture)
+			await this.s3Service.deleteFile(user.picture)
 		}
 
 		const fileName = `/users/${user.id}.webp`
@@ -126,7 +132,7 @@ export class AccountService {
 				.webp()
 				.toBuffer()
 
-			await this.storageService.uploadFile(
+			await this.s3Service.uploadFile(
 				processedBuffer,
 				fileName,
 				'image/webp'
@@ -137,7 +143,7 @@ export class AccountService {
 				.webp()
 				.toBuffer()
 
-			await this.storageService.uploadFile(
+			await this.s3Service.uploadFile(
 				processedBuffer,
 				fileName,
 				'image/webp'

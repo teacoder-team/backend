@@ -6,7 +6,8 @@ const {
   objectEnumValues,
   makeStrictEnum,
   Public,
-  getRuntime
+  getRuntime,
+  skip
 } = require('./runtime/index-browser.js')
 
 
@@ -16,12 +17,12 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 5.19.1
- * Query Engine version: 34ace0eb2704183d2c05b60b52fba5c43c13f303
+ * Prisma Client JS version: 5.22.0
+ * Query Engine version: 605197351a3c8bdd595af2d2a9bc3025bca48ea2
  */
 Prisma.prismaVersion = {
-  client: "5.19.1",
-  engine: "34ace0eb2704183d2c05b60b52fba5c43c13f303"
+  client: "5.22.0",
+  engine: "605197351a3c8bdd595af2d2a9bc3025bca48ea2"
 }
 
 Prisma.PrismaClientKnownRequestError = () => {
@@ -108,6 +109,8 @@ Prisma.NullTypes = {
   AnyNull: objectEnumValues.classes.AnyNull
 }
 
+
+
 /**
  * Enums
  */
@@ -157,6 +160,14 @@ exports.Prisma.CategoryScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.TokenScalarFieldEnum = {
+  id: 'id',
+  token: 'token',
+  type: 'type',
+  expiresIn: 'expiresIn',
+  userId: 'userId'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -182,10 +193,15 @@ exports.UserRole = exports.$Enums.UserRole = {
   ADMIN: 'ADMIN'
 };
 
+exports.TokenType = exports.$Enums.TokenType = {
+  PASSWORD_RESET: 'PASSWORD_RESET'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   Course: 'Course',
-  Category: 'Category'
+  Category: 'Category',
+  Token: 'Token'
 };
 
 /**

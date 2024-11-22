@@ -56,10 +56,10 @@ async function bootstrap() {
 	app.use(passport.session())
 
 	app.enableCors({
-		origin: config.getOrThrow<string>('ALLOWED_ORIGIN'),
+		origin: config.getOrThrow<string>('ALLOWED_ORIGIN').split(','),
 		credentials: true,
 		exposedHeaders: ['set-cookie'],
-		methods: ['GET', 'POST', 'PATCH', 'DELETE']
+		methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE']
 	})
 
 	if (parseBoolean(config.getOrThrow<string>('SWAGGER_ENABLED'))) {

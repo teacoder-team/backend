@@ -25,7 +25,9 @@ model User {
 
   isVerified    Boolean @default(false) @map("is_verified")
   isTotpEnabled Boolean @default(false) @map("is_totp_enabled")
-  totpSecret    String  @default("totp_secret")
+  totpSecret    String? @default("totp_secret")
+
+  tokens Token[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -69,6 +71,20 @@ model Category {
   @@map("categories")
 }
 
+model Token {
+  id String @id @default(uuid())
+
+  token String    @unique
+  type  TokenType
+
+  expiresIn DateTime @map("expires_in")
+
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String? @map("user_id")
+
+  @@map("tokens")
+}
+
 enum UserRole {
   STUDENT
   ADMIN
@@ -82,4 +98,10 @@ enum AuthMethod {
   GITHUB
 
   @@map("auth_methods")
+}
+
+enum TokenType {
+  PASSWORD_RESET
+
+  @@map("token_types")
 }
