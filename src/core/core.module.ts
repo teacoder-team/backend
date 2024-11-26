@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common'
-import { ConfigModule } from '@nestjs/config'
+import { ConfigModule, ConfigService } from '@nestjs/config'
 import { PassportModule } from '@nestjs/passport'
+import { TurnstileModule } from 'nest-cloudflare-turnstile'
 
 import { AccountModule } from '@/modules/auth/account/account.module'
 import { RecoveryModule } from '@/modules/auth/recovery/recovery.module'
@@ -15,6 +16,7 @@ import { StatisticsModule } from '@/modules/statistics/statistics.module'
 import { IS_DEV_ENV } from '@/shared/utils/is-dev.util'
 
 import { getPassportConfig } from './config/passport.config'
+import { getTurnstileConfig } from './config/turnstile.config'
 import { PrismaModule } from './prisma/prisma.module'
 import { RedisModule } from './redis/redis.module'
 import { SwaggerModule } from './swagger/swagger.module'
@@ -27,6 +29,11 @@ import { SwaggerModule } from './swagger/swagger.module'
 		}),
 		PassportModule.registerAsync({
 			useFactory: getPassportConfig
+		}),
+		TurnstileModule.forRootAsync({
+			imports: [ConfigModule],
+			useFactory: getTurnstileConfig,
+			inject: [ConfigService]
 		}),
 		PrismaModule,
 		RedisModule,

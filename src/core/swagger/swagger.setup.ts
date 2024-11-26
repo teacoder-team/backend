@@ -1,14 +1,15 @@
 import type { INestApplication } from '@nestjs/common'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 
+import { SwaggerDto } from './dto/swagger.dto'
+
 // import * as fs from 'fs'
 // import path from 'path'
 // import { generateApi } from 'swagger-typescript-api'
 // import * as YAML from 'yaml'
-import { SwaggerConfig } from '@/core/config/swagger.config'
 
 export async function setupSwagger(
-	config: SwaggerConfig,
+	config: SwaggerDto,
 	app: INestApplication,
 	prefix?: string
 ): Promise<void> {

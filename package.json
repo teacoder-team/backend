@@ -47,6 +47,7 @@
 		"hi-base32": "^0.5.1",
 		"i18n-iso-countries": "^7.13.0",
 		"ioredis": "^5.4.1",
+		"nest-cloudflare-turnstile": "^0.0.12",
 		"nestjs-telegraf": "^2.8.1",
 		"node-device-detector": "^2.1.5",
 		"otpauth": "^9.3.5",

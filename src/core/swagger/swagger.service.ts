@@ -5,7 +5,7 @@ import * as path from 'path'
 
 @Injectable()
 export class SwaggerService {
-	public getJson(res: Response): void {
+	public getJson(res: Response) {
 		if (fs.existsSync(this.swaggerJsonPath)) {
 			res.download(this.swaggerJsonPath)
 		}
@@ -13,7 +13,7 @@ export class SwaggerService {
 		return null
 	}
 
-	public getTypescript(res: Response): void {
+	public getTypescript(res: Response) {
 		if (fs.existsSync(this.swaggerTypescriptPath)) {
 			res.download(this.swaggerTypescriptPath)
 		}

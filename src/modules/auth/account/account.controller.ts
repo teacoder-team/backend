@@ -28,6 +28,7 @@ import {
 } from '@nestjs/swagger'
 import { User } from '@prisma/generated'
 import type { Request, Response } from 'express'
+import { TurnstileCaptcha } from 'nest-cloudflare-turnstile'
 
 import { UserAgent } from '@/shared/decorators/user-agent.decorator'
 
@@ -69,6 +70,7 @@ export class AccountController {
 	@ApiBadRequestResponse({
 		description: 'Некорректные данные для создания пользователя'
 	})
+	@TurnstileCaptcha()
 	@Post('create')
 	@HttpCode(HttpStatus.OK)
 	public async create(

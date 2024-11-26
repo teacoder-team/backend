@@ -21,6 +21,7 @@ import {
 	ApiUnauthorizedResponse
 } from '@nestjs/swagger'
 import { Request } from 'express'
+import { TurnstileCaptcha } from 'nest-cloudflare-turnstile'
 
 import { UserAgent } from '@/shared/decorators/user-agent.decorator'
 
@@ -47,6 +48,7 @@ export class SessionController {
 	@ApiBadRequestResponse({
 		description: 'Некорректные данные для входа в систему'
 	})
+	@TurnstileCaptcha()
 	@Post('login')
 	@HttpCode(HttpStatus.OK)
 	public async login(

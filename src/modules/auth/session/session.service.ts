@@ -52,7 +52,6 @@ export class SessionService {
 		}
 
 		const referer = req.get('Referer') || req.get('Origin')
-		console.log('Referer or Origin: ', referer)
 
 		if (
 			referer &&

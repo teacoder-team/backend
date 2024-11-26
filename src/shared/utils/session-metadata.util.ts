@@ -26,8 +26,6 @@ export function getSessionMetadata(
 	const device = new DeviceDetector().parse(userAgent)
 	const location = lookup(ip)
 
-	console.log(device, location, ip)
-
 	return {
 		location: {
 			country: countries.getName(location.country, 'ru') || 'Неизвестно',

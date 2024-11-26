@@ -17,6 +17,7 @@ import {
 	ApiTags
 } from '@nestjs/swagger'
 import type { Request } from 'express'
+import { TurnstileCaptcha } from 'nest-cloudflare-turnstile'
 
 import { UserAgent } from '@/shared/decorators/user-agent.decorator'
 
@@ -50,6 +51,7 @@ export class RecoveryController {
 	@ApiNotFoundResponse({
 		description: 'Пользователь с указанным email не найден'
 	})
+	@TurnstileCaptcha()
 	@Post()
 	@HttpCode(HttpStatus.OK)
 	public async resetPassword(

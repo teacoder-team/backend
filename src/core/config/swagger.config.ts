@@ -1,45 +1,22 @@
-import { Allow, IsBoolean, IsOptional, IsString } from 'class-validator'
+import { ConfigService } from '@nestjs/config'
 
-export class SwaggerConfig {
-	@IsString()
-	title!: string
+import { parseBoolean } from '@/shared/utils/parse-boolean.util'
 
-	@IsString()
-	description!: string
+import { SwaggerDto } from '../swagger/dto/swagger.dto'
 
-	@IsString()
-	version!: string
-
-	@IsString()
-	path!: string
-
-	@IsBoolean()
-	enabled = false
-
-	@Allow()
-	@IsOptional()
-	contact?: Contact
-
-	@Allow()
-	@IsOptional()
-	servers?: Server[]
-}
-
-export class Server {
-	@IsString()
-	url!: string
-
-	@IsString()
-	description!: string
-}
-
-export class Contact {
-	@IsString()
-	name!: string
-
-	@IsString()
-	email!: string
-
-	@IsString()
-	site!: string
+export function getSwaggerConfig(configService: ConfigService): SwaggerDto {
+	return {
+		title: 'TeaCoder API',
+		description: 'API for Teacoder educational platform',
+		version: '1.0.0',
+		path: configService.getOrThrow<string>('SWAGGER_PREFIX'),
+		enabled: parseBoolean(
+			configService.getOrThrow<string>('SWAGGER_ENABLED')
+		),
+		contact: {
+			name: 'TeaCoder Team',
+			site: 'https://teacoder.ru',
+			email: 'help@teacoder.ru'
+		}
+	}
 }

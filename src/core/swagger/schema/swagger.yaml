@@ -3,27 +3,26 @@ paths:
   /swagger/json:
     get:
       operationId: SwaggerController_getJson
-      summary: Получить Swagger JSON
       parameters: []
       responses:
         "200":
           description: Swagger JSON успешно загружен
+      summary: Получить Swagger JSON
       tags:
         &a1
         - Swagger
   /swagger/typescript:
     get:
       operationId: SwaggerController_getTypescript
-      summary: Получить Swagger TypeScript клиент
       parameters: []
       responses:
         "200":
           description: Swagger TypeScript клиент успешно загружен
+      summary: Получить Swagger TypeScript клиент
       tags: *a1
   /auth/account:
     get:
       operationId: AccountController_fetch
-      summary: Получить данные текущего пользователя
       parameters: []
       responses:
         "200":
@@ -34,13 +33,13 @@ paths:
                 $ref: "#/components/schemas/UserEntity"
         "401":
           description: Пользователь не авторизован
+      summary: Получить данные текущего пользователя
       tags:
         &a2
         - Account
   /auth/account/create:
     post:
       operationId: AccountController_create
-      summary: Создать нового пользователя
       parameters: []
       requestBody:
         required: true
@@ -53,11 +52,47 @@ paths:
           description: Пользователь успешно создан
         "400":
           description: Некорректные данные для создания пользователя
+      summary: Создать нового пользователя
+      tags: *a2
+  /auth/account/google:
+    get:
+      operationId: AccountController_googleAuth
+      parameters: []
+      responses:
+        "200":
+          description: ""
+      summary: Google OAuth аутентификация
+      tags: *a2
+  /auth/account/google/callback:
+    get:
+      operationId: AccountController_googleAuthCallback
+      parameters: []
+      responses:
+        "200":
+          description: OAuth успешно завершен
+      summary: Google OAuth callback
+      tags: *a2
+  /auth/account/github:
+    get:
+      operationId: AccountController_githubAuth
+      parameters: []
+      responses:
+        "200":
+          description: ""
+      summary: GitHub OAuth аутентификация
+      tags: *a2
+  /auth/account/github/callback:
+    get:
+      operationId: AccountController_githubAuthCallback
+      parameters: []
+      responses:
+        "200":
+          description: OAuth успешно завершен
+      summary: GitHub OAuth callback
       tags: *a2
   /auth/account/change/password:
     patch:
       operationId: AccountController_changePassword
-      summary: Изменить пароль пользователя
       parameters: []
       requestBody:
         required: true
@@ -72,11 +107,11 @@ paths:
           description: Некорректные данные для изменения пароля
         "401":
           description: Пользователь не авторизован
+      summary: Изменить пароль пользователя
       tags: *a2
   /auth/account/change/avatar:
     patch:
       operationId: AccountController_changeAvatar
-      summary: Изменить аватар пользователя
       parameters:
         - name: file
           required: true
@@ -90,11 +125,11 @@ paths:
           description: Неверный формат файла или файл слишком большой
         "401":
           description: Пользователь не авторизован
+      summary: Изменить аватар пользователя
       tags: *a2
   /auth/session/login:
     post:
       operationId: SessionController_login
-      summary: Войти в систему
       parameters: []
       requestBody:
         required: true
@@ -113,24 +148,24 @@ paths:
           description: Некорректные данные для входа в систему
         "404":
           description: Пользователь не найден
+      summary: Войти в систему
       tags:
         &a3
         - Session
   /auth/session/logout:
     post:
       operationId: SessionController_logout
-      summary: Выйти из системы
       parameters: []
       responses:
         "200":
           description: Пользователь успешно вышел из системы
         "500":
           description: Не удалось завершить сессию
+      summary: Выйти из системы
       tags: *a3
   /auth/session/all:
     get:
       operationId: SessionController_findAll
-      summary: Получить все активные сессии для пользователя
       parameters: []
       responses:
         "200":
@@ -143,21 +178,11 @@ paths:
                   $ref: "#/components/schemas/SessionEntity"
         "401":
           description: Неавторизованный доступ
-      tags: *a3
-    delete:
-      operationId: SessionController_removeAll
-      summary: Удалить все активные сессии для вошедшего пользователя
-      parameters: []
-      responses:
-        "200":
-          description: Все сессии удалены
-        "500":
-          description: Не удалось удалить сессии
+      summary: Получить все активные сессии для пользователя
       tags: *a3
   /auth/session/current:
     get:
       operationId: SessionController_findCurrent
-      summary: Получить данные текущей активной сессии
       parameters: []
       responses:
         "200":
@@ -168,11 +193,32 @@ paths:
                 $ref: "#/components/schemas/SessionEntity"
         "404":
           description: Сессия не найдена
+      summary: Получить данные текущей активной сессии
       tags: *a3
   "/auth/session/by-id/{id}":
+    get:
+      operationId: SessionController_findById
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: ID искомой сессии
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Информация о сессии
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SessionEntity"
+        "404":
+          description: Сессия не найдена
+      summary: Получить сессию по ID
+      tags: *a3
+  "/auth/session/remove/{id}":
     delete:
-      operationId: SessionController_removeById
-      summary: Удалить конкретную сессию по ID
+      operationId: SessionController_remove
       parameters:
         - name: id
           required: true
@@ -185,11 +231,22 @@ paths:
           description: Сессия успешно удалена
         "409":
           description: Невозможно удалить текущую сессию
+      summary: Удалить конкретную сессию по ID
+      tags: *a3
+  /auth/session/clear:
+    delete:
+      operationId: SessionController_clear
+      parameters: []
+      responses:
+        "200":
+          description: Серверная куки сессии успешно удалена
+        "401":
+          description: Неавторизованный доступ
+      summary: Удалить серверную куки сессии
       tags: *a3
   /auth/totp/enable:
     put:
       operationId: TotpController_enable
-      summary: Включение двухфакторной аутентификации
       parameters: []
       requestBody:
         required: true
@@ -206,13 +263,13 @@ paths:
                 $ref: "#/components/schemas/EnableTotpEntity"
         "400":
           description: Неверный код подтверждения
+      summary: Включение двухфакторной аутентификации
       tags:
         &a4
         - TOTP
   /auth/totp/generate:
     post:
       operationId: TotpController_generateSecret
-      summary: Генерация секретного ключа для двухфакторной аутентификации
       parameters: []
       responses:
         "200":
@@ -221,16 +278,81 @@ paths:
             application/json:
               schema:
                 type: object
+      summary: Генерация секретного ключа для двухфакторной аутентификации
       tags: *a4
   /auth/totp/disable:
     delete:
       operationId: TotpController_disable
-      summary: Отключение двухфакторной аутентификации
       parameters: []
       responses:
         "200":
           description: Двухфакторная аутентификация отключена
+      summary: Отключение двухфакторной аутентификации
       tags: *a4
+  /auth/account/recovery:
+    post:
+      operationId: RecoveryController_resetPassword
+      parameters: []
+      requestBody:
+        required: true
+        description: Тело запроса для сброса пароля
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: user@example.com
+              required:
+                - email
+      responses:
+        "200":
+          description: Ссылка на сброс пароля успешно отправлена на почту
+        "404":
+          description: Пользователь с указанным email не найден
+      summary: Запрос на сброс пароля
+      tags:
+        &a5
+        - Account Recovery
+  "/auth/account/recovery/{token}":
+    patch:
+      operationId: RecoveryController_newPassword
+      parameters:
+        - name: token
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        description: Тело запроса для установки нового пароля
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  type: string
+                  minLength: 8
+                  example: NewStrongPassword123
+                passwordRepeat:
+                  type: string
+                  minLength: 8
+                  example: NewStrongPassword123
+              required:
+                - password
+                - passwordRepeat
+      responses:
+        "200":
+          description: Пароль успешно обновлен
+        "400":
+          description: Срок действия токена истек
+        "404":
+          description: Токен не найден
+      summary: Установка нового пароля
+      tags: *a5
   "/course/by-slug/{slug}":
     get:
       operationId: CourseController_findBySlug
@@ -244,7 +366,7 @@ paths:
         "200":
           description: ""
       tags:
-        &a5
+        &a6
         - Course
   "/course/by-id/{id}":
     get:
@@ -258,7 +380,7 @@ paths:
       responses:
         "200":
           description: ""
-      tags: *a5
+      tags: *a6
   /course/create:
     post:
       operationId: CourseController_create
@@ -272,7 +394,7 @@ paths:
       responses:
         "200":
           description: ""
-      tags: *a5
+      tags: *a6
   "/course/change/thumbnail/{id}":
     patch:
       operationId: CourseController_changeThumbnail
@@ -285,7 +407,7 @@ paths:
       responses:
         "200":
           description: ""
-      tags: *a5
+      tags: *a6
 info:
   title: TeaCoder API
   description: API for Teacoder educational platform
