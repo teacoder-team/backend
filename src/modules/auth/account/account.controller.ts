@@ -10,13 +10,10 @@ import {
 	Patch,
 	Post,
 	Req,
-	Res,
 	UploadedFile,
-	UseGuards,
 	UseInterceptors
 } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import { AuthGuard } from '@nestjs/passport'
 import { FileInterceptor } from '@nestjs/platform-express'
 import {
 	ApiBadRequestResponse,
@@ -27,8 +24,7 @@ import {
 	ApiUnauthorizedResponse
 } from '@nestjs/swagger'
 import { User } from '@prisma/generated'
-import type { Request, Response } from 'express'
-import { TurnstileCaptcha } from 'nest-cloudflare-turnstile'
+import type { Request } from 'express'
 
 import { UserAgent } from '@/shared/decorators/user-agent.decorator'
 
@@ -70,7 +66,7 @@ export class AccountController {
 	@ApiBadRequestResponse({
 		description: 'Некорректные данные для создания пользователя'
 	})
-	@TurnstileCaptcha()
+	// @Turnstile()
 	@Post('create')
 	@HttpCode(HttpStatus.OK)
 	public async create(
@@ -79,52 +75,6 @@ export class AccountController {
 		@UserAgent() userAgent: string
 	) {
 		return this.accountService.create(req, dto, userAgent)
-	}
-
-	@ApiOperation({ summary: 'Google OAuth аутентификация' })
-	@UseGuards(AuthGuard('google'))
-	@Get('google')
-	public async googleAuth() {}
-
-	@ApiOperation({ summary: 'Google OAuth callback' })
-	@ApiOkResponse({
-		description: 'OAuth успешно завершен'
-	})
-	@UseGuards(AuthGuard('google'))
-	@Get('google/callback')
-	public async googleAuthCallback(
-		@Req() req: Request,
-		@Res() res: Response,
-		@UserAgent() userAgent: string
-	) {
-		await this.accountService.validateOAuth(req, userAgent)
-
-		return res.redirect(
-			this.configService.getOrThrow<string>('SITE_URL') + '/student'
-		)
-	}
-
-	@ApiOperation({ summary: 'GitHub OAuth аутентификация' })
-	@Get('github')
-	@UseGuards(AuthGuard('github'))
-	public async githubAuth() {}
-
-	@ApiOperation({ summary: 'GitHub OAuth callback' })
-	@ApiOkResponse({
-		description: 'OAuth успешно завершен'
-	})
-	@Get('github/callback')
-	@UseGuards(AuthGuard('github'))
-	public async githubAuthCallback(
-		@Req() req: Request,
-		@Res() res: Response,
-		@UserAgent() userAgent: string
-	) {
-		await this.accountService.validateOAuth(req, userAgent)
-
-		return res.redirect(
-			this.configService.getOrThrow<string>('SITE_URL') + '/student'
-		)
 	}
 
 	@ApiOperation({ summary: 'Изменить пароль пользователя' })

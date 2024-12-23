@@ -1,11 +1,17 @@
 import { ConfigService } from '@nestjs/config'
-import type { ITurnstileOptions } from 'nest-cloudflare-turnstile'
+import type { TurnstileOptions } from 'nestjs-cloudflare-captcha'
+
+import { parseBoolean } from '@/shared/utils/parse-boolean.util'
 
 export function getTurnstileConfig(
 	configService: ConfigService
-): ITurnstileOptions {
+): TurnstileOptions {
 	return {
 		secretKey: configService.getOrThrow<string>('CAPTCHA_SECRET_KEY'),
-		tokenResponse: req => req.headers.turnstile
+		token: req => req.body.captcha,
+		skipIf:
+			parseBoolean(
+				configService.getOrThrow<string>('CAPTCHA_ENABLED')
+			) === false
 	}
 }

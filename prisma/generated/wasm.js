@@ -148,14 +148,7 @@ exports.Prisma.CourseScalarFieldEnum = {
   youtubeUrl: 'youtubeUrl',
   codeUrl: 'codeUrl',
   isPublished: 'isPublished',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.CategoryScalarFieldEnum = {
-  id: 'id',
-  title: 'title',
-  slug: 'slug',
+  views: 'views',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -200,7 +193,6 @@ exports.TokenType = exports.$Enums.TokenType = {
 exports.Prisma.ModelName = {
   User: 'User',
   Course: 'Course',
-  Category: 'Category',
   Token: 'Token'
 };
 

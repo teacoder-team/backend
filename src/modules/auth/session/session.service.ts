@@ -1,20 +1,17 @@
 import {
 	BadRequestException,
-	ConflictException,
 	Injectable,
-	InternalServerErrorException,
 	NotFoundException,
 	UnauthorizedException
 } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import { UserRole } from '@prisma/generated'
+import { User } from '@prisma/generated'
 import { verify } from 'argon2'
 import type { Request } from 'express'
 import { TOTP } from 'otpauth'
 
 import { PrismaService } from '@/core/prisma/prisma.service'
 import { RedisService } from '@/core/redis/redis.service'
-import { getSessionMetadata } from '@/shared/utils/session-metadata.util'
 
 import { LoginDto } from './dto/login.dto'
 
@@ -22,8 +19,8 @@ import { LoginDto } from './dto/login.dto'
 export class SessionService {
 	public constructor(
 		private readonly prismaService: PrismaService,
-		private readonly configService: ConfigService,
-		private readonly redisService: RedisService
+		private readonly redisService: RedisService,
+		private readonly configService: ConfigService
 	) {}
 
 	public async login(req: Request, dto: LoginDto, userAgent: string) {
@@ -51,18 +48,6 @@ export class SessionService {
 			throw new UnauthorizedException('Неправильный пароль')
 		}
 
-		const referer = req.get('Referer') || req.get('Origin')
-
-		if (
-			referer &&
-			referer.includes('manage.teacoder.ru') &&
-			user.role !== UserRole.ADMIN
-		) {
-			throw new UnauthorizedException(
-				'У вас нет прав для доступа в админ-панель'
-			)
-		}
-
 		if (user.isTotpEnabled) {
 			if (!pin) {
 				return {
@@ -85,134 +70,178 @@ export class SessionService {
 			}
 		}
 
-		const metadata = getSessionMetadata(req, userAgent)
+		const session = await this.redisService.createSession(
+			user,
+			req,
+			userAgent
+		)
 
-		return new Promise((resolve, reject) => {
-			req.login(user, err => {
-				if (err) {
-					return reject(
-						new InternalServerErrorException(
-							'Не удалось сохранить сессию'
-						)
-					)
-				}
-
-				req.session.createdAt = new Date()
-				req.session.metadata = metadata
-
-				req.session.save(saveErr => {
-					if (saveErr) {
-						return reject(
-							new InternalServerErrorException(
-								'Не удалось сохранить данные сессии'
-							)
-						)
-					}
-					resolve({ user })
-				})
-			})
-		})
+		return session
 	}
 
-	public async logout(req: Request): Promise<void> {
-		return new Promise((resolve, reject) => {
-			req.session.destroy(err => {
-				if (err) {
-					return reject(
-						new InternalServerErrorException(
-							'Не удалось завершить сессию'
-						)
-					)
-				}
-				this.clear(req)
-				resolve()
-			})
-		})
-	}
+	public async logout(req: Request) {
+		const token = req.headers['x-session-token'] as string
 
-	public async findAll(req: Request) {
-		const userId = req.session.passport.user
-
-		const keys = await this.redisService.keys('*')
-
-		const userSessions = []
+		const keys = await this.redisService.keys(`sessions:*`)
 
 		for (const key of keys) {
-			const sessionData = await this.redisService.get(key)
+			const session = await this.redisService.hgetall(key)
 
-			if (sessionData) {
-				const session = JSON.parse(sessionData)
+			if (session.token === token) {
+				await this.redisService.del(key)
 
-				if (session.passport.user === userId) {
-					userSessions.push({
-						id: key.split(':')[1],
-						...session
-					})
+				const userSessionKeys =
+					await this.redisService.keys(`user_sessions:*`)
+
+				for (const userSessionKey of userSessionKeys) {
+					const userSession = JSON.parse(
+						await this.redisService.get(userSessionKey)
+					)
+
+					if (userSession.sessionId === session.id) {
+						await this.redisService.del(userSessionKey)
+					}
+				}
+
+				return true
+			}
+		}
+
+		throw new UnauthorizedException('Invalid or expired session')
+	}
+
+	public async findAll(req: Request, user: User) {
+		const token = req.headers['x-session-token'] as string
+		const keys = await this.redisService.keys(`sessions:*`)
+
+		if (keys.length === 0) {
+			return []
+		}
+
+		const userSessions = await Promise.all(
+			keys.map(async sessionKey => {
+				const session = await this.redisService.hgetall(sessionKey)
+
+				if (session.userId === user.id && session.token !== token) {
+					const userSessionKeys =
+						await this.redisService.keys(`user_sessions:*`)
+
+					for (const userSessionKey of userSessionKeys) {
+						const userSession = JSON.parse(
+							await this.redisService.get(userSessionKey)
+						)
+
+						if (userSession.sessionId === session.id) {
+							return {
+								id: session.id,
+								createdAt: userSession.createdAt,
+								country: userSession.geo.name,
+								city: userSession.geo.capital,
+								browser: userSession.client.name,
+								os: userSession.os.name,
+								type: userSession.device.type
+							}
+						}
+					}
+
+					return { session }
+				}
+
+				return null
+			})
+		)
+
+		return userSessions.filter(session => session !== null)
+	}
+
+	public async findCurrent(req: Request, user: User) {
+		const token = req.headers['x-session-token'] as string
+
+		const keys = await this.redisService.keys(`sessions:*`)
+
+		for (const key of keys) {
+			const session = await this.redisService.hgetall(key)
+
+			if (session.token === token && session.userId === user.id) {
+				const userSessionKeys =
+					await this.redisService.keys(`user_sessions:*`)
+
+				for (const userSessionKey of userSessionKeys) {
+					const userSession = JSON.parse(
+						await this.redisService.get(userSessionKey)
+					)
+
+					if (userSession.sessionId === session.id) {
+						return {
+							id: session.id,
+							createdAt: userSession.createdAt,
+							name: session.name,
+							country: userSession.geo.name,
+							city: userSession.geo.capital,
+							browser: userSession.client.name,
+							os: userSession.os.name,
+							type: userSession.device.type
+						}
+					}
+				}
+
+				return { session }
+			}
+		}
+
+		throw new UnauthorizedException('Session not found or expired')
+	}
+
+	public async remove(req: Request, id: string) {
+		const token = req.headers['x-session-token'] as string
+
+		const keys = await this.redisService.keys(`sessions:*`)
+
+		let currentSessionKey: string | null = null
+
+		for (const key of keys) {
+			const session = await this.redisService.hgetall(key)
+
+			if (session.token === token) {
+				currentSessionKey = key
+
+				if (session.id === id) {
+					throw new BadRequestException(
+						'Невозможно удалить текущую сессию'
+					)
 				}
 			}
 		}
 
-		userSessions.sort((a, b) => b.createdAt - a.createdAt)
-
-		return userSessions.filter(session => session.id !== req.session.id)
-	}
-
-	public async findById(id: string, req: Request) {
-		const sessionData = await this.redisService.get(
-			`${this.configService.getOrThrow<string>('SESSION_FOLDER')}${id}`
-		)
-
-		if (!sessionData) {
-			throw new NotFoundException('Сессия не найдена')
+		if (!currentSessionKey) {
+			throw new UnauthorizedException('Текущая сессия не найдена')
 		}
 
-		const session = JSON.parse(sessionData)
+		for (const key of keys) {
+			const session = await this.redisService.hgetall(key)
 
-		const userIdFromSession = session.passport.user
-		const currentUserId = req.session.passport.user
+			if (session.id === id) {
+				const userSessionKeys =
+					await this.redisService.keys(`user_sessions:*`)
 
-		if (userIdFromSession !== currentUserId) {
-			throw new UnauthorizedException(
-				'Эта сессия принадлежит другому пользователю'
-			)
+				for (const userSessionKey of userSessionKeys) {
+					const userSession = JSON.parse(
+						await this.redisService.get(userSessionKey)
+					)
+
+					if (userSession.sessionId === id) {
+						await this.redisService.del(userSessionKey)
+					}
+				}
+
+				await this.redisService.del(key)
+
+				return {
+					message: `Сессия с ID ${id} успешно удалена`
+				}
+			}
 		}
 
-		return {
-			id,
-			...session
-		}
-	}
-
-	public async findCurrent(req: Request) {
-		const sessionId = req.session.id
-
-		const sessionData = await this.redisService.get(
-			`${this.configService.getOrThrow<string>('SESSION_FOLDER')}${sessionId}`
-		)
-
-		const session = JSON.parse(sessionData)
-
-		return {
-			id: sessionId,
-			...session
-		}
-	}
-
-	public async remove(req: Request, id: string) {
-		if (req.session.id === id) {
-			throw new ConflictException('Текущую сессию удалить нельзя')
-		}
-
-		await this.redisService.del(
-			`${this.configService.getOrThrow<string>('SESSION_FOLDER')}${id}`
-		)
-
-		return true
-	}
-
-	public async clear(req: Request) {
-		return req.res.clearCookie(
-			this.configService.getOrThrow<string>('SESSION_NAME')
-		)
+		throw new NotFoundException('Сессия не найдена')
 	}
 }

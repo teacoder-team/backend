@@ -10,7 +10,6 @@ import { v4 as uuidv4 } from 'uuid'
 
 import { PrismaService } from '@/core/prisma/prisma.service'
 import { MailService } from '@/modules/libs/mail/mail.service'
-import { getSessionMetadata } from '@/shared/utils/session-metadata.util'
 
 import { NewPasswordDto } from './dto/new-password.dto'
 import { ResetPasswordDto } from './dto/reset-password.dto'
@@ -76,13 +75,13 @@ export class RecoveryService {
 			}
 		})
 
-		const metadata = getSessionMetadata(req, userAgent)
+		// const metadata = getSessionMetadata(req, userAgent)
 
-		await this.mailService.sendPasswordReset(
-			passwordResetToken.user.email,
-			passwordResetToken.token,
-			metadata
-		)
+		// await this.mailService.sendPasswordReset(
+		// 	passwordResetToken.user.email,
+		// 	passwordResetToken.token,
+		// 	metadata
+		// )
 
 		return true
 	}

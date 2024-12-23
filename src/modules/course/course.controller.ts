@@ -25,6 +25,12 @@ import { CreateCourseDto } from './dto/create-course.dto'
 export class CourseController {
 	public constructor(private readonly courseService: CourseService) {}
 
+	@Get('all')
+	@HttpCode(HttpStatus.OK)
+	public async findAll() {
+		return this.courseService.findAll()
+	}
+
 	@Get('by-slug/:slug')
 	@HttpCode(HttpStatus.OK)
 	public async findBySlug(@Param('slug') slug: string) {

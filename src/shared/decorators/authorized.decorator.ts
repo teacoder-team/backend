@@ -1,4 +1,4 @@
-import { createParamDecorator, type ExecutionContext } from '@nestjs/common'
+import { createParamDecorator, ExecutionContext } from '@nestjs/common'
 import type { User } from '@prisma/generated'
 
 export const Authorized = createParamDecorator(

@@ -1,86 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger'
 
-export class LocationInfo {
-	@ApiProperty({
-		name: 'country',
-		description: 'Страна пользователя',
-		example: 'Россия'
-	})
-	country: string
-
-	@ApiProperty({
-		name: 'city',
-		description: 'Город пользователя',
-		example: 'Москва'
-	})
-	city: string
-
-	@ApiProperty({
-		name: 'latitude',
-		description: 'Широта местоположения',
-		example: 55.7558
-	})
-	latitude: number
-
-	@ApiProperty({
-		name: 'longitude',
-		description: 'Долгота местоположения',
-		example: 37.6173
-	})
-	longitude: number
-}
-
-export class DeviceInfo {
-	@ApiProperty({
-		name: 'browser',
-		description: 'Тип браузера пользователя',
-		example: 'Chrome'
-	})
-	browser: string
-
-	@ApiProperty({
-		name: 'os',
-		description: 'Операционная система устройства',
-		example: 'Windows'
-	})
-	os: string
-
-	@ApiProperty({
-		name: 'type',
-		description: 'Тип устройства пользователя',
-		example: 'Desktop'
-	})
-	type: string
-}
-
-export class SessionMetadata {
-	@ApiProperty({
-		name: 'location',
-		description: 'Информация о местоположении пользователя',
-		type: LocationInfo
-	})
-	location: LocationInfo
-
-	@ApiProperty({
-		name: 'device',
-		description: 'Информация об устройстве пользователя',
-		type: DeviceInfo
-	})
-	device: DeviceInfo
-
-	@ApiProperty({
-		name: 'ip',
-		description: 'IP-адрес пользователя',
-		example: '192.168.1.1'
-	})
-	ip: string
-}
-
 export class SessionEntity {
 	@ApiProperty({
 		name: 'id',
 		description: 'Уникальный идентификатор сессии',
-		example: 'session-id-12345'
+		example: '2e5e3712-f577-413f-89a6-40165f24262c'
 	})
 	id: string
 
@@ -92,10 +16,37 @@ export class SessionEntity {
 	createdAt: Date
 
 	@ApiProperty({
-		name: 'metadata',
-		description:
-			'Данные метаданных сессии (местоположение, устройство, IP)',
-		type: SessionMetadata
+		name: 'country',
+		description: 'Страна, из которой была создана сессия',
+		example: 'Russia'
 	})
-	metadata: SessionMetadata
+	country: string
+
+	@ApiProperty({
+		name: 'city',
+		description: 'Город, из которого была создана сессия',
+		example: 'Moscow'
+	})
+	city: string
+
+	@ApiProperty({
+		name: 'browser',
+		description: 'Браузер, использованный для создания сессии',
+		example: 'Chrome'
+	})
+	browser: string
+
+	@ApiProperty({
+		name: 'os',
+		description: 'Операционная система устройства пользователя',
+		example: 'Windows'
+	})
+	os: string
+
+	@ApiProperty({
+		name: 'type',
+		description: 'Тип сессии (например, desktop, smartphone)',
+		example: 'desktop'
+	})
+	type: string
 }
