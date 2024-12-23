@@ -5,26 +5,27 @@ import {
 	Injectable
 } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
-import type { UserRole } from '@prisma/generated'
 
 import { ROLES_KEY } from '../decorators/roles.decorator'
 
 @Injectable()
 export class RolesGuard implements CanActivate {
-	public constructor(private readonly reflector: Reflector) {}
+	constructor(private readonly reflector: Reflector) {}
 
-	public async canActivate(context: ExecutionContext): Promise<boolean> {
-		const roles = this.reflector.getAllAndOverride<UserRole[]>(ROLES_KEY, [
+	async canActivate(context: ExecutionContext): Promise<boolean> {
+		const roles = this.reflector.getAllAndOverride<string[]>(ROLES_KEY, [
 			context.getHandler(),
 			context.getClass()
 		])
-		const request = context.switchToHttp().getRequest()
 
 		if (!roles) return true
 
-		if (!roles.includes(request.user.role)) {
+		const request = context.switchToHttp().getRequest()
+		const user = request.user
+
+		if (!user || !roles.includes(user.role)) {
 			throw new ForbiddenException(
-				'У вас нет прав доступа к этому ресурсу'
+				'You do not have permission to access this resource'
 			)
 		}
 

@@ -15,6 +15,16 @@ export class CourseService {
 		private readonly s3Service: S3Service
 	) {}
 
+	public async findAll() {
+		const courses = await this.prismaService.course.findMany({
+			orderBy: {
+				createdAt: 'desc'
+			}
+		})
+
+		return courses
+	}
+
 	public async findBySlug(slug: string) {
 		const course = await this.prismaService.course.findUnique({
 			where: {

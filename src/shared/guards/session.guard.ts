@@ -4,22 +4,53 @@ import {
 	Injectable,
 	UnauthorizedException
 } from '@nestjs/common'
-import { Request } from 'express'
+import type { Request } from 'express'
 
 import { PrismaService } from '@/core/prisma/prisma.service'
+import { RedisService } from '@/core/redis/redis.service'
 
 @Injectable()
-export class SessionGuard implements CanActivate {
-	public constructor(private readonly prismaService: PrismaService) {}
+export class SessionAuthGuard implements CanActivate {
+	public constructor(
+		private readonly prismaService: PrismaService,
+		private readonly redisService: RedisService
+	) {}
 
 	public async canActivate(context: ExecutionContext): Promise<boolean> {
 		const request = context.switchToHttp().getRequest() as Request
 
-		if (!request.isAuthenticated()) {
-			throw new UnauthorizedException(
-				'Для выполнения данного действия необходима авторизация'
-			)
+		const token = request.headers['x-session-token'] as string
+
+		if (!token) {
+			throw new UnauthorizedException('Session token is missing')
 		}
+
+		const keys = await this.redisService.keys('sessions:*')
+
+		let foundSession = null
+
+		for (const key of keys) {
+			const session = await this.redisService.hgetall(key)
+
+			if (session.token === token) {
+				foundSession = session
+				break
+			}
+		}
+
+		if (!foundSession) {
+			throw new UnauthorizedException('Invalid or expired session')
+		}
+
+		const user = await this.prismaService.user.findUnique({
+			where: { id: foundSession.userId }
+		})
+
+		if (!user) {
+			throw new UnauthorizedException('User not found')
+		}
+
+		request.user = user
 
 		return true
 	}

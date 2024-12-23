@@ -5,8 +5,8 @@ import { Ctx, Start, Update } from 'nestjs-telegraf'
 import { Context, Telegraf } from 'telegraf'
 
 import { PrismaService } from '@/core/prisma/prisma.service'
-import type { SessionMetadata } from '@/shared/types/session-metadata.types'
 
+// import type { SessionMetadata } from '@/shared/types/session.interface.'
 import { MESSAGES } from './telegram.messages'
 
 @Update()
@@ -36,18 +36,18 @@ export class TelegramService extends Telegraf {
 		await ctx.replyWithHTML(MESSAGES.welcomeMessage)
 	}
 
-	public async sendNewUser(user: User, metadata: SessionMetadata) {
+	public async sendNewUser(user: User) {
 		const ownerId =
 			this.configService.getOrThrow<string>('TELEGRAM_OWNER_ID')
 
 		const count = await this.prismaService.user.count()
 
-		await this.telegram.sendMessage(
-			ownerId,
-			MESSAGES.newUserMessage(user, metadata, count),
-			{
-				parse_mode: 'HTML'
-			}
-		)
+		// await this.telegram.sendMessage(
+		// 	ownerId,
+		// 	MESSAGES.newUserMessage(user, metadata, count),
+		// 	{
+		// 		parse_mode: 'HTML'
+		// 	}
+		// )
 	}
 }

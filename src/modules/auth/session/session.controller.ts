@@ -20,9 +20,11 @@ import {
 	ApiTags,
 	ApiUnauthorizedResponse
 } from '@nestjs/swagger'
+import { User } from '@prisma/generated'
 import { Request } from 'express'
-import { TurnstileCaptcha } from 'nest-cloudflare-turnstile'
+import { Turnstile } from 'nestjs-cloudflare-captcha'
 
+import { Authorized } from '@/shared/decorators/authorized.decorator'
 import { UserAgent } from '@/shared/decorators/user-agent.decorator'
 
 import { Authorization } from '../../../shared/decorators/auth.decorator'
@@ -48,7 +50,7 @@ export class SessionController {
 	@ApiBadRequestResponse({
 		description: 'Некорректные данные для входа в систему'
 	})
-	@TurnstileCaptcha()
+	@Turnstile()
 	@Post('login')
 	@HttpCode(HttpStatus.OK)
 	public async login(
@@ -85,8 +87,8 @@ export class SessionController {
 	@Get('all')
 	@HttpCode(HttpStatus.OK)
 	@Authorization()
-	public async findAll(@Req() req: Request) {
-		return this.sessionService.findAll(req)
+	public async findAll(@Req() req: Request, @Authorized() user: User) {
+		return this.sessionService.findAll(req, user)
 	}
 
 	@ApiOperation({ summary: 'Получить данные текущей активной сессии' })
@@ -100,23 +102,8 @@ export class SessionController {
 	@Authorization()
 	@Get('current')
 	@HttpCode(HttpStatus.OK)
-	public async findCurrent(@Req() req: Request) {
-		return this.sessionService.findCurrent(req)
-	}
-
-	@ApiOperation({ summary: 'Получить сессию по ID' })
-	@ApiParam({ name: 'id', description: 'ID искомой сессии' })
-	@ApiOkResponse({
-		description: 'Информация о сессии',
-		type: SessionEntity
-	})
-	@ApiNotFoundResponse({
-		description: 'Сессия не найдена'
-	})
-	@Get('by-id/:id')
-	@HttpCode(HttpStatus.OK)
-	public async findById(@Param('id') id: string, @Req() req: Request) {
-		return this.sessionService.findById(id, req)
+	public async findCurrent(@Req() req: Request, @Authorized() user: User) {
+		return this.sessionService.findCurrent(req, user)
 	}
 
 	@ApiOperation({ summary: 'Удалить конкретную сессию по ID' })
@@ -131,18 +118,5 @@ export class SessionController {
 	@HttpCode(HttpStatus.OK)
 	public async remove(@Req() req: Request, @Param('id') id: string) {
 		return this.sessionService.remove(req, id)
-	}
-
-	@ApiOperation({ summary: 'Удалить серверную куки сессии' })
-	@ApiOkResponse({
-		description: 'Серверная куки сессии успешно удалена'
-	})
-	@ApiUnauthorizedResponse({
-		description: 'Неавторизованный доступ'
-	})
-	@Delete('clear')
-	@HttpCode(HttpStatus.OK)
-	public async clear(@Req() req: Request) {
-		return this.sessionService.clear(req)
 	}
 }

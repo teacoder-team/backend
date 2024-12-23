@@ -10,11 +10,10 @@ import type { Request } from 'express'
 import * as sharp from 'sharp'
 
 import { PrismaService } from '@/core/prisma/prisma.service'
+import { RedisService } from '@/core/redis/redis.service'
 import { S3Service } from '@/modules/libs/s3/s3.service'
 import { TelegramService } from '@/modules/libs/telegram/telegram.service'
 import { generateSlug } from '@/shared/utils/generate-slug.util'
-import { saveSession } from '@/shared/utils/save-session.util'
-import { getSessionMetadata } from '@/shared/utils/session-metadata.util'
 
 import { ChangePasswordDto } from './dto/change-password.dto'
 import { CreateUserDto } from './dto/create-user.dto'
@@ -23,6 +22,7 @@ import { CreateUserDto } from './dto/create-user.dto'
 export class AccountService {
 	public constructor(
 		private readonly prismaService: PrismaService,
+		private readonly redisService: RedisService,
 		private readonly s3Service: S3Service,
 		private readonly telegramService: TelegramService
 	) {}
@@ -60,11 +60,15 @@ export class AccountService {
 			}
 		})
 
-		const metadata = getSessionMetadata(req, userAgent)
+		const session = await this.redisService.createSession(
+			user,
+			req,
+			userAgent
+		)
 
-		await this.telegramService.sendNewUser(user, metadata)
+		// await this.telegramService.sendNewUser(user, metadata)
 
-		return saveSession(req, user, metadata)
+		return session
 	}
 
 	public async validateOAuth(req: any, userAgent: string) {
@@ -73,8 +77,6 @@ export class AccountService {
 				email: req.user.email
 			}
 		})
-
-		const metadata = getSessionMetadata(req, userAgent)
 
 		if (!user) {
 			user = await this.prismaService.user.create({
@@ -89,10 +91,12 @@ export class AccountService {
 				}
 			})
 
-			await this.telegramService.sendNewUser(user, metadata)
+			// await this.telegramService.sendNewUser(user, metadata)
 		}
 
-		return saveSession(req, user, metadata)
+		await this.redisService.createSession(user, req, userAgent)
+
+		return true
 	}
 
 	public async changePassword(user: User, dto: ChangePasswordDto) {

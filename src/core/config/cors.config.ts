@@ -5,7 +5,7 @@ export function getCorsConfig(config: ConfigService): CorsOptions {
 	return {
 		origin: config.getOrThrow<string>('ALLOWED_ORIGIN').split(','),
 		credentials: true,
-		exposedHeaders: ['set-cookie'],
-		methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE']
+		methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
+		exposedHeaders: ['set-cookie']
 	}
 }

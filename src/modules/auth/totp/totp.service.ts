@@ -39,8 +39,6 @@ export class TotpService {
 				totpSecret: secret
 			}
 		})
-
-		return true
 	}
 
 	public async generateSecret(user: User) {
