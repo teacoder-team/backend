@@ -3,14 +3,13 @@ import { ConfigService } from '@nestjs/config'
 import { NestFactory } from '@nestjs/core'
 import helmet from 'helmet'
 
-import { getCorsConfig } from './core/config/cors.config'
-import { getSwaggerConfig } from './core/config/swagger.config'
-import { CoreModule } from './core/core.module'
-import { setupSwagger } from './core/swagger/swagger.setup'
-import { parseBoolean } from './shared/utils/parse-boolean.util'
+import { AppModule } from './app.module'
+import { parseBoolean } from './common/utils/parse-boolean'
+import { setupSwagger } from './common/utils/setup-swagger'
+import { getCorsConfig } from './config'
 
 async function bootstrap() {
-	const app = await NestFactory.create(CoreModule)
+	const app = await NestFactory.create(AppModule)
 
 	const config = app.get(ConfigService)
 
@@ -25,7 +24,7 @@ async function bootstrap() {
 	app.enableCors(getCorsConfig(config))
 
 	if (parseBoolean(config.getOrThrow<string>('SWAGGER_ENABLED'))) {
-		await setupSwagger(getSwaggerConfig(config), app)
+		await setupSwagger(app)
 	}
 
 	await app.listen(config.getOrThrow<number>('APPLICATION_PORT'))
