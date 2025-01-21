@@ -4,7 +4,6 @@ import {
 	NotFoundException,
 	UnauthorizedException
 } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
 import { User } from '@prisma/generated'
 import { verify } from 'argon2'
 import type { Request } from 'express'
@@ -19,8 +18,7 @@ import { LoginDto } from './dto/login.dto'
 export class SessionService {
 	public constructor(
 		private readonly prismaService: PrismaService,
-		private readonly redisService: RedisService,
-		private readonly configService: ConfigService
+		private readonly redisService: RedisService
 	) {}
 
 	public async login(req: Request, dto: LoginDto, userAgent: string) {
@@ -120,6 +118,11 @@ export class SessionService {
 
 		const userSessions = await Promise.all(
 			keys.map(async sessionKey => {
+				const type = await this.redisService.type(sessionKey)
+				if (type !== 'hash') {
+					return null
+				}
+
 				const session = await this.redisService.hgetall(sessionKey)
 
 				if (session.userId === user.id && session.token !== token) {

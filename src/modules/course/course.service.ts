@@ -1,10 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
-import sharp from 'sharp'
 
 import { PrismaService } from '@/core/prisma/prisma.service'
 import { generateSlug } from '@/shared/utils/generate-slug.util'
 
-import { S3Service } from '../libs/s3/s3.service'
+import { StorageService } from '../libs/storage/storage.service'
 
 import { CreateCourseDto } from './dto/create-course.dto'
 
@@ -12,7 +11,7 @@ import { CreateCourseDto } from './dto/create-course.dto'
 export class CourseService {
 	public constructor(
 		private readonly prismaService: PrismaService,
-		private readonly s3Service: S3Service
+		private readonly storageService: StorageService
 	) {}
 
 	public async findAll() {
@@ -70,24 +69,20 @@ export class CourseService {
 		const course = await this.findById(id)
 
 		if (course.thumbnail) {
-			await this.s3Service.deleteFile(course.thumbnail)
+			await this.storageService.deleteFile(course.thumbnail)
 		}
 
-		const fileName = `/courses/${course.id}.webp`
-
-		const processedBuffer = await sharp(file.buffer)
-			.resize(1280, 720)
-			.webp()
-			.toBuffer()
-
-		await this.s3Service.uploadFile(processedBuffer, fileName, 'image/webp')
+		const uploadedFile = await this.storageService.uploadFile(
+			file.buffer,
+			'courses'
+		)
 
 		await this.prismaService.course.update({
 			where: {
 				id: course.id
 			},
 			data: {
-				thumbnail: fileName
+				thumbnail: null
 			}
 		})
 

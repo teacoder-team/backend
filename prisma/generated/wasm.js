@@ -18,11 +18,11 @@ exports.$Enums = {}
 
 /**
  * Prisma Client JS version: 5.22.0
- * Query Engine version: 605197351a3c8bdd595af2d2a9bc3025bca48ea2
+ * Query Engine version: 34ace0eb2704183d2c05b60b52fba5c43c13f303
  */
 Prisma.prismaVersion = {
   client: "5.22.0",
-  engine: "605197351a3c8bdd595af2d2a9bc3025bca48ea2"
+  engine: "34ace0eb2704183d2c05b60b52fba5c43c13f303"
 }
 
 Prisma.PrismaClientKnownRequestError = () => {
@@ -128,13 +128,20 @@ exports.Prisma.UserScalarFieldEnum = {
   password: 'password',
   username: 'username',
   displayName: 'displayName',
-  picture: 'picture',
+  avatar: 'avatar',
   points: 'points',
-  method: 'method',
   role: 'role',
-  isVerified: 'isVerified',
   isTotpEnabled: 'isTotpEnabled',
   totpSecret: 'totpSecret',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.PasswordResetScalarFieldEnum = {
+  id: 'id',
+  token: 'token',
+  expiry: 'expiry',
+  userId: 'userId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -153,14 +160,6 @@ exports.Prisma.CourseScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
-exports.Prisma.TokenScalarFieldEnum = {
-  id: 'id',
-  token: 'token',
-  type: 'type',
-  expiresIn: 'expiresIn',
-  userId: 'userId'
-};
-
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -175,25 +174,15 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
-exports.AuthMethod = exports.$Enums.AuthMethod = {
-  CREDENTIALS: 'CREDENTIALS',
-  GOOGLE: 'GOOGLE',
-  GITHUB: 'GITHUB'
-};
-
 exports.UserRole = exports.$Enums.UserRole = {
   STUDENT: 'STUDENT',
   ADMIN: 'ADMIN'
 };
 
-exports.TokenType = exports.$Enums.TokenType = {
-  PASSWORD_RESET: 'PASSWORD_RESET'
-};
-
 exports.Prisma.ModelName = {
   User: 'User',
-  Course: 'Course',
-  Token: 'Token'
+  PasswordReset: 'PasswordReset',
+  Course: 'Course'
 };
 
 /**

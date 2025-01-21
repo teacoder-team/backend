@@ -17,22 +17,35 @@ model User {
   username    String @unique
   displayName String @map("display_name")
 
-  picture String?
-  points  Int     @default(0)
+  avatar String?
+  points Int     @default(0)
 
-  method AuthMethod
-  role   UserRole   @default(STUDENT)
+  role UserRole @default(STUDENT)
 
-  isVerified    Boolean @default(false) @map("is_verified")
   isTotpEnabled Boolean @default(false) @map("is_totp_enabled")
   totpSecret    String? @default("totp_secret")
 
-  tokens Token[]
+  passwordReset PasswordReset?
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("users")
+}
+
+model PasswordReset {
+  id String @id @default(uuid())
+
+  token  String   @unique
+  expiry DateTime
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @unique @map("user_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("reset_passwords")
 }
 
 model Course {
@@ -48,7 +61,8 @@ model Course {
   codeUrl    String? @map("code_url")
 
   isPublished Boolean @default(false) @map("is_published")
-  views       Int     @default(0)
+
+  views Int @default(0)
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -56,37 +70,9 @@ model Course {
   @@map("courses")
 }
 
-model Token {
-  id String @id @default(uuid())
-
-  token String    @unique
-  type  TokenType
-
-  expiresIn DateTime @map("expires_in")
-
-  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String? @map("user_id")
-
-  @@map("tokens")
-}
-
 enum UserRole {
   STUDENT
   ADMIN
 
   @@map("user_roles")
-}
-
-enum AuthMethod {
-  CREDENTIALS
-  GOOGLE
-  GITHUB
-
-  @@map("auth_methods")
-}
-
-enum TokenType {
-  PASSWORD_RESET
-
-  @@map("token_types")
 }

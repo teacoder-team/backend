@@ -16,7 +16,7 @@ export const MESSAGES = {
 
 <b>👤 Имя:</b> ${user.displayName}  
 <b>📧 Email:</b> ${user.email}  
-<b>🔑 Метод авторизации:</b> ${user.method}
+<b>🔑 Метод авторизации:</b> {user.method}
 
 <b>🌍 Местоположение:</b> ${metadata.location.city}, ${metadata.location.country}
 <b>📱 Операционная система:</b> ${metadata.device.os}  

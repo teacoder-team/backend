@@ -43,7 +43,9 @@ export class SessionAuthGuard implements CanActivate {
 		}
 
 		const user = await this.prismaService.user.findUnique({
-			where: { id: foundSession.userId }
+			where: {
+				id: foundSession.userId
+			}
 		})
 
 		if (!user) {
