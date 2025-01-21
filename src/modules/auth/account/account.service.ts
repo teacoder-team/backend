@@ -1,34 +1,36 @@
 import {
 	BadRequestException,
 	ConflictException,
-	Injectable
+	Injectable,
+	NotFoundException
 } from '@nestjs/common'
-import { AuthMethod, type User } from '@prisma/generated'
+import { type User } from '@prisma/generated'
 import { hash, verify } from 'argon2'
+import { randomBytes } from 'crypto'
 import validate from 'deep-email-validator'
 import type { Request } from 'express'
-import * as sharp from 'sharp'
 
 import { PrismaService } from '@/core/prisma/prisma.service'
 import { RedisService } from '@/core/redis/redis.service'
-import { S3Service } from '@/modules/libs/s3/s3.service'
-import { TelegramService } from '@/modules/libs/telegram/telegram.service'
 import { generateSlug } from '@/shared/utils/generate-slug.util'
 
 import { ChangePasswordDto } from './dto/change-password.dto'
 import { CreateUserDto } from './dto/create-user.dto'
+import { PasswordResetDto } from './dto/password-reset.dto'
+import { SendPasswordResetDto } from './dto/send-password-reset.dto'
 
 @Injectable()
 export class AccountService {
 	public constructor(
 		private readonly prismaService: PrismaService,
-		private readonly redisService: RedisService,
-		private readonly s3Service: S3Service,
-		private readonly telegramService: TelegramService
+		private readonly redisService: RedisService
 	) {}
 
 	public async fetch(user: User) {
-		return user
+		return {
+			id: user.id,
+			email: user.email
+		}
 	}
 
 	public async create(req: Request, dto: CreateUserDto, userAgent: string) {
@@ -55,8 +57,7 @@ export class AccountService {
 				displayName: name,
 				username: generateSlug(`${email}-${name}`),
 				email,
-				password: await hash(password),
-				method: AuthMethod.CREDENTIALS
+				password: await hash(password)
 			}
 		})
 
@@ -66,35 +67,76 @@ export class AccountService {
 			userAgent
 		)
 
-		// await this.telegramService.sendNewUser(user, metadata)
-
 		return session
 	}
 
-	public async validateOAuth(req: any, userAgent: string) {
-		let user = await this.prismaService.user.findUnique({
-			where: {
-				email: req.user.email
-			}
+	public async sendPasswordReset(dto: SendPasswordResetDto) {
+		const { email } = dto
+
+		const user = await this.prismaService.user.findUnique({
+			where: { email }
 		})
 
 		if (!user) {
-			user = await this.prismaService.user.create({
-				data: {
-					email: req.user.email,
-					displayName: req.user.name,
-					username: generateSlug(
-						`${req.user.email}-${req.user.name}`
-					),
-					picture: req.user.picture,
-					method: AuthMethod['GOOGLE']
-				}
-			})
-
-			// await this.telegramService.sendNewUser(user, metadata)
+			throw new NotFoundException('Пользователь не найден')
 		}
 
-		await this.redisService.createSession(user, req, userAgent)
+		const token = randomBytes(64).toString('hex')
+
+		const expiry = new Date()
+		expiry.setHours(expiry.getHours() + 1)
+
+		await this.prismaService.passwordReset.upsert({
+			where: {
+				userId: user.id
+			},
+			update: {
+				token,
+				expiry
+			},
+			create: {
+				token,
+				expiry,
+				userId: user.id
+			}
+		})
+
+		return true
+	}
+
+	public async passwordReset(dto: PasswordResetDto) {
+		const { token, password } = dto
+
+		const reset = await this.prismaService.passwordReset.findUnique({
+			where: {
+				token
+			}
+		})
+
+		if (!reset) {
+			throw new NotFoundException('Токен не найден')
+		}
+
+		const hasExpired = new Date(reset.expiry) < new Date()
+
+		if (hasExpired) {
+			throw new BadRequestException('Срок действия токена истек')
+		}
+
+		await this.prismaService.user.update({
+			where: {
+				id: reset.userId
+			},
+			data: {
+				password: await hash(password)
+			}
+		})
+
+		await this.prismaService.passwordReset.delete({
+			where: {
+				id: reset.id
+			}
+		})
 
 		return true
 	}
@@ -114,52 +156,6 @@ export class AccountService {
 			},
 			data: {
 				password: await hash(newPassword)
-			}
-		})
-
-		return true
-	}
-
-	public async changeAvatar(user: User, file: Express.Multer.File) {
-		if (user.picture) {
-			await this.s3Service.deleteFile(user.picture)
-		}
-
-		const fileName = `/users/${user.id}.webp`
-
-		if (
-			(file.originalname && file.originalname.endsWith('.gif')) ||
-			(file.filename && file.filename.endsWith('.gif'))
-		) {
-			const processedBuffer = await sharp(file.buffer, { animated: true })
-				.resize(512, 512)
-				.webp()
-				.toBuffer()
-
-			await this.s3Service.uploadFile(
-				processedBuffer,
-				fileName,
-				'image/webp'
-			)
-		} else {
-			const processedBuffer = await sharp(file.buffer)
-				.resize(512, 512)
-				.webp()
-				.toBuffer()
-
-			await this.s3Service.uploadFile(
-				processedBuffer,
-				fileName,
-				'image/webp'
-			)
-		}
-
-		await this.prismaService.user.update({
-			where: {
-				id: user.id
-			},
-			data: {
-				picture: fileName
 			}
 		})
 

@@ -4,7 +4,6 @@ import {
 	IsNotEmpty,
 	IsOptional,
 	IsString,
-	Length,
 	MaxLength,
 	MinLength
 } from 'class-validator'
@@ -38,6 +37,15 @@ export class LoginDto {
 	public password: string
 
 	@ApiProperty({
+		example: 'cf-token',
+		description: 'Токен Cloudflare Turnstile CAPTCHA',
+		required: false
+	})
+	@IsString({ message: 'Токен CAPTCHA должен быть строкой' })
+	@IsOptional()
+	public captcha?: string
+
+	@ApiProperty({
 		example: '123456',
 		description: 'PIN-код для TOTP аутентификации (6 цифр)',
 		required: false,
@@ -46,6 +54,6 @@ export class LoginDto {
 	})
 	@IsString({ message: 'PIN-код должен быть строкой' })
 	@IsOptional()
-	@Length(6, 6, { message: 'PIN-код должен состоять из 6 цифр' })
+	// @Length(6, 6, { message: 'PIN-код должен состоять из 6 цифр' })
 	public pin?: string
 }

@@ -42,6 +42,7 @@
 		"class-transformer": "^0.5.1",
 		"class-validator": "^0.14.1",
 		"deep-email-validator": "^0.1.21",
+		"form-data": "^4.0.1",
 		"geoip-country": "^5.0.202412202341",
 		"helmet": "^8.0.0",
 		"hi-base32": "^0.5.1",

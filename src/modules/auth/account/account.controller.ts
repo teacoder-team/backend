@@ -1,30 +1,17 @@
 import {
 	Body,
 	Controller,
-	FileTypeValidator,
 	Get,
 	HttpCode,
 	HttpStatus,
-	MaxFileSizeValidator,
-	ParseFilePipe,
 	Patch,
 	Post,
-	Req,
-	UploadedFile,
-	UseInterceptors
+	Req
 } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
-import { FileInterceptor } from '@nestjs/platform-express'
-import {
-	ApiBadRequestResponse,
-	ApiOkResponse,
-	ApiOperation,
-	ApiParam,
-	ApiTags,
-	ApiUnauthorizedResponse
-} from '@nestjs/swagger'
-import { User } from '@prisma/generated'
+import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { type User } from '@prisma/generated'
 import type { Request } from 'express'
+import { Turnstile } from 'nestjs-cloudflare-captcha'
 
 import { UserAgent } from '@/shared/decorators/user-agent.decorator'
 
@@ -34,23 +21,17 @@ import { Authorized } from '../../../shared/decorators/authorized.decorator'
 import { AccountService } from './account.service'
 import { ChangePasswordDto } from './dto/change-password.dto'
 import { CreateUserDto } from './dto/create-user.dto'
-import { UserEntity } from './entities/user.entity'
+import { PasswordResetDto } from './dto/password-reset.dto'
+import { SendPasswordResetDto } from './dto/send-password-reset.dto'
 
 @ApiTags('Account')
 @Controller('auth/account')
 export class AccountController {
-	public constructor(
-		private readonly accountService: AccountService,
-		private readonly configService: ConfigService
-	) {}
+	public constructor(private readonly accountService: AccountService) {}
 
-	@ApiOperation({ summary: 'Получить данные текущего пользователя' })
-	@ApiOkResponse({
-		description: 'Данные пользователя успешно получены',
-		type: UserEntity
-	})
-	@ApiUnauthorizedResponse({
-		description: 'Пользователь не авторизован'
+	@ApiOperation({
+		summary: 'Fetch account',
+		description: 'Fetch account information from the current session.'
 	})
 	@Authorization()
 	@Get()
@@ -59,14 +40,11 @@ export class AccountController {
 		return this.accountService.fetch(user)
 	}
 
-	@ApiOperation({ summary: 'Создать нового пользователя' })
-	@ApiOkResponse({
-		description: 'Пользователь успешно создан'
+	@ApiOperation({
+		summary: 'Create Account',
+		description: 'Create a new account'
 	})
-	@ApiBadRequestResponse({
-		description: 'Некорректные данные для создания пользователя'
-	})
-	// @Turnstile()
+	@Turnstile()
 	@Post('create')
 	@HttpCode(HttpStatus.OK)
 	public async create(
@@ -77,15 +55,31 @@ export class AccountController {
 		return this.accountService.create(req, dto, userAgent)
 	}
 
-	@ApiOperation({ summary: 'Изменить пароль пользователя' })
-	@ApiOkResponse({
-		description: 'Пароль успешно изменен'
+	@ApiOperation({
+		summary: 'Send Password Reset',
+		description: 'Send an email to reset account password.'
 	})
-	@ApiUnauthorizedResponse({
-		description: 'Пользователь не авторизован'
+	@Turnstile()
+	@Post('reset_password')
+	@HttpCode(HttpStatus.OK)
+	public async sendPasswordReset(@Body() dto: SendPasswordResetDto) {
+		return this.accountService.sendPasswordReset(dto)
+	}
+
+	@ApiOperation({
+		summary: 'Password Reset',
+		description: 'Confirm password reset and change the password.'
 	})
-	@ApiBadRequestResponse({
-		description: 'Некорректные данные для изменения пароля'
+	@Turnstile()
+	@Patch('reset_password')
+	@HttpCode(HttpStatus.OK)
+	public async passwordReset(@Body() dto: PasswordResetDto) {
+		return this.accountService.passwordReset(dto)
+	}
+
+	@ApiOperation({
+		summary: 'Change Password',
+		description: 'Change the current account password.'
 	})
 	@Authorization()
 	@Patch('change/password')
@@ -95,50 +89,5 @@ export class AccountController {
 		@Body() dto: ChangePasswordDto
 	) {
 		return this.accountService.changePassword(user, dto)
-	}
-
-	@ApiOperation({ summary: 'Изменить аватар пользователя' })
-	@ApiOkResponse({
-		description: 'Аватар успешно обновлен'
-	})
-	@ApiUnauthorizedResponse({
-		description: 'Пользователь не авторизован'
-	})
-	@ApiBadRequestResponse({
-		description: 'Неверный формат файла или файл слишком большой'
-	})
-	@ApiParam({
-		name: 'file',
-		description: 'Изображение аватара пользователя (файл)',
-		required: true
-	})
-	@Authorization()
-	@UseInterceptors(
-		FileInterceptor('file', {
-			limits: {
-				files: 1
-			}
-		})
-	)
-	@Patch('change/avatar')
-	@HttpCode(HttpStatus.OK)
-	public async changeAvatar(
-		@Authorized() user: User,
-		@UploadedFile(
-			new ParseFilePipe({
-				validators: [
-					new FileTypeValidator({
-						fileType: /\/(jpg|jpeg|png|gif|webp)$/
-					}),
-					new MaxFileSizeValidator({
-						maxSize: 1000 * 1000 * 10,
-						message: 'Можно загружать файлы не больше 10 МБ'
-					})
-				]
-			})
-		)
-		file: Express.Multer.File
-	) {
-		return this.accountService.changeAvatar(user, file)
 	}
 }
