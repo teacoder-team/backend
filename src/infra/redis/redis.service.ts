@@ -7,14 +7,12 @@ import {
 import { ConfigService } from '@nestjs/config'
 import type { User } from '@prisma/generated'
 import { randomBytes } from 'crypto'
-import type { Request } from 'express'
 import { lookup } from 'geoip-country'
 import Redis from 'ioredis'
 import { UAParser } from 'ua-parser-js'
 import { v4 as uuidv4 } from 'uuid'
 
 import type { Session, UserSession } from '@/common/interfaces'
-import { getIp } from '@/common/utils'
 
 @Injectable()
 export class RedisService
@@ -57,10 +55,9 @@ export class RedisService
 		}
 	}
 
-	public async createSession(user: User, req: Request, userAgent: string) {
+	public async createSession(user: User, ip: string, userAgent: string) {
 		this.parser.setUA(userAgent)
 		const result = this.parser.getResult()
-		const ip = getIp(req)
 		const geo = lookup(ip)
 
 		const session: Session = {

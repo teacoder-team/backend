@@ -4,20 +4,21 @@ import {
 	Injectable,
 	NotFoundException
 } from '@nestjs/common'
-import { type User } from '@prisma/generated'
+import type { User } from '@prisma/generated'
 import { hash, verify } from 'argon2'
 import { randomBytes } from 'crypto'
 import validate from 'deep-email-validator'
-import type { Request } from 'express'
 
-import { slugify } from '@/common/utils/slugify'
+import { slugify } from '@/common/utils'
 import { PrismaService } from '@/infra/prisma/prisma.service'
 import { RedisService } from '@/infra/redis/redis.service'
 
-import { ChangePasswordDto } from './dto/change-password.dto'
-import { CreateUserDto } from './dto/create-user.dto'
-import { PasswordResetDto } from './dto/password-reset.dto'
-import { SendPasswordResetDto } from './dto/send-password-reset.dto'
+import {
+	ChangePasswordDto,
+	CreateUserDto,
+	PasswordResetDto,
+	SendPasswordResetDto
+} from './dto'
 
 @Injectable()
 export class AccountService {
@@ -33,7 +34,7 @@ export class AccountService {
 		}
 	}
 
-	public async create(req: Request, dto: CreateUserDto, userAgent: string) {
+	public async create(dto: CreateUserDto, ip: string, userAgent: string) {
 		const { name, email, password } = dto
 
 		const { valid } = await validate(email)
@@ -63,7 +64,7 @@ export class AccountService {
 
 		const session = await this.redisService.createSession(
 			user,
-			req,
+			ip,
 			userAgent
 		)
 

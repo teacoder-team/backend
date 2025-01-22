@@ -5,15 +5,18 @@ import {
 	HttpCode,
 	HttpStatus,
 	Patch,
-	Post,
-	Req
+	Post
 } from '@nestjs/common'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
 import { type User } from '@prisma/generated'
-import type { Request } from 'express'
 import { Turnstile } from 'nestjs-cloudflare-captcha'
 
-import { Authorization, Authorized, UserAgent } from '@/common/decorators'
+import {
+	Authorization,
+	Authorized,
+	ClientIp,
+	UserAgent
+} from '@/common/decorators'
 
 import { AccountService } from './account.service'
 import {
@@ -47,11 +50,11 @@ export class AccountController {
 	@Post('create')
 	@HttpCode(HttpStatus.OK)
 	public async create(
-		@Req() req: Request,
 		@Body() dto: CreateUserDto,
+		@ClientIp() ip: string,
 		@UserAgent() userAgent: string
 	) {
-		return this.accountService.create(req, dto, userAgent)
+		return this.accountService.create(dto, ip, userAgent)
 	}
 
 	@ApiOperation({

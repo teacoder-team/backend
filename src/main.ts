@@ -4,6 +4,8 @@ import { NestFactory } from '@nestjs/core'
 import helmet from 'helmet'
 
 import { AppModule } from './app.module'
+import { GlobalExceptionFilter } from './common/filters/global-exception.filter'
+import { LoggingInterceptor } from './common/interceptors/logging.interceptor'
 import { parseBoolean } from './common/utils/parse-boolean'
 import { setupSwagger } from './common/utils/setup-swagger'
 import { getCorsConfig } from './config'
@@ -14,6 +16,9 @@ async function bootstrap() {
 	const config = app.get(ConfigService)
 
 	app.use(helmet())
+
+	app.useGlobalFilters(new GlobalExceptionFilter())
+	app.useGlobalInterceptors(new LoggingInterceptor())
 
 	app.useGlobalPipes(
 		new ValidationPipe({

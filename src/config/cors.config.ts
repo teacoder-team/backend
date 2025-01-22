@@ -4,8 +4,6 @@ import { ConfigService } from '@nestjs/config'
 export function getCorsConfig(config: ConfigService): CorsOptions {
 	return {
 		origin: config.getOrThrow<string>('ALLOWED_ORIGIN').split(','),
-		credentials: true,
-		methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
-		exposedHeaders: ['set-cookie']
+		methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE']
 	}
 }

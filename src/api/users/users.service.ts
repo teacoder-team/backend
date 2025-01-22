@@ -16,6 +16,13 @@ export class UsersService {
 		const users = await this.prismaService.user.findMany({
 			orderBy: {
 				createdAt: 'desc'
+			},
+			select: {
+				id: true,
+				createdAt: true,
+				displayName: true,
+				email: true,
+				role: true
 			}
 		})
 
