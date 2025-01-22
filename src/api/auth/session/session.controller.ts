@@ -24,7 +24,7 @@ import { SessionService } from './session.service'
 export class SessionController {
 	public constructor(private readonly sessionService: SessionService) {}
 
-	@ApiOperation({ summary: 'Войти в систему' })
+	@ApiOperation({ summary: 'Login', description: 'Login to an account.' })
 	@Turnstile()
 	@Post('login')
 	@HttpCode(HttpStatus.OK)
@@ -36,7 +36,10 @@ export class SessionController {
 		return this.sessionService.login(req, dto, userAgent)
 	}
 
-	@ApiOperation({ summary: 'Выйти из системы' })
+	@ApiOperation({
+		summary: 'Logout',
+		description: 'Delete current session.'
+	})
 	@Post('logout')
 	@HttpCode(HttpStatus.OK)
 	public async logout(@Req() req: Request) {
@@ -44,7 +47,8 @@ export class SessionController {
 	}
 
 	@ApiOperation({
-		summary: 'Получить все активные сессии для пользователя'
+		summary: 'Fetch Sessions',
+		description: 'Fetch all sessions associated with this account.'
 	})
 	@Get('all')
 	@HttpCode(HttpStatus.OK)
@@ -53,7 +57,10 @@ export class SessionController {
 		return this.sessionService.findAll(req, user)
 	}
 
-	@ApiOperation({ summary: 'Получить данные текущей активной сессии' })
+	@ApiOperation({
+		summary: 'Fetch Current Session',
+		description: 'Fetch the details of the currently active session.'
+	})
 	@Authorization()
 	@Get('current')
 	@HttpCode(HttpStatus.OK)
@@ -61,8 +68,11 @@ export class SessionController {
 		return this.sessionService.findCurrent(req, user)
 	}
 
-	@ApiOperation({ summary: 'Удалить конкретную сессию по ID' })
-	@Delete('remove/:id')
+	@ApiOperation({
+		summary: 'Revoke Session​',
+		description: 'Delete a specific active session.'
+	})
+	@Delete(':id')
 	@HttpCode(HttpStatus.OK)
 	public async remove(@Req() req: Request, @Param('id') id: string) {
 		return this.sessionService.remove(req, id)

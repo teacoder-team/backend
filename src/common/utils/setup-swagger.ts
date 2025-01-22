@@ -19,7 +19,12 @@ function createSwaggerConfig() {
 		.setTitle('TeaCoder API')
 		.setDescription('API for Teacoder educational platform')
 		.setVersion('1.0.0')
+		.setTermsOfService('https://teacoder.ru/docs/agreement')
 		.setContact('TeaCoder Team', 'https://teacoder.ru', 'help@teacoder.ru')
+		.setLicense(
+			'AGPL-3.0 license',
+			'https://github.com/teacoder-team/backend?tab=AGPL-3.0-1-ov-file#readme'
+		)
 		.build()
 }
 

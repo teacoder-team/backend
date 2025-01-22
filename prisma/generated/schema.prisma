@@ -22,10 +22,8 @@ model User {
 
   role UserRole @default(STUDENT)
 
-  isTotpEnabled Boolean @default(false) @map("is_totp_enabled")
-  totpSecret    String? @default("totp_secret")
-
   passwordReset PasswordReset?
+  mfa           MultiFactorAuthentication?
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -46,6 +44,37 @@ model PasswordReset {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("reset_passwords")
+}
+
+model MultiFactorAuthentication {
+  id String @id @default(uuid())
+
+  recoveryCodes String[] @default([]) @map("recovery_codes")
+
+  totp   Totp   @relation(fields: [totpId], references: [id])
+  totpId String @unique @map("totp_id")
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @unique @map("user_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("multi_factor_authentication")
+}
+
+model Totp {
+  id String @id @default(uuid())
+
+  status TotpStatus @default(DISABLED)
+  secret String?
+
+  mfa MultiFactorAuthentication?
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("totps")
 }
 
 model Course {
@@ -75,4 +104,12 @@ enum UserRole {
   ADMIN
 
   @@map("user_roles")
+}
+
+enum TotpStatus {
+  DISABLED
+  PENDING
+  ENABLED
+
+  @@map("totp_statuses")
 }

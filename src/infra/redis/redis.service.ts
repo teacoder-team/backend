@@ -10,7 +10,8 @@ import { randomBytes } from 'crypto'
 import type { Request } from 'express'
 import { lookup } from 'geoip-country'
 import Redis from 'ioredis'
-import DeviceDetector from 'node-device-detector'
+import { UAParser } from 'ua-parser-js'
+import { v4 as uuidv4 } from 'uuid'
 
 import type { Session, UserSession } from '@/common/interfaces'
 import { getIp } from '@/common/utils'
@@ -21,19 +22,12 @@ export class RedisService
 	implements OnModuleInit, OnModuleDestroy
 {
 	private readonly logger = new Logger(RedisService.name)
-	private detector: DeviceDetector
+	private parser: UAParser
 
 	public constructor(private readonly configService: ConfigService) {
 		super(configService.getOrThrow<string>('REDIS_URI'))
 
-		this.detector = new DeviceDetector({
-			clientIndexes: true,
-			deviceIndexes: true,
-			deviceAliasCode: false,
-			deviceTrusted: false,
-			deviceInfo: false,
-			maxUserAgentSize: 500
-		})
+		this.parser = new UAParser()
 	}
 
 	public async onModuleInit() {
@@ -64,13 +58,14 @@ export class RedisService
 	}
 
 	public async createSession(user: User, req: Request, userAgent: string) {
-		const result = this.detector.detect(userAgent)
+		this.parser.setUA(userAgent)
+		const result = this.parser.getResult()
 		const ip = getIp(req)
 		const geo = lookup(ip)
 
 		const session: Session = {
-			id: randomBytes(32).toString('hex'),
-			token: randomBytes(128).toString('hex'),
+			id: uuidv4(),
+			token: randomBytes(40).toString('hex'),
 			userId: user.id
 		}
 
@@ -78,13 +73,16 @@ export class RedisService
 		await this.expire(`sessions:${session.id}`, 30 * 24 * 60 * 60)
 
 		const userSession: UserSession = {
-			id: randomBytes(32).toString('hex'),
+			id: uuidv4(),
 			createdAt: new Date().toISOString(),
 			ip,
 			geo,
-			os: result.os,
-			client: result.client,
+			ua: result.ua,
+			browser: result.browser,
+			cpu: result.cpu,
 			device: result.device,
+			engine: result.engine,
+			os: result.os,
 			sessionId: session.id
 		}
 

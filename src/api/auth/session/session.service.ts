@@ -7,7 +7,6 @@ import {
 import type { User } from '@prisma/generated'
 import { verify } from 'argon2'
 import type { Request } from 'express'
-import { TOTP } from 'otpauth'
 
 import { PrismaService } from '@/infra/prisma/prisma.service'
 import { RedisService } from '@/infra/redis/redis.service'
@@ -44,28 +43,6 @@ export class SessionService {
 
 		if (!isValidPassword) {
 			throw new UnauthorizedException('Неправильный пароль')
-		}
-
-		if (user.isTotpEnabled) {
-			if (!pin) {
-				return {
-					message: 'Необходим код для завершения авторизации'
-				}
-			}
-
-			const totp = new TOTP({
-				issuer: 'TeaCoder',
-				label: `${user.email}`,
-				algorithm: 'SHA1',
-				digits: 6,
-				secret: user.totpSecret
-			})
-
-			const delta = totp.validate({ token: pin })
-
-			if (delta === null) {
-				throw new BadRequestException('Неверный код')
-			}
 		}
 
 		const session = await this.redisService.createSession(
