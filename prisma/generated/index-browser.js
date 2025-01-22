@@ -131,8 +131,6 @@ exports.Prisma.UserScalarFieldEnum = {
   avatar: 'avatar',
   points: 'points',
   role: 'role',
-  isTotpEnabled: 'isTotpEnabled',
-  totpSecret: 'totpSecret',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -142,6 +140,23 @@ exports.Prisma.PasswordResetScalarFieldEnum = {
   token: 'token',
   expiry: 'expiry',
   userId: 'userId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.MultiFactorAuthenticationScalarFieldEnum = {
+  id: 'id',
+  recoveryCodes: 'recoveryCodes',
+  totpId: 'totpId',
+  userId: 'userId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.TotpScalarFieldEnum = {
+  id: 'id',
+  status: 'status',
+  secret: 'secret',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -179,9 +194,17 @@ exports.UserRole = exports.$Enums.UserRole = {
   ADMIN: 'ADMIN'
 };
 
+exports.TotpStatus = exports.$Enums.TotpStatus = {
+  DISABLED: 'DISABLED',
+  PENDING: 'PENDING',
+  ENABLED: 'ENABLED'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   PasswordReset: 'PasswordReset',
+  MultiFactorAuthentication: 'MultiFactorAuthentication',
+  Totp: 'Totp',
   Course: 'Course'
 };
 

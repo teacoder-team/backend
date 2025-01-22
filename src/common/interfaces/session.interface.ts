@@ -1,5 +1,5 @@
 import type { Lookup } from 'geoip-country'
-import type { ResultClient, ResultDevice, ResultOs } from 'node-device-detector'
+import type { IBrowser, ICPU, IDevice, IEngine, IOS } from 'ua-parser-js'
 
 export interface Session {
 	id: string
@@ -12,8 +12,11 @@ export interface UserSession {
 	createdAt: Date | string
 	ip: string
 	geo: Lookup
-	os: ResultOs
-	client: ResultClient
-	device: ResultDevice
+	ua: string
+	browser: IBrowser
+	cpu: ICPU
+	device: IDevice
+	engine: IEngine
+	os: IOS
 	sessionId: string
 }

@@ -24,6 +24,16 @@ export type User = $Result.DefaultSelection<Prisma.$UserPayload>
  */
 export type PasswordReset = $Result.DefaultSelection<Prisma.$PasswordResetPayload>
 /**
+ * Model MultiFactorAuthentication
+ * 
+ */
+export type MultiFactorAuthentication = $Result.DefaultSelection<Prisma.$MultiFactorAuthenticationPayload>
+/**
+ * Model Totp
+ * 
+ */
+export type Totp = $Result.DefaultSelection<Prisma.$TotpPayload>
+/**
  * Model Course
  * 
  */
@@ -40,11 +50,24 @@ export namespace $Enums {
 
 export type UserRole = (typeof UserRole)[keyof typeof UserRole]
 
+
+export const TotpStatus: {
+  DISABLED: 'DISABLED',
+  PENDING: 'PENDING',
+  ENABLED: 'ENABLED'
+};
+
+export type TotpStatus = (typeof TotpStatus)[keyof typeof TotpStatus]
+
 }
 
 export type UserRole = $Enums.UserRole
 
 export const UserRole: typeof $Enums.UserRole
+
+export type TotpStatus = $Enums.TotpStatus
+
+export const TotpStatus: typeof $Enums.TotpStatus
 
 /**
  * ##  Prisma Client ʲˢ
@@ -188,6 +211,26 @@ export class PrismaClient<
     * ```
     */
   get passwordReset(): Prisma.PasswordResetDelegate<ExtArgs>;
+
+  /**
+   * `prisma.multiFactorAuthentication`: Exposes CRUD operations for the **MultiFactorAuthentication** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more MultiFactorAuthentications
+    * const multiFactorAuthentications = await prisma.multiFactorAuthentication.findMany()
+    * ```
+    */
+  get multiFactorAuthentication(): Prisma.MultiFactorAuthenticationDelegate<ExtArgs>;
+
+  /**
+   * `prisma.totp`: Exposes CRUD operations for the **Totp** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Totps
+    * const totps = await prisma.totp.findMany()
+    * ```
+    */
+  get totp(): Prisma.TotpDelegate<ExtArgs>;
 
   /**
    * `prisma.course`: Exposes CRUD operations for the **Course** model.
@@ -641,6 +684,8 @@ export namespace Prisma {
   export const ModelName: {
     User: 'User',
     PasswordReset: 'PasswordReset',
+    MultiFactorAuthentication: 'MultiFactorAuthentication',
+    Totp: 'Totp',
     Course: 'Course'
   };
 
@@ -657,7 +702,7 @@ export namespace Prisma {
 
   export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> = {
     meta: {
-      modelProps: "user" | "passwordReset" | "course"
+      modelProps: "user" | "passwordReset" | "multiFactorAuthentication" | "totp" | "course"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -798,6 +843,146 @@ export namespace Prisma {
           count: {
             args: Prisma.PasswordResetCountArgs<ExtArgs>
             result: $Utils.Optional<PasswordResetCountAggregateOutputType> | number
+          }
+        }
+      }
+      MultiFactorAuthentication: {
+        payload: Prisma.$MultiFactorAuthenticationPayload<ExtArgs>
+        fields: Prisma.MultiFactorAuthenticationFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.MultiFactorAuthenticationFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MultiFactorAuthenticationPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.MultiFactorAuthenticationFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MultiFactorAuthenticationPayload>
+          }
+          findFirst: {
+            args: Prisma.MultiFactorAuthenticationFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MultiFactorAuthenticationPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.MultiFactorAuthenticationFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MultiFactorAuthenticationPayload>
+          }
+          findMany: {
+            args: Prisma.MultiFactorAuthenticationFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MultiFactorAuthenticationPayload>[]
+          }
+          create: {
+            args: Prisma.MultiFactorAuthenticationCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MultiFactorAuthenticationPayload>
+          }
+          createMany: {
+            args: Prisma.MultiFactorAuthenticationCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.MultiFactorAuthenticationCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MultiFactorAuthenticationPayload>[]
+          }
+          delete: {
+            args: Prisma.MultiFactorAuthenticationDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MultiFactorAuthenticationPayload>
+          }
+          update: {
+            args: Prisma.MultiFactorAuthenticationUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MultiFactorAuthenticationPayload>
+          }
+          deleteMany: {
+            args: Prisma.MultiFactorAuthenticationDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.MultiFactorAuthenticationUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.MultiFactorAuthenticationUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MultiFactorAuthenticationPayload>
+          }
+          aggregate: {
+            args: Prisma.MultiFactorAuthenticationAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateMultiFactorAuthentication>
+          }
+          groupBy: {
+            args: Prisma.MultiFactorAuthenticationGroupByArgs<ExtArgs>
+            result: $Utils.Optional<MultiFactorAuthenticationGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.MultiFactorAuthenticationCountArgs<ExtArgs>
+            result: $Utils.Optional<MultiFactorAuthenticationCountAggregateOutputType> | number
+          }
+        }
+      }
+      Totp: {
+        payload: Prisma.$TotpPayload<ExtArgs>
+        fields: Prisma.TotpFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.TotpFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TotpPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.TotpFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TotpPayload>
+          }
+          findFirst: {
+            args: Prisma.TotpFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TotpPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.TotpFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TotpPayload>
+          }
+          findMany: {
+            args: Prisma.TotpFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TotpPayload>[]
+          }
+          create: {
+            args: Prisma.TotpCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TotpPayload>
+          }
+          createMany: {
+            args: Prisma.TotpCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.TotpCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TotpPayload>[]
+          }
+          delete: {
+            args: Prisma.TotpDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TotpPayload>
+          }
+          update: {
+            args: Prisma.TotpUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TotpPayload>
+          }
+          deleteMany: {
+            args: Prisma.TotpDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.TotpUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.TotpUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TotpPayload>
+          }
+          aggregate: {
+            args: Prisma.TotpAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateTotp>
+          }
+          groupBy: {
+            args: Prisma.TotpGroupByArgs<ExtArgs>
+            result: $Utils.Optional<TotpGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.TotpCountArgs<ExtArgs>
+            result: $Utils.Optional<TotpCountAggregateOutputType> | number
           }
         }
       }
@@ -1061,8 +1246,6 @@ export namespace Prisma {
     avatar: string | null
     points: number | null
     role: $Enums.UserRole | null
-    isTotpEnabled: boolean | null
-    totpSecret: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -1076,8 +1259,6 @@ export namespace Prisma {
     avatar: string | null
     points: number | null
     role: $Enums.UserRole | null
-    isTotpEnabled: boolean | null
-    totpSecret: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -1091,8 +1272,6 @@ export namespace Prisma {
     avatar: number
     points: number
     role: number
-    isTotpEnabled: number
-    totpSecret: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -1116,8 +1295,6 @@ export namespace Prisma {
     avatar?: true
     points?: true
     role?: true
-    isTotpEnabled?: true
-    totpSecret?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -1131,8 +1308,6 @@ export namespace Prisma {
     avatar?: true
     points?: true
     role?: true
-    isTotpEnabled?: true
-    totpSecret?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -1146,8 +1321,6 @@ export namespace Prisma {
     avatar?: true
     points?: true
     role?: true
-    isTotpEnabled?: true
-    totpSecret?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -1248,8 +1421,6 @@ export namespace Prisma {
     avatar: string | null
     points: number
     role: $Enums.UserRole
-    isTotpEnabled: boolean
-    totpSecret: string | null
     createdAt: Date
     updatedAt: Date
     _count: UserCountAggregateOutputType | null
@@ -1282,11 +1453,10 @@ export namespace Prisma {
     avatar?: boolean
     points?: boolean
     role?: boolean
-    isTotpEnabled?: boolean
-    totpSecret?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     passwordReset?: boolean | User$passwordResetArgs<ExtArgs>
+    mfa?: boolean | User$mfaArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -1298,8 +1468,6 @@ export namespace Prisma {
     avatar?: boolean
     points?: boolean
     role?: boolean
-    isTotpEnabled?: boolean
-    totpSecret?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["user"]>
@@ -1313,14 +1481,13 @@ export namespace Prisma {
     avatar?: boolean
     points?: boolean
     role?: boolean
-    isTotpEnabled?: boolean
-    totpSecret?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     passwordReset?: boolean | User$passwordResetArgs<ExtArgs>
+    mfa?: boolean | User$mfaArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
 
@@ -1328,6 +1495,7 @@ export namespace Prisma {
     name: "User"
     objects: {
       passwordReset: Prisma.$PasswordResetPayload<ExtArgs> | null
+      mfa: Prisma.$MultiFactorAuthenticationPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -1338,8 +1506,6 @@ export namespace Prisma {
       avatar: string | null
       points: number
       role: $Enums.UserRole
-      isTotpEnabled: boolean
-      totpSecret: string | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["user"]>
@@ -1707,6 +1873,7 @@ export namespace Prisma {
   export interface Prisma__UserClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     passwordReset<T extends User$passwordResetArgs<ExtArgs> = {}>(args?: Subset<T, User$passwordResetArgs<ExtArgs>>): Prisma__PasswordResetClient<$Result.GetResult<Prisma.$PasswordResetPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
+    mfa<T extends User$mfaArgs<ExtArgs> = {}>(args?: Subset<T, User$mfaArgs<ExtArgs>>): Prisma__MultiFactorAuthenticationClient<$Result.GetResult<Prisma.$MultiFactorAuthenticationPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1744,8 +1911,6 @@ export namespace Prisma {
     readonly avatar: FieldRef<"User", 'String'>
     readonly points: FieldRef<"User", 'Int'>
     readonly role: FieldRef<"User", 'UserRole'>
-    readonly isTotpEnabled: FieldRef<"User", 'Boolean'>
-    readonly totpSecret: FieldRef<"User", 'String'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
     readonly updatedAt: FieldRef<"User", 'DateTime'>
   }
@@ -2074,6 +2239,21 @@ export namespace Prisma {
      */
     include?: PasswordResetInclude<ExtArgs> | null
     where?: PasswordResetWhereInput
+  }
+
+  /**
+   * User.mfa
+   */
+  export type User$mfaArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MultiFactorAuthentication
+     */
+    select?: MultiFactorAuthenticationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MultiFactorAuthenticationInclude<ExtArgs> | null
+    where?: MultiFactorAuthenticationWhereInput
   }
 
   /**
@@ -3033,6 +3213,1894 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: PasswordResetInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model MultiFactorAuthentication
+   */
+
+  export type AggregateMultiFactorAuthentication = {
+    _count: MultiFactorAuthenticationCountAggregateOutputType | null
+    _min: MultiFactorAuthenticationMinAggregateOutputType | null
+    _max: MultiFactorAuthenticationMaxAggregateOutputType | null
+  }
+
+  export type MultiFactorAuthenticationMinAggregateOutputType = {
+    id: string | null
+    totpId: string | null
+    userId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type MultiFactorAuthenticationMaxAggregateOutputType = {
+    id: string | null
+    totpId: string | null
+    userId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type MultiFactorAuthenticationCountAggregateOutputType = {
+    id: number
+    recoveryCodes: number
+    totpId: number
+    userId: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type MultiFactorAuthenticationMinAggregateInputType = {
+    id?: true
+    totpId?: true
+    userId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type MultiFactorAuthenticationMaxAggregateInputType = {
+    id?: true
+    totpId?: true
+    userId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type MultiFactorAuthenticationCountAggregateInputType = {
+    id?: true
+    recoveryCodes?: true
+    totpId?: true
+    userId?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type MultiFactorAuthenticationAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which MultiFactorAuthentication to aggregate.
+     */
+    where?: MultiFactorAuthenticationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MultiFactorAuthentications to fetch.
+     */
+    orderBy?: MultiFactorAuthenticationOrderByWithRelationInput | MultiFactorAuthenticationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: MultiFactorAuthenticationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MultiFactorAuthentications from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MultiFactorAuthentications.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned MultiFactorAuthentications
+    **/
+    _count?: true | MultiFactorAuthenticationCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: MultiFactorAuthenticationMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: MultiFactorAuthenticationMaxAggregateInputType
+  }
+
+  export type GetMultiFactorAuthenticationAggregateType<T extends MultiFactorAuthenticationAggregateArgs> = {
+        [P in keyof T & keyof AggregateMultiFactorAuthentication]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateMultiFactorAuthentication[P]>
+      : GetScalarType<T[P], AggregateMultiFactorAuthentication[P]>
+  }
+
+
+
+
+  export type MultiFactorAuthenticationGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: MultiFactorAuthenticationWhereInput
+    orderBy?: MultiFactorAuthenticationOrderByWithAggregationInput | MultiFactorAuthenticationOrderByWithAggregationInput[]
+    by: MultiFactorAuthenticationScalarFieldEnum[] | MultiFactorAuthenticationScalarFieldEnum
+    having?: MultiFactorAuthenticationScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: MultiFactorAuthenticationCountAggregateInputType | true
+    _min?: MultiFactorAuthenticationMinAggregateInputType
+    _max?: MultiFactorAuthenticationMaxAggregateInputType
+  }
+
+  export type MultiFactorAuthenticationGroupByOutputType = {
+    id: string
+    recoveryCodes: string[]
+    totpId: string
+    userId: string
+    createdAt: Date
+    updatedAt: Date
+    _count: MultiFactorAuthenticationCountAggregateOutputType | null
+    _min: MultiFactorAuthenticationMinAggregateOutputType | null
+    _max: MultiFactorAuthenticationMaxAggregateOutputType | null
+  }
+
+  type GetMultiFactorAuthenticationGroupByPayload<T extends MultiFactorAuthenticationGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<MultiFactorAuthenticationGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof MultiFactorAuthenticationGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], MultiFactorAuthenticationGroupByOutputType[P]>
+            : GetScalarType<T[P], MultiFactorAuthenticationGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type MultiFactorAuthenticationSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    recoveryCodes?: boolean
+    totpId?: boolean
+    userId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    totp?: boolean | TotpDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["multiFactorAuthentication"]>
+
+  export type MultiFactorAuthenticationSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    recoveryCodes?: boolean
+    totpId?: boolean
+    userId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    totp?: boolean | TotpDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["multiFactorAuthentication"]>
+
+  export type MultiFactorAuthenticationSelectScalar = {
+    id?: boolean
+    recoveryCodes?: boolean
+    totpId?: boolean
+    userId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type MultiFactorAuthenticationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    totp?: boolean | TotpDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type MultiFactorAuthenticationIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    totp?: boolean | TotpDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $MultiFactorAuthenticationPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "MultiFactorAuthentication"
+    objects: {
+      totp: Prisma.$TotpPayload<ExtArgs>
+      user: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      recoveryCodes: string[]
+      totpId: string
+      userId: string
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["multiFactorAuthentication"]>
+    composites: {}
+  }
+
+  type MultiFactorAuthenticationGetPayload<S extends boolean | null | undefined | MultiFactorAuthenticationDefaultArgs> = $Result.GetResult<Prisma.$MultiFactorAuthenticationPayload, S>
+
+  type MultiFactorAuthenticationCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<MultiFactorAuthenticationFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: MultiFactorAuthenticationCountAggregateInputType | true
+    }
+
+  export interface MultiFactorAuthenticationDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['MultiFactorAuthentication'], meta: { name: 'MultiFactorAuthentication' } }
+    /**
+     * Find zero or one MultiFactorAuthentication that matches the filter.
+     * @param {MultiFactorAuthenticationFindUniqueArgs} args - Arguments to find a MultiFactorAuthentication
+     * @example
+     * // Get one MultiFactorAuthentication
+     * const multiFactorAuthentication = await prisma.multiFactorAuthentication.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends MultiFactorAuthenticationFindUniqueArgs>(args: SelectSubset<T, MultiFactorAuthenticationFindUniqueArgs<ExtArgs>>): Prisma__MultiFactorAuthenticationClient<$Result.GetResult<Prisma.$MultiFactorAuthenticationPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one MultiFactorAuthentication that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {MultiFactorAuthenticationFindUniqueOrThrowArgs} args - Arguments to find a MultiFactorAuthentication
+     * @example
+     * // Get one MultiFactorAuthentication
+     * const multiFactorAuthentication = await prisma.multiFactorAuthentication.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends MultiFactorAuthenticationFindUniqueOrThrowArgs>(args: SelectSubset<T, MultiFactorAuthenticationFindUniqueOrThrowArgs<ExtArgs>>): Prisma__MultiFactorAuthenticationClient<$Result.GetResult<Prisma.$MultiFactorAuthenticationPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first MultiFactorAuthentication that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MultiFactorAuthenticationFindFirstArgs} args - Arguments to find a MultiFactorAuthentication
+     * @example
+     * // Get one MultiFactorAuthentication
+     * const multiFactorAuthentication = await prisma.multiFactorAuthentication.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends MultiFactorAuthenticationFindFirstArgs>(args?: SelectSubset<T, MultiFactorAuthenticationFindFirstArgs<ExtArgs>>): Prisma__MultiFactorAuthenticationClient<$Result.GetResult<Prisma.$MultiFactorAuthenticationPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first MultiFactorAuthentication that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MultiFactorAuthenticationFindFirstOrThrowArgs} args - Arguments to find a MultiFactorAuthentication
+     * @example
+     * // Get one MultiFactorAuthentication
+     * const multiFactorAuthentication = await prisma.multiFactorAuthentication.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends MultiFactorAuthenticationFindFirstOrThrowArgs>(args?: SelectSubset<T, MultiFactorAuthenticationFindFirstOrThrowArgs<ExtArgs>>): Prisma__MultiFactorAuthenticationClient<$Result.GetResult<Prisma.$MultiFactorAuthenticationPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more MultiFactorAuthentications that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MultiFactorAuthenticationFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all MultiFactorAuthentications
+     * const multiFactorAuthentications = await prisma.multiFactorAuthentication.findMany()
+     * 
+     * // Get first 10 MultiFactorAuthentications
+     * const multiFactorAuthentications = await prisma.multiFactorAuthentication.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const multiFactorAuthenticationWithIdOnly = await prisma.multiFactorAuthentication.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends MultiFactorAuthenticationFindManyArgs>(args?: SelectSubset<T, MultiFactorAuthenticationFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MultiFactorAuthenticationPayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a MultiFactorAuthentication.
+     * @param {MultiFactorAuthenticationCreateArgs} args - Arguments to create a MultiFactorAuthentication.
+     * @example
+     * // Create one MultiFactorAuthentication
+     * const MultiFactorAuthentication = await prisma.multiFactorAuthentication.create({
+     *   data: {
+     *     // ... data to create a MultiFactorAuthentication
+     *   }
+     * })
+     * 
+     */
+    create<T extends MultiFactorAuthenticationCreateArgs>(args: SelectSubset<T, MultiFactorAuthenticationCreateArgs<ExtArgs>>): Prisma__MultiFactorAuthenticationClient<$Result.GetResult<Prisma.$MultiFactorAuthenticationPayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many MultiFactorAuthentications.
+     * @param {MultiFactorAuthenticationCreateManyArgs} args - Arguments to create many MultiFactorAuthentications.
+     * @example
+     * // Create many MultiFactorAuthentications
+     * const multiFactorAuthentication = await prisma.multiFactorAuthentication.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends MultiFactorAuthenticationCreateManyArgs>(args?: SelectSubset<T, MultiFactorAuthenticationCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many MultiFactorAuthentications and returns the data saved in the database.
+     * @param {MultiFactorAuthenticationCreateManyAndReturnArgs} args - Arguments to create many MultiFactorAuthentications.
+     * @example
+     * // Create many MultiFactorAuthentications
+     * const multiFactorAuthentication = await prisma.multiFactorAuthentication.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many MultiFactorAuthentications and only return the `id`
+     * const multiFactorAuthenticationWithIdOnly = await prisma.multiFactorAuthentication.createManyAndReturn({ 
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends MultiFactorAuthenticationCreateManyAndReturnArgs>(args?: SelectSubset<T, MultiFactorAuthenticationCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MultiFactorAuthenticationPayload<ExtArgs>, T, "createManyAndReturn">>
+
+    /**
+     * Delete a MultiFactorAuthentication.
+     * @param {MultiFactorAuthenticationDeleteArgs} args - Arguments to delete one MultiFactorAuthentication.
+     * @example
+     * // Delete one MultiFactorAuthentication
+     * const MultiFactorAuthentication = await prisma.multiFactorAuthentication.delete({
+     *   where: {
+     *     // ... filter to delete one MultiFactorAuthentication
+     *   }
+     * })
+     * 
+     */
+    delete<T extends MultiFactorAuthenticationDeleteArgs>(args: SelectSubset<T, MultiFactorAuthenticationDeleteArgs<ExtArgs>>): Prisma__MultiFactorAuthenticationClient<$Result.GetResult<Prisma.$MultiFactorAuthenticationPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one MultiFactorAuthentication.
+     * @param {MultiFactorAuthenticationUpdateArgs} args - Arguments to update one MultiFactorAuthentication.
+     * @example
+     * // Update one MultiFactorAuthentication
+     * const multiFactorAuthentication = await prisma.multiFactorAuthentication.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends MultiFactorAuthenticationUpdateArgs>(args: SelectSubset<T, MultiFactorAuthenticationUpdateArgs<ExtArgs>>): Prisma__MultiFactorAuthenticationClient<$Result.GetResult<Prisma.$MultiFactorAuthenticationPayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more MultiFactorAuthentications.
+     * @param {MultiFactorAuthenticationDeleteManyArgs} args - Arguments to filter MultiFactorAuthentications to delete.
+     * @example
+     * // Delete a few MultiFactorAuthentications
+     * const { count } = await prisma.multiFactorAuthentication.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends MultiFactorAuthenticationDeleteManyArgs>(args?: SelectSubset<T, MultiFactorAuthenticationDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more MultiFactorAuthentications.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MultiFactorAuthenticationUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many MultiFactorAuthentications
+     * const multiFactorAuthentication = await prisma.multiFactorAuthentication.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends MultiFactorAuthenticationUpdateManyArgs>(args: SelectSubset<T, MultiFactorAuthenticationUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one MultiFactorAuthentication.
+     * @param {MultiFactorAuthenticationUpsertArgs} args - Arguments to update or create a MultiFactorAuthentication.
+     * @example
+     * // Update or create a MultiFactorAuthentication
+     * const multiFactorAuthentication = await prisma.multiFactorAuthentication.upsert({
+     *   create: {
+     *     // ... data to create a MultiFactorAuthentication
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the MultiFactorAuthentication we want to update
+     *   }
+     * })
+     */
+    upsert<T extends MultiFactorAuthenticationUpsertArgs>(args: SelectSubset<T, MultiFactorAuthenticationUpsertArgs<ExtArgs>>): Prisma__MultiFactorAuthenticationClient<$Result.GetResult<Prisma.$MultiFactorAuthenticationPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of MultiFactorAuthentications.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MultiFactorAuthenticationCountArgs} args - Arguments to filter MultiFactorAuthentications to count.
+     * @example
+     * // Count the number of MultiFactorAuthentications
+     * const count = await prisma.multiFactorAuthentication.count({
+     *   where: {
+     *     // ... the filter for the MultiFactorAuthentications we want to count
+     *   }
+     * })
+    **/
+    count<T extends MultiFactorAuthenticationCountArgs>(
+      args?: Subset<T, MultiFactorAuthenticationCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], MultiFactorAuthenticationCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a MultiFactorAuthentication.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MultiFactorAuthenticationAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends MultiFactorAuthenticationAggregateArgs>(args: Subset<T, MultiFactorAuthenticationAggregateArgs>): Prisma.PrismaPromise<GetMultiFactorAuthenticationAggregateType<T>>
+
+    /**
+     * Group by MultiFactorAuthentication.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MultiFactorAuthenticationGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends MultiFactorAuthenticationGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: MultiFactorAuthenticationGroupByArgs['orderBy'] }
+        : { orderBy?: MultiFactorAuthenticationGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, MultiFactorAuthenticationGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetMultiFactorAuthenticationGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the MultiFactorAuthentication model
+   */
+  readonly fields: MultiFactorAuthenticationFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for MultiFactorAuthentication.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__MultiFactorAuthenticationClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    totp<T extends TotpDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TotpDefaultArgs<ExtArgs>>): Prisma__TotpClient<$Result.GetResult<Prisma.$TotpPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the MultiFactorAuthentication model
+   */ 
+  interface MultiFactorAuthenticationFieldRefs {
+    readonly id: FieldRef<"MultiFactorAuthentication", 'String'>
+    readonly recoveryCodes: FieldRef<"MultiFactorAuthentication", 'String[]'>
+    readonly totpId: FieldRef<"MultiFactorAuthentication", 'String'>
+    readonly userId: FieldRef<"MultiFactorAuthentication", 'String'>
+    readonly createdAt: FieldRef<"MultiFactorAuthentication", 'DateTime'>
+    readonly updatedAt: FieldRef<"MultiFactorAuthentication", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * MultiFactorAuthentication findUnique
+   */
+  export type MultiFactorAuthenticationFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MultiFactorAuthentication
+     */
+    select?: MultiFactorAuthenticationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MultiFactorAuthenticationInclude<ExtArgs> | null
+    /**
+     * Filter, which MultiFactorAuthentication to fetch.
+     */
+    where: MultiFactorAuthenticationWhereUniqueInput
+  }
+
+  /**
+   * MultiFactorAuthentication findUniqueOrThrow
+   */
+  export type MultiFactorAuthenticationFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MultiFactorAuthentication
+     */
+    select?: MultiFactorAuthenticationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MultiFactorAuthenticationInclude<ExtArgs> | null
+    /**
+     * Filter, which MultiFactorAuthentication to fetch.
+     */
+    where: MultiFactorAuthenticationWhereUniqueInput
+  }
+
+  /**
+   * MultiFactorAuthentication findFirst
+   */
+  export type MultiFactorAuthenticationFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MultiFactorAuthentication
+     */
+    select?: MultiFactorAuthenticationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MultiFactorAuthenticationInclude<ExtArgs> | null
+    /**
+     * Filter, which MultiFactorAuthentication to fetch.
+     */
+    where?: MultiFactorAuthenticationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MultiFactorAuthentications to fetch.
+     */
+    orderBy?: MultiFactorAuthenticationOrderByWithRelationInput | MultiFactorAuthenticationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for MultiFactorAuthentications.
+     */
+    cursor?: MultiFactorAuthenticationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MultiFactorAuthentications from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MultiFactorAuthentications.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of MultiFactorAuthentications.
+     */
+    distinct?: MultiFactorAuthenticationScalarFieldEnum | MultiFactorAuthenticationScalarFieldEnum[]
+  }
+
+  /**
+   * MultiFactorAuthentication findFirstOrThrow
+   */
+  export type MultiFactorAuthenticationFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MultiFactorAuthentication
+     */
+    select?: MultiFactorAuthenticationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MultiFactorAuthenticationInclude<ExtArgs> | null
+    /**
+     * Filter, which MultiFactorAuthentication to fetch.
+     */
+    where?: MultiFactorAuthenticationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MultiFactorAuthentications to fetch.
+     */
+    orderBy?: MultiFactorAuthenticationOrderByWithRelationInput | MultiFactorAuthenticationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for MultiFactorAuthentications.
+     */
+    cursor?: MultiFactorAuthenticationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MultiFactorAuthentications from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MultiFactorAuthentications.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of MultiFactorAuthentications.
+     */
+    distinct?: MultiFactorAuthenticationScalarFieldEnum | MultiFactorAuthenticationScalarFieldEnum[]
+  }
+
+  /**
+   * MultiFactorAuthentication findMany
+   */
+  export type MultiFactorAuthenticationFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MultiFactorAuthentication
+     */
+    select?: MultiFactorAuthenticationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MultiFactorAuthenticationInclude<ExtArgs> | null
+    /**
+     * Filter, which MultiFactorAuthentications to fetch.
+     */
+    where?: MultiFactorAuthenticationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MultiFactorAuthentications to fetch.
+     */
+    orderBy?: MultiFactorAuthenticationOrderByWithRelationInput | MultiFactorAuthenticationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing MultiFactorAuthentications.
+     */
+    cursor?: MultiFactorAuthenticationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MultiFactorAuthentications from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MultiFactorAuthentications.
+     */
+    skip?: number
+    distinct?: MultiFactorAuthenticationScalarFieldEnum | MultiFactorAuthenticationScalarFieldEnum[]
+  }
+
+  /**
+   * MultiFactorAuthentication create
+   */
+  export type MultiFactorAuthenticationCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MultiFactorAuthentication
+     */
+    select?: MultiFactorAuthenticationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MultiFactorAuthenticationInclude<ExtArgs> | null
+    /**
+     * The data needed to create a MultiFactorAuthentication.
+     */
+    data: XOR<MultiFactorAuthenticationCreateInput, MultiFactorAuthenticationUncheckedCreateInput>
+  }
+
+  /**
+   * MultiFactorAuthentication createMany
+   */
+  export type MultiFactorAuthenticationCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many MultiFactorAuthentications.
+     */
+    data: MultiFactorAuthenticationCreateManyInput | MultiFactorAuthenticationCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * MultiFactorAuthentication createManyAndReturn
+   */
+  export type MultiFactorAuthenticationCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MultiFactorAuthentication
+     */
+    select?: MultiFactorAuthenticationSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * The data used to create many MultiFactorAuthentications.
+     */
+    data: MultiFactorAuthenticationCreateManyInput | MultiFactorAuthenticationCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MultiFactorAuthenticationIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * MultiFactorAuthentication update
+   */
+  export type MultiFactorAuthenticationUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MultiFactorAuthentication
+     */
+    select?: MultiFactorAuthenticationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MultiFactorAuthenticationInclude<ExtArgs> | null
+    /**
+     * The data needed to update a MultiFactorAuthentication.
+     */
+    data: XOR<MultiFactorAuthenticationUpdateInput, MultiFactorAuthenticationUncheckedUpdateInput>
+    /**
+     * Choose, which MultiFactorAuthentication to update.
+     */
+    where: MultiFactorAuthenticationWhereUniqueInput
+  }
+
+  /**
+   * MultiFactorAuthentication updateMany
+   */
+  export type MultiFactorAuthenticationUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update MultiFactorAuthentications.
+     */
+    data: XOR<MultiFactorAuthenticationUpdateManyMutationInput, MultiFactorAuthenticationUncheckedUpdateManyInput>
+    /**
+     * Filter which MultiFactorAuthentications to update
+     */
+    where?: MultiFactorAuthenticationWhereInput
+  }
+
+  /**
+   * MultiFactorAuthentication upsert
+   */
+  export type MultiFactorAuthenticationUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MultiFactorAuthentication
+     */
+    select?: MultiFactorAuthenticationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MultiFactorAuthenticationInclude<ExtArgs> | null
+    /**
+     * The filter to search for the MultiFactorAuthentication to update in case it exists.
+     */
+    where: MultiFactorAuthenticationWhereUniqueInput
+    /**
+     * In case the MultiFactorAuthentication found by the `where` argument doesn't exist, create a new MultiFactorAuthentication with this data.
+     */
+    create: XOR<MultiFactorAuthenticationCreateInput, MultiFactorAuthenticationUncheckedCreateInput>
+    /**
+     * In case the MultiFactorAuthentication was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<MultiFactorAuthenticationUpdateInput, MultiFactorAuthenticationUncheckedUpdateInput>
+  }
+
+  /**
+   * MultiFactorAuthentication delete
+   */
+  export type MultiFactorAuthenticationDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MultiFactorAuthentication
+     */
+    select?: MultiFactorAuthenticationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MultiFactorAuthenticationInclude<ExtArgs> | null
+    /**
+     * Filter which MultiFactorAuthentication to delete.
+     */
+    where: MultiFactorAuthenticationWhereUniqueInput
+  }
+
+  /**
+   * MultiFactorAuthentication deleteMany
+   */
+  export type MultiFactorAuthenticationDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which MultiFactorAuthentications to delete
+     */
+    where?: MultiFactorAuthenticationWhereInput
+  }
+
+  /**
+   * MultiFactorAuthentication without action
+   */
+  export type MultiFactorAuthenticationDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MultiFactorAuthentication
+     */
+    select?: MultiFactorAuthenticationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MultiFactorAuthenticationInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Totp
+   */
+
+  export type AggregateTotp = {
+    _count: TotpCountAggregateOutputType | null
+    _min: TotpMinAggregateOutputType | null
+    _max: TotpMaxAggregateOutputType | null
+  }
+
+  export type TotpMinAggregateOutputType = {
+    id: string | null
+    status: $Enums.TotpStatus | null
+    secret: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type TotpMaxAggregateOutputType = {
+    id: string | null
+    status: $Enums.TotpStatus | null
+    secret: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type TotpCountAggregateOutputType = {
+    id: number
+    status: number
+    secret: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type TotpMinAggregateInputType = {
+    id?: true
+    status?: true
+    secret?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type TotpMaxAggregateInputType = {
+    id?: true
+    status?: true
+    secret?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type TotpCountAggregateInputType = {
+    id?: true
+    status?: true
+    secret?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type TotpAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Totp to aggregate.
+     */
+    where?: TotpWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Totps to fetch.
+     */
+    orderBy?: TotpOrderByWithRelationInput | TotpOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: TotpWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Totps from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Totps.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Totps
+    **/
+    _count?: true | TotpCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: TotpMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: TotpMaxAggregateInputType
+  }
+
+  export type GetTotpAggregateType<T extends TotpAggregateArgs> = {
+        [P in keyof T & keyof AggregateTotp]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateTotp[P]>
+      : GetScalarType<T[P], AggregateTotp[P]>
+  }
+
+
+
+
+  export type TotpGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TotpWhereInput
+    orderBy?: TotpOrderByWithAggregationInput | TotpOrderByWithAggregationInput[]
+    by: TotpScalarFieldEnum[] | TotpScalarFieldEnum
+    having?: TotpScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: TotpCountAggregateInputType | true
+    _min?: TotpMinAggregateInputType
+    _max?: TotpMaxAggregateInputType
+  }
+
+  export type TotpGroupByOutputType = {
+    id: string
+    status: $Enums.TotpStatus
+    secret: string | null
+    createdAt: Date
+    updatedAt: Date
+    _count: TotpCountAggregateOutputType | null
+    _min: TotpMinAggregateOutputType | null
+    _max: TotpMaxAggregateOutputType | null
+  }
+
+  type GetTotpGroupByPayload<T extends TotpGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<TotpGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof TotpGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], TotpGroupByOutputType[P]>
+            : GetScalarType<T[P], TotpGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type TotpSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    status?: boolean
+    secret?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    mfa?: boolean | Totp$mfaArgs<ExtArgs>
+  }, ExtArgs["result"]["totp"]>
+
+  export type TotpSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    status?: boolean
+    secret?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["totp"]>
+
+  export type TotpSelectScalar = {
+    id?: boolean
+    status?: boolean
+    secret?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type TotpInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    mfa?: boolean | Totp$mfaArgs<ExtArgs>
+  }
+  export type TotpIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+
+  export type $TotpPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Totp"
+    objects: {
+      mfa: Prisma.$MultiFactorAuthenticationPayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      status: $Enums.TotpStatus
+      secret: string | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["totp"]>
+    composites: {}
+  }
+
+  type TotpGetPayload<S extends boolean | null | undefined | TotpDefaultArgs> = $Result.GetResult<Prisma.$TotpPayload, S>
+
+  type TotpCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<TotpFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: TotpCountAggregateInputType | true
+    }
+
+  export interface TotpDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Totp'], meta: { name: 'Totp' } }
+    /**
+     * Find zero or one Totp that matches the filter.
+     * @param {TotpFindUniqueArgs} args - Arguments to find a Totp
+     * @example
+     * // Get one Totp
+     * const totp = await prisma.totp.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends TotpFindUniqueArgs>(args: SelectSubset<T, TotpFindUniqueArgs<ExtArgs>>): Prisma__TotpClient<$Result.GetResult<Prisma.$TotpPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one Totp that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {TotpFindUniqueOrThrowArgs} args - Arguments to find a Totp
+     * @example
+     * // Get one Totp
+     * const totp = await prisma.totp.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends TotpFindUniqueOrThrowArgs>(args: SelectSubset<T, TotpFindUniqueOrThrowArgs<ExtArgs>>): Prisma__TotpClient<$Result.GetResult<Prisma.$TotpPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first Totp that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TotpFindFirstArgs} args - Arguments to find a Totp
+     * @example
+     * // Get one Totp
+     * const totp = await prisma.totp.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends TotpFindFirstArgs>(args?: SelectSubset<T, TotpFindFirstArgs<ExtArgs>>): Prisma__TotpClient<$Result.GetResult<Prisma.$TotpPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first Totp that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TotpFindFirstOrThrowArgs} args - Arguments to find a Totp
+     * @example
+     * // Get one Totp
+     * const totp = await prisma.totp.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends TotpFindFirstOrThrowArgs>(args?: SelectSubset<T, TotpFindFirstOrThrowArgs<ExtArgs>>): Prisma__TotpClient<$Result.GetResult<Prisma.$TotpPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more Totps that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TotpFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Totps
+     * const totps = await prisma.totp.findMany()
+     * 
+     * // Get first 10 Totps
+     * const totps = await prisma.totp.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const totpWithIdOnly = await prisma.totp.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends TotpFindManyArgs>(args?: SelectSubset<T, TotpFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TotpPayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a Totp.
+     * @param {TotpCreateArgs} args - Arguments to create a Totp.
+     * @example
+     * // Create one Totp
+     * const Totp = await prisma.totp.create({
+     *   data: {
+     *     // ... data to create a Totp
+     *   }
+     * })
+     * 
+     */
+    create<T extends TotpCreateArgs>(args: SelectSubset<T, TotpCreateArgs<ExtArgs>>): Prisma__TotpClient<$Result.GetResult<Prisma.$TotpPayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many Totps.
+     * @param {TotpCreateManyArgs} args - Arguments to create many Totps.
+     * @example
+     * // Create many Totps
+     * const totp = await prisma.totp.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends TotpCreateManyArgs>(args?: SelectSubset<T, TotpCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Totps and returns the data saved in the database.
+     * @param {TotpCreateManyAndReturnArgs} args - Arguments to create many Totps.
+     * @example
+     * // Create many Totps
+     * const totp = await prisma.totp.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Totps and only return the `id`
+     * const totpWithIdOnly = await prisma.totp.createManyAndReturn({ 
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends TotpCreateManyAndReturnArgs>(args?: SelectSubset<T, TotpCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TotpPayload<ExtArgs>, T, "createManyAndReturn">>
+
+    /**
+     * Delete a Totp.
+     * @param {TotpDeleteArgs} args - Arguments to delete one Totp.
+     * @example
+     * // Delete one Totp
+     * const Totp = await prisma.totp.delete({
+     *   where: {
+     *     // ... filter to delete one Totp
+     *   }
+     * })
+     * 
+     */
+    delete<T extends TotpDeleteArgs>(args: SelectSubset<T, TotpDeleteArgs<ExtArgs>>): Prisma__TotpClient<$Result.GetResult<Prisma.$TotpPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one Totp.
+     * @param {TotpUpdateArgs} args - Arguments to update one Totp.
+     * @example
+     * // Update one Totp
+     * const totp = await prisma.totp.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends TotpUpdateArgs>(args: SelectSubset<T, TotpUpdateArgs<ExtArgs>>): Prisma__TotpClient<$Result.GetResult<Prisma.$TotpPayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more Totps.
+     * @param {TotpDeleteManyArgs} args - Arguments to filter Totps to delete.
+     * @example
+     * // Delete a few Totps
+     * const { count } = await prisma.totp.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends TotpDeleteManyArgs>(args?: SelectSubset<T, TotpDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Totps.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TotpUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Totps
+     * const totp = await prisma.totp.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends TotpUpdateManyArgs>(args: SelectSubset<T, TotpUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one Totp.
+     * @param {TotpUpsertArgs} args - Arguments to update or create a Totp.
+     * @example
+     * // Update or create a Totp
+     * const totp = await prisma.totp.upsert({
+     *   create: {
+     *     // ... data to create a Totp
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Totp we want to update
+     *   }
+     * })
+     */
+    upsert<T extends TotpUpsertArgs>(args: SelectSubset<T, TotpUpsertArgs<ExtArgs>>): Prisma__TotpClient<$Result.GetResult<Prisma.$TotpPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of Totps.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TotpCountArgs} args - Arguments to filter Totps to count.
+     * @example
+     * // Count the number of Totps
+     * const count = await prisma.totp.count({
+     *   where: {
+     *     // ... the filter for the Totps we want to count
+     *   }
+     * })
+    **/
+    count<T extends TotpCountArgs>(
+      args?: Subset<T, TotpCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], TotpCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Totp.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TotpAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends TotpAggregateArgs>(args: Subset<T, TotpAggregateArgs>): Prisma.PrismaPromise<GetTotpAggregateType<T>>
+
+    /**
+     * Group by Totp.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TotpGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends TotpGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: TotpGroupByArgs['orderBy'] }
+        : { orderBy?: TotpGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, TotpGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetTotpGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Totp model
+   */
+  readonly fields: TotpFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Totp.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__TotpClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    mfa<T extends Totp$mfaArgs<ExtArgs> = {}>(args?: Subset<T, Totp$mfaArgs<ExtArgs>>): Prisma__MultiFactorAuthenticationClient<$Result.GetResult<Prisma.$MultiFactorAuthenticationPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Totp model
+   */ 
+  interface TotpFieldRefs {
+    readonly id: FieldRef<"Totp", 'String'>
+    readonly status: FieldRef<"Totp", 'TotpStatus'>
+    readonly secret: FieldRef<"Totp", 'String'>
+    readonly createdAt: FieldRef<"Totp", 'DateTime'>
+    readonly updatedAt: FieldRef<"Totp", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Totp findUnique
+   */
+  export type TotpFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Totp
+     */
+    select?: TotpSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TotpInclude<ExtArgs> | null
+    /**
+     * Filter, which Totp to fetch.
+     */
+    where: TotpWhereUniqueInput
+  }
+
+  /**
+   * Totp findUniqueOrThrow
+   */
+  export type TotpFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Totp
+     */
+    select?: TotpSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TotpInclude<ExtArgs> | null
+    /**
+     * Filter, which Totp to fetch.
+     */
+    where: TotpWhereUniqueInput
+  }
+
+  /**
+   * Totp findFirst
+   */
+  export type TotpFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Totp
+     */
+    select?: TotpSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TotpInclude<ExtArgs> | null
+    /**
+     * Filter, which Totp to fetch.
+     */
+    where?: TotpWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Totps to fetch.
+     */
+    orderBy?: TotpOrderByWithRelationInput | TotpOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Totps.
+     */
+    cursor?: TotpWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Totps from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Totps.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Totps.
+     */
+    distinct?: TotpScalarFieldEnum | TotpScalarFieldEnum[]
+  }
+
+  /**
+   * Totp findFirstOrThrow
+   */
+  export type TotpFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Totp
+     */
+    select?: TotpSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TotpInclude<ExtArgs> | null
+    /**
+     * Filter, which Totp to fetch.
+     */
+    where?: TotpWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Totps to fetch.
+     */
+    orderBy?: TotpOrderByWithRelationInput | TotpOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Totps.
+     */
+    cursor?: TotpWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Totps from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Totps.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Totps.
+     */
+    distinct?: TotpScalarFieldEnum | TotpScalarFieldEnum[]
+  }
+
+  /**
+   * Totp findMany
+   */
+  export type TotpFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Totp
+     */
+    select?: TotpSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TotpInclude<ExtArgs> | null
+    /**
+     * Filter, which Totps to fetch.
+     */
+    where?: TotpWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Totps to fetch.
+     */
+    orderBy?: TotpOrderByWithRelationInput | TotpOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Totps.
+     */
+    cursor?: TotpWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Totps from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Totps.
+     */
+    skip?: number
+    distinct?: TotpScalarFieldEnum | TotpScalarFieldEnum[]
+  }
+
+  /**
+   * Totp create
+   */
+  export type TotpCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Totp
+     */
+    select?: TotpSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TotpInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Totp.
+     */
+    data: XOR<TotpCreateInput, TotpUncheckedCreateInput>
+  }
+
+  /**
+   * Totp createMany
+   */
+  export type TotpCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Totps.
+     */
+    data: TotpCreateManyInput | TotpCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Totp createManyAndReturn
+   */
+  export type TotpCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Totp
+     */
+    select?: TotpSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * The data used to create many Totps.
+     */
+    data: TotpCreateManyInput | TotpCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Totp update
+   */
+  export type TotpUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Totp
+     */
+    select?: TotpSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TotpInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Totp.
+     */
+    data: XOR<TotpUpdateInput, TotpUncheckedUpdateInput>
+    /**
+     * Choose, which Totp to update.
+     */
+    where: TotpWhereUniqueInput
+  }
+
+  /**
+   * Totp updateMany
+   */
+  export type TotpUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Totps.
+     */
+    data: XOR<TotpUpdateManyMutationInput, TotpUncheckedUpdateManyInput>
+    /**
+     * Filter which Totps to update
+     */
+    where?: TotpWhereInput
+  }
+
+  /**
+   * Totp upsert
+   */
+  export type TotpUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Totp
+     */
+    select?: TotpSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TotpInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Totp to update in case it exists.
+     */
+    where: TotpWhereUniqueInput
+    /**
+     * In case the Totp found by the `where` argument doesn't exist, create a new Totp with this data.
+     */
+    create: XOR<TotpCreateInput, TotpUncheckedCreateInput>
+    /**
+     * In case the Totp was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<TotpUpdateInput, TotpUncheckedUpdateInput>
+  }
+
+  /**
+   * Totp delete
+   */
+  export type TotpDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Totp
+     */
+    select?: TotpSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TotpInclude<ExtArgs> | null
+    /**
+     * Filter which Totp to delete.
+     */
+    where: TotpWhereUniqueInput
+  }
+
+  /**
+   * Totp deleteMany
+   */
+  export type TotpDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Totps to delete
+     */
+    where?: TotpWhereInput
+  }
+
+  /**
+   * Totp.mfa
+   */
+  export type Totp$mfaArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MultiFactorAuthentication
+     */
+    select?: MultiFactorAuthenticationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MultiFactorAuthenticationInclude<ExtArgs> | null
+    where?: MultiFactorAuthenticationWhereInput
+  }
+
+  /**
+   * Totp without action
+   */
+  export type TotpDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Totp
+     */
+    select?: TotpSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TotpInclude<ExtArgs> | null
   }
 
 
@@ -4043,8 +6111,6 @@ export namespace Prisma {
     avatar: 'avatar',
     points: 'points',
     role: 'role',
-    isTotpEnabled: 'isTotpEnabled',
-    totpSecret: 'totpSecret',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -4062,6 +6128,29 @@ export namespace Prisma {
   };
 
   export type PasswordResetScalarFieldEnum = (typeof PasswordResetScalarFieldEnum)[keyof typeof PasswordResetScalarFieldEnum]
+
+
+  export const MultiFactorAuthenticationScalarFieldEnum: {
+    id: 'id',
+    recoveryCodes: 'recoveryCodes',
+    totpId: 'totpId',
+    userId: 'userId',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type MultiFactorAuthenticationScalarFieldEnum = (typeof MultiFactorAuthenticationScalarFieldEnum)[keyof typeof MultiFactorAuthenticationScalarFieldEnum]
+
+
+  export const TotpScalarFieldEnum: {
+    id: 'id',
+    status: 'status',
+    secret: 'secret',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type TotpScalarFieldEnum = (typeof TotpScalarFieldEnum)[keyof typeof TotpScalarFieldEnum]
 
 
   export const CourseScalarFieldEnum: {
@@ -4153,13 +6242,6 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'Boolean'
-   */
-  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
-    
-
-
-  /**
    * Reference to a field of type 'DateTime'
    */
   export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
@@ -4170,6 +6252,27 @@ export namespace Prisma {
    * Reference to a field of type 'DateTime[]'
    */
   export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'TotpStatus'
+   */
+  export type EnumTotpStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TotpStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'TotpStatus[]'
+   */
+  export type ListEnumTotpStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TotpStatus[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Boolean'
+   */
+  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
     
 
 
@@ -4202,11 +6305,10 @@ export namespace Prisma {
     avatar?: StringNullableFilter<"User"> | string | null
     points?: IntFilter<"User"> | number
     role?: EnumUserRoleFilter<"User"> | $Enums.UserRole
-    isTotpEnabled?: BoolFilter<"User"> | boolean
-    totpSecret?: StringNullableFilter<"User"> | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     passwordReset?: XOR<PasswordResetNullableRelationFilter, PasswordResetWhereInput> | null
+    mfa?: XOR<MultiFactorAuthenticationNullableRelationFilter, MultiFactorAuthenticationWhereInput> | null
   }
 
   export type UserOrderByWithRelationInput = {
@@ -4218,11 +6320,10 @@ export namespace Prisma {
     avatar?: SortOrderInput | SortOrder
     points?: SortOrder
     role?: SortOrder
-    isTotpEnabled?: SortOrder
-    totpSecret?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     passwordReset?: PasswordResetOrderByWithRelationInput
+    mfa?: MultiFactorAuthenticationOrderByWithRelationInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -4237,11 +6338,10 @@ export namespace Prisma {
     avatar?: StringNullableFilter<"User"> | string | null
     points?: IntFilter<"User"> | number
     role?: EnumUserRoleFilter<"User"> | $Enums.UserRole
-    isTotpEnabled?: BoolFilter<"User"> | boolean
-    totpSecret?: StringNullableFilter<"User"> | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     passwordReset?: XOR<PasswordResetNullableRelationFilter, PasswordResetWhereInput> | null
+    mfa?: XOR<MultiFactorAuthenticationNullableRelationFilter, MultiFactorAuthenticationWhereInput> | null
   }, "id" | "email" | "username">
 
   export type UserOrderByWithAggregationInput = {
@@ -4253,8 +6353,6 @@ export namespace Prisma {
     avatar?: SortOrderInput | SortOrder
     points?: SortOrder
     role?: SortOrder
-    isTotpEnabled?: SortOrder
-    totpSecret?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: UserCountOrderByAggregateInput
@@ -4276,8 +6374,6 @@ export namespace Prisma {
     avatar?: StringNullableWithAggregatesFilter<"User"> | string | null
     points?: IntWithAggregatesFilter<"User"> | number
     role?: EnumUserRoleWithAggregatesFilter<"User"> | $Enums.UserRole
-    isTotpEnabled?: BoolWithAggregatesFilter<"User"> | boolean
-    totpSecret?: StringNullableWithAggregatesFilter<"User"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
   }
@@ -4340,6 +6436,124 @@ export namespace Prisma {
     userId?: StringWithAggregatesFilter<"PasswordReset"> | string
     createdAt?: DateTimeWithAggregatesFilter<"PasswordReset"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"PasswordReset"> | Date | string
+  }
+
+  export type MultiFactorAuthenticationWhereInput = {
+    AND?: MultiFactorAuthenticationWhereInput | MultiFactorAuthenticationWhereInput[]
+    OR?: MultiFactorAuthenticationWhereInput[]
+    NOT?: MultiFactorAuthenticationWhereInput | MultiFactorAuthenticationWhereInput[]
+    id?: StringFilter<"MultiFactorAuthentication"> | string
+    recoveryCodes?: StringNullableListFilter<"MultiFactorAuthentication">
+    totpId?: StringFilter<"MultiFactorAuthentication"> | string
+    userId?: StringFilter<"MultiFactorAuthentication"> | string
+    createdAt?: DateTimeFilter<"MultiFactorAuthentication"> | Date | string
+    updatedAt?: DateTimeFilter<"MultiFactorAuthentication"> | Date | string
+    totp?: XOR<TotpRelationFilter, TotpWhereInput>
+    user?: XOR<UserRelationFilter, UserWhereInput>
+  }
+
+  export type MultiFactorAuthenticationOrderByWithRelationInput = {
+    id?: SortOrder
+    recoveryCodes?: SortOrder
+    totpId?: SortOrder
+    userId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    totp?: TotpOrderByWithRelationInput
+    user?: UserOrderByWithRelationInput
+  }
+
+  export type MultiFactorAuthenticationWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    totpId?: string
+    userId?: string
+    AND?: MultiFactorAuthenticationWhereInput | MultiFactorAuthenticationWhereInput[]
+    OR?: MultiFactorAuthenticationWhereInput[]
+    NOT?: MultiFactorAuthenticationWhereInput | MultiFactorAuthenticationWhereInput[]
+    recoveryCodes?: StringNullableListFilter<"MultiFactorAuthentication">
+    createdAt?: DateTimeFilter<"MultiFactorAuthentication"> | Date | string
+    updatedAt?: DateTimeFilter<"MultiFactorAuthentication"> | Date | string
+    totp?: XOR<TotpRelationFilter, TotpWhereInput>
+    user?: XOR<UserRelationFilter, UserWhereInput>
+  }, "id" | "totpId" | "userId">
+
+  export type MultiFactorAuthenticationOrderByWithAggregationInput = {
+    id?: SortOrder
+    recoveryCodes?: SortOrder
+    totpId?: SortOrder
+    userId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: MultiFactorAuthenticationCountOrderByAggregateInput
+    _max?: MultiFactorAuthenticationMaxOrderByAggregateInput
+    _min?: MultiFactorAuthenticationMinOrderByAggregateInput
+  }
+
+  export type MultiFactorAuthenticationScalarWhereWithAggregatesInput = {
+    AND?: MultiFactorAuthenticationScalarWhereWithAggregatesInput | MultiFactorAuthenticationScalarWhereWithAggregatesInput[]
+    OR?: MultiFactorAuthenticationScalarWhereWithAggregatesInput[]
+    NOT?: MultiFactorAuthenticationScalarWhereWithAggregatesInput | MultiFactorAuthenticationScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"MultiFactorAuthentication"> | string
+    recoveryCodes?: StringNullableListFilter<"MultiFactorAuthentication">
+    totpId?: StringWithAggregatesFilter<"MultiFactorAuthentication"> | string
+    userId?: StringWithAggregatesFilter<"MultiFactorAuthentication"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"MultiFactorAuthentication"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"MultiFactorAuthentication"> | Date | string
+  }
+
+  export type TotpWhereInput = {
+    AND?: TotpWhereInput | TotpWhereInput[]
+    OR?: TotpWhereInput[]
+    NOT?: TotpWhereInput | TotpWhereInput[]
+    id?: StringFilter<"Totp"> | string
+    status?: EnumTotpStatusFilter<"Totp"> | $Enums.TotpStatus
+    secret?: StringNullableFilter<"Totp"> | string | null
+    createdAt?: DateTimeFilter<"Totp"> | Date | string
+    updatedAt?: DateTimeFilter<"Totp"> | Date | string
+    mfa?: XOR<MultiFactorAuthenticationNullableRelationFilter, MultiFactorAuthenticationWhereInput> | null
+  }
+
+  export type TotpOrderByWithRelationInput = {
+    id?: SortOrder
+    status?: SortOrder
+    secret?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    mfa?: MultiFactorAuthenticationOrderByWithRelationInput
+  }
+
+  export type TotpWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: TotpWhereInput | TotpWhereInput[]
+    OR?: TotpWhereInput[]
+    NOT?: TotpWhereInput | TotpWhereInput[]
+    status?: EnumTotpStatusFilter<"Totp"> | $Enums.TotpStatus
+    secret?: StringNullableFilter<"Totp"> | string | null
+    createdAt?: DateTimeFilter<"Totp"> | Date | string
+    updatedAt?: DateTimeFilter<"Totp"> | Date | string
+    mfa?: XOR<MultiFactorAuthenticationNullableRelationFilter, MultiFactorAuthenticationWhereInput> | null
+  }, "id">
+
+  export type TotpOrderByWithAggregationInput = {
+    id?: SortOrder
+    status?: SortOrder
+    secret?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: TotpCountOrderByAggregateInput
+    _max?: TotpMaxOrderByAggregateInput
+    _min?: TotpMinOrderByAggregateInput
+  }
+
+  export type TotpScalarWhereWithAggregatesInput = {
+    AND?: TotpScalarWhereWithAggregatesInput | TotpScalarWhereWithAggregatesInput[]
+    OR?: TotpScalarWhereWithAggregatesInput[]
+    NOT?: TotpScalarWhereWithAggregatesInput | TotpScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Totp"> | string
+    status?: EnumTotpStatusWithAggregatesFilter<"Totp"> | $Enums.TotpStatus
+    secret?: StringNullableWithAggregatesFilter<"Totp"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"Totp"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Totp"> | Date | string
   }
 
   export type CourseWhereInput = {
@@ -4435,11 +6649,10 @@ export namespace Prisma {
     avatar?: string | null
     points?: number
     role?: $Enums.UserRole
-    isTotpEnabled?: boolean
-    totpSecret?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     passwordReset?: PasswordResetCreateNestedOneWithoutUserInput
+    mfa?: MultiFactorAuthenticationCreateNestedOneWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -4451,11 +6664,10 @@ export namespace Prisma {
     avatar?: string | null
     points?: number
     role?: $Enums.UserRole
-    isTotpEnabled?: boolean
-    totpSecret?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     passwordReset?: PasswordResetUncheckedCreateNestedOneWithoutUserInput
+    mfa?: MultiFactorAuthenticationUncheckedCreateNestedOneWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -4467,11 +6679,10 @@ export namespace Prisma {
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     points?: IntFieldUpdateOperationsInput | number
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-    isTotpEnabled?: BoolFieldUpdateOperationsInput | boolean
-    totpSecret?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     passwordReset?: PasswordResetUpdateOneWithoutUserNestedInput
+    mfa?: MultiFactorAuthenticationUpdateOneWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -4483,11 +6694,10 @@ export namespace Prisma {
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     points?: IntFieldUpdateOperationsInput | number
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-    isTotpEnabled?: BoolFieldUpdateOperationsInput | boolean
-    totpSecret?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     passwordReset?: PasswordResetUncheckedUpdateOneWithoutUserNestedInput
+    mfa?: MultiFactorAuthenticationUncheckedUpdateOneWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -4499,8 +6709,6 @@ export namespace Prisma {
     avatar?: string | null
     points?: number
     role?: $Enums.UserRole
-    isTotpEnabled?: boolean
-    totpSecret?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -4514,8 +6722,6 @@ export namespace Prisma {
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     points?: IntFieldUpdateOperationsInput | number
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-    isTotpEnabled?: BoolFieldUpdateOperationsInput | boolean
-    totpSecret?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -4529,8 +6735,6 @@ export namespace Prisma {
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     points?: IntFieldUpdateOperationsInput | number
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-    isTotpEnabled?: BoolFieldUpdateOperationsInput | boolean
-    totpSecret?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -4593,6 +6797,127 @@ export namespace Prisma {
     token?: StringFieldUpdateOperationsInput | string
     expiry?: DateTimeFieldUpdateOperationsInput | Date | string
     userId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MultiFactorAuthenticationCreateInput = {
+    id?: string
+    recoveryCodes?: MultiFactorAuthenticationCreaterecoveryCodesInput | string[]
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    totp: TotpCreateNestedOneWithoutMfaInput
+    user: UserCreateNestedOneWithoutMfaInput
+  }
+
+  export type MultiFactorAuthenticationUncheckedCreateInput = {
+    id?: string
+    recoveryCodes?: MultiFactorAuthenticationCreaterecoveryCodesInput | string[]
+    totpId: string
+    userId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MultiFactorAuthenticationUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    recoveryCodes?: MultiFactorAuthenticationUpdaterecoveryCodesInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    totp?: TotpUpdateOneRequiredWithoutMfaNestedInput
+    user?: UserUpdateOneRequiredWithoutMfaNestedInput
+  }
+
+  export type MultiFactorAuthenticationUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    recoveryCodes?: MultiFactorAuthenticationUpdaterecoveryCodesInput | string[]
+    totpId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MultiFactorAuthenticationCreateManyInput = {
+    id?: string
+    recoveryCodes?: MultiFactorAuthenticationCreaterecoveryCodesInput | string[]
+    totpId: string
+    userId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MultiFactorAuthenticationUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    recoveryCodes?: MultiFactorAuthenticationUpdaterecoveryCodesInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MultiFactorAuthenticationUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    recoveryCodes?: MultiFactorAuthenticationUpdaterecoveryCodesInput | string[]
+    totpId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TotpCreateInput = {
+    id?: string
+    status?: $Enums.TotpStatus
+    secret?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    mfa?: MultiFactorAuthenticationCreateNestedOneWithoutTotpInput
+  }
+
+  export type TotpUncheckedCreateInput = {
+    id?: string
+    status?: $Enums.TotpStatus
+    secret?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    mfa?: MultiFactorAuthenticationUncheckedCreateNestedOneWithoutTotpInput
+  }
+
+  export type TotpUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumTotpStatusFieldUpdateOperationsInput | $Enums.TotpStatus
+    secret?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    mfa?: MultiFactorAuthenticationUpdateOneWithoutTotpNestedInput
+  }
+
+  export type TotpUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumTotpStatusFieldUpdateOperationsInput | $Enums.TotpStatus
+    secret?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    mfa?: MultiFactorAuthenticationUncheckedUpdateOneWithoutTotpNestedInput
+  }
+
+  export type TotpCreateManyInput = {
+    id?: string
+    status?: $Enums.TotpStatus
+    secret?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TotpUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumTotpStatusFieldUpdateOperationsInput | $Enums.TotpStatus
+    secret?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TotpUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumTotpStatusFieldUpdateOperationsInput | $Enums.TotpStatus
+    secret?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -4743,11 +7068,6 @@ export namespace Prisma {
     not?: NestedEnumUserRoleFilter<$PrismaModel> | $Enums.UserRole
   }
 
-  export type BoolFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolFilter<$PrismaModel> | boolean
-  }
-
   export type DateTimeFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -4764,6 +7084,11 @@ export namespace Prisma {
     isNot?: PasswordResetWhereInput | null
   }
 
+  export type MultiFactorAuthenticationNullableRelationFilter = {
+    is?: MultiFactorAuthenticationWhereInput | null
+    isNot?: MultiFactorAuthenticationWhereInput | null
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -4778,8 +7103,6 @@ export namespace Prisma {
     avatar?: SortOrder
     points?: SortOrder
     role?: SortOrder
-    isTotpEnabled?: SortOrder
-    totpSecret?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -4797,8 +7120,6 @@ export namespace Prisma {
     avatar?: SortOrder
     points?: SortOrder
     role?: SortOrder
-    isTotpEnabled?: SortOrder
-    totpSecret?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -4812,8 +7133,6 @@ export namespace Prisma {
     avatar?: SortOrder
     points?: SortOrder
     role?: SortOrder
-    isTotpEnabled?: SortOrder
-    totpSecret?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -4884,14 +7203,6 @@ export namespace Prisma {
     _max?: NestedEnumUserRoleFilter<$PrismaModel>
   }
 
-  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedBoolFilter<$PrismaModel>
-    _max?: NestedBoolFilter<$PrismaModel>
-  }
-
   export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -4936,6 +7247,90 @@ export namespace Prisma {
     userId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+  }
+
+  export type StringNullableListFilter<$PrismaModel = never> = {
+    equals?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    has?: string | StringFieldRefInput<$PrismaModel> | null
+    hasEvery?: string[] | ListStringFieldRefInput<$PrismaModel>
+    hasSome?: string[] | ListStringFieldRefInput<$PrismaModel>
+    isEmpty?: boolean
+  }
+
+  export type TotpRelationFilter = {
+    is?: TotpWhereInput
+    isNot?: TotpWhereInput
+  }
+
+  export type MultiFactorAuthenticationCountOrderByAggregateInput = {
+    id?: SortOrder
+    recoveryCodes?: SortOrder
+    totpId?: SortOrder
+    userId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type MultiFactorAuthenticationMaxOrderByAggregateInput = {
+    id?: SortOrder
+    totpId?: SortOrder
+    userId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type MultiFactorAuthenticationMinOrderByAggregateInput = {
+    id?: SortOrder
+    totpId?: SortOrder
+    userId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type EnumTotpStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.TotpStatus | EnumTotpStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.TotpStatus[] | ListEnumTotpStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TotpStatus[] | ListEnumTotpStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumTotpStatusFilter<$PrismaModel> | $Enums.TotpStatus
+  }
+
+  export type TotpCountOrderByAggregateInput = {
+    id?: SortOrder
+    status?: SortOrder
+    secret?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type TotpMaxOrderByAggregateInput = {
+    id?: SortOrder
+    status?: SortOrder
+    secret?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type TotpMinOrderByAggregateInput = {
+    id?: SortOrder
+    status?: SortOrder
+    secret?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type EnumTotpStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.TotpStatus | EnumTotpStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.TotpStatus[] | ListEnumTotpStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TotpStatus[] | ListEnumTotpStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumTotpStatusWithAggregatesFilter<$PrismaModel> | $Enums.TotpStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumTotpStatusFilter<$PrismaModel>
+    _max?: NestedEnumTotpStatusFilter<$PrismaModel>
+  }
+
+  export type BoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
   export type CourseCountOrderByAggregateInput = {
@@ -4988,16 +7383,36 @@ export namespace Prisma {
     views?: SortOrder
   }
 
+  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
   export type PasswordResetCreateNestedOneWithoutUserInput = {
     create?: XOR<PasswordResetCreateWithoutUserInput, PasswordResetUncheckedCreateWithoutUserInput>
     connectOrCreate?: PasswordResetCreateOrConnectWithoutUserInput
     connect?: PasswordResetWhereUniqueInput
   }
 
+  export type MultiFactorAuthenticationCreateNestedOneWithoutUserInput = {
+    create?: XOR<MultiFactorAuthenticationCreateWithoutUserInput, MultiFactorAuthenticationUncheckedCreateWithoutUserInput>
+    connectOrCreate?: MultiFactorAuthenticationCreateOrConnectWithoutUserInput
+    connect?: MultiFactorAuthenticationWhereUniqueInput
+  }
+
   export type PasswordResetUncheckedCreateNestedOneWithoutUserInput = {
     create?: XOR<PasswordResetCreateWithoutUserInput, PasswordResetUncheckedCreateWithoutUserInput>
     connectOrCreate?: PasswordResetCreateOrConnectWithoutUserInput
     connect?: PasswordResetWhereUniqueInput
+  }
+
+  export type MultiFactorAuthenticationUncheckedCreateNestedOneWithoutUserInput = {
+    create?: XOR<MultiFactorAuthenticationCreateWithoutUserInput, MultiFactorAuthenticationUncheckedCreateWithoutUserInput>
+    connectOrCreate?: MultiFactorAuthenticationCreateOrConnectWithoutUserInput
+    connect?: MultiFactorAuthenticationWhereUniqueInput
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -5020,10 +7435,6 @@ export namespace Prisma {
     set?: $Enums.UserRole
   }
 
-  export type BoolFieldUpdateOperationsInput = {
-    set?: boolean
-  }
-
   export type DateTimeFieldUpdateOperationsInput = {
     set?: Date | string
   }
@@ -5038,6 +7449,16 @@ export namespace Prisma {
     update?: XOR<XOR<PasswordResetUpdateToOneWithWhereWithoutUserInput, PasswordResetUpdateWithoutUserInput>, PasswordResetUncheckedUpdateWithoutUserInput>
   }
 
+  export type MultiFactorAuthenticationUpdateOneWithoutUserNestedInput = {
+    create?: XOR<MultiFactorAuthenticationCreateWithoutUserInput, MultiFactorAuthenticationUncheckedCreateWithoutUserInput>
+    connectOrCreate?: MultiFactorAuthenticationCreateOrConnectWithoutUserInput
+    upsert?: MultiFactorAuthenticationUpsertWithoutUserInput
+    disconnect?: MultiFactorAuthenticationWhereInput | boolean
+    delete?: MultiFactorAuthenticationWhereInput | boolean
+    connect?: MultiFactorAuthenticationWhereUniqueInput
+    update?: XOR<XOR<MultiFactorAuthenticationUpdateToOneWithWhereWithoutUserInput, MultiFactorAuthenticationUpdateWithoutUserInput>, MultiFactorAuthenticationUncheckedUpdateWithoutUserInput>
+  }
+
   export type PasswordResetUncheckedUpdateOneWithoutUserNestedInput = {
     create?: XOR<PasswordResetCreateWithoutUserInput, PasswordResetUncheckedCreateWithoutUserInput>
     connectOrCreate?: PasswordResetCreateOrConnectWithoutUserInput
@@ -5046,6 +7467,16 @@ export namespace Prisma {
     delete?: PasswordResetWhereInput | boolean
     connect?: PasswordResetWhereUniqueInput
     update?: XOR<XOR<PasswordResetUpdateToOneWithWhereWithoutUserInput, PasswordResetUpdateWithoutUserInput>, PasswordResetUncheckedUpdateWithoutUserInput>
+  }
+
+  export type MultiFactorAuthenticationUncheckedUpdateOneWithoutUserNestedInput = {
+    create?: XOR<MultiFactorAuthenticationCreateWithoutUserInput, MultiFactorAuthenticationUncheckedCreateWithoutUserInput>
+    connectOrCreate?: MultiFactorAuthenticationCreateOrConnectWithoutUserInput
+    upsert?: MultiFactorAuthenticationUpsertWithoutUserInput
+    disconnect?: MultiFactorAuthenticationWhereInput | boolean
+    delete?: MultiFactorAuthenticationWhereInput | boolean
+    connect?: MultiFactorAuthenticationWhereUniqueInput
+    update?: XOR<XOR<MultiFactorAuthenticationUpdateToOneWithWhereWithoutUserInput, MultiFactorAuthenticationUpdateWithoutUserInput>, MultiFactorAuthenticationUncheckedUpdateWithoutUserInput>
   }
 
   export type UserCreateNestedOneWithoutPasswordResetInput = {
@@ -5060,6 +7491,83 @@ export namespace Prisma {
     upsert?: UserUpsertWithoutPasswordResetInput
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutPasswordResetInput, UserUpdateWithoutPasswordResetInput>, UserUncheckedUpdateWithoutPasswordResetInput>
+  }
+
+  export type MultiFactorAuthenticationCreaterecoveryCodesInput = {
+    set: string[]
+  }
+
+  export type TotpCreateNestedOneWithoutMfaInput = {
+    create?: XOR<TotpCreateWithoutMfaInput, TotpUncheckedCreateWithoutMfaInput>
+    connectOrCreate?: TotpCreateOrConnectWithoutMfaInput
+    connect?: TotpWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutMfaInput = {
+    create?: XOR<UserCreateWithoutMfaInput, UserUncheckedCreateWithoutMfaInput>
+    connectOrCreate?: UserCreateOrConnectWithoutMfaInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type MultiFactorAuthenticationUpdaterecoveryCodesInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type TotpUpdateOneRequiredWithoutMfaNestedInput = {
+    create?: XOR<TotpCreateWithoutMfaInput, TotpUncheckedCreateWithoutMfaInput>
+    connectOrCreate?: TotpCreateOrConnectWithoutMfaInput
+    upsert?: TotpUpsertWithoutMfaInput
+    connect?: TotpWhereUniqueInput
+    update?: XOR<XOR<TotpUpdateToOneWithWhereWithoutMfaInput, TotpUpdateWithoutMfaInput>, TotpUncheckedUpdateWithoutMfaInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutMfaNestedInput = {
+    create?: XOR<UserCreateWithoutMfaInput, UserUncheckedCreateWithoutMfaInput>
+    connectOrCreate?: UserCreateOrConnectWithoutMfaInput
+    upsert?: UserUpsertWithoutMfaInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutMfaInput, UserUpdateWithoutMfaInput>, UserUncheckedUpdateWithoutMfaInput>
+  }
+
+  export type MultiFactorAuthenticationCreateNestedOneWithoutTotpInput = {
+    create?: XOR<MultiFactorAuthenticationCreateWithoutTotpInput, MultiFactorAuthenticationUncheckedCreateWithoutTotpInput>
+    connectOrCreate?: MultiFactorAuthenticationCreateOrConnectWithoutTotpInput
+    connect?: MultiFactorAuthenticationWhereUniqueInput
+  }
+
+  export type MultiFactorAuthenticationUncheckedCreateNestedOneWithoutTotpInput = {
+    create?: XOR<MultiFactorAuthenticationCreateWithoutTotpInput, MultiFactorAuthenticationUncheckedCreateWithoutTotpInput>
+    connectOrCreate?: MultiFactorAuthenticationCreateOrConnectWithoutTotpInput
+    connect?: MultiFactorAuthenticationWhereUniqueInput
+  }
+
+  export type EnumTotpStatusFieldUpdateOperationsInput = {
+    set?: $Enums.TotpStatus
+  }
+
+  export type MultiFactorAuthenticationUpdateOneWithoutTotpNestedInput = {
+    create?: XOR<MultiFactorAuthenticationCreateWithoutTotpInput, MultiFactorAuthenticationUncheckedCreateWithoutTotpInput>
+    connectOrCreate?: MultiFactorAuthenticationCreateOrConnectWithoutTotpInput
+    upsert?: MultiFactorAuthenticationUpsertWithoutTotpInput
+    disconnect?: MultiFactorAuthenticationWhereInput | boolean
+    delete?: MultiFactorAuthenticationWhereInput | boolean
+    connect?: MultiFactorAuthenticationWhereUniqueInput
+    update?: XOR<XOR<MultiFactorAuthenticationUpdateToOneWithWhereWithoutTotpInput, MultiFactorAuthenticationUpdateWithoutTotpInput>, MultiFactorAuthenticationUncheckedUpdateWithoutTotpInput>
+  }
+
+  export type MultiFactorAuthenticationUncheckedUpdateOneWithoutTotpNestedInput = {
+    create?: XOR<MultiFactorAuthenticationCreateWithoutTotpInput, MultiFactorAuthenticationUncheckedCreateWithoutTotpInput>
+    connectOrCreate?: MultiFactorAuthenticationCreateOrConnectWithoutTotpInput
+    upsert?: MultiFactorAuthenticationUpsertWithoutTotpInput
+    disconnect?: MultiFactorAuthenticationWhereInput | boolean
+    delete?: MultiFactorAuthenticationWhereInput | boolean
+    connect?: MultiFactorAuthenticationWhereUniqueInput
+    update?: XOR<XOR<MultiFactorAuthenticationUpdateToOneWithWhereWithoutTotpInput, MultiFactorAuthenticationUpdateWithoutTotpInput>, MultiFactorAuthenticationUncheckedUpdateWithoutTotpInput>
+  }
+
+  export type BoolFieldUpdateOperationsInput = {
+    set?: boolean
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -5106,11 +7614,6 @@ export namespace Prisma {
     in?: $Enums.UserRole[] | ListEnumUserRoleFieldRefInput<$PrismaModel>
     notIn?: $Enums.UserRole[] | ListEnumUserRoleFieldRefInput<$PrismaModel>
     not?: NestedEnumUserRoleFilter<$PrismaModel> | $Enums.UserRole
-  }
-
-  export type NestedBoolFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
   export type NestedDateTimeFilter<$PrismaModel = never> = {
@@ -5206,14 +7709,6 @@ export namespace Prisma {
     _max?: NestedEnumUserRoleFilter<$PrismaModel>
   }
 
-  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedBoolFilter<$PrismaModel>
-    _max?: NestedBoolFilter<$PrismaModel>
-  }
-
   export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -5226,6 +7721,36 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedDateTimeFilter<$PrismaModel>
     _max?: NestedDateTimeFilter<$PrismaModel>
+  }
+
+  export type NestedEnumTotpStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.TotpStatus | EnumTotpStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.TotpStatus[] | ListEnumTotpStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TotpStatus[] | ListEnumTotpStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumTotpStatusFilter<$PrismaModel> | $Enums.TotpStatus
+  }
+
+  export type NestedEnumTotpStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.TotpStatus | EnumTotpStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.TotpStatus[] | ListEnumTotpStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TotpStatus[] | ListEnumTotpStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumTotpStatusWithAggregatesFilter<$PrismaModel> | $Enums.TotpStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumTotpStatusFilter<$PrismaModel>
+    _max?: NestedEnumTotpStatusFilter<$PrismaModel>
+  }
+
+  export type NestedBoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
   }
 
   export type PasswordResetCreateWithoutUserInput = {
@@ -5247,6 +7772,27 @@ export namespace Prisma {
   export type PasswordResetCreateOrConnectWithoutUserInput = {
     where: PasswordResetWhereUniqueInput
     create: XOR<PasswordResetCreateWithoutUserInput, PasswordResetUncheckedCreateWithoutUserInput>
+  }
+
+  export type MultiFactorAuthenticationCreateWithoutUserInput = {
+    id?: string
+    recoveryCodes?: MultiFactorAuthenticationCreaterecoveryCodesInput | string[]
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    totp: TotpCreateNestedOneWithoutMfaInput
+  }
+
+  export type MultiFactorAuthenticationUncheckedCreateWithoutUserInput = {
+    id?: string
+    recoveryCodes?: MultiFactorAuthenticationCreaterecoveryCodesInput | string[]
+    totpId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MultiFactorAuthenticationCreateOrConnectWithoutUserInput = {
+    where: MultiFactorAuthenticationWhereUniqueInput
+    create: XOR<MultiFactorAuthenticationCreateWithoutUserInput, MultiFactorAuthenticationUncheckedCreateWithoutUserInput>
   }
 
   export type PasswordResetUpsertWithoutUserInput = {
@@ -5276,6 +7822,33 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type MultiFactorAuthenticationUpsertWithoutUserInput = {
+    update: XOR<MultiFactorAuthenticationUpdateWithoutUserInput, MultiFactorAuthenticationUncheckedUpdateWithoutUserInput>
+    create: XOR<MultiFactorAuthenticationCreateWithoutUserInput, MultiFactorAuthenticationUncheckedCreateWithoutUserInput>
+    where?: MultiFactorAuthenticationWhereInput
+  }
+
+  export type MultiFactorAuthenticationUpdateToOneWithWhereWithoutUserInput = {
+    where?: MultiFactorAuthenticationWhereInput
+    data: XOR<MultiFactorAuthenticationUpdateWithoutUserInput, MultiFactorAuthenticationUncheckedUpdateWithoutUserInput>
+  }
+
+  export type MultiFactorAuthenticationUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    recoveryCodes?: MultiFactorAuthenticationUpdaterecoveryCodesInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    totp?: TotpUpdateOneRequiredWithoutMfaNestedInput
+  }
+
+  export type MultiFactorAuthenticationUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    recoveryCodes?: MultiFactorAuthenticationUpdaterecoveryCodesInput | string[]
+    totpId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type UserCreateWithoutPasswordResetInput = {
     id?: string
     email: string
@@ -5285,10 +7858,9 @@ export namespace Prisma {
     avatar?: string | null
     points?: number
     role?: $Enums.UserRole
-    isTotpEnabled?: boolean
-    totpSecret?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    mfa?: MultiFactorAuthenticationCreateNestedOneWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutPasswordResetInput = {
@@ -5300,10 +7872,9 @@ export namespace Prisma {
     avatar?: string | null
     points?: number
     role?: $Enums.UserRole
-    isTotpEnabled?: boolean
-    totpSecret?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    mfa?: MultiFactorAuthenticationUncheckedCreateNestedOneWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutPasswordResetInput = {
@@ -5331,10 +7902,9 @@ export namespace Prisma {
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     points?: IntFieldUpdateOperationsInput | number
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-    isTotpEnabled?: BoolFieldUpdateOperationsInput | boolean
-    totpSecret?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    mfa?: MultiFactorAuthenticationUpdateOneWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPasswordResetInput = {
@@ -5346,8 +7916,175 @@ export namespace Prisma {
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     points?: IntFieldUpdateOperationsInput | number
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-    isTotpEnabled?: BoolFieldUpdateOperationsInput | boolean
-    totpSecret?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    mfa?: MultiFactorAuthenticationUncheckedUpdateOneWithoutUserNestedInput
+  }
+
+  export type TotpCreateWithoutMfaInput = {
+    id?: string
+    status?: $Enums.TotpStatus
+    secret?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TotpUncheckedCreateWithoutMfaInput = {
+    id?: string
+    status?: $Enums.TotpStatus
+    secret?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TotpCreateOrConnectWithoutMfaInput = {
+    where: TotpWhereUniqueInput
+    create: XOR<TotpCreateWithoutMfaInput, TotpUncheckedCreateWithoutMfaInput>
+  }
+
+  export type UserCreateWithoutMfaInput = {
+    id?: string
+    email: string
+    password?: string | null
+    username: string
+    displayName: string
+    avatar?: string | null
+    points?: number
+    role?: $Enums.UserRole
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    passwordReset?: PasswordResetCreateNestedOneWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutMfaInput = {
+    id?: string
+    email: string
+    password?: string | null
+    username: string
+    displayName: string
+    avatar?: string | null
+    points?: number
+    role?: $Enums.UserRole
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    passwordReset?: PasswordResetUncheckedCreateNestedOneWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutMfaInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutMfaInput, UserUncheckedCreateWithoutMfaInput>
+  }
+
+  export type TotpUpsertWithoutMfaInput = {
+    update: XOR<TotpUpdateWithoutMfaInput, TotpUncheckedUpdateWithoutMfaInput>
+    create: XOR<TotpCreateWithoutMfaInput, TotpUncheckedCreateWithoutMfaInput>
+    where?: TotpWhereInput
+  }
+
+  export type TotpUpdateToOneWithWhereWithoutMfaInput = {
+    where?: TotpWhereInput
+    data: XOR<TotpUpdateWithoutMfaInput, TotpUncheckedUpdateWithoutMfaInput>
+  }
+
+  export type TotpUpdateWithoutMfaInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumTotpStatusFieldUpdateOperationsInput | $Enums.TotpStatus
+    secret?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TotpUncheckedUpdateWithoutMfaInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumTotpStatusFieldUpdateOperationsInput | $Enums.TotpStatus
+    secret?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserUpsertWithoutMfaInput = {
+    update: XOR<UserUpdateWithoutMfaInput, UserUncheckedUpdateWithoutMfaInput>
+    create: XOR<UserCreateWithoutMfaInput, UserUncheckedCreateWithoutMfaInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutMfaInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutMfaInput, UserUncheckedUpdateWithoutMfaInput>
+  }
+
+  export type UserUpdateWithoutMfaInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    username?: StringFieldUpdateOperationsInput | string
+    displayName?: StringFieldUpdateOperationsInput | string
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    points?: IntFieldUpdateOperationsInput | number
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    passwordReset?: PasswordResetUpdateOneWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutMfaInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    username?: StringFieldUpdateOperationsInput | string
+    displayName?: StringFieldUpdateOperationsInput | string
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    points?: IntFieldUpdateOperationsInput | number
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    passwordReset?: PasswordResetUncheckedUpdateOneWithoutUserNestedInput
+  }
+
+  export type MultiFactorAuthenticationCreateWithoutTotpInput = {
+    id?: string
+    recoveryCodes?: MultiFactorAuthenticationCreaterecoveryCodesInput | string[]
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutMfaInput
+  }
+
+  export type MultiFactorAuthenticationUncheckedCreateWithoutTotpInput = {
+    id?: string
+    recoveryCodes?: MultiFactorAuthenticationCreaterecoveryCodesInput | string[]
+    userId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MultiFactorAuthenticationCreateOrConnectWithoutTotpInput = {
+    where: MultiFactorAuthenticationWhereUniqueInput
+    create: XOR<MultiFactorAuthenticationCreateWithoutTotpInput, MultiFactorAuthenticationUncheckedCreateWithoutTotpInput>
+  }
+
+  export type MultiFactorAuthenticationUpsertWithoutTotpInput = {
+    update: XOR<MultiFactorAuthenticationUpdateWithoutTotpInput, MultiFactorAuthenticationUncheckedUpdateWithoutTotpInput>
+    create: XOR<MultiFactorAuthenticationCreateWithoutTotpInput, MultiFactorAuthenticationUncheckedCreateWithoutTotpInput>
+    where?: MultiFactorAuthenticationWhereInput
+  }
+
+  export type MultiFactorAuthenticationUpdateToOneWithWhereWithoutTotpInput = {
+    where?: MultiFactorAuthenticationWhereInput
+    data: XOR<MultiFactorAuthenticationUpdateWithoutTotpInput, MultiFactorAuthenticationUncheckedUpdateWithoutTotpInput>
+  }
+
+  export type MultiFactorAuthenticationUpdateWithoutTotpInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    recoveryCodes?: MultiFactorAuthenticationUpdaterecoveryCodesInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutMfaNestedInput
+  }
+
+  export type MultiFactorAuthenticationUncheckedUpdateWithoutTotpInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    recoveryCodes?: MultiFactorAuthenticationUpdaterecoveryCodesInput | string[]
+    userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -5365,6 +8102,14 @@ export namespace Prisma {
      * @deprecated Use PasswordResetDefaultArgs instead
      */
     export type PasswordResetArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = PasswordResetDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use MultiFactorAuthenticationDefaultArgs instead
+     */
+    export type MultiFactorAuthenticationArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = MultiFactorAuthenticationDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use TotpDefaultArgs instead
+     */
+    export type TotpArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = TotpDefaultArgs<ExtArgs>
     /**
      * @deprecated Use CourseDefaultArgs instead
      */
