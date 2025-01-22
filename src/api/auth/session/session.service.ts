@@ -11,7 +11,7 @@ import type { Request } from 'express'
 import { PrismaService } from '@/infra/prisma/prisma.service'
 import { RedisService } from '@/infra/redis/redis.service'
 
-import { LoginDto } from './dto/login.dto'
+import { LoginDto } from './dto'
 
 @Injectable()
 export class SessionService {
@@ -20,7 +20,7 @@ export class SessionService {
 		private readonly redisService: RedisService
 	) {}
 
-	public async login(req: Request, dto: LoginDto, userAgent: string) {
+	public async login(dto: LoginDto, ip: string, userAgent: string) {
 		const { email, password, pin } = dto
 
 		const user = await this.prismaService.user.findFirst({
@@ -47,7 +47,7 @@ export class SessionService {
 
 		const session = await this.redisService.createSession(
 			user,
-			req,
+			ip,
 			userAgent
 		)
 
@@ -117,9 +117,8 @@ export class SessionService {
 								createdAt: userSession.createdAt,
 								country: userSession.geo.name,
 								city: userSession.geo.capital,
-								browser: userSession.client.name,
-								os: userSession.os.name,
-								type: userSession.device.type
+								browser: userSession.browser.name,
+								os: userSession.os.name
 							}
 						}
 					}
@@ -155,12 +154,10 @@ export class SessionService {
 						return {
 							id: session.id,
 							createdAt: userSession.createdAt,
-							name: session.name,
 							country: userSession.geo.name,
 							city: userSession.geo.capital,
-							browser: userSession.client.name,
-							os: userSession.os.name,
-							type: userSession.device.type
+							browser: userSession.browser.name,
+							os: userSession.os.name
 						}
 					}
 				}

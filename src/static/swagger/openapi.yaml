@@ -9,8 +9,7 @@ paths:
         "200":
           description: ""
       summary: Fetch account
-      tags:
-        &a1
+      tags: &a1
         - Account
   /auth/account/create:
     post:
@@ -90,8 +89,7 @@ paths:
         "200":
           description: ""
       summary: Login
-      tags:
-        &a2
+      tags: &a2
         - Session
   /auth/session/logout:
     post:
@@ -123,7 +121,7 @@ paths:
           description: ""
       summary: Fetch Current Session
       tags: *a2
-  "/auth/session/{id}":
+  /auth/session/{id}:
     delete:
       description: Delete a specific active session.
       operationId: SessionController_remove
@@ -147,8 +145,7 @@ paths:
         "200":
           description: ""
       summary: Create MFA ticket​
-      tags:
-        &a3
+      tags: &a3
         - MFA
   /auth/mfa:
     get:
@@ -215,8 +212,7 @@ paths:
         "200":
           description: ""
       summary: Fetch All
-      tags:
-        &a4
+      tags: &a4
         - Users
   /users/@me:
     get:
@@ -244,10 +240,9 @@ paths:
       responses:
         "200":
           description: ""
-      tags:
-        &a5
+      tags: &a5
         - Course
-  "/courses/by-slug/{slug}":
+  /courses/by-slug/{slug}:
     get:
       operationId: CourseController_findBySlug
       parameters:
@@ -260,7 +255,7 @@ paths:
         "200":
           description: ""
       tags: *a5
-  "/courses/by-id/{id}":
+  /courses/by-id/{id}:
     get:
       operationId: CourseController_findById
       parameters:
@@ -287,7 +282,7 @@ paths:
         "200":
           description: ""
       tags: *a5
-  "/courses/change/thumbnail/{id}":
+  /courses/change/thumbnail/{id}:
     patch:
       operationId: CourseController_changeThumbnail
       parameters:

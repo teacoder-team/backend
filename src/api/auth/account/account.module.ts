@@ -1,12 +1,10 @@
 import { Module } from '@nestjs/common'
 
-import { TelegramService } from '@/services/telegram/telegram.service'
-
 import { AccountController } from './account.controller'
 import { AccountService } from './account.service'
 
 @Module({
 	controllers: [AccountController],
-	providers: [AccountService, TelegramService]
+	providers: [AccountService]
 })
 export class AccountModule {}

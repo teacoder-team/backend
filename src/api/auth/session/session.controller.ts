@@ -14,7 +14,12 @@ import type { User } from '@prisma/generated'
 import type { Request } from 'express'
 import { Turnstile } from 'nestjs-cloudflare-captcha'
 
-import { Authorization, Authorized, UserAgent } from '@/common/decorators'
+import {
+	Authorization,
+	Authorized,
+	ClientIp,
+	UserAgent
+} from '@/common/decorators'
 
 import { LoginDto } from './dto'
 import { SessionService } from './session.service'
@@ -29,11 +34,11 @@ export class SessionController {
 	@Post('login')
 	@HttpCode(HttpStatus.OK)
 	public async login(
-		@Req() req: Request,
 		@Body() dto: LoginDto,
+		@ClientIp() ip: string,
 		@UserAgent() userAgent: string
 	) {
-		return this.sessionService.login(req, dto, userAgent)
+		return this.sessionService.login(dto, ip, userAgent)
 	}
 
 	@ApiOperation({
