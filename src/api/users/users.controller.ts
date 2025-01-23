@@ -12,10 +12,11 @@ import {
 } from '@nestjs/common'
 import { FileInterceptor } from '@nestjs/platform-express'
 import { ApiOperation } from '@nestjs/swagger'
-import { type User, UserRole } from '@prisma/generated'
 
 import { Authorization } from '@/common/decorators/auth.decorator'
 import { Authorized } from '@/common/decorators/authorized.decorator'
+
+import { type Account, UserRole } from '../auth/account/entities'
 
 import { UsersService } from './users.service'
 
@@ -40,8 +41,8 @@ export class UsersController {
 	@Authorization()
 	@Get('@me')
 	@HttpCode(HttpStatus.OK)
-	public async self(@Authorized() user: User) {
-		return this.usersService.self(user)
+	public async self(@Authorized() account: Account) {
+		return this.usersService.self(account)
 	}
 
 	@ApiOperation({ summary: 'Изменить аватар пользователя' })
@@ -56,7 +57,7 @@ export class UsersController {
 	@Patch('@me/avatar')
 	@HttpCode(HttpStatus.OK)
 	public async changeAvatar(
-		@Authorized() user: User,
+		@Authorized() account: Account,
 		@UploadedFile(
 			new ParseFilePipe({
 				validators: [
@@ -72,6 +73,6 @@ export class UsersController {
 		)
 		file: Express.Multer.File
 	) {
-		return this.usersService.changeAvatar(user, file)
+		return this.usersService.changeAvatar(account, file)
 	}
 }

@@ -1,30 +1,32 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
+import { InjectRepository } from '@nestjs/typeorm'
+import type { Repository } from 'typeorm'
 
-import { slugify } from '@/common/utils/slugify'
-import { PrismaService } from '@/infra/prisma/prisma.service'
+import { slugify } from '@/common/utils'
 import { StorageService } from '@/services/storage/storage.service'
 
-import { CreateCourseDto } from './dto/create-course.dto'
+import type { CreateCourseDto } from './dto'
+import { Course } from './entities'
 
 @Injectable()
 export class CourseService {
-	public constructor(
-		private readonly prismaService: PrismaService,
+	constructor(
+		@InjectRepository(Course)
+		private readonly courseRepository: Repository<Course>,
 		private readonly storageService: StorageService
 	) {}
 
 	public async findAll() {
-		const courses = await this.prismaService.course.findMany({
-			orderBy: {
-				createdAt: 'desc'
+		const courses = await this.courseRepository.find({
+			order: {
+				createdAt: 'DESC'
 			}
 		})
-
 		return courses
 	}
 
 	public async findBySlug(slug: string) {
-		const course = await this.prismaService.course.findUnique({
+		const course = await this.courseRepository.findOne({
 			where: {
 				slug
 			}
@@ -38,7 +40,7 @@ export class CourseService {
 	}
 
 	public async findById(id: string) {
-		const course = await this.prismaService.course.findUnique({
+		const course = await this.courseRepository.findOne({
 			where: {
 				id
 			}
@@ -54,12 +56,12 @@ export class CourseService {
 	public async create(dto: CreateCourseDto) {
 		const { title } = dto
 
-		await this.prismaService.course.create({
-			data: {
-				title,
-				slug: slugify(title)
-			}
+		const course = this.courseRepository.create({
+			title,
+			slug: slugify(title)
 		})
+
+		await this.courseRepository.save(course)
 
 		return true
 	}
@@ -71,18 +73,8 @@ export class CourseService {
 			await this.storageService.deleteFile(course.thumbnail)
 		}
 
-		// const uploadedFile = await this.storageService.uploadFile(
-		// 	file.buffer,
-		// 	'courses'
-		// )
-
-		await this.prismaService.course.update({
-			where: {
-				id: course.id
-			},
-			data: {
-				thumbnail: null
-			}
+		await this.courseRepository.update(course.id, {
+			thumbnail: null
 		})
 
 		return true

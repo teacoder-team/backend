@@ -4,7 +4,6 @@ import { NestFactory } from '@nestjs/core'
 import helmet from 'helmet'
 
 import { AppModule } from './app.module'
-import { GlobalExceptionFilter } from './common/filters/global-exception.filter'
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor'
 import { parseBoolean } from './common/utils/parse-boolean'
 import { setupSwagger } from './common/utils/setup-swagger'
@@ -17,7 +16,6 @@ async function bootstrap() {
 
 	app.use(helmet())
 
-	app.useGlobalFilters(new GlobalExceptionFilter())
 	app.useGlobalInterceptors(new LoggingInterceptor())
 
 	app.useGlobalPipes(
@@ -31,6 +29,8 @@ async function bootstrap() {
 	if (parseBoolean(config.getOrThrow<string>('SWAGGER_ENABLED'))) {
 		await setupSwagger(app)
 	}
+
+	console.log(config.getOrThrow<string>('APPLICATION_URL'))
 
 	await app.listen(config.getOrThrow<number>('APPLICATION_PORT'))
 	Logger.log(

@@ -22,8 +22,6 @@
 		"test:cov": "jest --coverage",
 		"test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
 		"test:e2e": "jest --config ./test/jest-e2e.json",
-		"db:push": "prisma db push",
-		"db:studio": "prisma studio",
 		"release": "release-it"
 	},
 	"dependencies": {
@@ -36,7 +34,7 @@
 		"@nestjs/platform-express": "^10.4.8",
 		"@nestjs/schedule": "^4.1.1",
 		"@nestjs/swagger": "^8.0.7",
-		"@prisma/client": "^5.22.0",
+		"@nestjs/typeorm": "^11.0.0",
 		"argon2": "^0.41.1",
 		"axios": "^1.7.7",
 		"class-transformer": "^0.5.1",
@@ -47,12 +45,13 @@
 		"helmet": "^8.0.0",
 		"ioredis": "^5.4.1",
 		"nestjs-cloudflare-captcha": "^0.0.10",
-		"prisma": "^5.22.0",
+		"pg": "^8.13.1",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
 		"reflect-metadata": "^0.2.2",
 		"rxjs": "^7.8.1",
 		"sharp": "^0.33.5",
+		"typeorm": "^0.3.20",
 		"ua-parser-js": "^2.0.0",
 		"yaml": "^2.7.0"
 	},
