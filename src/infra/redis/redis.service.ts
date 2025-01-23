@@ -5,13 +5,13 @@ import {
 	type OnModuleInit
 } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import type { User } from '@prisma/generated'
 import { randomBytes } from 'crypto'
 import { lookup } from 'geoip-country'
 import Redis from 'ioredis'
 import { UAParser } from 'ua-parser-js'
 import { v4 as uuidv4 } from 'uuid'
 
+import type { Account } from '@/api/auth/account/entities'
 import type { Session, UserSession } from '@/common/interfaces'
 
 @Injectable()
@@ -23,7 +23,12 @@ export class RedisService
 	private parser: UAParser
 
 	public constructor(private readonly configService: ConfigService) {
-		super(configService.getOrThrow<string>('REDIS_URI'))
+		super({
+			host: configService.getOrThrow<string>('REDIS_HOST'),
+			port: configService.getOrThrow<number>('REDIS_PORT'),
+			username: configService.getOrThrow<string>('REDIS_USER'),
+			password: configService.getOrThrow<string>('REDIS_PASSWORD')
+		})
 
 		this.parser = new UAParser()
 	}
@@ -55,7 +60,11 @@ export class RedisService
 		}
 	}
 
-	public async createSession(user: User, ip: string, userAgent: string) {
+	public async createSession(
+		account: Account,
+		ip: string,
+		userAgent: string
+	) {
 		this.parser.setUA(userAgent)
 		const result = this.parser.getResult()
 		const geo = lookup(ip)
@@ -63,7 +72,7 @@ export class RedisService
 		const session: Session = {
 			id: uuidv4(),
 			token: randomBytes(40).toString('hex'),
-			userId: user.id
+			userId: account.id
 		}
 
 		await this.hmset(`sessions:${session.id}`, session)
