@@ -5,23 +5,25 @@ import {
 	HttpCode,
 	HttpStatus,
 	Patch,
-	Post,
-	Req
+	Post
 } from '@nestjs/common'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
-import { type User } from '@prisma/generated'
-import type { Request } from 'express'
 import { Turnstile } from 'nestjs-cloudflare-captcha'
 
-import { Authorization, Authorized, UserAgent } from '@/common/decorators'
+import {
+	Authorization,
+	Authorized,
+	ClientIp,
+	UserAgent
+} from '@/common/decorators'
 
 import { AccountService } from './account.service'
-import {
-	ChangePasswordDto,
+import type {
 	CreateUserDto,
 	PasswordResetDto,
 	SendPasswordResetDto
 } from './dto'
+import type { Account } from './entities'
 
 @ApiTags('Account')
 @Controller('auth/account')
@@ -35,8 +37,8 @@ export class AccountController {
 	@Authorization()
 	@Get()
 	@HttpCode(HttpStatus.OK)
-	public async fetch(@Authorized() user: User) {
-		return this.accountService.fetch(user)
+	public async fetch(@Authorized() account: Account) {
+		return this.accountService.fetch(account)
 	}
 
 	@ApiOperation({
@@ -47,11 +49,11 @@ export class AccountController {
 	@Post('create')
 	@HttpCode(HttpStatus.OK)
 	public async create(
-		@Req() req: Request,
 		@Body() dto: CreateUserDto,
+		@ClientIp() ip: string,
 		@UserAgent() userAgent: string
 	) {
-		return this.accountService.create(req, dto, userAgent)
+		return this.accountService.create(dto, ip, userAgent)
 	}
 
 	@ApiOperation({
@@ -74,19 +76,5 @@ export class AccountController {
 	@HttpCode(HttpStatus.OK)
 	public async passwordReset(@Body() dto: PasswordResetDto) {
 		return this.accountService.passwordReset(dto)
-	}
-
-	@ApiOperation({
-		summary: 'Change Password',
-		description: 'Change the current account password.'
-	})
-	@Authorization()
-	@Patch('change/password')
-	@HttpCode(HttpStatus.OK)
-	public async changePassword(
-		@Authorized() user: User,
-		@Body() dto: ChangePasswordDto
-	) {
-		return this.accountService.changePassword(user, dto)
 	}
 }

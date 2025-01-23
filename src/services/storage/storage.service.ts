@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import FormData from 'form-data'
 
-import { FileResponse } from '@/common/interfaces'
+import type { FileResponse } from '@/common/interfaces'
 
 @Injectable()
 export class StorageService {

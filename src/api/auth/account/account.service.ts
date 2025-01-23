@@ -4,36 +4,40 @@ import {
 	Injectable,
 	NotFoundException
 } from '@nestjs/common'
-import { type User } from '@prisma/generated'
-import { hash, verify } from 'argon2'
+import { InjectRepository } from '@nestjs/typeorm'
+import { hash } from 'argon2'
 import { randomBytes } from 'crypto'
 import validate from 'deep-email-validator'
-import type { Request } from 'express'
+import type { Repository } from 'typeorm'
 
-import { slugify } from '@/common/utils/slugify'
-import { PrismaService } from '@/infra/prisma/prisma.service'
+import { slugify } from '@/common/utils'
 import { RedisService } from '@/infra/redis/redis.service'
 
-import { ChangePasswordDto } from './dto/change-password.dto'
-import { CreateUserDto } from './dto/create-user.dto'
-import { PasswordResetDto } from './dto/password-reset.dto'
-import { SendPasswordResetDto } from './dto/send-password-reset.dto'
+import type {
+	CreateUserDto,
+	PasswordResetDto,
+	SendPasswordResetDto
+} from './dto'
+import { Account, PasswordReset } from './entities'
 
 @Injectable()
 export class AccountService {
 	public constructor(
-		private readonly prismaService: PrismaService,
+		@InjectRepository(Account)
+		private readonly accountRepository: Repository<Account>,
+		@InjectRepository(PasswordReset)
+		private readonly passwordResetRepository: Repository<PasswordReset>,
 		private readonly redisService: RedisService
 	) {}
 
-	public async fetch(user: User) {
+	public async fetch(account: Account) {
 		return {
-			id: user.id,
-			email: user.email
+			id: account.id,
+			email: account.email
 		}
 	}
 
-	public async create(req: Request, dto: CreateUserDto, userAgent: string) {
+	public async create(dto: CreateUserDto, ip: string, userAgent: string) {
 		const { name, email, password } = dto
 
 		const { valid } = await validate(email)
@@ -42,7 +46,7 @@ export class AccountService {
 			throw new BadRequestException('Невалидная почта')
 		}
 
-		const isExists = await this.prismaService.user.findFirst({
+		const isExists = await this.accountRepository.findOne({
 			where: {
 				email
 			}
@@ -52,18 +56,18 @@ export class AccountService {
 			throw new ConflictException('Такой пользователь уже существует')
 		}
 
-		const user = await this.prismaService.user.create({
-			data: {
-				displayName: name,
-				username: slugify(`${email}-${name}`),
-				email,
-				password: await hash(password)
-			}
+		const account = await this.accountRepository.create({
+			email,
+			password: await hash(password),
+			displayName: name,
+			username: slugify(`${email}-${name}`)
 		})
 
+		await this.accountRepository.save(account)
+
 		const session = await this.redisService.createSession(
-			user,
-			req,
+			account,
+			ip,
 			userAgent
 		)
 
@@ -73,7 +77,7 @@ export class AccountService {
 	public async sendPasswordReset(dto: SendPasswordResetDto) {
 		const { email } = dto
 
-		const user = await this.prismaService.user.findUnique({
+		const user = await this.accountRepository.findOne({
 			where: { email }
 		})
 
@@ -86,19 +90,10 @@ export class AccountService {
 		const expiry = new Date()
 		expiry.setHours(expiry.getHours() + 1)
 
-		await this.prismaService.passwordReset.upsert({
-			where: {
-				userId: user.id
-			},
-			update: {
-				token,
-				expiry
-			},
-			create: {
-				token,
-				expiry,
-				userId: user.id
-			}
+		await this.passwordResetRepository.save({
+			user,
+			token,
+			expiry
 		})
 
 		return true
@@ -107,7 +102,7 @@ export class AccountService {
 	public async passwordReset(dto: PasswordResetDto) {
 		const { token, password } = dto
 
-		const reset = await this.prismaService.passwordReset.findUnique({
+		const reset = await this.passwordResetRepository.findOne({
 			where: {
 				token
 			}
@@ -123,41 +118,13 @@ export class AccountService {
 			throw new BadRequestException('Срок действия токена истек')
 		}
 
-		await this.prismaService.user.update({
-			where: {
-				id: reset.userId
-			},
-			data: {
-				password: await hash(password)
-			}
+		const account = await reset.account
+
+		await this.accountRepository.update(account.id, {
+			password: await hash(password)
 		})
 
-		await this.prismaService.passwordReset.delete({
-			where: {
-				id: reset.id
-			}
-		})
-
-		return true
-	}
-
-	public async changePassword(user: User, dto: ChangePasswordDto) {
-		const { oldPassword, newPassword } = dto
-
-		const isValidPassword = await verify(user.password, oldPassword)
-
-		if (!isValidPassword) {
-			throw new BadRequestException('Неверный старый пароль')
-		}
-
-		await this.prismaService.user.update({
-			where: {
-				id: user.id
-			},
-			data: {
-				password: await hash(newPassword)
-			}
-		})
+		await this.passwordResetRepository.delete(reset.id)
 
 		return true
 	}

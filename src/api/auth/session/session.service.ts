@@ -4,26 +4,29 @@ import {
 	NotFoundException,
 	UnauthorizedException
 } from '@nestjs/common'
-import type { User } from '@prisma/generated'
+import { InjectRepository } from '@nestjs/typeorm'
 import { verify } from 'argon2'
 import type { Request } from 'express'
+import type { Repository } from 'typeorm'
 
-import { PrismaService } from '@/infra/prisma/prisma.service'
 import { RedisService } from '@/infra/redis/redis.service'
 
-import { LoginDto } from './dto/login.dto'
+import { Account } from '../account/entities'
+
+import type { LoginDto } from './dto'
 
 @Injectable()
 export class SessionService {
 	public constructor(
-		private readonly prismaService: PrismaService,
+		@InjectRepository(Account)
+		private readonly accountRepository: Repository<Account>,
 		private readonly redisService: RedisService
 	) {}
 
-	public async login(req: Request, dto: LoginDto, userAgent: string) {
-		const { email, password, pin } = dto
+	public async login(dto: LoginDto, ip: string, userAgent: string) {
+		const { email, password } = dto
 
-		const user = await this.prismaService.user.findFirst({
+		const user = await this.accountRepository.findOne({
 			where: {
 				email
 			}
@@ -47,7 +50,7 @@ export class SessionService {
 
 		const session = await this.redisService.createSession(
 			user,
-			req,
+			ip,
 			userAgent
 		)
 
@@ -85,7 +88,7 @@ export class SessionService {
 		throw new UnauthorizedException('Invalid or expired session')
 	}
 
-	public async findAll(req: Request, user: User) {
+	public async findAll(req: Request, account: Account) {
 		const token = req.headers['x-session-token'] as string
 		const keys = await this.redisService.keys(`sessions:*`)
 
@@ -102,7 +105,7 @@ export class SessionService {
 
 				const session = await this.redisService.hgetall(sessionKey)
 
-				if (session.userId === user.id && session.token !== token) {
+				if (session.userId === account.id && session.token !== token) {
 					const userSessionKeys =
 						await this.redisService.keys(`user_sessions:*`)
 
@@ -117,9 +120,8 @@ export class SessionService {
 								createdAt: userSession.createdAt,
 								country: userSession.geo.name,
 								city: userSession.geo.capital,
-								browser: userSession.client.name,
-								os: userSession.os.name,
-								type: userSession.device.type
+								browser: userSession.browser.name,
+								os: userSession.os.name
 							}
 						}
 					}
@@ -134,7 +136,7 @@ export class SessionService {
 		return userSessions.filter(session => session !== null)
 	}
 
-	public async findCurrent(req: Request, user: User) {
+	public async findCurrent(req: Request, account: Account) {
 		const token = req.headers['x-session-token'] as string
 
 		const keys = await this.redisService.keys(`sessions:*`)
@@ -142,7 +144,7 @@ export class SessionService {
 		for (const key of keys) {
 			const session = await this.redisService.hgetall(key)
 
-			if (session.token === token && session.userId === user.id) {
+			if (session.token === token && session.userId === account.id) {
 				const userSessionKeys =
 					await this.redisService.keys(`user_sessions:*`)
 
@@ -155,12 +157,10 @@ export class SessionService {
 						return {
 							id: session.id,
 							createdAt: userSession.createdAt,
-							name: session.name,
 							country: userSession.geo.name,
 							city: userSession.geo.capital,
-							browser: userSession.client.name,
-							os: userSession.os.name,
-							type: userSession.device.type
+							browser: userSession.browser.name,
+							os: userSession.os.name
 						}
 					}
 				}
@@ -216,9 +216,7 @@ export class SessionService {
 
 				await this.redisService.del(key)
 
-				return {
-					message: `Сессия с ID ${id} успешно удалена`
-				}
+				return true
 			}
 		}
 

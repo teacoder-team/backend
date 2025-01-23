@@ -4,6 +4,7 @@ import { NestFactory } from '@nestjs/core'
 import helmet from 'helmet'
 
 import { AppModule } from './app.module'
+import { LoggingInterceptor } from './common/interceptors/logging.interceptor'
 import { parseBoolean } from './common/utils/parse-boolean'
 import { setupSwagger } from './common/utils/setup-swagger'
 import { getCorsConfig } from './config'
@@ -14,6 +15,8 @@ async function bootstrap() {
 	const config = app.get(ConfigService)
 
 	app.use(helmet())
+
+	app.useGlobalInterceptors(new LoggingInterceptor())
 
 	app.useGlobalPipes(
 		new ValidationPipe({
@@ -26,6 +29,8 @@ async function bootstrap() {
 	if (parseBoolean(config.getOrThrow<string>('SWAGGER_ENABLED'))) {
 		await setupSwagger(app)
 	}
+
+	console.log(config.getOrThrow<string>('APPLICATION_URL'))
 
 	await app.listen(config.getOrThrow<number>('APPLICATION_PORT'))
 	Logger.log(

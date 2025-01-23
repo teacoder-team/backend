@@ -1,10 +1,11 @@
-import { User } from '@prisma/generated'
 import 'http'
+
+import type { Account } from '@/api/auth/account/entities'
 
 declare global {
 	namespace Express {
 		interface Request {
-			user?: User
+			user?: Account
 		}
 	}
 }
