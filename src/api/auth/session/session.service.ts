@@ -26,30 +26,30 @@ export class SessionService {
 	public async login(dto: LoginDto, ip: string, userAgent: string) {
 		const { email, password } = dto
 
-		const user = await this.accountRepository.findOne({
+		const account = await this.accountRepository.findOne({
 			where: {
 				email
 			}
 		})
 
-		if (!user) {
+		if (!account) {
 			throw new NotFoundException('Пользователь не найден')
 		}
 
-		if (!user.password) {
+		if (!account.password) {
 			throw new BadRequestException(
 				'Вход через пароль недоступен, т.к. вы зарегистрированы через соц. сеть'
 			)
 		}
 
-		const isValidPassword = await verify(user.password, password)
+		const isValidPassword = await verify(account.password, password)
 
 		if (!isValidPassword) {
 			throw new UnauthorizedException('Неправильный пароль')
 		}
 
 		const session = await this.redisService.createSession(
-			user,
+			account,
 			ip,
 			userAgent
 		)

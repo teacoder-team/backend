@@ -20,10 +20,19 @@ function createSwaggerConfig() {
 		.setDescription('API for Teacoder educational platform')
 		.setVersion('1.0.0')
 		.setTermsOfService('https://teacoder.ru/docs/agreement')
-		.setContact('TeaCoder Team', 'https://teacoder.ru', 'help@teacoder.ru')
+		.setContact(
+			'TeaCoder Support',
+			'https://teacoder.ru',
+			'support@teacoder.ru'
+		)
 		.setLicense(
-			'AGPL-3.0 license',
-			'https://github.com/teacoder-team/backend?tab=AGPL-3.0-1-ov-file#readme'
+			'AGPLv3',
+			'https://github.com/teacoder-team/backend/blob/master/LICENSE'
+		)
+		.addServer('https://api.teacoder.ru', 'TeaCoder Production')
+		.addServer(
+			'http://local.teacoder.ru:14702',
+			'Local TeaCoder Environment'
 		)
 		.build()
 }

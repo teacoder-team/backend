@@ -254,14 +254,18 @@ info:
   description: API for Teacoder educational platform
   version: 1.0.0
   contact:
-    name: TeaCoder Team
+    name: TeaCoder Support
     url: https://teacoder.ru
-    email: help@teacoder.ru
+    email: support@teacoder.ru
   termsOfService: https://teacoder.ru/docs/agreement
   license:
-    name: AGPL-3.0 license
-    url: https://github.com/teacoder-team/backend?tab=AGPL-3.0-1-ov-file#readme
+    name: AGPLv3
+    url: https://github.com/teacoder-team/backend/blob/master/LICENSE
 tags: []
-servers: []
+servers:
+  - url: https://api.teacoder.ru
+    description: TeaCoder Production
+  - url: http://local.teacoder.ru:14702
+    description: Local TeaCoder Environment
 components:
   schemas: {}
