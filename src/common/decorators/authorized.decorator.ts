@@ -1,9 +1,8 @@
-import { createParamDecorator, type ExecutionContext } from '@nestjs/common'
-
-import type { Account } from '@/api/auth/account/entities'
+import { createParamDecorator, ExecutionContext } from '@nestjs/common'
+import type { User } from '@prisma/generated'
 
 export const Authorized = createParamDecorator(
-	(data: keyof Account, ctx: ExecutionContext) => {
+	(data: keyof User, ctx: ExecutionContext) => {
 		const request = ctx.switchToHttp().getRequest()
 		const user = request.user
 

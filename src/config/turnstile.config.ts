@@ -1,4 +1,4 @@
-import type { ConfigService } from '@nestjs/config'
+import { ConfigService } from '@nestjs/config'
 import type { TurnstileOptions } from 'nestjs-cloudflare-captcha'
 
 import { parseBoolean } from '@/common/utils'

@@ -5,7 +5,7 @@ TeaCoder Backend is the server-side component of the website teacoder.ru.
 ## Tech Stack
 
 -   **NestJS**: Framework for building server-side applications.
--   **TypeORM**: ORM for database management.
+-   **Prisma**: ORM for database management.
 -   **Redis**: In-memory data store used for caching and session management.
 -   **Docker**: Platform for containerization.
 

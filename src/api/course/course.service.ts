@@ -1,32 +1,30 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
-import { InjectRepository } from '@nestjs/typeorm'
-import type { Repository } from 'typeorm'
 
-import { slugify } from '@/common/utils'
+import { slugify } from '@/common/utils/slugify'
+import { PrismaService } from '@/infra/prisma/prisma.service'
 import { StorageService } from '@/services/storage/storage.service'
 
-import type { CreateCourseDto } from './dto'
-import { Course } from './entities'
+import { CreateCourseDto } from './dto/create-course.dto'
 
 @Injectable()
 export class CourseService {
-	constructor(
-		@InjectRepository(Course)
-		private readonly courseRepository: Repository<Course>,
+	public constructor(
+		private readonly prismaService: PrismaService,
 		private readonly storageService: StorageService
 	) {}
 
 	public async findAll() {
-		const courses = await this.courseRepository.find({
-			order: {
-				createdAt: 'DESC'
+		const courses = await this.prismaService.course.findMany({
+			orderBy: {
+				createdAt: 'desc'
 			}
 		})
+
 		return courses
 	}
 
 	public async findBySlug(slug: string) {
-		const course = await this.courseRepository.findOne({
+		const course = await this.prismaService.course.findUnique({
 			where: {
 				slug
 			}
@@ -40,7 +38,7 @@ export class CourseService {
 	}
 
 	public async findById(id: string) {
-		const course = await this.courseRepository.findOne({
+		const course = await this.prismaService.course.findUnique({
 			where: {
 				id
 			}
@@ -56,12 +54,12 @@ export class CourseService {
 	public async create(dto: CreateCourseDto) {
 		const { title } = dto
 
-		const course = this.courseRepository.create({
-			title,
-			slug: slugify(title)
+		await this.prismaService.course.create({
+			data: {
+				title,
+				slug: slugify(title)
+			}
 		})
-
-		await this.courseRepository.save(course)
 
 		return true
 	}
@@ -73,8 +71,18 @@ export class CourseService {
 			await this.storageService.deleteFile(course.thumbnail)
 		}
 
-		await this.courseRepository.update(course.id, {
-			thumbnail: null
+		// const uploadedFile = await this.storageService.uploadFile(
+		// 	file.buffer,
+		// 	'courses'
+		// )
+
+		await this.prismaService.course.update({
+			where: {
+				id: course.id
+			},
+			data: {
+				thumbnail: null
+			}
 		})
 
 		return true
