@@ -4,52 +4,53 @@ import {
 	NotFoundException,
 	UnauthorizedException
 } from '@nestjs/common'
-import { InjectRepository } from '@nestjs/typeorm'
+import type { User } from '@prisma/generated'
 import { verify } from 'argon2'
 import type { Request } from 'express'
-import type { Repository } from 'typeorm'
 
+import { PrismaService } from '@/infra/prisma/prisma.service'
 import { RedisService } from '@/infra/redis/redis.service'
 
-import { Account } from '../account/entities'
-
-import type { LoginDto } from './dto'
+import { LoginDto } from './dto'
 
 @Injectable()
 export class SessionService {
 	public constructor(
-		@InjectRepository(Account)
-		private readonly accountRepository: Repository<Account>,
+		private readonly prismaService: PrismaService,
 		private readonly redisService: RedisService
 	) {}
 
 	public async login(dto: LoginDto, ip: string, userAgent: string) {
-		const { email, password } = dto
+		const { email, password, pin } = dto
 
-		const user = await this.accountRepository.findOne({
+<<<<<<< HEAD
+		const account = await this.accountRepository.findOne({
+=======
+		const user = await this.prismaService.user.findFirst({
+>>>>>>> parent of 207e3fd (chore: migrate from Prisma to TypeORM)
 			where: {
 				email
 			}
 		})
 
-		if (!user) {
+		if (!account) {
 			throw new NotFoundException('Пользователь не найден')
 		}
 
-		if (!user.password) {
+		if (!account.password) {
 			throw new BadRequestException(
 				'Вход через пароль недоступен, т.к. вы зарегистрированы через соц. сеть'
 			)
 		}
 
-		const isValidPassword = await verify(user.password, password)
+		const isValidPassword = await verify(account.password, password)
 
 		if (!isValidPassword) {
 			throw new UnauthorizedException('Неправильный пароль')
 		}
 
 		const session = await this.redisService.createSession(
-			user,
+			account,
 			ip,
 			userAgent
 		)
@@ -88,7 +89,7 @@ export class SessionService {
 		throw new UnauthorizedException('Invalid or expired session')
 	}
 
-	public async findAll(req: Request, account: Account) {
+	public async findAll(req: Request, user: User) {
 		const token = req.headers['x-session-token'] as string
 		const keys = await this.redisService.keys(`sessions:*`)
 
@@ -105,7 +106,7 @@ export class SessionService {
 
 				const session = await this.redisService.hgetall(sessionKey)
 
-				if (session.userId === account.id && session.token !== token) {
+				if (session.userId === user.id && session.token !== token) {
 					const userSessionKeys =
 						await this.redisService.keys(`user_sessions:*`)
 
@@ -136,7 +137,7 @@ export class SessionService {
 		return userSessions.filter(session => session !== null)
 	}
 
-	public async findCurrent(req: Request, account: Account) {
+	public async findCurrent(req: Request, user: User) {
 		const token = req.headers['x-session-token'] as string
 
 		const keys = await this.redisService.keys(`sessions:*`)
@@ -144,7 +145,7 @@ export class SessionService {
 		for (const key of keys) {
 			const session = await this.redisService.hgetall(key)
 
-			if (session.token === token && session.userId === account.id) {
+			if (session.token === token && session.userId === user.id) {
 				const userSessionKeys =
 					await this.redisService.keys(`user_sessions:*`)
 
@@ -216,7 +217,9 @@ export class SessionService {
 
 				await this.redisService.del(key)
 
-				return true
+				return {
+					message: `Сессия с ID ${id} успешно удалена`
+				}
 			}
 		}
 

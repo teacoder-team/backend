@@ -1,5 +1,5 @@
 import { createParamDecorator, type ExecutionContext } from '@nestjs/common'
-import type { Request } from 'express'
+import { Request } from 'express'
 
 import { IS_DEV_ENV } from '../utils'
 

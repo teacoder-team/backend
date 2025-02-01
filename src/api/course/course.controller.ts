@@ -13,13 +13,12 @@ import {
 	UploadedFile
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
+import { UserRole } from '@prisma/generated'
 
 import { Authorization } from '@/common/decorators/auth.decorator'
 
-import { UserRole } from '../auth/account/entities'
-
 import { CourseService } from './course.service'
-import type { CreateCourseDto } from './dto/create-course.dto'
+import { CreateCourseDto } from './dto/create-course.dto'
 
 @ApiTags('Course')
 @Controller('courses')

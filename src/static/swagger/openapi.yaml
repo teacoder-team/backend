@@ -16,6 +16,12 @@ paths:
       description: Create a new account
       operationId: AccountController_create
       parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateUserDto"
       responses:
         "200":
           description: ""
@@ -26,6 +32,12 @@ paths:
       description: Send an email to reset account password.
       operationId: AccountController_sendPasswordReset
       parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SendPasswordResetDto"
       responses:
         "200":
           description: ""
@@ -35,16 +47,44 @@ paths:
       description: Confirm password reset and change the password.
       operationId: AccountController_passwordReset
       parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PasswordResetDto"
       responses:
         "200":
           description: ""
       summary: Password Reset
+      tags: *a1
+  /auth/account/change/password:
+    patch:
+      description: Change the current account password.
+      operationId: AccountController_changePassword
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChangePasswordDto"
+      responses:
+        "200":
+          description: ""
+      summary: Change Password
       tags: *a1
   /auth/session/login:
     post:
       description: Login to an account.
       operationId: SessionController_login
       parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginDto"
       responses:
         "200":
           description: ""
@@ -232,6 +272,12 @@ paths:
     post:
       operationId: CourseController_create
       parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCourseDto"
       responses:
         "200":
           description: ""
@@ -254,14 +300,36 @@ info:
   description: API for Teacoder educational platform
   version: 1.0.0
   contact:
-    name: TeaCoder Team
+    name: TeaCoder Support
     url: https://teacoder.ru
-    email: help@teacoder.ru
+    email: support@teacoder.ru
   termsOfService: https://teacoder.ru/docs/agreement
   license:
-    name: AGPL-3.0 license
-    url: https://github.com/teacoder-team/backend?tab=AGPL-3.0-1-ov-file#readme
+    name: AGPLv3
+    url: https://github.com/teacoder-team/backend/blob/master/LICENSE
 tags: []
-servers: []
+servers:
+  - url: https://api.teacoder.ru
+    description: TeaCoder Production
+  - url: http://local.teacoder.ru:14702
+    description: Local TeaCoder Environment
 components:
-  schemas: {}
+  schemas:
+    CreateUserDto:
+      type: object
+      properties: {}
+    SendPasswordResetDto:
+      type: object
+      properties: {}
+    PasswordResetDto:
+      type: object
+      properties: {}
+    ChangePasswordDto:
+      type: object
+      properties: {}
+    LoginDto:
+      type: object
+      properties: {}
+    CreateCourseDto:
+      type: object
+      properties: {}

@@ -1,55 +1,57 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
-import { InjectRepository } from '@nestjs/typeorm'
+import { type User } from '@prisma/generated'
 import { randomBytes } from 'crypto'
-import type { Repository } from 'typeorm'
 
-import { Account } from '../account/entities'
-
-import { MultiFactorAuthentication } from './entities'
+import { PrismaService } from '@/infra/prisma/prisma.service'
 
 @Injectable()
 export class MfaService {
-	public constructor(
-		@InjectRepository(MultiFactorAuthentication)
-		private readonly mfaRepository: Repository<MultiFactorAuthentication>,
-		@InjectRepository(Account)
-		private readonly accountRepository: Repository<Account>
-	) {}
+	public constructor(private readonly prismaService: PrismaService) {}
 
-	public async fetchRecovery(account: Account): Promise<string[]> {
-		const mfa = await this.mfaRepository.findOne({
-			where: { account: { id: account.id } }
-		})
+	public async fetchRecovery(user: User): Promise<string[]> {
+		const mfa =
+			await this.prismaService.multiFactorAuthentication.findUnique({
+				where: {
+					userId: user.id
+				}
+			})
 
-		if (!mfa || !mfa.recoveryCodes) {
-			throw new NotFoundException('MFA not found for this account')
+		if (!mfa) {
+			throw new NotFoundException(
+				'Многофакторная аутентификация не включена для этого пользователя'
+			)
 		}
 
 		return mfa.recoveryCodes
 	}
 
-	public async generateRecovery(account: Account): Promise<string[]> {
+	public async generateRecovery(user: User): Promise<string[]> {
 		const recoveryCodes = Array.from({ length: 10 }, () =>
 			randomBytes(4).toString('hex')
 		)
 
-		let mfa = await this.mfaRepository.findOne({
-			where: { account: { id: account.id } }
+		await this.prismaService.user.update({
+			where: {
+				id: user.id
+			},
+			data: {
+				mfa: {
+					upsert: {
+						create: {
+							recoveryCodes,
+							totp: {
+								create: {
+									secret: null
+								}
+							}
+						},
+						update: {
+							recoveryCodes
+						}
+					}
+				}
+			}
 		})
-
-		if (!mfa) {
-			mfa = this.mfaRepository.create({
-				account,
-				recoveryCodes
-			})
-
-			account.mfa = mfa
-			await this.accountRepository.save(account)
-		} else {
-			mfa.recoveryCodes = recoveryCodes
-		}
-
-		await this.mfaRepository.save(mfa)
 
 		return recoveryCodes
 	}

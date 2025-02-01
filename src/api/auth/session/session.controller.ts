@@ -10,6 +10,7 @@ import {
 	Req
 } from '@nestjs/common'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import type { User } from '@prisma/generated'
 import type { Request } from 'express'
 import { Turnstile } from 'nestjs-cloudflare-captcha'
 
@@ -20,9 +21,7 @@ import {
 	UserAgent
 } from '@/common/decorators'
 
-import type { Account } from '../account/entities'
-
-import type { LoginDto } from './dto'
+import { LoginDto } from './dto'
 import { SessionService } from './session.service'
 
 @ApiTags('Session')
@@ -59,8 +58,8 @@ export class SessionController {
 	@Get('all')
 	@HttpCode(HttpStatus.OK)
 	@Authorization()
-	public async findAll(@Req() req: Request, @Authorized() account: Account) {
-		return this.sessionService.findAll(req, account)
+	public async findAll(@Req() req: Request, @Authorized() user: User) {
+		return this.sessionService.findAll(req, user)
 	}
 
 	@ApiOperation({
@@ -70,11 +69,8 @@ export class SessionController {
 	@Authorization()
 	@Get('current')
 	@HttpCode(HttpStatus.OK)
-	public async findCurrent(
-		@Req() req: Request,
-		@Authorized() account: Account
-	) {
-		return this.sessionService.findCurrent(req, account)
+	public async findCurrent(@Req() req: Request, @Authorized() user: User) {
+		return this.sessionService.findCurrent(req, user)
 	}
 
 	@ApiOperation({

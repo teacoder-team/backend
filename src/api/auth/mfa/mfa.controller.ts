@@ -9,10 +9,9 @@ import {
 	Put
 } from '@nestjs/common'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import type { User } from '@prisma/generated'
 
 import { Authorization, Authorized } from '@/common/decorators'
-
-import type { Account } from '../account/entities'
 
 import { MfaService } from './mfa.service'
 
@@ -44,8 +43,8 @@ export class MfaController {
 	@Authorization()
 	@Post('recovery')
 	@HttpCode(HttpStatus.OK)
-	public async fetchRecovery(@Authorized() account: Account) {
-		return this.mfaService.fetchRecovery(account)
+	public async fetchRecovery(@Authorized() user: User) {
+		return this.mfaService.fetchRecovery(user)
 	}
 
 	@ApiOperation({
@@ -55,8 +54,8 @@ export class MfaController {
 	@Authorization()
 	@Patch('recovery')
 	@HttpCode(HttpStatus.OK)
-	public async generateRecovery(@Authorized() account: Account) {
-		return this.mfaService.generateRecovery(account)
+	public async generateRecovery(@Authorized() user: User) {
+		return this.mfaService.generateRecovery(user)
 	}
 
 	@ApiOperation({

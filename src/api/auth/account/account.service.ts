@@ -4,36 +4,33 @@ import {
 	Injectable,
 	NotFoundException
 } from '@nestjs/common'
-import { InjectRepository } from '@nestjs/typeorm'
-import { hash } from 'argon2'
+import type { User } from '@prisma/generated'
+import { hash, verify } from 'argon2'
 import { randomBytes } from 'crypto'
 import validate from 'deep-email-validator'
-import type { Repository } from 'typeorm'
 
 import { slugify } from '@/common/utils'
+import { PrismaService } from '@/infra/prisma/prisma.service'
 import { RedisService } from '@/infra/redis/redis.service'
 
-import type {
+import {
+	ChangePasswordDto,
 	CreateUserDto,
 	PasswordResetDto,
 	SendPasswordResetDto
 } from './dto'
-import { Account, PasswordReset } from './entities'
 
 @Injectable()
 export class AccountService {
 	public constructor(
-		@InjectRepository(Account)
-		private readonly accountRepository: Repository<Account>,
-		@InjectRepository(PasswordReset)
-		private readonly passwordResetRepository: Repository<PasswordReset>,
+		private readonly prismaService: PrismaService,
 		private readonly redisService: RedisService
 	) {}
 
-	public async fetch(account: Account) {
+	public async fetch(user: User) {
 		return {
-			id: account.id,
-			email: account.email
+			id: user.id,
+			email: user.email
 		}
 	}
 
@@ -46,7 +43,7 @@ export class AccountService {
 			throw new BadRequestException('Невалидная почта')
 		}
 
-		const isExists = await this.accountRepository.findOne({
+		const isExists = await this.prismaService.user.findFirst({
 			where: {
 				email
 			}
@@ -56,17 +53,17 @@ export class AccountService {
 			throw new ConflictException('Такой пользователь уже существует')
 		}
 
-		const account = await this.accountRepository.create({
-			email,
-			password: await hash(password),
-			displayName: name,
-			username: slugify(`${email}-${name}`)
+		const user = await this.prismaService.user.create({
+			data: {
+				displayName: name,
+				username: slugify(`${email}-${name}`),
+				email,
+				password: await hash(password)
+			}
 		})
 
-		await this.accountRepository.save(account)
-
 		const session = await this.redisService.createSession(
-			account,
+			user,
 			ip,
 			userAgent
 		)
@@ -77,7 +74,7 @@ export class AccountService {
 	public async sendPasswordReset(dto: SendPasswordResetDto) {
 		const { email } = dto
 
-		const user = await this.accountRepository.findOne({
+		const user = await this.prismaService.user.findUnique({
 			where: { email }
 		})
 
@@ -90,10 +87,19 @@ export class AccountService {
 		const expiry = new Date()
 		expiry.setHours(expiry.getHours() + 1)
 
-		await this.passwordResetRepository.save({
-			user,
-			token,
-			expiry
+		await this.prismaService.passwordReset.upsert({
+			where: {
+				userId: user.id
+			},
+			update: {
+				token,
+				expiry
+			},
+			create: {
+				token,
+				expiry,
+				userId: user.id
+			}
 		})
 
 		return true
@@ -102,7 +108,7 @@ export class AccountService {
 	public async passwordReset(dto: PasswordResetDto) {
 		const { token, password } = dto
 
-		const reset = await this.passwordResetRepository.findOne({
+		const reset = await this.prismaService.passwordReset.findUnique({
 			where: {
 				token
 			}
@@ -118,13 +124,41 @@ export class AccountService {
 			throw new BadRequestException('Срок действия токена истек')
 		}
 
-		const account = await reset.account
-
-		await this.accountRepository.update(account.id, {
-			password: await hash(password)
+		await this.prismaService.user.update({
+			where: {
+				id: reset.userId
+			},
+			data: {
+				password: await hash(password)
+			}
 		})
 
-		await this.passwordResetRepository.delete(reset.id)
+		await this.prismaService.passwordReset.delete({
+			where: {
+				id: reset.id
+			}
+		})
+
+		return true
+	}
+
+	public async changePassword(user: User, dto: ChangePasswordDto) {
+		const { oldPassword, newPassword } = dto
+
+		const isValidPassword = await verify(user.password, oldPassword)
+
+		if (!isValidPassword) {
+			throw new BadRequestException('Неверный старый пароль')
+		}
+
+		await this.prismaService.user.update({
+			where: {
+				id: user.id
+			},
+			data: {
+				password: await hash(newPassword)
+			}
+		})
 
 		return true
 	}

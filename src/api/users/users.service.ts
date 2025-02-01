@@ -1,42 +1,45 @@
 import { Injectable } from '@nestjs/common'
-import { InjectRepository } from '@nestjs/typeorm'
+import { User } from '@prisma/generated'
 import sharp from 'sharp'
-import type { Repository } from 'typeorm'
 
+import { PrismaService } from '@/infra/prisma/prisma.service'
 import { StorageService } from '@/services/storage/storage.service'
-
-import { Account } from '../auth/account/entities'
 
 @Injectable()
 export class UsersService {
 	public constructor(
-		@InjectRepository(Account)
-		private readonly accountRepository: Repository<Account>,
+		private readonly prismaService: PrismaService,
 		private readonly storageService: StorageService
 	) {}
 
 	public async findAll() {
-		const users = await this.accountRepository.find({
-			order: {
-				createdAt: 'DESC'
+		const users = await this.prismaService.user.findMany({
+			orderBy: {
+				createdAt: 'desc'
 			},
-			select: ['id', 'createdAt', 'displayName', 'email', 'role']
+			select: {
+				id: true,
+				createdAt: true,
+				displayName: true,
+				email: true,
+				role: true
+			}
 		})
 
 		return users
 	}
 
-	public async self(account: Account) {
+	public async self(user: User) {
 		return {
-			id: account.id,
-			displayName: account.displayName,
-			avatar: account.avatar
+			id: user.id,
+			displayName: user.displayName,
+			avatar: user.avatar
 		}
 	}
 
-	public async changeAvatar(account: Account, file: Express.Multer.File) {
-		if (account.avatar) {
-			await this.storageService.deleteFile(account.avatar)
+	public async changeAvatar(user: User, file: Express.Multer.File) {
+		if (user.avatar) {
+			await this.storageService.deleteFile(user.avatar)
 		}
 
 		let processedBuffer: Buffer
@@ -64,8 +67,13 @@ export class UsersService {
 			'avatars'
 		)
 
-		await this.accountRepository.update(account.id, {
-			avatar: uploadedFile.file_id
+		await this.prismaService.user.update({
+			where: {
+				id: user.id
+			},
+			data: {
+				avatar: uploadedFile.file_id
+			}
 		})
 
 		return uploadedFile

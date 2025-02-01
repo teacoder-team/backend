@@ -1,0 +1,115 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("POSTGRES_URI")
+}
+
+model User {
+  id String @id @default(uuid())
+
+  email    String  @unique
+  password String?
+
+  username    String @unique
+  displayName String @map("display_name")
+
+  avatar String?
+  points Int     @default(0)
+
+  role UserRole @default(STUDENT)
+
+  passwordReset PasswordReset?
+  mfa           MultiFactorAuthentication?
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("users")
+}
+
+model PasswordReset {
+  id String @id @default(uuid())
+
+  token  String   @unique
+  expiry DateTime
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @unique @map("user_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("reset_passwords")
+}
+
+model MultiFactorAuthentication {
+  id String @id @default(uuid())
+
+  recoveryCodes String[] @default([]) @map("recovery_codes")
+
+  totp   Totp   @relation(fields: [totpId], references: [id])
+  totpId String @unique @map("totp_id")
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @unique @map("user_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("multi_factor_authentication")
+}
+
+model Totp {
+  id String @id @default(uuid())
+
+  status TotpStatus @default(DISABLED)
+  secret String?
+
+  mfa MultiFactorAuthentication?
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("totps")
+}
+
+model Course {
+  id String @id @default(uuid())
+
+  title String
+  slug  String @unique
+
+  description String?
+  thumbnail   String?
+
+  youtubeUrl String? @map("youtube_url")
+  codeUrl    String? @map("code_url")
+
+  isPublished Boolean @default(false) @map("is_published")
+
+  views Int @default(0)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("courses")
+}
+
+enum UserRole {
+  STUDENT
+  ADMIN
+
+  @@map("user_roles")
+}
+
+enum TotpStatus {
+  DISABLED
+  PENDING
+  ENABLED
+
+  @@map("totp_statuses")
+}

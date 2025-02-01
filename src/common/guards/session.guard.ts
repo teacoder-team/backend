@@ -1,22 +1,19 @@
 import {
-	CanActivate,
-	ExecutionContext,
+	type CanActivate,
+	type ExecutionContext,
 	Injectable,
 	UnauthorizedException
 } from '@nestjs/common'
-import { InjectRepository } from '@nestjs/typeorm'
-import { Request } from 'express'
-import { Repository } from 'typeorm'
+import type { Request } from 'express'
 
-import { Account } from '@/api/auth/account/entities'
+import { PrismaService } from '@/infra/prisma/prisma.service'
 import { RedisService } from '@/infra/redis/redis.service'
 
 @Injectable()
 export class SessionAuthGuard implements CanActivate {
 	public constructor(
-		private readonly redisService: RedisService,
-		@InjectRepository(Account)
-		private readonly accountRepository: Repository<Account>
+		private readonly prismaService: PrismaService,
+		private readonly redisService: RedisService
 	) {}
 
 	public async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -45,7 +42,7 @@ export class SessionAuthGuard implements CanActivate {
 			throw new UnauthorizedException('Invalid or expired session')
 		}
 
-		const user = await this.accountRepository.findOne({
+		const user = await this.prismaService.user.findUnique({
 			where: {
 				id: foundSession.userId
 			}
