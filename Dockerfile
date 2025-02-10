@@ -12,6 +12,8 @@ COPY . .
 
 RUN yarn prisma generate
 
+RUN ls -al /app/prisma/__generated__
+
 RUN yarn build
 
 FROM base AS runner
