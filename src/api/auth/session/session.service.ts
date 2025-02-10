@@ -23,11 +23,7 @@ export class SessionService {
 	public async login(dto: LoginDto, ip: string, userAgent: string) {
 		const { email, password, pin } = dto
 
-<<<<<<< HEAD
-		const account = await this.accountRepository.findOne({
-=======
-		const user = await this.prismaService.user.findFirst({
->>>>>>> parent of 207e3fd (chore: migrate from Prisma to TypeORM)
+		const account = await this.prismaService.user.findFirst({
 			where: {
 				email
 			}
