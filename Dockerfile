@@ -12,8 +12,6 @@ COPY . .
 
 RUN yarn prisma generate
 
-RUN ls -al /app/prisma/__generated__
-
 RUN yarn build
 
 FROM base AS runner
@@ -27,6 +25,6 @@ COPY --chown=nodejs:nodejs package.json yarn.lock ./
 RUN yarn install --production
 
 COPY --chown=nodejs:nodejs --from=builder /app/dist ./dist
-COPY --chown=nodejs:nodejs --from=builder /app/prisma/__generated__ ./prisma/__generated__
+COPY --chown=nodejs:nodejs --from=builder /app/prisma/generated ./prisma/generated
 
 CMD ["node", "dist/main"]
