@@ -33,17 +33,6 @@ export class UsersController {
 		return this.usersService.findAll()
 	}
 
-	@ApiOperation({
-		summary: 'Fetch Self',
-		description: 'Retrieve your user information.'
-	})
-	@Authorization()
-	@Get('@me')
-	@HttpCode(HttpStatus.OK)
-	public async self(@Authorized() user: User) {
-		return this.usersService.self(user)
-	}
-
 	@ApiOperation({ summary: 'Изменить аватар пользователя' })
 	@Authorization()
 	@UseInterceptors(

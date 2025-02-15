@@ -27,6 +27,29 @@ paths:
           description: ""
       summary: Create Account
       tags: *a1
+  /auth/account/verify:
+    post:
+      operationId: AccountController_sendEmailVerify
+      parameters: []
+      responses:
+        "200":
+          description: ""
+      summary: Send Email Verify
+      tags: *a1
+  /auth/account/verify/{code}:
+    patch:
+      operationId: AccountController_verifyEmail
+      parameters:
+        - name: code
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ""
+      summary: Verify Email
+      tags: *a1
   /auth/account/reset_password:
     post:
       description: Send an email to reset account password.
@@ -57,6 +80,21 @@ paths:
         "200":
           description: ""
       summary: Password Reset
+      tags: *a1
+  /auth/account/change/email:
+    patch:
+      operationId: AccountController_changeEmail
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChangeEmailDto"
+      responses:
+        "200":
+          description: ""
+      summary: Change Email
       tags: *a1
   /auth/account/change/password:
     patch:
@@ -95,7 +133,12 @@ paths:
     post:
       description: Delete current session.
       operationId: SessionController_logout
-      parameters: []
+      parameters:
+        - name: x-session-token
+          required: true
+          in: header
+          schema:
+            type: string
       responses:
         "200":
           description: ""
@@ -105,7 +148,12 @@ paths:
     get:
       description: Fetch all sessions associated with this account.
       operationId: SessionController_findAll
-      parameters: []
+      parameters:
+        - name: x-session-token
+          required: true
+          in: header
+          schema:
+            type: string
       responses:
         "200":
           description: ""
@@ -115,7 +163,12 @@ paths:
     get:
       description: Fetch the details of the currently active session.
       operationId: SessionController_findCurrent
-      parameters: []
+      parameters:
+        - name: x-session-token
+          required: true
+          in: header
+          schema:
+            type: string
       responses:
         "200":
           description: ""
@@ -136,17 +189,6 @@ paths:
           description: ""
       summary: Revoke Session​
       tags: *a2
-  /auth/mfa/ticket:
-    put:
-      description: Create a new MFA ticket or validate an existing one.
-      operationId: MfaController_createTicket
-      parameters: []
-      responses:
-        "200":
-          description: ""
-      summary: Create MFA ticket​
-      tags: &a3
-        - MFA
   /auth/mfa:
     get:
       description: Fetch MFA status of an account.
@@ -156,9 +198,10 @@ paths:
         "200":
           description: ""
       summary: MFA Status​​
-      tags: *a3
+      tags: &a3
+        - MFA
   /auth/mfa/recovery:
-    post:
+    get:
       description: Fetch recovery codes for an account.
       operationId: MfaController_fetchRecovery
       parameters: []
@@ -169,18 +212,24 @@ paths:
       tags: *a3
     patch:
       description: Re-generate recovery codes for an account.
-      operationId: MfaController_generateRecovery
+      operationId: MfaController_regenerateRecovery
       parameters: []
       responses:
         "200":
           description: ""
-      summary: Generate Recovery Codes​​
+      summary: Regenerate Recovery Codes​​
       tags: *a3
   /auth/mfa/totp:
     put:
       description: Enable TOTP 2FA for an account.
       operationId: MfaController_totpEnable
       parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TotpEnableDto"
       responses:
         "200":
           description: ""
@@ -199,6 +248,12 @@ paths:
       description: Disable TOTP 2FA for an account.
       operationId: MfaController_totpDisable
       parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DisableMfaDto"
       responses:
         "200":
           description: ""
@@ -214,16 +269,6 @@ paths:
       summary: Fetch All
       tags: &a4
         - Users
-  /users/@me:
-    get:
-      description: Retrieve your user information.
-      operationId: UsersController_self
-      parameters: []
-      responses:
-        "200":
-          description: ""
-      summary: Fetch Self
-      tags: *a4
   /users/@me/avatar:
     patch:
       operationId: UsersController_changeAvatar
@@ -233,7 +278,7 @@ paths:
           description: ""
       summary: Изменить аватар пользователя
       tags: *a4
-  /courses/all:
+  /course/all:
     get:
       operationId: CourseController_findAll
       parameters: []
@@ -242,7 +287,7 @@ paths:
           description: ""
       tags: &a5
         - Course
-  /courses/by-slug/{slug}:
+  /course/{slug}:
     get:
       operationId: CourseController_findBySlug
       parameters:
@@ -255,20 +300,7 @@ paths:
         "200":
           description: ""
       tags: *a5
-  /courses/by-id/{id}:
-    get:
-      operationId: CourseController_findById
-      parameters:
-        - name: id
-          required: true
-          in: path
-          schema:
-            type: string
-      responses:
-        "200":
-          description: ""
-      tags: *a5
-  /courses/create:
+  /course/create:
     post:
       operationId: CourseController_create
       parameters: []
@@ -282,7 +314,7 @@ paths:
         "200":
           description: ""
       tags: *a5
-  /courses/change/thumbnail/{id}:
+  /course/change/thumbnail/{id}:
     patch:
       operationId: CourseController_changeThumbnail
       parameters:
@@ -308,11 +340,7 @@ info:
     name: AGPLv3
     url: https://github.com/teacoder-team/backend/blob/master/LICENSE
 tags: []
-servers:
-  - url: https://api.teacoder.ru
-    description: TeaCoder Production
-  - url: http://local.teacoder.ru:14702
-    description: Local TeaCoder Environment
+servers: []
 components:
   schemas:
     CreateUserDto:
@@ -324,10 +352,19 @@ components:
     PasswordResetDto:
       type: object
       properties: {}
+    ChangeEmailDto:
+      type: object
+      properties: {}
     ChangePasswordDto:
       type: object
       properties: {}
     LoginDto:
+      type: object
+      properties: {}
+    TotpEnableDto:
+      type: object
+      properties: {}
+    DisableMfaDto:
       type: object
       properties: {}
     CreateCourseDto:

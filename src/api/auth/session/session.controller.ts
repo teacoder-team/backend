@@ -3,6 +3,7 @@ import {
 	Controller,
 	Delete,
 	Get,
+	Headers,
 	HttpCode,
 	HttpStatus,
 	Param,
@@ -47,8 +48,8 @@ export class SessionController {
 	})
 	@Post('logout')
 	@HttpCode(HttpStatus.OK)
-	public async logout(@Req() req: Request) {
-		return this.sessionService.logout(req)
+	public async logout(@Headers('x-session-token') token: string) {
+		return this.sessionService.logout(token)
 	}
 
 	@ApiOperation({
@@ -58,8 +59,11 @@ export class SessionController {
 	@Get('all')
 	@HttpCode(HttpStatus.OK)
 	@Authorization()
-	public async findAll(@Req() req: Request, @Authorized() user: User) {
-		return this.sessionService.findAll(req, user)
+	public async findAll(
+		@Authorized() user: User,
+		@Headers('x-session-token') token: string
+	) {
+		return this.sessionService.findAll(user, token)
 	}
 
 	@ApiOperation({
@@ -69,8 +73,11 @@ export class SessionController {
 	@Authorization()
 	@Get('current')
 	@HttpCode(HttpStatus.OK)
-	public async findCurrent(@Req() req: Request, @Authorized() user: User) {
-		return this.sessionService.findCurrent(req, user)
+	public async findCurrent(
+		@Authorized() user: User,
+		@Headers('x-session-token') token: string
+	) {
+		return this.sessionService.findCurrent(user, token)
 	}
 
 	@ApiOperation({

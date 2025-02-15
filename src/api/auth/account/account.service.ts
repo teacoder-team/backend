@@ -4,7 +4,7 @@ import {
 	Injectable,
 	NotFoundException
 } from '@nestjs/common'
-import type { User } from '@prisma/generated'
+import { type User } from '@prisma/generated'
 import { hash, verify } from 'argon2'
 import { randomBytes } from 'crypto'
 import validate from 'deep-email-validator'
@@ -14,6 +14,7 @@ import { PrismaService } from '@/infra/prisma/prisma.service'
 import { RedisService } from '@/infra/redis/redis.service'
 
 import {
+	ChangeEmailDto,
 	ChangePasswordDto,
 	CreateUserDto,
 	PasswordResetDto,
@@ -30,7 +31,9 @@ export class AccountService {
 	public async fetch(user: User) {
 		return {
 			id: user.id,
-			email: user.email
+			displayName: user.displayName,
+			email: user.email,
+			avatar: user.avatar
 		}
 	}
 
@@ -142,10 +145,25 @@ export class AccountService {
 		return true
 	}
 
-	public async changePassword(user: User, dto: ChangePasswordDto) {
-		const { oldPassword, newPassword } = dto
+	public async changeEmail(user: User, dto: ChangeEmailDto) {
+		const { email } = dto
 
-		const isValidPassword = await verify(user.password, oldPassword)
+		await this.prismaService.user.update({
+			where: {
+				id: user.id
+			},
+			data: {
+				email
+			}
+		})
+
+		return true
+	}
+
+	public async changePassword(user: User, dto: ChangePasswordDto) {
+		const { currentPassword, newPassword } = dto
+
+		const isValidPassword = await verify(user.password, currentPassword)
 
 		if (!isValidPassword) {
 			throw new BadRequestException('Неверный старый пароль')

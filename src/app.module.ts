@@ -4,7 +4,7 @@ import { ConfigModule } from '@nestjs/config'
 import { ApiModule } from './api/api.module'
 import { IS_DEV_ENV } from './common/utils'
 import { InfraModule } from './infra/infra.module'
-import { ServicesModule } from './services/services.module'
+import { LibsModule } from './libs/libs.module'
 
 @Module({
 	imports: [
@@ -14,7 +14,7 @@ import { ServicesModule } from './services/services.module'
 		}),
 		ApiModule,
 		InfraModule,
-		ServicesModule
+		LibsModule
 	]
 })
 export class AppModule {}

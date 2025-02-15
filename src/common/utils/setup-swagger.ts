@@ -29,11 +29,6 @@ function createSwaggerConfig() {
 			'AGPLv3',
 			'https://github.com/teacoder-team/backend/blob/master/LICENSE'
 		)
-		.addServer('https://api.teacoder.ru', 'TeaCoder Production')
-		.addServer(
-			'http://local.teacoder.ru:14702',
-			'Local TeaCoder Environment'
-		)
 		.build()
 }
 

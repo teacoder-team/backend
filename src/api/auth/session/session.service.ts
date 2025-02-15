@@ -4,7 +4,7 @@ import {
 	NotFoundException,
 	UnauthorizedException
 } from '@nestjs/common'
-import type { User } from '@prisma/generated'
+import { TotpStatus, type User } from '@prisma/generated'
 import { verify } from 'argon2'
 import type { Request } from 'express'
 
@@ -21,36 +21,38 @@ export class SessionService {
 	) {}
 
 	public async login(dto: LoginDto, ip: string, userAgent: string) {
-		const { email, password, pin } = dto
+		const { email, password } = dto
 
-<<<<<<< HEAD
-		const account = await this.accountRepository.findOne({
-=======
 		const user = await this.prismaService.user.findFirst({
->>>>>>> parent of 207e3fd (chore: migrate from Prisma to TypeORM)
 			where: {
 				email
 			}
 		})
 
-		if (!account) {
+		if (!user) {
 			throw new NotFoundException('Пользователь не найден')
 		}
 
-		if (!account.password) {
+		if (!user.password) {
 			throw new BadRequestException(
 				'Вход через пароль недоступен, т.к. вы зарегистрированы через соц. сеть'
 			)
 		}
 
-		const isValidPassword = await verify(account.password, password)
+		const isValidPassword = await verify(user.password, password)
 
 		if (!isValidPassword) {
 			throw new UnauthorizedException('Неправильный пароль')
 		}
 
+		const methods = await this.fetchMfaMethods(user)
+
+		if (methods.length > 0) {
+			return { methods }
+		}
+
 		const session = await this.redisService.createSession(
-			account,
+			user,
 			ip,
 			userAgent
 		)
@@ -58,9 +60,7 @@ export class SessionService {
 		return session
 	}
 
-	public async logout(req: Request) {
-		const token = req.headers['x-session-token'] as string
-
+	public async logout(token: string) {
 		const keys = await this.redisService.keys(`sessions:*`)
 
 		for (const key of keys) {
@@ -89,8 +89,7 @@ export class SessionService {
 		throw new UnauthorizedException('Invalid or expired session')
 	}
 
-	public async findAll(req: Request, user: User) {
-		const token = req.headers['x-session-token'] as string
+	public async findAll(user: User, token: string) {
 		const keys = await this.redisService.keys(`sessions:*`)
 
 		if (keys.length === 0) {
@@ -137,9 +136,7 @@ export class SessionService {
 		return userSessions.filter(session => session !== null)
 	}
 
-	public async findCurrent(req: Request, user: User) {
-		const token = req.headers['x-session-token'] as string
-
+	public async findCurrent(user: User, token: string) {
 		const keys = await this.redisService.keys(`sessions:*`)
 
 		for (const key of keys) {
@@ -224,5 +221,40 @@ export class SessionService {
 		}
 
 		throw new NotFoundException('Сессия не найдена')
+	}
+
+	private async fetchMfaMethods(user: User) {
+		const mfa =
+			await this.prismaService.multiFactorAuthentication.findUnique({
+				where: {
+					userId: user.id
+				},
+				include: {
+					totp: true,
+					passkey: true
+				}
+			})
+
+		if (!mfa) {
+			throw new NotFoundException(
+				'Многофакторная аутентификация не включена для этого пользователя'
+			)
+		}
+
+		const methods: string[] = []
+
+		if (mfa.totp?.status === TotpStatus.ENABLED) {
+			methods.push('Totp')
+		}
+
+		if (mfa.passkey?.isActivated) {
+			methods.push('Passkey')
+		}
+
+		if (mfa.recoveryCodes.length > 0) {
+			methods.push('Recovery')
+		}
+
+		return methods
 	}
 }

@@ -41,6 +41,7 @@ async function bootstrap() {
 			`📄 Documentation is available at: ${config.getOrThrow<string>('APPLICATION_URL')}${config.getOrThrow<string>('SWAGGER_PREFIX')}`
 		)
 	}
+	
 }
 
 bootstrap()

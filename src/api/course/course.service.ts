@@ -2,14 +2,16 @@ import { Injectable, NotFoundException } from '@nestjs/common'
 
 import { slugify } from '@/common/utils/slugify'
 import { PrismaService } from '@/infra/prisma/prisma.service'
-import { StorageService } from '@/services/storage/storage.service'
+import { RedisService } from '@/infra/redis/redis.service'
+import { StorageService } from '@/libs/storage/storage.service'
 
-import { CreateCourseDto } from './dto/create-course.dto'
+import { CreateCourseDto } from './dto'
 
 @Injectable()
 export class CourseService {
 	public constructor(
 		private readonly prismaService: PrismaService,
+		private readonly redisService: RedisService,
 		private readonly storageService: StorageService
 	) {}
 
@@ -17,6 +19,13 @@ export class CourseService {
 		const courses = await this.prismaService.course.findMany({
 			orderBy: {
 				createdAt: 'desc'
+			},
+			select: {
+				id: true,
+				title: true,
+				slug: true,
+				description: true,
+				thumbnail: true
 			}
 		})
 
@@ -24,29 +33,24 @@ export class CourseService {
 	}
 
 	public async findBySlug(slug: string) {
+		const cachedCourse = await this.redisService.get(`courses:${slug}`)
+
+		if (cachedCourse) return JSON.parse(cachedCourse)
+
 		const course = await this.prismaService.course.findUnique({
 			where: {
 				slug
 			}
 		})
 
-		if (!course) {
-			throw new NotFoundException('Курс не найден')
-		}
+		if (!course) throw new NotFoundException('Курс не найден')
 
-		return course
-	}
-
-	public async findById(id: string) {
-		const course = await this.prismaService.course.findUnique({
-			where: {
-				id
-			}
-		})
-
-		if (!course) {
-			throw new NotFoundException('Курс не найден')
-		}
+		await this.redisService.set(
+			`courses:${course.slug}`,
+			JSON.stringify(course),
+			'EX',
+			10 * 60
+		)
 
 		return course
 	}
@@ -65,25 +69,25 @@ export class CourseService {
 	}
 
 	public async changeThumbnail(id: string, file: Express.Multer.File) {
-		const course = await this.findById(id)
+		// const course = await this.findById(id)
 
-		if (course.thumbnail) {
-			await this.storageService.deleteFile(course.thumbnail)
-		}
+		// if (course.thumbnail) {
+		// 	await this.storageService.deleteFile(course.thumbnail)
+		// }
 
 		// const uploadedFile = await this.storageService.uploadFile(
 		// 	file.buffer,
 		// 	'courses'
 		// )
 
-		await this.prismaService.course.update({
-			where: {
-				id: course.id
-			},
-			data: {
-				thumbnail: null
-			}
-		})
+		// await this.prismaService.course.update({
+		// 	where: {
+		// 		id: course.id
+		// 	},
+		// 	data: {
+		// 		thumbnail: null
+		// 	}
+		// })
 
 		return true
 	}

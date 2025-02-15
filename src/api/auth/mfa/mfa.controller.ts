@@ -1,4 +1,5 @@
 import {
+	Body,
 	Controller,
 	Delete,
 	Get,
@@ -13,6 +14,7 @@ import type { User } from '@prisma/generated'
 
 import { Authorization, Authorized } from '@/common/decorators'
 
+import { DisableMfaDto, TotpEnableDto } from './dto'
 import { MfaService } from './mfa.service'
 
 @ApiTags('MFA')
@@ -21,64 +23,74 @@ export class MfaController {
 	public constructor(private readonly mfaService: MfaService) {}
 
 	@ApiOperation({
-		summary: 'Create MFA ticket​',
-		description: 'Create a new MFA ticket or validate an existing one.'
-	})
-	@Put('ticket')
-	@HttpCode(HttpStatus.OK)
-	public async createTicket() {}
-
-	@ApiOperation({
 		summary: 'MFA Status​​',
 		description: 'Fetch MFA status of an account.'
 	})
+	@Authorization()
 	@Get()
 	@HttpCode(HttpStatus.OK)
-	public async fetchStatus() {}
+	public async fetchStatus(@Authorized() user: User) {
+		return this.mfaService.fetchStatus(user)
+	}
 
 	@ApiOperation({
 		summary: 'Fetch Recovery Codes​​​',
 		description: 'Fetch recovery codes for an account.'
 	})
 	@Authorization()
-	@Post('recovery')
+	@Get('recovery')
 	@HttpCode(HttpStatus.OK)
 	public async fetchRecovery(@Authorized() user: User) {
 		return this.mfaService.fetchRecovery(user)
 	}
 
 	@ApiOperation({
-		summary: 'Generate Recovery Codes​​',
+		summary: 'Regenerate Recovery Codes​​',
 		description: 'Re-generate recovery codes for an account.'
 	})
 	@Authorization()
 	@Patch('recovery')
 	@HttpCode(HttpStatus.OK)
-	public async generateRecovery(@Authorized() user: User) {
-		return this.mfaService.generateRecovery(user)
+	public async regenerateRecovery(@Authorized() user: User) {
+		return this.mfaService.regenerateRecovery(user)
 	}
 
 	@ApiOperation({
 		summary: 'Enable TOTP 2FA​​',
 		description: 'Enable TOTP 2FA for an account.'
 	})
+	@Authorization()
 	@Put('totp')
 	@HttpCode(HttpStatus.OK)
-	public async totpEnable() {}
+	public async totpEnable(
+		@Authorized() user: User,
+		@Body() dto: TotpEnableDto
+	) {
+		return this.mfaService.totpEnable(user, dto)
+	}
 
 	@ApiOperation({
 		summary: 'Generate TOTP Secret​​​',
 		description: 'Generate a new secret for TOTP.'
 	})
+	@Authorization()
 	@Post('totp')
 	@HttpCode(HttpStatus.OK)
-	public async totpGenerateSecret() {}
+	public async totpGenerateSecret(@Authorized() user: User) {
+		return this.mfaService.totpGenerateSecret(user)
+	}
 
 	@ApiOperation({
 		summary: 'Disable TOTP 2FA​​',
 		description: 'Disable TOTP 2FA for an account.'
 	})
+	@Authorization()
 	@Delete('totp')
 	@HttpCode(HttpStatus.OK)
-	public async totpDisable() {}
+	public async totpDisable(
+		@Authorized() user: User,
+		@Body() dto: DisableMfaDto
+	) {
+		return this.mfaService.totpDisable(user, dto)
+	}
 }

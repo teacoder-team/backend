@@ -18,10 +18,10 @@ import { UserRole } from '@prisma/generated'
 import { Authorization } from '@/common/decorators/auth.decorator'
 
 import { CourseService } from './course.service'
-import { CreateCourseDto } from './dto/create-course.dto'
+import { CreateCourseDto } from './dto'
 
 @ApiTags('Course')
-@Controller('courses')
+@Controller('course')
 export class CourseController {
 	public constructor(private readonly courseService: CourseService) {}
 
@@ -31,17 +31,10 @@ export class CourseController {
 		return this.courseService.findAll()
 	}
 
-	@Get('by-slug/:slug')
+	@Get(':slug')
 	@HttpCode(HttpStatus.OK)
 	public async findBySlug(@Param('slug') slug: string) {
 		return this.courseService.findBySlug(slug)
-	}
-
-	@Authorization(UserRole.ADMIN)
-	@Get('by-id/:id')
-	@HttpCode(HttpStatus.OK)
-	public async findById(@Param('id') id: string) {
-		return this.courseService.findById(id)
 	}
 
 	@Authorization(UserRole.ADMIN)

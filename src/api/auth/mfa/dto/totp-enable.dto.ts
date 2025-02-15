@@ -1,3 +1,4 @@
 export class TotpEnableDto {
-	password: string
+	public pin: string
+	public secret: string
 }

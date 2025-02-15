@@ -3,7 +3,7 @@ import { User } from '@prisma/generated'
 import sharp from 'sharp'
 
 import { PrismaService } from '@/infra/prisma/prisma.service'
-import { StorageService } from '@/services/storage/storage.service'
+import { StorageService } from '@/libs/storage/storage.service'
 
 @Injectable()
 export class UsersService {
@@ -27,14 +27,6 @@ export class UsersService {
 		})
 
 		return users
-	}
-
-	public async self(user: User) {
-		return {
-			id: user.id,
-			displayName: user.displayName,
-			avatar: user.avatar
-		}
 	}
 
 	public async changeAvatar(user: User, file: Express.Multer.File) {

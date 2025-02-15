@@ -29,6 +29,11 @@ export type PasswordReset = $Result.DefaultSelection<Prisma.$PasswordResetPayloa
  */
 export type MultiFactorAuthentication = $Result.DefaultSelection<Prisma.$MultiFactorAuthenticationPayload>
 /**
+ * Model Passkey
+ * 
+ */
+export type Passkey = $Result.DefaultSelection<Prisma.$PasskeyPayload>
+/**
  * Model Totp
  * 
  */
@@ -223,6 +228,16 @@ export class PrismaClient<
   get multiFactorAuthentication(): Prisma.MultiFactorAuthenticationDelegate<ExtArgs>;
 
   /**
+   * `prisma.passkey`: Exposes CRUD operations for the **Passkey** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Passkeys
+    * const passkeys = await prisma.passkey.findMany()
+    * ```
+    */
+  get passkey(): Prisma.PasskeyDelegate<ExtArgs>;
+
+  /**
    * `prisma.totp`: Exposes CRUD operations for the **Totp** model.
     * Example usage:
     * ```ts
@@ -301,7 +316,7 @@ export namespace Prisma {
 
   /**
    * Prisma Client JS version: 5.22.0
-   * Query Engine version: 605197351a3c8bdd595af2d2a9bc3025bca48ea2
+   * Query Engine version: 34ace0eb2704183d2c05b60b52fba5c43c13f303
    */
   export type PrismaVersion = {
     client: string
@@ -685,6 +700,7 @@ export namespace Prisma {
     User: 'User',
     PasswordReset: 'PasswordReset',
     MultiFactorAuthentication: 'MultiFactorAuthentication',
+    Passkey: 'Passkey',
     Totp: 'Totp',
     Course: 'Course'
   };
@@ -702,7 +718,7 @@ export namespace Prisma {
 
   export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> = {
     meta: {
-      modelProps: "user" | "passwordReset" | "multiFactorAuthentication" | "totp" | "course"
+      modelProps: "user" | "passwordReset" | "multiFactorAuthentication" | "passkey" | "totp" | "course"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -913,6 +929,76 @@ export namespace Prisma {
           count: {
             args: Prisma.MultiFactorAuthenticationCountArgs<ExtArgs>
             result: $Utils.Optional<MultiFactorAuthenticationCountAggregateOutputType> | number
+          }
+        }
+      }
+      Passkey: {
+        payload: Prisma.$PasskeyPayload<ExtArgs>
+        fields: Prisma.PasskeyFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.PasskeyFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PasskeyPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.PasskeyFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PasskeyPayload>
+          }
+          findFirst: {
+            args: Prisma.PasskeyFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PasskeyPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.PasskeyFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PasskeyPayload>
+          }
+          findMany: {
+            args: Prisma.PasskeyFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PasskeyPayload>[]
+          }
+          create: {
+            args: Prisma.PasskeyCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PasskeyPayload>
+          }
+          createMany: {
+            args: Prisma.PasskeyCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.PasskeyCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PasskeyPayload>[]
+          }
+          delete: {
+            args: Prisma.PasskeyDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PasskeyPayload>
+          }
+          update: {
+            args: Prisma.PasskeyUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PasskeyPayload>
+          }
+          deleteMany: {
+            args: Prisma.PasskeyDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.PasskeyUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.PasskeyUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PasskeyPayload>
+          }
+          aggregate: {
+            args: Prisma.PasskeyAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregatePasskey>
+          }
+          groupBy: {
+            args: Prisma.PasskeyGroupByArgs<ExtArgs>
+            result: $Utils.Optional<PasskeyGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.PasskeyCountArgs<ExtArgs>
+            result: $Utils.Optional<PasskeyCountAggregateOutputType> | number
           }
         }
       }
@@ -3229,6 +3315,7 @@ export namespace Prisma {
   export type MultiFactorAuthenticationMinAggregateOutputType = {
     id: string | null
     totpId: string | null
+    passkeyId: string | null
     userId: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -3237,6 +3324,7 @@ export namespace Prisma {
   export type MultiFactorAuthenticationMaxAggregateOutputType = {
     id: string | null
     totpId: string | null
+    passkeyId: string | null
     userId: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -3246,6 +3334,7 @@ export namespace Prisma {
     id: number
     recoveryCodes: number
     totpId: number
+    passkeyId: number
     userId: number
     createdAt: number
     updatedAt: number
@@ -3256,6 +3345,7 @@ export namespace Prisma {
   export type MultiFactorAuthenticationMinAggregateInputType = {
     id?: true
     totpId?: true
+    passkeyId?: true
     userId?: true
     createdAt?: true
     updatedAt?: true
@@ -3264,6 +3354,7 @@ export namespace Prisma {
   export type MultiFactorAuthenticationMaxAggregateInputType = {
     id?: true
     totpId?: true
+    passkeyId?: true
     userId?: true
     createdAt?: true
     updatedAt?: true
@@ -3273,6 +3364,7 @@ export namespace Prisma {
     id?: true
     recoveryCodes?: true
     totpId?: true
+    passkeyId?: true
     userId?: true
     createdAt?: true
     updatedAt?: true
@@ -3354,7 +3446,8 @@ export namespace Prisma {
   export type MultiFactorAuthenticationGroupByOutputType = {
     id: string
     recoveryCodes: string[]
-    totpId: string
+    totpId: string | null
+    passkeyId: string | null
     userId: string
     createdAt: Date
     updatedAt: Date
@@ -3381,10 +3474,12 @@ export namespace Prisma {
     id?: boolean
     recoveryCodes?: boolean
     totpId?: boolean
+    passkeyId?: boolean
     userId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    totp?: boolean | TotpDefaultArgs<ExtArgs>
+    totp?: boolean | MultiFactorAuthentication$totpArgs<ExtArgs>
+    passkey?: boolean | MultiFactorAuthentication$passkeyArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["multiFactorAuthentication"]>
 
@@ -3392,10 +3487,12 @@ export namespace Prisma {
     id?: boolean
     recoveryCodes?: boolean
     totpId?: boolean
+    passkeyId?: boolean
     userId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    totp?: boolean | TotpDefaultArgs<ExtArgs>
+    totp?: boolean | MultiFactorAuthentication$totpArgs<ExtArgs>
+    passkey?: boolean | MultiFactorAuthentication$passkeyArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["multiFactorAuthentication"]>
 
@@ -3403,30 +3500,35 @@ export namespace Prisma {
     id?: boolean
     recoveryCodes?: boolean
     totpId?: boolean
+    passkeyId?: boolean
     userId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
   export type MultiFactorAuthenticationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    totp?: boolean | TotpDefaultArgs<ExtArgs>
+    totp?: boolean | MultiFactorAuthentication$totpArgs<ExtArgs>
+    passkey?: boolean | MultiFactorAuthentication$passkeyArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
   export type MultiFactorAuthenticationIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    totp?: boolean | TotpDefaultArgs<ExtArgs>
+    totp?: boolean | MultiFactorAuthentication$totpArgs<ExtArgs>
+    passkey?: boolean | MultiFactorAuthentication$passkeyArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
 
   export type $MultiFactorAuthenticationPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "MultiFactorAuthentication"
     objects: {
-      totp: Prisma.$TotpPayload<ExtArgs>
+      totp: Prisma.$TotpPayload<ExtArgs> | null
+      passkey: Prisma.$PasskeyPayload<ExtArgs> | null
       user: Prisma.$UserPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       recoveryCodes: string[]
-      totpId: string
+      totpId: string | null
+      passkeyId: string | null
       userId: string
       createdAt: Date
       updatedAt: Date
@@ -3794,7 +3896,8 @@ export namespace Prisma {
    */
   export interface Prisma__MultiFactorAuthenticationClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    totp<T extends TotpDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TotpDefaultArgs<ExtArgs>>): Prisma__TotpClient<$Result.GetResult<Prisma.$TotpPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    totp<T extends MultiFactorAuthentication$totpArgs<ExtArgs> = {}>(args?: Subset<T, MultiFactorAuthentication$totpArgs<ExtArgs>>): Prisma__TotpClient<$Result.GetResult<Prisma.$TotpPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
+    passkey<T extends MultiFactorAuthentication$passkeyArgs<ExtArgs> = {}>(args?: Subset<T, MultiFactorAuthentication$passkeyArgs<ExtArgs>>): Prisma__PasskeyClient<$Result.GetResult<Prisma.$PasskeyPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -3828,6 +3931,7 @@ export namespace Prisma {
     readonly id: FieldRef<"MultiFactorAuthentication", 'String'>
     readonly recoveryCodes: FieldRef<"MultiFactorAuthentication", 'String[]'>
     readonly totpId: FieldRef<"MultiFactorAuthentication", 'String'>
+    readonly passkeyId: FieldRef<"MultiFactorAuthentication", 'String'>
     readonly userId: FieldRef<"MultiFactorAuthentication", 'String'>
     readonly createdAt: FieldRef<"MultiFactorAuthentication", 'DateTime'>
     readonly updatedAt: FieldRef<"MultiFactorAuthentication", 'DateTime'>
@@ -4149,6 +4253,36 @@ export namespace Prisma {
   }
 
   /**
+   * MultiFactorAuthentication.totp
+   */
+  export type MultiFactorAuthentication$totpArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Totp
+     */
+    select?: TotpSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TotpInclude<ExtArgs> | null
+    where?: TotpWhereInput
+  }
+
+  /**
+   * MultiFactorAuthentication.passkey
+   */
+  export type MultiFactorAuthentication$passkeyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Passkey
+     */
+    select?: PasskeySelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PasskeyInclude<ExtArgs> | null
+    where?: PasskeyWhereInput
+  }
+
+  /**
    * MultiFactorAuthentication without action
    */
   export type MultiFactorAuthenticationDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -4160,6 +4294,959 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: MultiFactorAuthenticationInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Passkey
+   */
+
+  export type AggregatePasskey = {
+    _count: PasskeyCountAggregateOutputType | null
+    _min: PasskeyMinAggregateOutputType | null
+    _max: PasskeyMaxAggregateOutputType | null
+  }
+
+  export type PasskeyMinAggregateOutputType = {
+    id: string | null
+    publicKey: string | null
+    privateKey: string | null
+    isActivated: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type PasskeyMaxAggregateOutputType = {
+    id: string | null
+    publicKey: string | null
+    privateKey: string | null
+    isActivated: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type PasskeyCountAggregateOutputType = {
+    id: number
+    publicKey: number
+    privateKey: number
+    isActivated: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type PasskeyMinAggregateInputType = {
+    id?: true
+    publicKey?: true
+    privateKey?: true
+    isActivated?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type PasskeyMaxAggregateInputType = {
+    id?: true
+    publicKey?: true
+    privateKey?: true
+    isActivated?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type PasskeyCountAggregateInputType = {
+    id?: true
+    publicKey?: true
+    privateKey?: true
+    isActivated?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type PasskeyAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Passkey to aggregate.
+     */
+    where?: PasskeyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Passkeys to fetch.
+     */
+    orderBy?: PasskeyOrderByWithRelationInput | PasskeyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: PasskeyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Passkeys from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Passkeys.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Passkeys
+    **/
+    _count?: true | PasskeyCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: PasskeyMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: PasskeyMaxAggregateInputType
+  }
+
+  export type GetPasskeyAggregateType<T extends PasskeyAggregateArgs> = {
+        [P in keyof T & keyof AggregatePasskey]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregatePasskey[P]>
+      : GetScalarType<T[P], AggregatePasskey[P]>
+  }
+
+
+
+
+  export type PasskeyGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PasskeyWhereInput
+    orderBy?: PasskeyOrderByWithAggregationInput | PasskeyOrderByWithAggregationInput[]
+    by: PasskeyScalarFieldEnum[] | PasskeyScalarFieldEnum
+    having?: PasskeyScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: PasskeyCountAggregateInputType | true
+    _min?: PasskeyMinAggregateInputType
+    _max?: PasskeyMaxAggregateInputType
+  }
+
+  export type PasskeyGroupByOutputType = {
+    id: string
+    publicKey: string
+    privateKey: string
+    isActivated: boolean
+    createdAt: Date
+    updatedAt: Date
+    _count: PasskeyCountAggregateOutputType | null
+    _min: PasskeyMinAggregateOutputType | null
+    _max: PasskeyMaxAggregateOutputType | null
+  }
+
+  type GetPasskeyGroupByPayload<T extends PasskeyGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<PasskeyGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof PasskeyGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], PasskeyGroupByOutputType[P]>
+            : GetScalarType<T[P], PasskeyGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type PasskeySelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    publicKey?: boolean
+    privateKey?: boolean
+    isActivated?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    mfa?: boolean | Passkey$mfaArgs<ExtArgs>
+  }, ExtArgs["result"]["passkey"]>
+
+  export type PasskeySelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    publicKey?: boolean
+    privateKey?: boolean
+    isActivated?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["passkey"]>
+
+  export type PasskeySelectScalar = {
+    id?: boolean
+    publicKey?: boolean
+    privateKey?: boolean
+    isActivated?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type PasskeyInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    mfa?: boolean | Passkey$mfaArgs<ExtArgs>
+  }
+  export type PasskeyIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+
+  export type $PasskeyPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Passkey"
+    objects: {
+      mfa: Prisma.$MultiFactorAuthenticationPayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      publicKey: string
+      privateKey: string
+      isActivated: boolean
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["passkey"]>
+    composites: {}
+  }
+
+  type PasskeyGetPayload<S extends boolean | null | undefined | PasskeyDefaultArgs> = $Result.GetResult<Prisma.$PasskeyPayload, S>
+
+  type PasskeyCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<PasskeyFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: PasskeyCountAggregateInputType | true
+    }
+
+  export interface PasskeyDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Passkey'], meta: { name: 'Passkey' } }
+    /**
+     * Find zero or one Passkey that matches the filter.
+     * @param {PasskeyFindUniqueArgs} args - Arguments to find a Passkey
+     * @example
+     * // Get one Passkey
+     * const passkey = await prisma.passkey.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends PasskeyFindUniqueArgs>(args: SelectSubset<T, PasskeyFindUniqueArgs<ExtArgs>>): Prisma__PasskeyClient<$Result.GetResult<Prisma.$PasskeyPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one Passkey that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {PasskeyFindUniqueOrThrowArgs} args - Arguments to find a Passkey
+     * @example
+     * // Get one Passkey
+     * const passkey = await prisma.passkey.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends PasskeyFindUniqueOrThrowArgs>(args: SelectSubset<T, PasskeyFindUniqueOrThrowArgs<ExtArgs>>): Prisma__PasskeyClient<$Result.GetResult<Prisma.$PasskeyPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first Passkey that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PasskeyFindFirstArgs} args - Arguments to find a Passkey
+     * @example
+     * // Get one Passkey
+     * const passkey = await prisma.passkey.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends PasskeyFindFirstArgs>(args?: SelectSubset<T, PasskeyFindFirstArgs<ExtArgs>>): Prisma__PasskeyClient<$Result.GetResult<Prisma.$PasskeyPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first Passkey that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PasskeyFindFirstOrThrowArgs} args - Arguments to find a Passkey
+     * @example
+     * // Get one Passkey
+     * const passkey = await prisma.passkey.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends PasskeyFindFirstOrThrowArgs>(args?: SelectSubset<T, PasskeyFindFirstOrThrowArgs<ExtArgs>>): Prisma__PasskeyClient<$Result.GetResult<Prisma.$PasskeyPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more Passkeys that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PasskeyFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Passkeys
+     * const passkeys = await prisma.passkey.findMany()
+     * 
+     * // Get first 10 Passkeys
+     * const passkeys = await prisma.passkey.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const passkeyWithIdOnly = await prisma.passkey.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends PasskeyFindManyArgs>(args?: SelectSubset<T, PasskeyFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PasskeyPayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a Passkey.
+     * @param {PasskeyCreateArgs} args - Arguments to create a Passkey.
+     * @example
+     * // Create one Passkey
+     * const Passkey = await prisma.passkey.create({
+     *   data: {
+     *     // ... data to create a Passkey
+     *   }
+     * })
+     * 
+     */
+    create<T extends PasskeyCreateArgs>(args: SelectSubset<T, PasskeyCreateArgs<ExtArgs>>): Prisma__PasskeyClient<$Result.GetResult<Prisma.$PasskeyPayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many Passkeys.
+     * @param {PasskeyCreateManyArgs} args - Arguments to create many Passkeys.
+     * @example
+     * // Create many Passkeys
+     * const passkey = await prisma.passkey.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends PasskeyCreateManyArgs>(args?: SelectSubset<T, PasskeyCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Passkeys and returns the data saved in the database.
+     * @param {PasskeyCreateManyAndReturnArgs} args - Arguments to create many Passkeys.
+     * @example
+     * // Create many Passkeys
+     * const passkey = await prisma.passkey.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Passkeys and only return the `id`
+     * const passkeyWithIdOnly = await prisma.passkey.createManyAndReturn({ 
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends PasskeyCreateManyAndReturnArgs>(args?: SelectSubset<T, PasskeyCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PasskeyPayload<ExtArgs>, T, "createManyAndReturn">>
+
+    /**
+     * Delete a Passkey.
+     * @param {PasskeyDeleteArgs} args - Arguments to delete one Passkey.
+     * @example
+     * // Delete one Passkey
+     * const Passkey = await prisma.passkey.delete({
+     *   where: {
+     *     // ... filter to delete one Passkey
+     *   }
+     * })
+     * 
+     */
+    delete<T extends PasskeyDeleteArgs>(args: SelectSubset<T, PasskeyDeleteArgs<ExtArgs>>): Prisma__PasskeyClient<$Result.GetResult<Prisma.$PasskeyPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one Passkey.
+     * @param {PasskeyUpdateArgs} args - Arguments to update one Passkey.
+     * @example
+     * // Update one Passkey
+     * const passkey = await prisma.passkey.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends PasskeyUpdateArgs>(args: SelectSubset<T, PasskeyUpdateArgs<ExtArgs>>): Prisma__PasskeyClient<$Result.GetResult<Prisma.$PasskeyPayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more Passkeys.
+     * @param {PasskeyDeleteManyArgs} args - Arguments to filter Passkeys to delete.
+     * @example
+     * // Delete a few Passkeys
+     * const { count } = await prisma.passkey.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends PasskeyDeleteManyArgs>(args?: SelectSubset<T, PasskeyDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Passkeys.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PasskeyUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Passkeys
+     * const passkey = await prisma.passkey.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends PasskeyUpdateManyArgs>(args: SelectSubset<T, PasskeyUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one Passkey.
+     * @param {PasskeyUpsertArgs} args - Arguments to update or create a Passkey.
+     * @example
+     * // Update or create a Passkey
+     * const passkey = await prisma.passkey.upsert({
+     *   create: {
+     *     // ... data to create a Passkey
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Passkey we want to update
+     *   }
+     * })
+     */
+    upsert<T extends PasskeyUpsertArgs>(args: SelectSubset<T, PasskeyUpsertArgs<ExtArgs>>): Prisma__PasskeyClient<$Result.GetResult<Prisma.$PasskeyPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of Passkeys.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PasskeyCountArgs} args - Arguments to filter Passkeys to count.
+     * @example
+     * // Count the number of Passkeys
+     * const count = await prisma.passkey.count({
+     *   where: {
+     *     // ... the filter for the Passkeys we want to count
+     *   }
+     * })
+    **/
+    count<T extends PasskeyCountArgs>(
+      args?: Subset<T, PasskeyCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], PasskeyCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Passkey.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PasskeyAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends PasskeyAggregateArgs>(args: Subset<T, PasskeyAggregateArgs>): Prisma.PrismaPromise<GetPasskeyAggregateType<T>>
+
+    /**
+     * Group by Passkey.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PasskeyGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends PasskeyGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: PasskeyGroupByArgs['orderBy'] }
+        : { orderBy?: PasskeyGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, PasskeyGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetPasskeyGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Passkey model
+   */
+  readonly fields: PasskeyFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Passkey.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__PasskeyClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    mfa<T extends Passkey$mfaArgs<ExtArgs> = {}>(args?: Subset<T, Passkey$mfaArgs<ExtArgs>>): Prisma__MultiFactorAuthenticationClient<$Result.GetResult<Prisma.$MultiFactorAuthenticationPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Passkey model
+   */ 
+  interface PasskeyFieldRefs {
+    readonly id: FieldRef<"Passkey", 'String'>
+    readonly publicKey: FieldRef<"Passkey", 'String'>
+    readonly privateKey: FieldRef<"Passkey", 'String'>
+    readonly isActivated: FieldRef<"Passkey", 'Boolean'>
+    readonly createdAt: FieldRef<"Passkey", 'DateTime'>
+    readonly updatedAt: FieldRef<"Passkey", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Passkey findUnique
+   */
+  export type PasskeyFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Passkey
+     */
+    select?: PasskeySelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PasskeyInclude<ExtArgs> | null
+    /**
+     * Filter, which Passkey to fetch.
+     */
+    where: PasskeyWhereUniqueInput
+  }
+
+  /**
+   * Passkey findUniqueOrThrow
+   */
+  export type PasskeyFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Passkey
+     */
+    select?: PasskeySelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PasskeyInclude<ExtArgs> | null
+    /**
+     * Filter, which Passkey to fetch.
+     */
+    where: PasskeyWhereUniqueInput
+  }
+
+  /**
+   * Passkey findFirst
+   */
+  export type PasskeyFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Passkey
+     */
+    select?: PasskeySelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PasskeyInclude<ExtArgs> | null
+    /**
+     * Filter, which Passkey to fetch.
+     */
+    where?: PasskeyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Passkeys to fetch.
+     */
+    orderBy?: PasskeyOrderByWithRelationInput | PasskeyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Passkeys.
+     */
+    cursor?: PasskeyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Passkeys from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Passkeys.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Passkeys.
+     */
+    distinct?: PasskeyScalarFieldEnum | PasskeyScalarFieldEnum[]
+  }
+
+  /**
+   * Passkey findFirstOrThrow
+   */
+  export type PasskeyFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Passkey
+     */
+    select?: PasskeySelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PasskeyInclude<ExtArgs> | null
+    /**
+     * Filter, which Passkey to fetch.
+     */
+    where?: PasskeyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Passkeys to fetch.
+     */
+    orderBy?: PasskeyOrderByWithRelationInput | PasskeyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Passkeys.
+     */
+    cursor?: PasskeyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Passkeys from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Passkeys.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Passkeys.
+     */
+    distinct?: PasskeyScalarFieldEnum | PasskeyScalarFieldEnum[]
+  }
+
+  /**
+   * Passkey findMany
+   */
+  export type PasskeyFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Passkey
+     */
+    select?: PasskeySelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PasskeyInclude<ExtArgs> | null
+    /**
+     * Filter, which Passkeys to fetch.
+     */
+    where?: PasskeyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Passkeys to fetch.
+     */
+    orderBy?: PasskeyOrderByWithRelationInput | PasskeyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Passkeys.
+     */
+    cursor?: PasskeyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Passkeys from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Passkeys.
+     */
+    skip?: number
+    distinct?: PasskeyScalarFieldEnum | PasskeyScalarFieldEnum[]
+  }
+
+  /**
+   * Passkey create
+   */
+  export type PasskeyCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Passkey
+     */
+    select?: PasskeySelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PasskeyInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Passkey.
+     */
+    data: XOR<PasskeyCreateInput, PasskeyUncheckedCreateInput>
+  }
+
+  /**
+   * Passkey createMany
+   */
+  export type PasskeyCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Passkeys.
+     */
+    data: PasskeyCreateManyInput | PasskeyCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Passkey createManyAndReturn
+   */
+  export type PasskeyCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Passkey
+     */
+    select?: PasskeySelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * The data used to create many Passkeys.
+     */
+    data: PasskeyCreateManyInput | PasskeyCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Passkey update
+   */
+  export type PasskeyUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Passkey
+     */
+    select?: PasskeySelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PasskeyInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Passkey.
+     */
+    data: XOR<PasskeyUpdateInput, PasskeyUncheckedUpdateInput>
+    /**
+     * Choose, which Passkey to update.
+     */
+    where: PasskeyWhereUniqueInput
+  }
+
+  /**
+   * Passkey updateMany
+   */
+  export type PasskeyUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Passkeys.
+     */
+    data: XOR<PasskeyUpdateManyMutationInput, PasskeyUncheckedUpdateManyInput>
+    /**
+     * Filter which Passkeys to update
+     */
+    where?: PasskeyWhereInput
+  }
+
+  /**
+   * Passkey upsert
+   */
+  export type PasskeyUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Passkey
+     */
+    select?: PasskeySelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PasskeyInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Passkey to update in case it exists.
+     */
+    where: PasskeyWhereUniqueInput
+    /**
+     * In case the Passkey found by the `where` argument doesn't exist, create a new Passkey with this data.
+     */
+    create: XOR<PasskeyCreateInput, PasskeyUncheckedCreateInput>
+    /**
+     * In case the Passkey was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<PasskeyUpdateInput, PasskeyUncheckedUpdateInput>
+  }
+
+  /**
+   * Passkey delete
+   */
+  export type PasskeyDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Passkey
+     */
+    select?: PasskeySelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PasskeyInclude<ExtArgs> | null
+    /**
+     * Filter which Passkey to delete.
+     */
+    where: PasskeyWhereUniqueInput
+  }
+
+  /**
+   * Passkey deleteMany
+   */
+  export type PasskeyDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Passkeys to delete
+     */
+    where?: PasskeyWhereInput
+  }
+
+  /**
+   * Passkey.mfa
+   */
+  export type Passkey$mfaArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MultiFactorAuthentication
+     */
+    select?: MultiFactorAuthenticationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MultiFactorAuthenticationInclude<ExtArgs> | null
+    where?: MultiFactorAuthenticationWhereInput
+  }
+
+  /**
+   * Passkey without action
+   */
+  export type PasskeyDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Passkey
+     */
+    select?: PasskeySelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PasskeyInclude<ExtArgs> | null
   }
 
 
@@ -6134,12 +7221,25 @@ export namespace Prisma {
     id: 'id',
     recoveryCodes: 'recoveryCodes',
     totpId: 'totpId',
+    passkeyId: 'passkeyId',
     userId: 'userId',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
 
   export type MultiFactorAuthenticationScalarFieldEnum = (typeof MultiFactorAuthenticationScalarFieldEnum)[keyof typeof MultiFactorAuthenticationScalarFieldEnum]
+
+
+  export const PasskeyScalarFieldEnum: {
+    id: 'id',
+    publicKey: 'publicKey',
+    privateKey: 'privateKey',
+    isActivated: 'isActivated',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type PasskeyScalarFieldEnum = (typeof PasskeyScalarFieldEnum)[keyof typeof PasskeyScalarFieldEnum]
 
 
   export const TotpScalarFieldEnum: {
@@ -6256,6 +7356,13 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'Boolean'
+   */
+  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
+
+
+  /**
    * Reference to a field of type 'TotpStatus'
    */
   export type EnumTotpStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TotpStatus'>
@@ -6266,13 +7373,6 @@ export namespace Prisma {
    * Reference to a field of type 'TotpStatus[]'
    */
   export type ListEnumTotpStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TotpStatus[]'>
-    
-
-
-  /**
-   * Reference to a field of type 'Boolean'
-   */
-  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
     
 
 
@@ -6444,28 +7544,33 @@ export namespace Prisma {
     NOT?: MultiFactorAuthenticationWhereInput | MultiFactorAuthenticationWhereInput[]
     id?: StringFilter<"MultiFactorAuthentication"> | string
     recoveryCodes?: StringNullableListFilter<"MultiFactorAuthentication">
-    totpId?: StringFilter<"MultiFactorAuthentication"> | string
+    totpId?: StringNullableFilter<"MultiFactorAuthentication"> | string | null
+    passkeyId?: StringNullableFilter<"MultiFactorAuthentication"> | string | null
     userId?: StringFilter<"MultiFactorAuthentication"> | string
     createdAt?: DateTimeFilter<"MultiFactorAuthentication"> | Date | string
     updatedAt?: DateTimeFilter<"MultiFactorAuthentication"> | Date | string
-    totp?: XOR<TotpRelationFilter, TotpWhereInput>
+    totp?: XOR<TotpNullableRelationFilter, TotpWhereInput> | null
+    passkey?: XOR<PasskeyNullableRelationFilter, PasskeyWhereInput> | null
     user?: XOR<UserRelationFilter, UserWhereInput>
   }
 
   export type MultiFactorAuthenticationOrderByWithRelationInput = {
     id?: SortOrder
     recoveryCodes?: SortOrder
-    totpId?: SortOrder
+    totpId?: SortOrderInput | SortOrder
+    passkeyId?: SortOrderInput | SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     totp?: TotpOrderByWithRelationInput
+    passkey?: PasskeyOrderByWithRelationInput
     user?: UserOrderByWithRelationInput
   }
 
   export type MultiFactorAuthenticationWhereUniqueInput = Prisma.AtLeast<{
     id?: string
     totpId?: string
+    passkeyId?: string
     userId?: string
     AND?: MultiFactorAuthenticationWhereInput | MultiFactorAuthenticationWhereInput[]
     OR?: MultiFactorAuthenticationWhereInput[]
@@ -6473,14 +7578,16 @@ export namespace Prisma {
     recoveryCodes?: StringNullableListFilter<"MultiFactorAuthentication">
     createdAt?: DateTimeFilter<"MultiFactorAuthentication"> | Date | string
     updatedAt?: DateTimeFilter<"MultiFactorAuthentication"> | Date | string
-    totp?: XOR<TotpRelationFilter, TotpWhereInput>
+    totp?: XOR<TotpNullableRelationFilter, TotpWhereInput> | null
+    passkey?: XOR<PasskeyNullableRelationFilter, PasskeyWhereInput> | null
     user?: XOR<UserRelationFilter, UserWhereInput>
-  }, "id" | "totpId" | "userId">
+  }, "id" | "totpId" | "passkeyId" | "userId">
 
   export type MultiFactorAuthenticationOrderByWithAggregationInput = {
     id?: SortOrder
     recoveryCodes?: SortOrder
-    totpId?: SortOrder
+    totpId?: SortOrderInput | SortOrder
+    passkeyId?: SortOrderInput | SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -6495,10 +7602,71 @@ export namespace Prisma {
     NOT?: MultiFactorAuthenticationScalarWhereWithAggregatesInput | MultiFactorAuthenticationScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"MultiFactorAuthentication"> | string
     recoveryCodes?: StringNullableListFilter<"MultiFactorAuthentication">
-    totpId?: StringWithAggregatesFilter<"MultiFactorAuthentication"> | string
+    totpId?: StringNullableWithAggregatesFilter<"MultiFactorAuthentication"> | string | null
+    passkeyId?: StringNullableWithAggregatesFilter<"MultiFactorAuthentication"> | string | null
     userId?: StringWithAggregatesFilter<"MultiFactorAuthentication"> | string
     createdAt?: DateTimeWithAggregatesFilter<"MultiFactorAuthentication"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"MultiFactorAuthentication"> | Date | string
+  }
+
+  export type PasskeyWhereInput = {
+    AND?: PasskeyWhereInput | PasskeyWhereInput[]
+    OR?: PasskeyWhereInput[]
+    NOT?: PasskeyWhereInput | PasskeyWhereInput[]
+    id?: StringFilter<"Passkey"> | string
+    publicKey?: StringFilter<"Passkey"> | string
+    privateKey?: StringFilter<"Passkey"> | string
+    isActivated?: BoolFilter<"Passkey"> | boolean
+    createdAt?: DateTimeFilter<"Passkey"> | Date | string
+    updatedAt?: DateTimeFilter<"Passkey"> | Date | string
+    mfa?: XOR<MultiFactorAuthenticationNullableRelationFilter, MultiFactorAuthenticationWhereInput> | null
+  }
+
+  export type PasskeyOrderByWithRelationInput = {
+    id?: SortOrder
+    publicKey?: SortOrder
+    privateKey?: SortOrder
+    isActivated?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    mfa?: MultiFactorAuthenticationOrderByWithRelationInput
+  }
+
+  export type PasskeyWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: PasskeyWhereInput | PasskeyWhereInput[]
+    OR?: PasskeyWhereInput[]
+    NOT?: PasskeyWhereInput | PasskeyWhereInput[]
+    publicKey?: StringFilter<"Passkey"> | string
+    privateKey?: StringFilter<"Passkey"> | string
+    isActivated?: BoolFilter<"Passkey"> | boolean
+    createdAt?: DateTimeFilter<"Passkey"> | Date | string
+    updatedAt?: DateTimeFilter<"Passkey"> | Date | string
+    mfa?: XOR<MultiFactorAuthenticationNullableRelationFilter, MultiFactorAuthenticationWhereInput> | null
+  }, "id">
+
+  export type PasskeyOrderByWithAggregationInput = {
+    id?: SortOrder
+    publicKey?: SortOrder
+    privateKey?: SortOrder
+    isActivated?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: PasskeyCountOrderByAggregateInput
+    _max?: PasskeyMaxOrderByAggregateInput
+    _min?: PasskeyMinOrderByAggregateInput
+  }
+
+  export type PasskeyScalarWhereWithAggregatesInput = {
+    AND?: PasskeyScalarWhereWithAggregatesInput | PasskeyScalarWhereWithAggregatesInput[]
+    OR?: PasskeyScalarWhereWithAggregatesInput[]
+    NOT?: PasskeyScalarWhereWithAggregatesInput | PasskeyScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Passkey"> | string
+    publicKey?: StringWithAggregatesFilter<"Passkey"> | string
+    privateKey?: StringWithAggregatesFilter<"Passkey"> | string
+    isActivated?: BoolWithAggregatesFilter<"Passkey"> | boolean
+    createdAt?: DateTimeWithAggregatesFilter<"Passkey"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Passkey"> | Date | string
   }
 
   export type TotpWhereInput = {
@@ -6806,14 +7974,16 @@ export namespace Prisma {
     recoveryCodes?: MultiFactorAuthenticationCreaterecoveryCodesInput | string[]
     createdAt?: Date | string
     updatedAt?: Date | string
-    totp: TotpCreateNestedOneWithoutMfaInput
+    totp?: TotpCreateNestedOneWithoutMfaInput
+    passkey?: PasskeyCreateNestedOneWithoutMfaInput
     user: UserCreateNestedOneWithoutMfaInput
   }
 
   export type MultiFactorAuthenticationUncheckedCreateInput = {
     id?: string
     recoveryCodes?: MultiFactorAuthenticationCreaterecoveryCodesInput | string[]
-    totpId: string
+    totpId?: string | null
+    passkeyId?: string | null
     userId: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -6824,14 +7994,16 @@ export namespace Prisma {
     recoveryCodes?: MultiFactorAuthenticationUpdaterecoveryCodesInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    totp?: TotpUpdateOneRequiredWithoutMfaNestedInput
+    totp?: TotpUpdateOneWithoutMfaNestedInput
+    passkey?: PasskeyUpdateOneWithoutMfaNestedInput
     user?: UserUpdateOneRequiredWithoutMfaNestedInput
   }
 
   export type MultiFactorAuthenticationUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     recoveryCodes?: MultiFactorAuthenticationUpdaterecoveryCodesInput | string[]
-    totpId?: StringFieldUpdateOperationsInput | string
+    totpId?: NullableStringFieldUpdateOperationsInput | string | null
+    passkeyId?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -6840,7 +8012,8 @@ export namespace Prisma {
   export type MultiFactorAuthenticationCreateManyInput = {
     id?: string
     recoveryCodes?: MultiFactorAuthenticationCreaterecoveryCodesInput | string[]
-    totpId: string
+    totpId?: string | null
+    passkeyId?: string | null
     userId: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -6856,8 +8029,76 @@ export namespace Prisma {
   export type MultiFactorAuthenticationUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     recoveryCodes?: MultiFactorAuthenticationUpdaterecoveryCodesInput | string[]
-    totpId?: StringFieldUpdateOperationsInput | string
+    totpId?: NullableStringFieldUpdateOperationsInput | string | null
+    passkeyId?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PasskeyCreateInput = {
+    id?: string
+    publicKey: string
+    privateKey: string
+    isActivated?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    mfa?: MultiFactorAuthenticationCreateNestedOneWithoutPasskeyInput
+  }
+
+  export type PasskeyUncheckedCreateInput = {
+    id?: string
+    publicKey: string
+    privateKey: string
+    isActivated?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    mfa?: MultiFactorAuthenticationUncheckedCreateNestedOneWithoutPasskeyInput
+  }
+
+  export type PasskeyUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    publicKey?: StringFieldUpdateOperationsInput | string
+    privateKey?: StringFieldUpdateOperationsInput | string
+    isActivated?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    mfa?: MultiFactorAuthenticationUpdateOneWithoutPasskeyNestedInput
+  }
+
+  export type PasskeyUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    publicKey?: StringFieldUpdateOperationsInput | string
+    privateKey?: StringFieldUpdateOperationsInput | string
+    isActivated?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    mfa?: MultiFactorAuthenticationUncheckedUpdateOneWithoutPasskeyNestedInput
+  }
+
+  export type PasskeyCreateManyInput = {
+    id?: string
+    publicKey: string
+    privateKey: string
+    isActivated?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PasskeyUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    publicKey?: StringFieldUpdateOperationsInput | string
+    privateKey?: StringFieldUpdateOperationsInput | string
+    isActivated?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PasskeyUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    publicKey?: StringFieldUpdateOperationsInput | string
+    privateKey?: StringFieldUpdateOperationsInput | string
+    isActivated?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -7257,15 +8498,21 @@ export namespace Prisma {
     isEmpty?: boolean
   }
 
-  export type TotpRelationFilter = {
-    is?: TotpWhereInput
-    isNot?: TotpWhereInput
+  export type TotpNullableRelationFilter = {
+    is?: TotpWhereInput | null
+    isNot?: TotpWhereInput | null
+  }
+
+  export type PasskeyNullableRelationFilter = {
+    is?: PasskeyWhereInput | null
+    isNot?: PasskeyWhereInput | null
   }
 
   export type MultiFactorAuthenticationCountOrderByAggregateInput = {
     id?: SortOrder
     recoveryCodes?: SortOrder
     totpId?: SortOrder
+    passkeyId?: SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -7274,6 +8521,7 @@ export namespace Prisma {
   export type MultiFactorAuthenticationMaxOrderByAggregateInput = {
     id?: SortOrder
     totpId?: SortOrder
+    passkeyId?: SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -7282,9 +8530,50 @@ export namespace Prisma {
   export type MultiFactorAuthenticationMinOrderByAggregateInput = {
     id?: SortOrder
     totpId?: SortOrder
+    passkeyId?: SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+  }
+
+  export type BoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type PasskeyCountOrderByAggregateInput = {
+    id?: SortOrder
+    publicKey?: SortOrder
+    privateKey?: SortOrder
+    isActivated?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type PasskeyMaxOrderByAggregateInput = {
+    id?: SortOrder
+    publicKey?: SortOrder
+    privateKey?: SortOrder
+    isActivated?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type PasskeyMinOrderByAggregateInput = {
+    id?: SortOrder
+    publicKey?: SortOrder
+    privateKey?: SortOrder
+    isActivated?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
   }
 
   export type EnumTotpStatusFilter<$PrismaModel = never> = {
@@ -7326,11 +8615,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumTotpStatusFilter<$PrismaModel>
     _max?: NestedEnumTotpStatusFilter<$PrismaModel>
-  }
-
-  export type BoolFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
   export type CourseCountOrderByAggregateInput = {
@@ -7381,14 +8665,6 @@ export namespace Prisma {
 
   export type CourseSumOrderByAggregateInput = {
     views?: SortOrder
-  }
-
-  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedBoolFilter<$PrismaModel>
-    _max?: NestedBoolFilter<$PrismaModel>
   }
 
   export type PasswordResetCreateNestedOneWithoutUserInput = {
@@ -7503,6 +8779,12 @@ export namespace Prisma {
     connect?: TotpWhereUniqueInput
   }
 
+  export type PasskeyCreateNestedOneWithoutMfaInput = {
+    create?: XOR<PasskeyCreateWithoutMfaInput, PasskeyUncheckedCreateWithoutMfaInput>
+    connectOrCreate?: PasskeyCreateOrConnectWithoutMfaInput
+    connect?: PasskeyWhereUniqueInput
+  }
+
   export type UserCreateNestedOneWithoutMfaInput = {
     create?: XOR<UserCreateWithoutMfaInput, UserUncheckedCreateWithoutMfaInput>
     connectOrCreate?: UserCreateOrConnectWithoutMfaInput
@@ -7514,12 +8796,24 @@ export namespace Prisma {
     push?: string | string[]
   }
 
-  export type TotpUpdateOneRequiredWithoutMfaNestedInput = {
+  export type TotpUpdateOneWithoutMfaNestedInput = {
     create?: XOR<TotpCreateWithoutMfaInput, TotpUncheckedCreateWithoutMfaInput>
     connectOrCreate?: TotpCreateOrConnectWithoutMfaInput
     upsert?: TotpUpsertWithoutMfaInput
+    disconnect?: TotpWhereInput | boolean
+    delete?: TotpWhereInput | boolean
     connect?: TotpWhereUniqueInput
     update?: XOR<XOR<TotpUpdateToOneWithWhereWithoutMfaInput, TotpUpdateWithoutMfaInput>, TotpUncheckedUpdateWithoutMfaInput>
+  }
+
+  export type PasskeyUpdateOneWithoutMfaNestedInput = {
+    create?: XOR<PasskeyCreateWithoutMfaInput, PasskeyUncheckedCreateWithoutMfaInput>
+    connectOrCreate?: PasskeyCreateOrConnectWithoutMfaInput
+    upsert?: PasskeyUpsertWithoutMfaInput
+    disconnect?: PasskeyWhereInput | boolean
+    delete?: PasskeyWhereInput | boolean
+    connect?: PasskeyWhereUniqueInput
+    update?: XOR<XOR<PasskeyUpdateToOneWithWhereWithoutMfaInput, PasskeyUpdateWithoutMfaInput>, PasskeyUncheckedUpdateWithoutMfaInput>
   }
 
   export type UserUpdateOneRequiredWithoutMfaNestedInput = {
@@ -7528,6 +8822,42 @@ export namespace Prisma {
     upsert?: UserUpsertWithoutMfaInput
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutMfaInput, UserUpdateWithoutMfaInput>, UserUncheckedUpdateWithoutMfaInput>
+  }
+
+  export type MultiFactorAuthenticationCreateNestedOneWithoutPasskeyInput = {
+    create?: XOR<MultiFactorAuthenticationCreateWithoutPasskeyInput, MultiFactorAuthenticationUncheckedCreateWithoutPasskeyInput>
+    connectOrCreate?: MultiFactorAuthenticationCreateOrConnectWithoutPasskeyInput
+    connect?: MultiFactorAuthenticationWhereUniqueInput
+  }
+
+  export type MultiFactorAuthenticationUncheckedCreateNestedOneWithoutPasskeyInput = {
+    create?: XOR<MultiFactorAuthenticationCreateWithoutPasskeyInput, MultiFactorAuthenticationUncheckedCreateWithoutPasskeyInput>
+    connectOrCreate?: MultiFactorAuthenticationCreateOrConnectWithoutPasskeyInput
+    connect?: MultiFactorAuthenticationWhereUniqueInput
+  }
+
+  export type BoolFieldUpdateOperationsInput = {
+    set?: boolean
+  }
+
+  export type MultiFactorAuthenticationUpdateOneWithoutPasskeyNestedInput = {
+    create?: XOR<MultiFactorAuthenticationCreateWithoutPasskeyInput, MultiFactorAuthenticationUncheckedCreateWithoutPasskeyInput>
+    connectOrCreate?: MultiFactorAuthenticationCreateOrConnectWithoutPasskeyInput
+    upsert?: MultiFactorAuthenticationUpsertWithoutPasskeyInput
+    disconnect?: MultiFactorAuthenticationWhereInput | boolean
+    delete?: MultiFactorAuthenticationWhereInput | boolean
+    connect?: MultiFactorAuthenticationWhereUniqueInput
+    update?: XOR<XOR<MultiFactorAuthenticationUpdateToOneWithWhereWithoutPasskeyInput, MultiFactorAuthenticationUpdateWithoutPasskeyInput>, MultiFactorAuthenticationUncheckedUpdateWithoutPasskeyInput>
+  }
+
+  export type MultiFactorAuthenticationUncheckedUpdateOneWithoutPasskeyNestedInput = {
+    create?: XOR<MultiFactorAuthenticationCreateWithoutPasskeyInput, MultiFactorAuthenticationUncheckedCreateWithoutPasskeyInput>
+    connectOrCreate?: MultiFactorAuthenticationCreateOrConnectWithoutPasskeyInput
+    upsert?: MultiFactorAuthenticationUpsertWithoutPasskeyInput
+    disconnect?: MultiFactorAuthenticationWhereInput | boolean
+    delete?: MultiFactorAuthenticationWhereInput | boolean
+    connect?: MultiFactorAuthenticationWhereUniqueInput
+    update?: XOR<XOR<MultiFactorAuthenticationUpdateToOneWithWhereWithoutPasskeyInput, MultiFactorAuthenticationUpdateWithoutPasskeyInput>, MultiFactorAuthenticationUncheckedUpdateWithoutPasskeyInput>
   }
 
   export type MultiFactorAuthenticationCreateNestedOneWithoutTotpInput = {
@@ -7564,10 +8894,6 @@ export namespace Prisma {
     delete?: MultiFactorAuthenticationWhereInput | boolean
     connect?: MultiFactorAuthenticationWhereUniqueInput
     update?: XOR<XOR<MultiFactorAuthenticationUpdateToOneWithWhereWithoutTotpInput, MultiFactorAuthenticationUpdateWithoutTotpInput>, MultiFactorAuthenticationUncheckedUpdateWithoutTotpInput>
-  }
-
-  export type BoolFieldUpdateOperationsInput = {
-    set?: boolean
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -7723,6 +9049,19 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type NestedBoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
   export type NestedEnumTotpStatusFilter<$PrismaModel = never> = {
     equals?: $Enums.TotpStatus | EnumTotpStatusFieldRefInput<$PrismaModel>
     in?: $Enums.TotpStatus[] | ListEnumTotpStatusFieldRefInput<$PrismaModel>
@@ -7738,19 +9077,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumTotpStatusFilter<$PrismaModel>
     _max?: NestedEnumTotpStatusFilter<$PrismaModel>
-  }
-
-  export type NestedBoolFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolFilter<$PrismaModel> | boolean
-  }
-
-  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedBoolFilter<$PrismaModel>
-    _max?: NestedBoolFilter<$PrismaModel>
   }
 
   export type PasswordResetCreateWithoutUserInput = {
@@ -7779,13 +9105,15 @@ export namespace Prisma {
     recoveryCodes?: MultiFactorAuthenticationCreaterecoveryCodesInput | string[]
     createdAt?: Date | string
     updatedAt?: Date | string
-    totp: TotpCreateNestedOneWithoutMfaInput
+    totp?: TotpCreateNestedOneWithoutMfaInput
+    passkey?: PasskeyCreateNestedOneWithoutMfaInput
   }
 
   export type MultiFactorAuthenticationUncheckedCreateWithoutUserInput = {
     id?: string
     recoveryCodes?: MultiFactorAuthenticationCreaterecoveryCodesInput | string[]
-    totpId: string
+    totpId?: string | null
+    passkeyId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -7838,13 +9166,15 @@ export namespace Prisma {
     recoveryCodes?: MultiFactorAuthenticationUpdaterecoveryCodesInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    totp?: TotpUpdateOneRequiredWithoutMfaNestedInput
+    totp?: TotpUpdateOneWithoutMfaNestedInput
+    passkey?: PasskeyUpdateOneWithoutMfaNestedInput
   }
 
   export type MultiFactorAuthenticationUncheckedUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     recoveryCodes?: MultiFactorAuthenticationUpdaterecoveryCodesInput | string[]
-    totpId?: StringFieldUpdateOperationsInput | string
+    totpId?: NullableStringFieldUpdateOperationsInput | string | null
+    passkeyId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -7942,6 +9272,29 @@ export namespace Prisma {
     create: XOR<TotpCreateWithoutMfaInput, TotpUncheckedCreateWithoutMfaInput>
   }
 
+  export type PasskeyCreateWithoutMfaInput = {
+    id?: string
+    publicKey: string
+    privateKey: string
+    isActivated?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PasskeyUncheckedCreateWithoutMfaInput = {
+    id?: string
+    publicKey: string
+    privateKey: string
+    isActivated?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PasskeyCreateOrConnectWithoutMfaInput = {
+    where: PasskeyWhereUniqueInput
+    create: XOR<PasskeyCreateWithoutMfaInput, PasskeyUncheckedCreateWithoutMfaInput>
+  }
+
   export type UserCreateWithoutMfaInput = {
     id?: string
     email: string
@@ -8002,6 +9355,35 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type PasskeyUpsertWithoutMfaInput = {
+    update: XOR<PasskeyUpdateWithoutMfaInput, PasskeyUncheckedUpdateWithoutMfaInput>
+    create: XOR<PasskeyCreateWithoutMfaInput, PasskeyUncheckedCreateWithoutMfaInput>
+    where?: PasskeyWhereInput
+  }
+
+  export type PasskeyUpdateToOneWithWhereWithoutMfaInput = {
+    where?: PasskeyWhereInput
+    data: XOR<PasskeyUpdateWithoutMfaInput, PasskeyUncheckedUpdateWithoutMfaInput>
+  }
+
+  export type PasskeyUpdateWithoutMfaInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    publicKey?: StringFieldUpdateOperationsInput | string
+    privateKey?: StringFieldUpdateOperationsInput | string
+    isActivated?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PasskeyUncheckedUpdateWithoutMfaInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    publicKey?: StringFieldUpdateOperationsInput | string
+    privateKey?: StringFieldUpdateOperationsInput | string
+    isActivated?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type UserUpsertWithoutMfaInput = {
     update: XOR<UserUpdateWithoutMfaInput, UserUncheckedUpdateWithoutMfaInput>
     create: XOR<UserCreateWithoutMfaInput, UserUncheckedCreateWithoutMfaInput>
@@ -8041,17 +9423,71 @@ export namespace Prisma {
     passwordReset?: PasswordResetUncheckedUpdateOneWithoutUserNestedInput
   }
 
+  export type MultiFactorAuthenticationCreateWithoutPasskeyInput = {
+    id?: string
+    recoveryCodes?: MultiFactorAuthenticationCreaterecoveryCodesInput | string[]
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    totp?: TotpCreateNestedOneWithoutMfaInput
+    user: UserCreateNestedOneWithoutMfaInput
+  }
+
+  export type MultiFactorAuthenticationUncheckedCreateWithoutPasskeyInput = {
+    id?: string
+    recoveryCodes?: MultiFactorAuthenticationCreaterecoveryCodesInput | string[]
+    totpId?: string | null
+    userId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MultiFactorAuthenticationCreateOrConnectWithoutPasskeyInput = {
+    where: MultiFactorAuthenticationWhereUniqueInput
+    create: XOR<MultiFactorAuthenticationCreateWithoutPasskeyInput, MultiFactorAuthenticationUncheckedCreateWithoutPasskeyInput>
+  }
+
+  export type MultiFactorAuthenticationUpsertWithoutPasskeyInput = {
+    update: XOR<MultiFactorAuthenticationUpdateWithoutPasskeyInput, MultiFactorAuthenticationUncheckedUpdateWithoutPasskeyInput>
+    create: XOR<MultiFactorAuthenticationCreateWithoutPasskeyInput, MultiFactorAuthenticationUncheckedCreateWithoutPasskeyInput>
+    where?: MultiFactorAuthenticationWhereInput
+  }
+
+  export type MultiFactorAuthenticationUpdateToOneWithWhereWithoutPasskeyInput = {
+    where?: MultiFactorAuthenticationWhereInput
+    data: XOR<MultiFactorAuthenticationUpdateWithoutPasskeyInput, MultiFactorAuthenticationUncheckedUpdateWithoutPasskeyInput>
+  }
+
+  export type MultiFactorAuthenticationUpdateWithoutPasskeyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    recoveryCodes?: MultiFactorAuthenticationUpdaterecoveryCodesInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    totp?: TotpUpdateOneWithoutMfaNestedInput
+    user?: UserUpdateOneRequiredWithoutMfaNestedInput
+  }
+
+  export type MultiFactorAuthenticationUncheckedUpdateWithoutPasskeyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    recoveryCodes?: MultiFactorAuthenticationUpdaterecoveryCodesInput | string[]
+    totpId?: NullableStringFieldUpdateOperationsInput | string | null
+    userId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type MultiFactorAuthenticationCreateWithoutTotpInput = {
     id?: string
     recoveryCodes?: MultiFactorAuthenticationCreaterecoveryCodesInput | string[]
     createdAt?: Date | string
     updatedAt?: Date | string
+    passkey?: PasskeyCreateNestedOneWithoutMfaInput
     user: UserCreateNestedOneWithoutMfaInput
   }
 
   export type MultiFactorAuthenticationUncheckedCreateWithoutTotpInput = {
     id?: string
     recoveryCodes?: MultiFactorAuthenticationCreaterecoveryCodesInput | string[]
+    passkeyId?: string | null
     userId: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -8078,12 +9514,14 @@ export namespace Prisma {
     recoveryCodes?: MultiFactorAuthenticationUpdaterecoveryCodesInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    passkey?: PasskeyUpdateOneWithoutMfaNestedInput
     user?: UserUpdateOneRequiredWithoutMfaNestedInput
   }
 
   export type MultiFactorAuthenticationUncheckedUpdateWithoutTotpInput = {
     id?: StringFieldUpdateOperationsInput | string
     recoveryCodes?: MultiFactorAuthenticationUpdaterecoveryCodesInput | string[]
+    passkeyId?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8106,6 +9544,10 @@ export namespace Prisma {
      * @deprecated Use MultiFactorAuthenticationDefaultArgs instead
      */
     export type MultiFactorAuthenticationArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = MultiFactorAuthenticationDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use PasskeyDefaultArgs instead
+     */
+    export type PasskeyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = PasskeyDefaultArgs<ExtArgs>
     /**
      * @deprecated Use TotpDefaultArgs instead
      */

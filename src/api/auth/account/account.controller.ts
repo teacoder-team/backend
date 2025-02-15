@@ -20,6 +20,7 @@ import {
 
 import { AccountService } from './account.service'
 import {
+	ChangeEmailDto,
 	ChangePasswordDto,
 	CreateUserDto,
 	PasswordResetDto,
@@ -77,6 +78,19 @@ export class AccountController {
 	@HttpCode(HttpStatus.OK)
 	public async passwordReset(@Body() dto: PasswordResetDto) {
 		return this.accountService.passwordReset(dto)
+	}
+
+	@ApiOperation({
+		summary: 'Change Email'
+	})
+	@Authorization()
+	@Patch('change/email')
+	@HttpCode(HttpStatus.OK)
+	public async changeEmail(
+		@Authorized() user: User,
+		@Body() dto: ChangeEmailDto
+	) {
+		return this.accountService.changeEmail(user, dto)
 	}
 
 	@ApiOperation({
