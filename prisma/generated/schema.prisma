@@ -25,8 +25,9 @@ model User {
   passwordReset PasswordReset?
   mfa           MultiFactorAuthentication?
 
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt    DateTime       @default(now()) @map("created_at")
+  updatedAt    DateTime       @updatedAt @map("updated_at")
+  UserProgress UserProgress[]
 
   @@map("users")
 }
@@ -111,10 +112,68 @@ model Course {
 
   views Int @default(0)
 
+  sections Section[]
+
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("courses")
+}
+
+model Section {
+  id String @id @default(uuid())
+
+  title   String
+  lessons Lesson[]
+
+  course   Course? @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId String? @map("course_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("sections")
+}
+
+model Lesson {
+  id String @id @default(uuid())
+
+  title String
+  slug  String @unique
+
+  description String?
+  kinescopeId String  @map("kinescope_id")
+
+  isPublished Boolean @default(false) @map("is_published")
+
+  userProgress UserProgress[]
+
+  section   Section? @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  sectionId String?  @map("section_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("lessons")
+}
+
+model UserProgress {
+  id String @id @default(uuid())
+
+  isCompleted Boolean @default(false) @map("is_completed")
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @map("user_id")
+
+  lesson   Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  lessonId String @map("lesson_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([userId, lessonId])
+  @@index([lessonId])
+  @@map("user_progress")
 }
 
 enum UserRole {

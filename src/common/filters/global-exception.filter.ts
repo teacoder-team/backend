@@ -10,14 +10,14 @@ import type { Request, Response } from 'express'
 export class GlobalExceptionFilter implements ExceptionFilter {
 	public catch(exception: HttpException, host: ArgumentsHost) {
 		const ctx = host.switchToHttp()
+
 		const response = ctx.getResponse<Response>()
 		const request = ctx.getRequest<Request>()
-		const type = exception.name
+
 		const message = exception.message
 		const status = exception.getStatus()
 
 		response.status(status).json({
-			type,
 			message,
 			status,
 			path: request.url

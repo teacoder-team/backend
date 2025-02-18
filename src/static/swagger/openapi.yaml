@@ -27,29 +27,6 @@ paths:
           description: ""
       summary: Create Account
       tags: *a1
-  /auth/account/verify:
-    post:
-      operationId: AccountController_sendEmailVerify
-      parameters: []
-      responses:
-        "200":
-          description: ""
-      summary: Send Email Verify
-      tags: *a1
-  /auth/account/verify/{code}:
-    patch:
-      operationId: AccountController_verifyEmail
-      parameters:
-        - name: code
-          required: true
-          in: path
-          schema:
-            type: string
-      responses:
-        "200":
-          description: ""
-      summary: Verify Email
-      tags: *a1
   /auth/account/reset_password:
     post:
       description: Send an email to reset account password.
@@ -278,17 +255,20 @@ paths:
           description: ""
       summary: Изменить аватар пользователя
       tags: *a4
-  /course/all:
+  /courses/all:
     get:
+      description: Retrieve a list of all available courses.
       operationId: CourseController_findAll
       parameters: []
       responses:
         "200":
           description: ""
+      summary: Fetch all courses
       tags: &a5
         - Course
-  /course/{slug}:
+  /courses/{slug}:
     get:
+      description: Retrieve a course using its unique slug identifier.
       operationId: CourseController_findBySlug
       parameters:
         - name: slug
@@ -299,9 +279,11 @@ paths:
       responses:
         "200":
           description: ""
+      summary: Find course by slug
       tags: *a5
-  /course/create:
+  /courses/create:
     post:
+      description: Allows an admin to create a new course.
       operationId: CourseController_create
       parameters: []
       requestBody:
@@ -313,10 +295,11 @@ paths:
       responses:
         "200":
           description: ""
+      summary: Create a new course
       tags: *a5
-  /course/change/thumbnail/{id}:
-    patch:
-      operationId: CourseController_changeThumbnail
+  /lessons/{id}/upload:
+    post:
+      operationId: LessonController_upload
       parameters:
         - name: id
           required: true
@@ -326,7 +309,8 @@ paths:
       responses:
         "200":
           description: ""
-      tags: *a5
+      tags:
+        - Lesson
 info:
   title: TeaCoder API
   description: API for Teacoder educational platform

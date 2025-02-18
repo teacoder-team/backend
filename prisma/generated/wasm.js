@@ -185,6 +185,28 @@ exports.Prisma.CourseScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.LessonScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  slug: 'slug',
+  description: 'description',
+  position: 'position',
+  kinescopeId: 'kinescopeId',
+  isPublished: 'isPublished',
+  courseId: 'courseId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.UserProgressScalarFieldEnum = {
+  id: 'id',
+  isCompleted: 'isCompleted',
+  userId: 'userId',
+  lessonId: 'lessonId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -216,7 +238,9 @@ exports.Prisma.ModelName = {
   MultiFactorAuthentication: 'MultiFactorAuthentication',
   Passkey: 'Passkey',
   Totp: 'Totp',
-  Course: 'Course'
+  Course: 'Course',
+  Lesson: 'Lesson',
+  UserProgress: 'UserProgress'
 };
 
 /**

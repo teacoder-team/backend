@@ -1,18 +1,13 @@
 import {
 	Body,
 	Controller,
-	FileTypeValidator,
 	Get,
 	HttpCode,
 	HttpStatus,
-	MaxFileSizeValidator,
 	Param,
-	ParseFilePipe,
-	Patch,
-	Post,
-	UploadedFile
+	Post
 } from '@nestjs/common'
-import { ApiTags } from '@nestjs/swagger'
+import { ApiOperation, ApiTags } from '@nestjs/swagger'
 import { UserRole } from '@prisma/generated'
 
 import { Authorization } from '@/common/decorators/auth.decorator'
@@ -21,49 +16,38 @@ import { CourseService } from './course.service'
 import { CreateCourseDto } from './dto'
 
 @ApiTags('Course')
-@Controller('course')
+@Controller('courses')
 export class CourseController {
 	public constructor(private readonly courseService: CourseService) {}
 
+	@ApiOperation({
+		summary: 'Fetch all courses',
+		description: 'Retrieve a list of all available courses.'
+	})
 	@Get('all')
 	@HttpCode(HttpStatus.OK)
 	public async findAll() {
 		return this.courseService.findAll()
 	}
 
+	@ApiOperation({
+		summary: 'Find course by slug',
+		description: 'Retrieve a course using its unique slug identifier.'
+	})
 	@Get(':slug')
 	@HttpCode(HttpStatus.OK)
 	public async findBySlug(@Param('slug') slug: string) {
 		return this.courseService.findBySlug(slug)
 	}
 
+	@ApiOperation({
+		summary: 'Create a new course',
+		description: 'Allows an admin to create a new course.'
+	})
 	@Authorization(UserRole.ADMIN)
 	@Post('create')
 	@HttpCode(HttpStatus.OK)
 	public async create(@Body() dto: CreateCourseDto) {
 		return this.courseService.create(dto)
-	}
-
-	@Authorization(UserRole.ADMIN)
-	@Patch('change/thumbnail/:id')
-	@HttpCode(HttpStatus.OK)
-	public async changeThumbnail(
-		@Param('id') id: string,
-		@UploadedFile(
-			new ParseFilePipe({
-				validators: [
-					new FileTypeValidator({
-						fileType: /\/(jpg|jpeg|png|webp)$/
-					}),
-					new MaxFileSizeValidator({
-						maxSize: 1000 * 1000 * 10,
-						message: 'Можно загружать файлы не больше 10 МБ'
-					})
-				]
-			})
-		)
-		file: Express.Multer.File
-	) {
-		return this.courseService.changeThumbnail(id, file)
 	}
 }

@@ -43,7 +43,7 @@ export class CourseService {
 			}
 		})
 
-		if (!course) throw new NotFoundException('Курс не найден')
+		if (!course) throw new NotFoundException('Course not found')
 
 		await this.redisService.set(
 			`courses:${course.slug}`,
@@ -64,30 +64,6 @@ export class CourseService {
 				slug: slugify(title)
 			}
 		})
-
-		return true
-	}
-
-	public async changeThumbnail(id: string, file: Express.Multer.File) {
-		// const course = await this.findById(id)
-
-		// if (course.thumbnail) {
-		// 	await this.storageService.deleteFile(course.thumbnail)
-		// }
-
-		// const uploadedFile = await this.storageService.uploadFile(
-		// 	file.buffer,
-		// 	'courses'
-		// )
-
-		// await this.prismaService.course.update({
-		// 	where: {
-		// 		id: course.id
-		// 	},
-		// 	data: {
-		// 		thumbnail: null
-		// 	}
-		// })
 
 		return true
 	}

@@ -8,6 +8,8 @@ import { AccountModule } from './auth/account/account.module'
 import { MfaModule } from './auth/mfa/mfa.module'
 import { SessionModule } from './auth/session/session.module'
 import { CourseModule } from './course/course.module'
+import { LessonModule } from './lesson/lesson.module'
+import { ProgressModule } from './progress/progress.module'
 import { UsersModule } from './users/users.module'
 
 @Module({
@@ -21,7 +23,9 @@ import { UsersModule } from './users/users.module'
 		SessionModule,
 		MfaModule,
 		UsersModule,
-		CourseModule
+		CourseModule,
+		LessonModule,
+		ProgressModule
 	]
 })
 export class ApiModule {}
