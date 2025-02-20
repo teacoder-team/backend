@@ -66,8 +66,8 @@ export class RedisService
 			userId: user.id
 		}
 
-		await this.hmset(`sessions:${session.id}`, session)
-		await this.expire(`sessions:${session.id}`, 30 * 24 * 60 * 60)
+		await this.hmset(`sessions:${session.token}`, session)
+		await this.expire(`sessions:${session.token}`, 7 * 24 * 60 * 60)
 
 		const userSession: UserSession = {
 			id: uuidv4(),
@@ -84,10 +84,10 @@ export class RedisService
 		}
 
 		await this.set(
-			`user_sessions:${userSession.id}`,
+			`user_sessions:${session.token}`,
 			JSON.stringify(userSession),
 			'EX',
-			30 * 24 * 60 * 60
+			7 * 24 * 60 * 60
 		)
 
 		return session

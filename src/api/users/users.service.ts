@@ -51,8 +51,6 @@ export class UsersService {
 				.toBuffer()
 		}
 
-		console.log(processedBuffer)
-
 		const uploadedFile = await this.storageService.uploadFile(
 			file,
 			processedBuffer,

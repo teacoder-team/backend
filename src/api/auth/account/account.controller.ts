@@ -7,7 +7,7 @@ import {
 	Patch,
 	Post
 } from '@nestjs/common'
-import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { type User } from '@prisma/generated'
 import { Turnstile } from 'nestjs-cloudflare-captcha'
 
@@ -20,11 +20,13 @@ import {
 
 import { AccountService } from './account.service'
 import {
-	ChangeEmailDto,
-	ChangePasswordDto,
-	CreateUserDto,
-	PasswordResetDto,
-	SendPasswordResetDto
+	AccountResponse,
+	ChangeEmailRequest,
+	ChangePasswordRequest,
+	CreateUserRequest,
+	CreateUserResponse,
+	PasswordResetRequest,
+	SendPasswordResetRequest
 } from './dto'
 
 @ApiTags('Account')
@@ -36,22 +38,30 @@ export class AccountController {
 		summary: 'Fetch account',
 		description: 'Fetch account information from the current session.'
 	})
+	@ApiResponse({
+		status: HttpStatus.OK,
+		type: AccountResponse
+	})
 	@Authorization()
 	@Get()
 	@HttpCode(HttpStatus.OK)
-	public async fetch(@Authorized() user: User) {
-		return this.accountService.fetch(user)
+	public async me(@Authorized() user: User) {
+		return this.accountService.me(user)
 	}
 
 	@ApiOperation({
 		summary: 'Create Account',
 		description: 'Create a new account'
 	})
+	@ApiResponse({
+		status: HttpStatus.OK,
+		type: CreateUserResponse
+	})
 	@Turnstile()
 	@Post('create')
 	@HttpCode(HttpStatus.OK)
 	public async create(
-		@Body() dto: CreateUserDto,
+		@Body() dto: CreateUserRequest,
 		@ClientIp() ip: string,
 		@UserAgent() userAgent: string
 	) {
@@ -62,10 +72,14 @@ export class AccountController {
 		summary: 'Send Password Reset',
 		description: 'Send an email to reset account password.'
 	})
+	@ApiResponse({
+		status: HttpStatus.OK,
+		type: Boolean
+	})
 	@Turnstile()
 	@Post('reset_password')
 	@HttpCode(HttpStatus.OK)
-	public async sendPasswordReset(@Body() dto: SendPasswordResetDto) {
+	public async sendPasswordReset(@Body() dto: SendPasswordResetRequest) {
 		return this.accountService.sendPasswordReset(dto)
 	}
 
@@ -73,22 +87,31 @@ export class AccountController {
 		summary: 'Password Reset',
 		description: 'Confirm password reset and change the password.'
 	})
+	@ApiResponse({
+		status: HttpStatus.OK,
+		type: Boolean
+	})
 	@Turnstile()
 	@Patch('reset_password')
 	@HttpCode(HttpStatus.OK)
-	public async passwordReset(@Body() dto: PasswordResetDto) {
+	public async passwordReset(@Body() dto: PasswordResetRequest) {
 		return this.accountService.passwordReset(dto)
 	}
 
 	@ApiOperation({
-		summary: 'Change Email'
+		summary: 'Change Email',
+		description: 'Change the associated account email.'
+	})
+	@ApiResponse({
+		status: HttpStatus.OK,
+		type: Boolean
 	})
 	@Authorization()
 	@Patch('change/email')
 	@HttpCode(HttpStatus.OK)
 	public async changeEmail(
 		@Authorized() user: User,
-		@Body() dto: ChangeEmailDto
+		@Body() dto: ChangeEmailRequest
 	) {
 		return this.accountService.changeEmail(user, dto)
 	}
@@ -97,12 +120,16 @@ export class AccountController {
 		summary: 'Change Password',
 		description: 'Change the current account password.'
 	})
+	@ApiResponse({
+		status: HttpStatus.OK,
+		type: Boolean
+	})
 	@Authorization()
 	@Patch('change/password')
 	@HttpCode(HttpStatus.OK)
 	public async changePassword(
 		@Authorized() user: User,
-		@Body() dto: ChangePasswordDto
+		@Body() dto: ChangePasswordRequest
 	) {
 		return this.accountService.changePassword(user, dto)
 	}

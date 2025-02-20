@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger'
 import {
 	IsEmail,
 	IsNotEmpty,
@@ -6,16 +7,32 @@ import {
 	MinLength
 } from 'class-validator'
 
-export class CreateUserDto {
+import { LoginResponse } from '../../session/dto'
+
+export class CreateUserRequest {
+	@ApiProperty({
+		description: 'Display name',
+		example: 'John Doe'
+	})
 	@IsString({ message: 'Имя должно быть строкой' })
 	@IsNotEmpty({ message: 'Имя обязательно для заполнения' })
 	public name: string
 
+	@ApiProperty({
+		description: 'Email address',
+		example: 'john.doe@example.com'
+	})
 	@IsString({ message: 'Электронная почта должна быть строкой' })
 	@IsEmail({}, { message: 'Некорректный формат электронной почты' })
 	@IsNotEmpty({ message: 'Электронная почта обязательна для заполнения' })
 	public email: string
 
+	@ApiProperty({
+		description: 'Password',
+		example: '123456',
+		minLength: 6,
+		maxLength: 128
+	})
 	@IsString({ message: 'Пароль должен быть строкой' })
 	@IsNotEmpty({ message: 'Пароль обязателен для заполнения' })
 	@MinLength(6, {
@@ -26,3 +43,5 @@ export class CreateUserDto {
 	})
 	public password: string
 }
+
+export class CreateUserResponse extends LoginResponse {}

@@ -20,16 +20,19 @@ export class CourseService {
 			orderBy: {
 				createdAt: 'desc'
 			},
-			select: {
-				id: true,
-				title: true,
-				slug: true,
-				description: true,
-				thumbnail: true
+			include: {
+				_count: {
+					select: {
+						lessons: true
+					}
+				}
 			}
 		})
 
-		return courses
+		return courses.map(({ _count, ...course }) => ({
+			...course,
+			lessons: _count.lessons
+		}))
 	}
 
 	public async findBySlug(slug: string) {

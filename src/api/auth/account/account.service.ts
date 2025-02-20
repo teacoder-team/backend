@@ -14,11 +14,11 @@ import { PrismaService } from '@/infra/prisma/prisma.service'
 import { RedisService } from '@/infra/redis/redis.service'
 
 import {
-	ChangeEmailDto,
-	ChangePasswordDto,
-	CreateUserDto,
-	PasswordResetDto,
-	SendPasswordResetDto
+	ChangeEmailRequest,
+	ChangePasswordRequest,
+	CreateUserRequest,
+	PasswordResetRequest,
+	SendPasswordResetRequest
 } from './dto'
 
 @Injectable()
@@ -28,7 +28,7 @@ export class AccountService {
 		private readonly redisService: RedisService
 	) {}
 
-	public async fetch(user: User) {
+	public async me(user: User) {
 		return {
 			id: user.id,
 			displayName: user.displayName,
@@ -37,7 +37,7 @@ export class AccountService {
 		}
 	}
 
-	public async create(dto: CreateUserDto, ip: string, userAgent: string) {
+	public async create(dto: CreateUserRequest, ip: string, userAgent: string) {
 		const { name, email, password } = dto
 
 		const { valid } = await validate(email)
@@ -74,7 +74,7 @@ export class AccountService {
 		return session
 	}
 
-	public async sendPasswordReset(dto: SendPasswordResetDto) {
+	public async sendPasswordReset(dto: SendPasswordResetRequest) {
 		const { email } = dto
 
 		const user = await this.prismaService.user.findUnique({
@@ -108,7 +108,7 @@ export class AccountService {
 		return true
 	}
 
-	public async passwordReset(dto: PasswordResetDto) {
+	public async passwordReset(dto: PasswordResetRequest) {
 		const { token, password } = dto
 
 		const reset = await this.prismaService.passwordReset.findUnique({
@@ -145,7 +145,7 @@ export class AccountService {
 		return true
 	}
 
-	public async changeEmail(user: User, dto: ChangeEmailDto) {
+	public async changeEmail(user: User, dto: ChangeEmailRequest) {
 		const { email } = dto
 
 		await this.prismaService.user.update({
@@ -160,7 +160,7 @@ export class AccountService {
 		return true
 	}
 
-	public async changePassword(user: User, dto: ChangePasswordDto) {
+	public async changePassword(user: User, dto: ChangePasswordRequest) {
 		const { currentPassword, newPassword } = dto
 
 		const isValidPassword = await verify(user.password, currentPassword)

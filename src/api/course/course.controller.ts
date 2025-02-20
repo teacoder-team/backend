@@ -7,13 +7,13 @@ import {
 	Param,
 	Post
 } from '@nestjs/common'
-import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { UserRole } from '@prisma/generated'
 
 import { Authorization } from '@/common/decorators/auth.decorator'
 
 import { CourseService } from './course.service'
-import { CreateCourseDto } from './dto'
+import { CourseResponse, CreateCourseDto } from './dto'
 
 @ApiTags('Course')
 @Controller('courses')
@@ -24,7 +24,11 @@ export class CourseController {
 		summary: 'Fetch all courses',
 		description: 'Retrieve a list of all available courses.'
 	})
-	@Get('all')
+	@ApiResponse({
+		status: HttpStatus.OK,
+		type: [CourseResponse]
+	})
+	@Get()
 	@HttpCode(HttpStatus.OK)
 	public async findAll() {
 		return this.courseService.findAll()
@@ -33,6 +37,10 @@ export class CourseController {
 	@ApiOperation({
 		summary: 'Find course by slug',
 		description: 'Retrieve a course using its unique slug identifier.'
+	})
+	@ApiResponse({
+		status: HttpStatus.OK,
+		type: CourseResponse
 	})
 	@Get(':slug')
 	@HttpCode(HttpStatus.OK)

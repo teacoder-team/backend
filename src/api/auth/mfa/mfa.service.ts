@@ -12,7 +12,7 @@ import * as QRCode from 'qrcode'
 
 import { PrismaService } from '@/infra/prisma/prisma.service'
 
-import { DisableMfaDto, TotpEnableDto } from './dto'
+import { TotpDisableRequest, TotpEnableRequest } from './dto'
 
 @Injectable()
 export class MfaService {
@@ -69,7 +69,7 @@ export class MfaService {
 		return mfa.recoveryCodes
 	}
 
-	public async totpEnable(user: User, dto: TotpEnableDto) {
+	public async totpEnable(user: User, dto: TotpEnableRequest) {
 		const { secret, pin } = dto
 
 		const totp = new TOTP({
@@ -184,7 +184,7 @@ export class MfaService {
 		return { qrCodeUrl, secret }
 	}
 
-	public async totpDisable(user: User, dto: DisableMfaDto) {
+	public async totpDisable(user: User, dto: TotpDisableRequest) {
 		const { password } = dto
 
 		const isValidPassword = await verify(user.password, password)

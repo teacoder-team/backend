@@ -9,12 +9,17 @@ import {
 	Post,
 	Put
 } from '@nestjs/common'
-import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
 import type { User } from '@prisma/generated'
 
 import { Authorization, Authorized } from '@/common/decorators'
 
-import { DisableMfaDto, TotpEnableDto } from './dto'
+import {
+	MfaStatusResponse,
+	TotpDisableRequest,
+	TotpEnableRequest,
+	TotpGenerateSecretResponse
+} from './dto'
 import { MfaService } from './mfa.service'
 
 @ApiTags('MFA')
@@ -25,6 +30,10 @@ export class MfaController {
 	@ApiOperation({
 		summary: 'MFA Status​​',
 		description: 'Fetch MFA status of an account.'
+	})
+	@ApiResponse({
+		status: HttpStatus.OK,
+		type: MfaStatusResponse
 	})
 	@Authorization()
 	@Get()
@@ -37,6 +46,10 @@ export class MfaController {
 		summary: 'Fetch Recovery Codes​​​',
 		description: 'Fetch recovery codes for an account.'
 	})
+	@ApiResponse({
+		status: HttpStatus.OK,
+		type: [String]
+	})
 	@Authorization()
 	@Get('recovery')
 	@HttpCode(HttpStatus.OK)
@@ -47,6 +60,10 @@ export class MfaController {
 	@ApiOperation({
 		summary: 'Regenerate Recovery Codes​​',
 		description: 'Re-generate recovery codes for an account.'
+	})
+	@ApiResponse({
+		status: HttpStatus.OK,
+		type: [String]
 	})
 	@Authorization()
 	@Patch('recovery')
@@ -59,12 +76,16 @@ export class MfaController {
 		summary: 'Enable TOTP 2FA​​',
 		description: 'Enable TOTP 2FA for an account.'
 	})
+	@ApiResponse({
+		status: HttpStatus.OK,
+		type: Boolean
+	})
 	@Authorization()
 	@Put('totp')
 	@HttpCode(HttpStatus.OK)
 	public async totpEnable(
 		@Authorized() user: User,
-		@Body() dto: TotpEnableDto
+		@Body() dto: TotpEnableRequest
 	) {
 		return this.mfaService.totpEnable(user, dto)
 	}
@@ -72,6 +93,10 @@ export class MfaController {
 	@ApiOperation({
 		summary: 'Generate TOTP Secret​​​',
 		description: 'Generate a new secret for TOTP.'
+	})
+	@ApiResponse({
+		status: HttpStatus.OK,
+		type: TotpGenerateSecretResponse
 	})
 	@Authorization()
 	@Post('totp')
@@ -84,12 +109,16 @@ export class MfaController {
 		summary: 'Disable TOTP 2FA​​',
 		description: 'Disable TOTP 2FA for an account.'
 	})
+	@ApiResponse({
+		status: HttpStatus.OK,
+		type: Boolean
+	})
 	@Authorization()
 	@Delete('totp')
 	@HttpCode(HttpStatus.OK)
 	public async totpDisable(
 		@Authorized() user: User,
-		@Body() dto: DisableMfaDto
+		@Body() dto: TotpDisableRequest
 	) {
 		return this.mfaService.totpDisable(user, dto)
 	}

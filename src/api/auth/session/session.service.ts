@@ -4,14 +4,12 @@ import {
 	NotFoundException,
 	UnauthorizedException
 } from '@nestjs/common'
-import { TotpStatus, type User } from '@prisma/generated'
 import { verify } from 'argon2'
-import type { Request } from 'express'
 
 import { PrismaService } from '@/infra/prisma/prisma.service'
 import { RedisService } from '@/infra/redis/redis.service'
 
-import { LoginDto } from './dto'
+import { LoginRequest } from './dto'
 
 @Injectable()
 export class SessionService {
@@ -20,7 +18,7 @@ export class SessionService {
 		private readonly redisService: RedisService
 	) {}
 
-	public async login(dto: LoginDto, ip: string, userAgent: string) {
+	public async login(dto: LoginRequest, ip: string, userAgent: string) {
 		const { email, password } = dto
 
 		const user = await this.prismaService.user.findFirst({
@@ -45,12 +43,6 @@ export class SessionService {
 			throw new UnauthorizedException('Неправильный пароль')
 		}
 
-		const methods = await this.fetchMfaMethods(user)
-
-		if (methods.length > 0) {
-			return { methods }
-		}
-
 		const session = await this.redisService.createSession(
 			user,
 			ip,
@@ -61,200 +53,14 @@ export class SessionService {
 	}
 
 	public async logout(token: string) {
-		const keys = await this.redisService.keys(`sessions:*`)
+		const session = await this.redisService.hgetall(`sessions:${token}`)
 
-		for (const key of keys) {
-			const session = await this.redisService.hgetall(key)
+		if (!session || session.token !== token)
+			throw new UnauthorizedException('Session not found')
 
-			if (session.token === token) {
-				await this.redisService.del(key)
+		await this.redisService.del(`sessions:${token}`)
+		await this.redisService.del(`user_sessions:${session.token}`)
 
-				const userSessionKeys =
-					await this.redisService.keys(`user_sessions:*`)
-
-				for (const userSessionKey of userSessionKeys) {
-					const userSession = JSON.parse(
-						await this.redisService.get(userSessionKey)
-					)
-
-					if (userSession.sessionId === session.id) {
-						await this.redisService.del(userSessionKey)
-					}
-				}
-
-				return true
-			}
-		}
-
-		throw new UnauthorizedException('Invalid or expired session')
-	}
-
-	public async findAll(user: User, token: string) {
-		const keys = await this.redisService.keys(`sessions:*`)
-
-		if (keys.length === 0) {
-			return []
-		}
-
-		const userSessions = await Promise.all(
-			keys.map(async sessionKey => {
-				const type = await this.redisService.type(sessionKey)
-				if (type !== 'hash') {
-					return null
-				}
-
-				const session = await this.redisService.hgetall(sessionKey)
-
-				if (session.userId === user.id && session.token !== token) {
-					const userSessionKeys =
-						await this.redisService.keys(`user_sessions:*`)
-
-					for (const userSessionKey of userSessionKeys) {
-						const userSession = JSON.parse(
-							await this.redisService.get(userSessionKey)
-						)
-
-						if (userSession.sessionId === session.id) {
-							return {
-								id: session.id,
-								createdAt: userSession.createdAt,
-								country: userSession.geo.name,
-								city: userSession.geo.capital,
-								browser: userSession.browser.name,
-								os: userSession.os.name
-							}
-						}
-					}
-
-					return { session }
-				}
-
-				return null
-			})
-		)
-
-		return userSessions.filter(session => session !== null)
-	}
-
-	public async findCurrent(user: User, token: string) {
-		const keys = await this.redisService.keys(`sessions:*`)
-
-		for (const key of keys) {
-			const session = await this.redisService.hgetall(key)
-
-			if (session.token === token && session.userId === user.id) {
-				const userSessionKeys =
-					await this.redisService.keys(`user_sessions:*`)
-
-				for (const userSessionKey of userSessionKeys) {
-					const userSession = JSON.parse(
-						await this.redisService.get(userSessionKey)
-					)
-
-					if (userSession.sessionId === session.id) {
-						return {
-							id: session.id,
-							createdAt: userSession.createdAt,
-							country: userSession.geo.name,
-							city: userSession.geo.capital,
-							browser: userSession.browser.name,
-							os: userSession.os.name
-						}
-					}
-				}
-
-				return { session }
-			}
-		}
-
-		throw new UnauthorizedException('Session not found or expired')
-	}
-
-	public async remove(req: Request, id: string) {
-		const token = req.headers['x-session-token'] as string
-
-		const keys = await this.redisService.keys(`sessions:*`)
-
-		let currentSessionKey: string | null = null
-
-		for (const key of keys) {
-			const session = await this.redisService.hgetall(key)
-
-			if (session.token === token) {
-				currentSessionKey = key
-
-				if (session.id === id) {
-					throw new BadRequestException(
-						'Невозможно удалить текущую сессию'
-					)
-				}
-			}
-		}
-
-		if (!currentSessionKey) {
-			throw new UnauthorizedException('Текущая сессия не найдена')
-		}
-
-		for (const key of keys) {
-			const session = await this.redisService.hgetall(key)
-
-			if (session.id === id) {
-				const userSessionKeys =
-					await this.redisService.keys(`user_sessions:*`)
-
-				for (const userSessionKey of userSessionKeys) {
-					const userSession = JSON.parse(
-						await this.redisService.get(userSessionKey)
-					)
-
-					if (userSession.sessionId === id) {
-						await this.redisService.del(userSessionKey)
-					}
-				}
-
-				await this.redisService.del(key)
-
-				return {
-					message: `Сессия с ID ${id} успешно удалена`
-				}
-			}
-		}
-
-		throw new NotFoundException('Сессия не найдена')
-	}
-
-	private async fetchMfaMethods(user: User) {
-		const mfa =
-			await this.prismaService.multiFactorAuthentication.findUnique({
-				where: {
-					userId: user.id
-				},
-				include: {
-					totp: true,
-					passkey: true
-				}
-			})
-
-		if (!mfa) {
-			throw new NotFoundException(
-				'Многофакторная аутентификация не включена для этого пользователя'
-			)
-		}
-
-		const methods: string[] = []
-
-		if (mfa.totp?.status === TotpStatus.ENABLED) {
-			methods.push('Totp')
-		}
-
-		if (mfa.passkey?.isActivated) {
-			methods.push('Passkey')
-		}
-
-		if (mfa.recoveryCodes.length > 0) {
-			methods.push('Recovery')
-		}
-
-		return methods
+		return true
 	}
 }

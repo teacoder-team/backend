@@ -19,32 +19,21 @@ export class SessionAuthGuard implements CanActivate {
 	public async canActivate(context: ExecutionContext): Promise<boolean> {
 		const request = context.switchToHttp().getRequest() as Request
 
-		const token = request.headers['x-session-token'] as string
+		const token = request.headers['x-session-token']
 
 		if (!token) {
 			throw new UnauthorizedException('Session token is missing')
 		}
 
-		const keys = await this.redisService.keys('sessions:*')
+		const session = await this.redisService.hgetall(`sessions:${token}`)
 
-		let foundSession = null
-
-		for (const key of keys) {
-			const session = await this.redisService.hgetall(key)
-
-			if (session.token === token) {
-				foundSession = session
-				break
-			}
-		}
-
-		if (!foundSession) {
-			throw new UnauthorizedException('Invalid or expired session')
+		if (Object.keys(session).length === 0) {
+			throw new UnauthorizedException('Session not found')
 		}
 
 		const user = await this.prismaService.user.findUnique({
 			where: {
-				id: foundSession.userId
+				id: session.userId
 			}
 		})
 

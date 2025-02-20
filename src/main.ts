@@ -7,7 +7,7 @@ import { AppModule } from './app.module'
 import { GlobalExceptionFilter } from './common/filters/global-exception.filter'
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor'
 import { parseBoolean } from './common/utils/parse-boolean'
-import { setupSwagger } from './common/utils/setup-swagger'
+import { setupSwagger } from './common/utils/swagger'
 import { getCorsConfig } from './config'
 
 async function bootstrap() {
@@ -29,7 +29,7 @@ async function bootstrap() {
 	app.enableCors(getCorsConfig(config))
 
 	if (parseBoolean(config.getOrThrow<string>('SWAGGER_ENABLED'))) {
-		await setupSwagger(app)
+		setupSwagger(app)
 	}
 
 	await app.listen(config.getOrThrow<number>('APPLICATION_PORT'))
@@ -41,7 +41,6 @@ async function bootstrap() {
 			`📄 Documentation is available at: ${config.getOrThrow<string>('APPLICATION_URL')}${config.getOrThrow<string>('SWAGGER_PREFIX')}`
 		)
 	}
-	
 }
 
 bootstrap()
