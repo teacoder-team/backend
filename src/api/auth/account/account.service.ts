@@ -4,7 +4,7 @@ import {
 	Injectable,
 	NotFoundException
 } from '@nestjs/common'
-import { type User } from '@prisma/generated'
+import { DeletionStatus, type User } from '@prisma/generated'
 import { hash, verify } from 'argon2'
 import { randomBytes } from 'crypto'
 import validate from 'deep-email-validator'
@@ -16,6 +16,7 @@ import { RedisService } from '@/infra/redis/redis.service'
 import {
 	ChangeEmailRequest,
 	ChangePasswordRequest,
+	ConfirmDeletionRequest,
 	CreateUserRequest,
 	PasswordResetRequest,
 	SendPasswordResetRequest
@@ -78,12 +79,12 @@ export class AccountService {
 		const { email } = dto
 
 		const user = await this.prismaService.user.findUnique({
-			where: { email }
+			where: {
+				email
+			}
 		})
 
-		if (!user) {
-			throw new NotFoundException('Пользователь не найден')
-		}
+		if (!user) throw new NotFoundException('Пользователь не найден')
 
 		const token = randomBytes(64).toString('hex')
 
@@ -121,9 +122,7 @@ export class AccountService {
 			throw new NotFoundException('Токен не найден')
 		}
 
-		const hasExpired = new Date(reset.expiry) < new Date()
-
-		if (hasExpired) {
+		if (new Date() > reset.expiry) {
 			throw new BadRequestException('Срок действия токена истек')
 		}
 
@@ -175,6 +174,76 @@ export class AccountService {
 			},
 			data: {
 				password: await hash(newPassword)
+			}
+		})
+
+		return true
+	}
+
+	public async deleteAccount(user: User) {
+		const existingDeletion =
+			await this.prismaService.deletionInfo.findUnique({
+				where: {
+					status: DeletionStatus.SCHEDULED,
+					userId: user.id
+				}
+			})
+
+		if (existingDeletion) {
+			throw new ConflictException('Запрос на удаление уже создан')
+		}
+
+		const token = randomBytes(64).toString('hex')
+
+		const expiry = new Date()
+		expiry.setHours(expiry.getHours() + 1)
+
+		await this.prismaService.deletionInfo.create({
+			data: {
+				token,
+				expiry,
+				user: {
+					connect: {
+						id: user.id
+					}
+				}
+			}
+		})
+
+		return true
+	}
+
+	public async confirmDeletion(user: User, dto: ConfirmDeletionRequest) {
+		const { token } = dto
+
+		const deletion = await this.prismaService.deletionInfo.findUnique({
+			where: {
+				userId: user.id
+			}
+		})
+
+		if (!deletion)
+			throw new NotFoundException('Запрос на удаление не найден')
+
+		if (deletion.token !== token)
+			throw new BadRequestException('Неверный токен')
+
+		if (new Date() > deletion.expiry)
+			throw new BadRequestException('Срок действия токена истёк')
+
+		const after = new Date()
+		after.setDate(after.getDate() + 7)
+
+		await this.prismaService.deletionInfo.update({
+			where: {
+				token,
+				userId: user.id
+			},
+			data: {
+				status: DeletionStatus.SCHEDULED,
+				token: null,
+				expiry: null,
+				after
 			}
 		})
 

@@ -7,7 +7,7 @@ import {
 	MinLength
 } from 'class-validator'
 
-import { LoginResponse } from '../../session/dto'
+import { LoginSessionResponse } from '../../session/dto'
 
 export class CreateUserRequest {
 	@ApiProperty({
@@ -44,4 +44,4 @@ export class CreateUserRequest {
 	public password: string
 }
 
-export class CreateUserResponse extends LoginResponse {}
+export class CreateUserResponse extends LoginSessionResponse {}

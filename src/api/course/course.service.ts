@@ -5,7 +5,7 @@ import { PrismaService } from '@/infra/prisma/prisma.service'
 import { RedisService } from '@/infra/redis/redis.service'
 import { StorageService } from '@/libs/storage/storage.service'
 
-import { CreateCourseDto } from './dto'
+import { CreateCourseRequest } from './dto'
 
 @Injectable()
 export class CourseService {
@@ -58,16 +58,16 @@ export class CourseService {
 		return course
 	}
 
-	public async create(dto: CreateCourseDto) {
+	public async create(dto: CreateCourseRequest) {
 		const { title } = dto
 
-		await this.prismaService.course.create({
+		const course = await this.prismaService.course.create({
 			data: {
 				title,
 				slug: slugify(title)
 			}
 		})
 
-		return true
+		return { id: course.id }
 	}
 }

@@ -22,12 +22,14 @@ model User {
 
   role UserRole @default(STUDENT)
 
+  userProgress UserProgress[]
+
   passwordReset PasswordReset?
   mfa           MultiFactorAuthentication?
+  deletionInfo  DeletionInfo?
 
-  createdAt    DateTime       @default(now()) @map("created_at")
-  updatedAt    DateTime       @updatedAt @map("updated_at")
-  UserProgress UserProgress[]
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("users")
 }
@@ -112,27 +114,12 @@ model Course {
 
   views Int @default(0)
 
-  sections Section[]
+  lessons Lesson[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("courses")
-}
-
-model Section {
-  id String @id @default(uuid())
-
-  title   String
-  lessons Lesson[]
-
-  course   Course? @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  courseId String? @map("course_id")
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  @@map("sections")
 }
 
 model Lesson {
@@ -142,14 +129,16 @@ model Lesson {
   slug  String @unique
 
   description String?
-  kinescopeId String  @map("kinescope_id")
+  position    Int
+
+  kinescopeId String? @map("kinescope_id")
 
   isPublished Boolean @default(false) @map("is_published")
 
   userProgress UserProgress[]
 
-  section   Section? @relation(fields: [sectionId], references: [id], onDelete: Cascade)
-  sectionId String?  @map("section_id")
+  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId String @map("course_id")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -176,6 +165,25 @@ model UserProgress {
   @@map("user_progress")
 }
 
+model DeletionInfo {
+  id String @id @default(uuid())
+
+  status DeletionStatus @default(WAITING_FOR_VERIFICATION)
+
+  token  String?  @unique
+  expiry DateTime
+
+  after DateTime?
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @unique @map("user_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("deletion_info")
+}
+
 enum UserRole {
   STUDENT
   ADMIN
@@ -196,4 +204,10 @@ enum TotpStatus {
   ENABLED
 
   @@map("totp_statuses")
+}
+
+enum DeletionStatus {
+  WAITING_FOR_VERIFICATION
+  SCHEDULED
+  DELETED
 }

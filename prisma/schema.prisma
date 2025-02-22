@@ -22,12 +22,14 @@ model User {
 
   role UserRole @default(STUDENT)
 
+  userProgress UserProgress[]
+
   passwordReset PasswordReset?
   mfa           MultiFactorAuthentication?
+  deletionInfo  DeletionInfo?
 
-  createdAt    DateTime       @default(now()) @map("created_at")
-  updatedAt    DateTime       @updatedAt @map("updated_at")
-  UserProgress UserProgress[]
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("users")
 }
@@ -163,6 +165,25 @@ model UserProgress {
   @@map("user_progress")
 }
 
+model DeletionInfo {
+  id String @id @default(uuid())
+
+  status DeletionStatus @default(WAITING_FOR_VERIFICATION)
+
+  token  String?   @unique
+  expiry DateTime?
+
+  after DateTime?
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @unique @map("user_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("deletion_info")
+}
+
 enum UserRole {
   STUDENT
   ADMIN
@@ -183,4 +204,10 @@ enum TotpStatus {
   ENABLED
 
   @@map("totp_statuses")
+}
+
+enum DeletionStatus {
+  WAITING_FOR_VERIFICATION
+  SCHEDULED
+  DELETED
 }

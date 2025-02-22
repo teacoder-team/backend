@@ -13,7 +13,11 @@ import { UserRole } from '@prisma/generated'
 import { Authorization } from '@/common/decorators/auth.decorator'
 
 import { CourseService } from './course.service'
-import { CourseResponse, CreateCourseDto } from './dto'
+import {
+	CourseResponse,
+	CreateCourseRequest,
+	CreateCourseResponse
+} from './dto'
 
 @ApiTags('Course')
 @Controller('courses')
@@ -52,10 +56,14 @@ export class CourseController {
 		summary: 'Create a new course',
 		description: 'Allows an admin to create a new course.'
 	})
+	@ApiResponse({
+		status: HttpStatus.OK,
+		type: CreateCourseResponse
+	})
 	@Authorization(UserRole.ADMIN)
 	@Post('create')
 	@HttpCode(HttpStatus.OK)
-	public async create(@Body() dto: CreateCourseDto) {
+	public async create(@Body() dto: CreateCourseRequest) {
 		return this.courseService.create(dto)
 	}
 }

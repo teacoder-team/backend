@@ -6,12 +6,18 @@ import {
 	HttpStatus,
 	Post
 } from '@nestjs/common'
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
+import {
+	ApiExtraModels,
+	ApiOperation,
+	ApiResponse,
+	ApiTags,
+	getSchemaPath
+} from '@nestjs/swagger'
 import { Turnstile } from 'nestjs-cloudflare-captcha'
 
 import { ClientIp, UserAgent } from '@/common/decorators'
 
-import { LoginRequest, LoginResponse } from './dto'
+import { LoginMfaResponse, LoginRequest, LoginSessionResponse } from './dto'
 import { SessionService } from './session.service'
 
 @ApiTags('Session')
@@ -19,10 +25,17 @@ import { SessionService } from './session.service'
 export class SessionController {
 	public constructor(private readonly sessionService: SessionService) {}
 
+	@ApiExtraModels(LoginSessionResponse, LoginMfaResponse)
 	@ApiOperation({ summary: 'Login', description: 'Login to an account.' })
 	@ApiResponse({
 		status: HttpStatus.OK,
-		type: LoginResponse
+		description: 'Login response with or without MFA',
+		schema: {
+			oneOf: [
+				{ $ref: getSchemaPath(LoginSessionResponse) },
+				{ $ref: getSchemaPath(LoginMfaResponse) }
+			]
+		}
 	})
 	@Turnstile()
 	@Post('login')
