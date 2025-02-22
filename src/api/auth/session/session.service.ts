@@ -4,6 +4,7 @@ import {
 	NotFoundException,
 	UnauthorizedException
 } from '@nestjs/common'
+import { TotpStatus } from '@prisma/generated'
 import { verify } from 'argon2'
 
 import { PrismaService } from '@/infra/prisma/prisma.service'
@@ -41,6 +42,34 @@ export class SessionService {
 
 		if (!isValidPassword) {
 			throw new UnauthorizedException('Неправильный пароль')
+		}
+
+		const mfa =
+			await this.prismaService.multiFactorAuthentication.findUnique({
+				where: {
+					userId: user.id
+				},
+				include: {
+					totp: true,
+					passkey: true
+				}
+			})
+
+		if (mfa) {
+			const allowedMethods: string[] = []
+
+			if (mfa.totp?.status === TotpStatus.ENABLED)
+				allowedMethods.push('Totp')
+			if (mfa?.passkey?.isActivated || false)
+				allowedMethods.push('Passkey')
+			if (mfa.recoveryCodes.length > 0) allowedMethods.push('Recovery')
+
+			const ticket = await this.redisService.createMfaTicket(
+				user.id,
+				allowedMethods
+			)
+
+			return ticket
 		}
 
 		const session = await this.redisService.createSession(

@@ -66,8 +66,8 @@ export class RedisService
 			userId: user.id
 		}
 
-		await this.hmset(`sessions:${session.token}`, session)
-		await this.expire(`sessions:${session.token}`, 7 * 24 * 60 * 60)
+		await this.hmset(`sessions:${session.id}`, session)
+		await this.expire(`sessions:${session.id}`, 7 * 24 * 60 * 60)
 
 		const userSession: UserSession = {
 			id: uuidv4(),
@@ -84,12 +84,25 @@ export class RedisService
 		}
 
 		await this.set(
-			`user_sessions:${session.token}`,
+			`user_sessions:${userSession.id}`,
 			JSON.stringify(userSession),
 			'EX',
 			7 * 24 * 60 * 60
 		)
 
 		return session
+	}
+
+	public async createMfaTicket(userId: string, allowedMethods: string[]) {
+		const data = {
+			ticket: randomBytes(20).toString('hex'),
+			allowedMethods,
+			userId
+		}
+
+		await this.hset(`mfa_tickets:${data.ticket}`, data)
+		await this.expire(`mfa_tickets:${data.ticket}`, 300)
+
+		return data
 	}
 }

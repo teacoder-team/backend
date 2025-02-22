@@ -10,9 +10,9 @@ import { ROLES_KEY } from '../decorators/roles.decorator'
 
 @Injectable()
 export class RolesGuard implements CanActivate {
-	constructor(private readonly reflector: Reflector) {}
+	public constructor(private readonly reflector: Reflector) {}
 
-	async canActivate(context: ExecutionContext): Promise<boolean> {
+	public async canActivate(context: ExecutionContext): Promise<boolean> {
 		const roles = this.reflector.getAllAndOverride<string[]>(ROLES_KEY, [
 			context.getHandler(),
 			context.getClass()

@@ -37,9 +37,7 @@ export class SessionAuthGuard implements CanActivate {
 			}
 		})
 
-		if (!user) {
-			throw new UnauthorizedException('User not found')
-		}
+		if (!user) throw new UnauthorizedException('User not found')
 
 		request.user = user
 
