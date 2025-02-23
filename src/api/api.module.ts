@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
+import { ScheduleModule } from '@nestjs/schedule'
 import { TurnstileModule } from 'nestjs-cloudflare-captcha'
 
 import { getTurnstileConfig } from '@/config/turnstile.config'
@@ -19,6 +20,7 @@ import { UsersModule } from './users/users.module'
 			useFactory: getTurnstileConfig,
 			inject: [ConfigService]
 		}),
+		ScheduleModule.forRoot(),
 		AccountModule,
 		SessionModule,
 		MfaModule,

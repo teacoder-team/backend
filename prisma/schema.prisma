@@ -57,7 +57,7 @@ model MultiFactorAuthentication {
   totp   Totp?   @relation(fields: [totpId], references: [id], onDelete: Cascade)
   totpId String? @unique @map("totp_id")
 
-  passkey   Passkey? @relation(fields: [passkeyId], references: [id])
+  passkey   Passkey? @relation(fields: [passkeyId], references: [id], onDelete: Cascade)
   passkeyId String?  @unique @map("passkey_id")
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)

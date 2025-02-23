@@ -1,10 +1,13 @@
-import { Logger, ValidationPipe } from '@nestjs/common'
+import {
+	ClassSerializerInterceptor,
+	Logger,
+	ValidationPipe
+} from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import { NestFactory } from '@nestjs/core'
+import { NestFactory, Reflector } from '@nestjs/core'
 import helmet from 'helmet'
 
 import { AppModule } from './app.module'
-import { GlobalExceptionFilter } from './common/filters/global-exception.filter'
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor'
 import { parseBoolean } from './common/utils/parse-boolean'
 import { setupSwagger } from './common/utils/swagger'
@@ -17,7 +20,9 @@ async function bootstrap() {
 
 	app.use(helmet())
 
-	app.useGlobalFilters(new GlobalExceptionFilter())
+	app.useGlobalInterceptors(
+		new ClassSerializerInterceptor(app.get(Reflector))
+	)
 	app.useGlobalInterceptors(new LoggingInterceptor())
 
 	app.useGlobalPipes(
