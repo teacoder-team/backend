@@ -21,21 +21,19 @@ export class LoggingInterceptor implements NestInterceptor {
 		const url = request.url
 		const ip = request.ip
 		const body = request.body
-		const headers = request.headers
 
 		const now = Date.now()
 
 		this.logger.log(
-			`Incoming request: ${method} ${url} | IP: ${ip} | Headers: ${JSON.stringify(headers)} | Body: ${JSON.stringify(body)}`
+			`Incoming request: ${method} ${url} | IP: ${ip} | Body: ${JSON.stringify(body)}`
 		)
 
 		return next.handle().pipe(
-			tap(response => {
+			tap(() => {
 				const elapsed = Date.now() - now
-				const statusCode = response.statusCode
 
 				this.logger.log(
-					`Request processed: ${method} ${url} | Status: ${statusCode} | Duration: ${elapsed}ms | Response: ${JSON.stringify(response)}`
+					`Request processed: ${method} ${url} | Duration: ${elapsed}ms`
 				)
 			})
 		)

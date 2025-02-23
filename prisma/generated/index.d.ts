@@ -9812,7 +9812,7 @@ export namespace Prisma {
     id: string
     status: $Enums.DeletionStatus
     token: string | null
-    expiry: Date
+    expiry: Date | null
     after: Date | null
     userId: string
     createdAt: Date
@@ -9887,7 +9887,7 @@ export namespace Prisma {
       id: string
       status: $Enums.DeletionStatus
       token: string | null
-      expiry: Date
+      expiry: Date | null
       after: Date | null
       userId: string
       createdAt: Date
@@ -11480,7 +11480,7 @@ export namespace Prisma {
     id?: StringFilter<"DeletionInfo"> | string
     status?: EnumDeletionStatusFilter<"DeletionInfo"> | $Enums.DeletionStatus
     token?: StringNullableFilter<"DeletionInfo"> | string | null
-    expiry?: DateTimeFilter<"DeletionInfo"> | Date | string
+    expiry?: DateTimeNullableFilter<"DeletionInfo"> | Date | string | null
     after?: DateTimeNullableFilter<"DeletionInfo"> | Date | string | null
     userId?: StringFilter<"DeletionInfo"> | string
     createdAt?: DateTimeFilter<"DeletionInfo"> | Date | string
@@ -11492,7 +11492,7 @@ export namespace Prisma {
     id?: SortOrder
     status?: SortOrder
     token?: SortOrderInput | SortOrder
-    expiry?: SortOrder
+    expiry?: SortOrderInput | SortOrder
     after?: SortOrderInput | SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
@@ -11508,7 +11508,7 @@ export namespace Prisma {
     OR?: DeletionInfoWhereInput[]
     NOT?: DeletionInfoWhereInput | DeletionInfoWhereInput[]
     status?: EnumDeletionStatusFilter<"DeletionInfo"> | $Enums.DeletionStatus
-    expiry?: DateTimeFilter<"DeletionInfo"> | Date | string
+    expiry?: DateTimeNullableFilter<"DeletionInfo"> | Date | string | null
     after?: DateTimeNullableFilter<"DeletionInfo"> | Date | string | null
     createdAt?: DateTimeFilter<"DeletionInfo"> | Date | string
     updatedAt?: DateTimeFilter<"DeletionInfo"> | Date | string
@@ -11519,7 +11519,7 @@ export namespace Prisma {
     id?: SortOrder
     status?: SortOrder
     token?: SortOrderInput | SortOrder
-    expiry?: SortOrder
+    expiry?: SortOrderInput | SortOrder
     after?: SortOrderInput | SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
@@ -11536,7 +11536,7 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"DeletionInfo"> | string
     status?: EnumDeletionStatusWithAggregatesFilter<"DeletionInfo"> | $Enums.DeletionStatus
     token?: StringNullableWithAggregatesFilter<"DeletionInfo"> | string | null
-    expiry?: DateTimeWithAggregatesFilter<"DeletionInfo"> | Date | string
+    expiry?: DateTimeNullableWithAggregatesFilter<"DeletionInfo"> | Date | string | null
     after?: DateTimeNullableWithAggregatesFilter<"DeletionInfo"> | Date | string | null
     userId?: StringWithAggregatesFilter<"DeletionInfo"> | string
     createdAt?: DateTimeWithAggregatesFilter<"DeletionInfo"> | Date | string
@@ -12167,7 +12167,7 @@ export namespace Prisma {
     id?: string
     status?: $Enums.DeletionStatus
     token?: string | null
-    expiry: Date | string
+    expiry?: Date | string | null
     after?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -12178,7 +12178,7 @@ export namespace Prisma {
     id?: string
     status?: $Enums.DeletionStatus
     token?: string | null
-    expiry: Date | string
+    expiry?: Date | string | null
     after?: Date | string | null
     userId: string
     createdAt?: Date | string
@@ -12189,7 +12189,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumDeletionStatusFieldUpdateOperationsInput | $Enums.DeletionStatus
     token?: NullableStringFieldUpdateOperationsInput | string | null
-    expiry?: DateTimeFieldUpdateOperationsInput | Date | string
+    expiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     after?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -12200,7 +12200,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumDeletionStatusFieldUpdateOperationsInput | $Enums.DeletionStatus
     token?: NullableStringFieldUpdateOperationsInput | string | null
-    expiry?: DateTimeFieldUpdateOperationsInput | Date | string
+    expiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     after?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -12211,7 +12211,7 @@ export namespace Prisma {
     id?: string
     status?: $Enums.DeletionStatus
     token?: string | null
-    expiry: Date | string
+    expiry?: Date | string | null
     after?: Date | string | null
     userId: string
     createdAt?: Date | string
@@ -12222,7 +12222,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumDeletionStatusFieldUpdateOperationsInput | $Enums.DeletionStatus
     token?: NullableStringFieldUpdateOperationsInput | string | null
-    expiry?: DateTimeFieldUpdateOperationsInput | Date | string
+    expiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     after?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -12232,7 +12232,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumDeletionStatusFieldUpdateOperationsInput | $Enums.DeletionStatus
     token?: NullableStringFieldUpdateOperationsInput | string | null
-    expiry?: DateTimeFieldUpdateOperationsInput | Date | string
+    expiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     after?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13584,7 +13584,7 @@ export namespace Prisma {
     id?: string
     status?: $Enums.DeletionStatus
     token?: string | null
-    expiry: Date | string
+    expiry?: Date | string | null
     after?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -13594,7 +13594,7 @@ export namespace Prisma {
     id?: string
     status?: $Enums.DeletionStatus
     token?: string | null
-    expiry: Date | string
+    expiry?: Date | string | null
     after?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -13704,7 +13704,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumDeletionStatusFieldUpdateOperationsInput | $Enums.DeletionStatus
     token?: NullableStringFieldUpdateOperationsInput | string | null
-    expiry?: DateTimeFieldUpdateOperationsInput | Date | string
+    expiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     after?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13714,7 +13714,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     status?: EnumDeletionStatusFieldUpdateOperationsInput | $Enums.DeletionStatus
     token?: NullableStringFieldUpdateOperationsInput | string | null
-    expiry?: DateTimeFieldUpdateOperationsInput | Date | string
+    expiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     after?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string

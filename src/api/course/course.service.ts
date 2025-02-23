@@ -23,7 +23,11 @@ export class CourseService {
 			include: {
 				_count: {
 					select: {
-						lessons: true
+						lessons: {
+							where: {
+								isPublished: true
+							}
+						}
 					}
 				}
 			}
@@ -42,7 +46,8 @@ export class CourseService {
 
 		const course = await this.prismaService.course.findUnique({
 			where: {
-				slug
+				slug,
+				isPublished: true
 			}
 		})
 
@@ -56,6 +61,34 @@ export class CourseService {
 		)
 
 		return course
+	}
+
+	public async getCourseLessons(id: string) {
+		const course = await this.prismaService.course.findUnique({
+			where: {
+				id,
+				isPublished: true
+			}
+		})
+
+		if (!course) throw new NotFoundException('Course not found')
+
+		const lessons = await this.prismaService.lesson.findMany({
+			where: {
+				courseId: course.id,
+				isPublished: true
+			},
+			orderBy: {
+				position: 'asc'
+			},
+			select: {
+				id: true,
+				title: true,
+				slug: true
+			}
+		})
+
+		return lessons
 	}
 
 	public async create(dto: CreateCourseRequest) {

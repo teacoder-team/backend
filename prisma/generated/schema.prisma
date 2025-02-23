@@ -170,8 +170,8 @@ model DeletionInfo {
 
   status DeletionStatus @default(WAITING_FOR_VERIFICATION)
 
-  token  String?  @unique
-  expiry DateTime
+  token  String?   @unique
+  expiry DateTime?
 
   after DateTime?
 
