@@ -2,6 +2,7 @@ import {
 	type CanActivate,
 	type ExecutionContext,
 	Injectable,
+	NotFoundException,
 	UnauthorizedException
 } from '@nestjs/common'
 import type { Request } from 'express'
@@ -25,7 +26,7 @@ export class SessionAuthGuard implements CanActivate {
 
 		const keys = await this.redisService.keys('sessions:*')
 
-		const foundSession = await Promise.all(
+		const currentSession = await Promise.all(
 			keys.map(async key => {
 				const session = await this.redisService.hgetall(key)
 
@@ -33,17 +34,25 @@ export class SessionAuthGuard implements CanActivate {
 			})
 		).then(sessions => sessions.find(Boolean))
 
-		if (!foundSession) throw new UnauthorizedException('Session not found')
+		if (!currentSession) throw new NotFoundException('Session not found')
+
+		await this.redisService.expire(
+			`sessions:${currentSession.id}`,
+			7 * 24 * 60 * 60
+		)
+
+		await this.redisService.expire(
+			`user_sessions:${currentSession.id}`,
+			7 * 24 * 60 * 60
+		)
 
 		const user = await this.prismaService.user.findUnique({
 			where: {
-				id: foundSession.userId
+				id: currentSession.userId
 			}
 		})
 
-		if (!user) {
-			throw new UnauthorizedException('User not found')
-		}
+		if (!user) throw new NotFoundException('User not found')
 
 		request.user = user
 

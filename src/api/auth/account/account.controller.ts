@@ -8,7 +8,7 @@ import {
 	Post,
 	Put
 } from '@nestjs/common'
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger'
 import type { User } from '@prisma/generated'
 import { Turnstile } from 'nestjs-cloudflare-captcha'
 
@@ -40,8 +40,7 @@ export class AccountController {
 		summary: 'Fetch account',
 		description: 'Fetch account information from the current session.'
 	})
-	@ApiResponse({
-		status: HttpStatus.OK,
+	@ApiOkResponse({
 		type: AccountResponse
 	})
 	@Authorization()
@@ -55,8 +54,7 @@ export class AccountController {
 		summary: 'Create Account',
 		description: 'Create a new account'
 	})
-	@ApiResponse({
-		status: HttpStatus.OK,
+	@ApiOkResponse({
 		type: CreateUserResponse
 	})
 	@Turnstile()
@@ -74,8 +72,7 @@ export class AccountController {
 		summary: 'Send Password Reset',
 		description: 'Send an email to reset account password.'
 	})
-	@ApiResponse({
-		status: HttpStatus.OK,
+	@ApiOkResponse({
 		type: Boolean
 	})
 	@Turnstile()
@@ -89,8 +86,7 @@ export class AccountController {
 		summary: 'Password Reset',
 		description: 'Confirm password reset and change the password.'
 	})
-	@ApiResponse({
-		status: HttpStatus.OK,
+	@ApiOkResponse({
 		type: Boolean
 	})
 	@Turnstile()
@@ -104,8 +100,7 @@ export class AccountController {
 		summary: 'Change Email',
 		description: 'Change the associated account email.'
 	})
-	@ApiResponse({
-		status: HttpStatus.OK,
+	@ApiOkResponse({
 		type: Boolean
 	})
 	@Authorization()
@@ -122,8 +117,7 @@ export class AccountController {
 		summary: 'Change Password',
 		description: 'Change the current account password.'
 	})
-	@ApiResponse({
-		status: HttpStatus.OK,
+	@ApiOkResponse({
 		type: Boolean
 	})
 	@Authorization()
@@ -140,8 +134,7 @@ export class AccountController {
 		summary: 'Delete Account',
 		description: 'Request to have an account deleted.'
 	})
-	@ApiResponse({
-		status: HttpStatus.OK,
+	@ApiOkResponse({
 		type: Boolean
 	})
 	@Authorization()
@@ -156,8 +149,7 @@ export class AccountController {
 		description:
 			'Schedule an account for deletion by confirming the received token.'
 	})
-	@ApiResponse({
-		status: HttpStatus.OK,
+	@ApiOkResponse({
 		type: Boolean
 	})
 	@Authorization()

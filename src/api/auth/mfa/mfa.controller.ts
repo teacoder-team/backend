@@ -9,7 +9,7 @@ import {
 	Post,
 	Put
 } from '@nestjs/common'
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger'
 import type { User } from '@prisma/generated'
 
 import { Authorization, Authorized } from '@/common/decorators'
@@ -31,8 +31,7 @@ export class MfaController {
 		summary: 'MFA Status​​',
 		description: 'Fetch MFA status of an account.'
 	})
-	@ApiResponse({
-		status: HttpStatus.OK,
+	@ApiOkResponse({
 		type: MfaStatusResponse
 	})
 	@Authorization()
@@ -46,8 +45,7 @@ export class MfaController {
 		summary: 'Fetch Recovery Codes​​​',
 		description: 'Fetch recovery codes for an account.'
 	})
-	@ApiResponse({
-		status: HttpStatus.OK,
+	@ApiOkResponse({
 		type: [String]
 	})
 	@Authorization()
@@ -61,8 +59,7 @@ export class MfaController {
 		summary: 'Regenerate Recovery Codes​​',
 		description: 'Re-generate recovery codes for an account.'
 	})
-	@ApiResponse({
-		status: HttpStatus.OK,
+	@ApiOkResponse({
 		type: [String]
 	})
 	@Authorization()
@@ -76,8 +73,7 @@ export class MfaController {
 		summary: 'Enable TOTP 2FA​​',
 		description: 'Enable TOTP 2FA for an account.'
 	})
-	@ApiResponse({
-		status: HttpStatus.OK,
+	@ApiOkResponse({
 		type: Boolean
 	})
 	@Authorization()
@@ -94,8 +90,7 @@ export class MfaController {
 		summary: 'Generate TOTP Secret​​​',
 		description: 'Generate a new secret for TOTP.'
 	})
-	@ApiResponse({
-		status: HttpStatus.OK,
+	@ApiOkResponse({
 		type: TotpGenerateSecretResponse
 	})
 	@Authorization()
@@ -109,8 +104,7 @@ export class MfaController {
 		summary: 'Disable TOTP 2FA​​',
 		description: 'Disable TOTP 2FA for an account.'
 	})
-	@ApiResponse({
-		status: HttpStatus.OK,
+	@ApiOkResponse({
 		type: Boolean
 	})
 	@Authorization()

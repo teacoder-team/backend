@@ -1,23 +1,37 @@
 import {
 	Body,
 	Controller,
+	Delete,
+	Get,
 	Headers,
 	HttpCode,
 	HttpStatus,
+	Param,
 	Post
 } from '@nestjs/common'
 import {
 	ApiExtraModels,
+	ApiOkResponse,
 	ApiOperation,
-	ApiResponse,
 	ApiTags,
 	getSchemaPath
 } from '@nestjs/swagger'
+import type { User } from '@prisma/generated'
 import { Turnstile } from 'nestjs-cloudflare-captcha'
 
-import { ClientIp, UserAgent } from '@/common/decorators'
+import {
+	Authorization,
+	Authorized,
+	ClientIp,
+	UserAgent
+} from '@/common/decorators'
 
-import { LoginMfaResponse, LoginRequest, LoginSessionResponse } from './dto'
+import {
+	LoginMfaResponse,
+	LoginRequest,
+	LoginSessionResponse,
+	SessionResponse
+} from './dto'
 import { SessionService } from './session.service'
 
 @ApiTags('Session')
@@ -27,9 +41,7 @@ export class SessionController {
 
 	@ApiExtraModels(LoginSessionResponse, LoginMfaResponse)
 	@ApiOperation({ summary: 'Login', description: 'Login to an account.' })
-	@ApiResponse({
-		status: HttpStatus.OK,
-		description: 'Login response with or without MFA',
+	@ApiOkResponse({
 		schema: {
 			oneOf: [
 				{ $ref: getSchemaPath(LoginSessionResponse) },
@@ -52,41 +64,67 @@ export class SessionController {
 		summary: 'Logout',
 		description: 'Delete current session.'
 	})
+	@ApiOkResponse({
+		example: true,
+		type: Boolean
+	})
 	@Post('logout')
 	@HttpCode(HttpStatus.OK)
 	public async logout(@Headers('x-session-token') token: string) {
 		return this.sessionService.logout(token)
 	}
 
-	// @ApiOperation({
-	// 	summary: 'Fetch Sessions',
-	// 	description: 'Fetch all sessions associated with this account.'
-	// })
-	// @ApiResponse({
-	// 	status: HttpStatus.OK,
-	// 	type: [SessionResponse]
-	// })
-	// @Get('all')
-	// @HttpCode(HttpStatus.OK)
-	// @Authorization()
-	// public async getSessions(
-	// 	@Authorized() user: User,
-	// 	@Headers('x-session-token') token: string
-	// ) {
-	// 	return this.sessionService.getSessions(user, token)
-	// }
+	@ApiOperation({
+		summary: 'Fetch Sessions',
+		description: 'Fetch all sessions associated with this account.'
+	})
+	@ApiOkResponse({
+		type: [SessionResponse]
+	})
+	@Get('all')
+	@HttpCode(HttpStatus.OK)
+	@Authorization()
+	public async getSessions(
+		@Authorized() user: User,
+		@Headers('x-session-token') token: string
+	) {
+		return this.sessionService.getSessions(user, token)
+	}
 
-	// @ApiOperation({
-	// 	summary: 'Revoke Session​',
-	// 	description: 'Delete a specific active session.'
-	// })
-	// @Authorization()
-	// @Delete(':id')
-	// @HttpCode(HttpStatus.OK)
-	// public async revoke(
-	// 	@Param('id') id: string,
-	// 	@Headers('x-session-token') token: string
-	// ) {
-	// 	return this.sessionService.revoke(id, token)
-	// }
+	@ApiOperation({
+		summary: 'Delete All Sessions​',
+		description:
+			'Delete all active sessions, optionally including current one.'
+	})
+	@ApiOkResponse({
+		example: true,
+		type: Boolean
+	})
+	@Authorization()
+	@Delete('all')
+	@HttpCode(HttpStatus.OK)
+	public async removeAll(
+		@Authorized() user: User,
+		@Headers('x-session-token') token: string
+	) {
+		return this.sessionService.removeAll(user, token)
+	}
+
+	@ApiOperation({
+		summary: 'Revoke Session​',
+		description: 'Delete a specific active session.'
+	})
+	@ApiOkResponse({
+		example: true,
+		type: Boolean
+	})
+	@Authorization()
+	@Delete(':id')
+	@HttpCode(HttpStatus.OK)
+	public async revoke(
+		@Param('id') id: string,
+		@Headers('x-session-token') token: string
+	) {
+		return this.sessionService.revoke(id, token)
+	}
 }

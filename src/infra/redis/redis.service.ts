@@ -84,7 +84,7 @@ export class RedisService
 		}
 
 		await this.set(
-			`user_sessions:${userSession.id}`,
+			`user_sessions:${session.id}`,
 			JSON.stringify(userSession),
 			'EX',
 			7 * 24 * 60 * 60

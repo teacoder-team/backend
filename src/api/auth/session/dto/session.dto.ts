@@ -27,13 +27,13 @@ export class SessionResponse {
 
 	@ApiProperty({
 		description: 'Name of the browser used',
-		example: 'Google Chrome'
+		example: 'Chrome'
 	})
 	public browser: string
 
 	@ApiProperty({
 		description: 'Operating system of the user',
-		example: 'Windows 11'
+		example: 'Windows 10'
 	})
 	public os: string
 }

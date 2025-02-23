@@ -4,7 +4,8 @@ import {
 	NotFoundException,
 	UnauthorizedException
 } from '@nestjs/common'
-import { TotpStatus } from '@prisma/generated'
+import { Cron, CronExpression } from '@nestjs/schedule'
+import { TotpStatus, User } from '@prisma/generated'
 import { verify } from 'argon2'
 
 import { PrismaService } from '@/infra/prisma/prisma.service'
@@ -55,7 +56,7 @@ export class SessionService {
 				}
 			})
 
-		if (mfa) {
+		if (mfa && mfa.recoveryCodes.length > 0) {
 			const allowedMethods: string[] = []
 
 			if (mfa.totp?.status === TotpStatus.ENABLED)
@@ -82,14 +83,133 @@ export class SessionService {
 	}
 
 	public async logout(token: string) {
-		const session = await this.redisService.hgetall(`sessions:${token}`)
+		const keys = await this.redisService.keys('sessions:*')
 
-		if (!session || session.token !== token)
-			throw new UnauthorizedException('Session not found')
+		const currentSession = await Promise.all(
+			keys.map(async key => {
+				const session = await this.redisService.hgetall(key)
 
-		await this.redisService.del(`sessions:${token}`)
-		await this.redisService.del(`user_sessions:${session.token}`)
+				return session.token === token ? session : null
+			})
+		).then(sessions => sessions.find(Boolean))
+
+		if (!currentSession) throw new NotFoundException('Session not found')
+
+		await this.redisService.del(`sessions:${currentSession.id}`)
+		await this.redisService.del(`user_sessions:${currentSession.id}`)
 
 		return true
+	}
+
+	public async getSessions(user: User, token: string) {
+		const keys = await this.redisService.keys('sessions:*')
+
+		let currentSession = null
+
+		const promises = keys.map(async key => {
+			const session = await this.redisService.hgetall(key)
+
+			if (session.token === token) {
+				currentSession = await this.getSessionDetails(session)
+
+				return null
+			}
+
+			if (session.userId === user.id) {
+				const sessionDetails = await this.getSessionDetails(session)
+
+				return sessionDetails
+			}
+
+			return null
+		})
+
+		const userSessions = (await Promise.all(promises)).filter(Boolean)
+
+		if (currentSession) {
+			return [currentSession, ...userSessions]
+		}
+
+		return userSessions
+	}
+
+	public async revoke(id: string, token: string) {
+		const session = await this.redisService.hgetall(`sessions:${id}`)
+
+		if (!session) throw new UnauthorizedException('Session not found')
+
+		await this.redisService.del(`sessions:${session.id}`)
+		await this.redisService.del(`user_sessions:${session.id}`)
+
+		return true
+	}
+
+	public async removeAll(user: User, token: string) {
+		const keys = await this.redisService.keys('sessions:*')
+
+		const sessions = []
+		const userSessions = []
+
+		const promises = keys.map(async key => {
+			const session = await this.redisService.hgetall(key)
+
+			if (session.userId === user.id && session.token !== token) {
+				sessions.push(key)
+				userSessions.push(`user_sessions:${session.id}`)
+			}
+
+			return null
+		})
+
+		await Promise.all(promises)
+
+		if (sessions.length > 0) {
+			await Promise.all([
+				...sessions.map(key => this.redisService.del(key)),
+				...userSessions.map(key => this.redisService.del(key))
+			])
+		}
+
+		return true
+	}
+
+	@Cron(CronExpression.EVERY_6_HOURS)
+	public async cleanupSessions() {
+		const userSessions = await this.redisService.keys(`user_sessions:*`)
+
+		for (const userSession of userSessions) {
+			const sessions = await this.redisService.hgetall(userSession)
+
+			for (const sessionId in sessions) {
+				const sessionExists = await this.redisService.exists(
+					`session:${sessionId}`
+				)
+
+				if (!sessionExists) {
+					await this.redisService.hdel(userSession, sessionId)
+				}
+			}
+		}
+	}
+
+	private async getSessionDetails(session: any) {
+		const keys = await this.redisService.keys(`user_sessions:${session.id}`)
+
+		const promises = keys.map(async key => {
+			const userSession = JSON.parse(await this.redisService.get(key))
+
+			return {
+				id: session.id,
+				createdAt: userSession.createdAt,
+				country: userSession.geo.name,
+				city: userSession.geo.capital,
+				browser: userSession.browser.name,
+				os: userSession.os.name
+			}
+		})
+
+		const sessionDetails = await Promise.all(promises)
+
+		return sessionDetails[0] || null
 	}
 }
