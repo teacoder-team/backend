@@ -7,10 +7,17 @@ import {
 	Param,
 	Post
 } from '@nestjs/common'
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
+import {
+	ApiOkResponse,
+	ApiOperation,
+	ApiResponse,
+	ApiTags
+} from '@nestjs/swagger'
 import { UserRole } from '@prisma/generated'
 
 import { Authorization } from '@/common/decorators/auth.decorator'
+
+import { LessonResponse } from '../lesson/dto'
 
 import { CourseService } from './course.service'
 import {
@@ -50,6 +57,15 @@ export class CourseController {
 	@HttpCode(HttpStatus.OK)
 	public async findBySlug(@Param('slug') slug: string) {
 		return this.courseService.findBySlug(slug)
+	}
+
+	@ApiOkResponse({
+		type: [LessonResponse]
+	})
+	@Get(':id/lessons')
+	@HttpCode(HttpStatus.OK)
+	public async getCourseLessons(@Param('id') id: string) {
+		return this.courseService.getCourseLessons(id)
 	}
 
 	@ApiOperation({
