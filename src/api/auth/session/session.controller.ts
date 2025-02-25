@@ -14,7 +14,7 @@ import {
 	ApiOkResponse,
 	ApiOperation,
 	ApiTags,
-	getSchemaPath
+	refs
 } from '@nestjs/swagger'
 import type { User } from '@prisma/generated'
 import { Turnstile } from 'nestjs-cloudflare-captcha'
@@ -39,15 +39,10 @@ import { SessionService } from './session.service'
 export class SessionController {
 	public constructor(private readonly sessionService: SessionService) {}
 
-	@ApiExtraModels(LoginSessionResponse, LoginMfaResponse)
 	@ApiOperation({ summary: 'Login', description: 'Login to an account.' })
+	@ApiExtraModels(LoginSessionResponse, LoginMfaResponse)
 	@ApiOkResponse({
-		schema: {
-			oneOf: [
-				{ $ref: getSchemaPath(LoginSessionResponse) },
-				{ $ref: getSchemaPath(LoginMfaResponse) }
-			]
-		}
+		schema: { anyOf: refs(LoginSessionResponse, LoginMfaResponse) }
 	})
 	@Turnstile()
 	@Post('login')
@@ -68,6 +63,7 @@ export class SessionController {
 		example: true,
 		type: Boolean
 	})
+	@Authorization()
 	@Post('logout')
 	@HttpCode(HttpStatus.OK)
 	public async logout(@Headers('x-session-token') token: string) {
@@ -81,9 +77,9 @@ export class SessionController {
 	@ApiOkResponse({
 		type: [SessionResponse]
 	})
+	@Authorization()
 	@Get('all')
 	@HttpCode(HttpStatus.OK)
-	@Authorization()
 	public async getSessions(
 		@Authorized() user: User,
 		@Headers('x-session-token') token: string

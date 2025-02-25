@@ -3,7 +3,6 @@ import { Injectable, NotFoundException } from '@nestjs/common'
 import { slugify } from '@/common/utils/slugify'
 import { PrismaService } from '@/infra/prisma/prisma.service'
 import { RedisService } from '@/infra/redis/redis.service'
-import { StorageService } from '@/libs/storage/storage.service'
 
 import { CreateCourseRequest } from './dto'
 
@@ -11,8 +10,7 @@ import { CreateCourseRequest } from './dto'
 export class CourseService {
 	public constructor(
 		private readonly prismaService: PrismaService,
-		private readonly redisService: RedisService,
-		private readonly storageService: StorageService
+		private readonly redisService: RedisService
 	) {}
 
 	public async findAll() {

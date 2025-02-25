@@ -53,42 +53,88 @@ export class ProgressService {
 
 		if (!lesson) throw new NotFoundException('Lesson not found')
 
-		await this.prismaService.userProgress.upsert({
-			where: {
-				userId_lessonId: {
-					userId: user.id,
-					lessonId: lesson.id
-				}
-			},
-			update: {
-				isCompleted
-			},
-			create: {
-				isCompleted,
-				user: {
-					connect: {
-						id: user.id
-					}
-				},
-				lesson: {
-					connect: {
-						id: lesson.id
-					}
-				}
-			}
-		})
-
-		if (isCompleted) {
-			const nextLesson = await this.prismaService.lesson.findFirst({
+		const existingProgress =
+			await this.prismaService.userProgress.findUnique({
 				where: {
-					courseId: lesson.courseId,
-					position: lesson.position + 1
+					userId_lessonId: {
+						userId: user.id,
+						lessonId: lesson.id
+					}
 				}
 			})
 
-			return { nextLesson: nextLesson.slug }
+		let userProgress
+
+		if (existingProgress) {
+			const wasCompleted = existingProgress.isCompleted
+
+			userProgress = await this.prismaService.userProgress.update({
+				where: {
+					userId_lessonId: {
+						userId: user.id,
+						lessonId: lesson.id
+					}
+				},
+				data: { isCompleted }
+			})
+
+			if (!wasCompleted && isCompleted) {
+				await this.prismaService.user.update({
+					where: {
+						id: user.id
+					},
+					data: {
+						points: {
+							increment: 5
+						}
+					}
+				})
+			} else if (wasCompleted && !isCompleted) {
+				await this.prismaService.user.update({
+					where: {
+						id: user.id
+					},
+					data: {
+						points: {
+							decrement: 5
+						}
+					}
+				})
+			}
+		} else {
+			userProgress = await this.prismaService.userProgress.create({
+				data: {
+					userId: user.id,
+					lessonId: lesson.id,
+					isCompleted
+				}
+			})
+
+			if (isCompleted) {
+				await this.prismaService.user.update({
+					where: { id: user.id },
+					data: {
+						points: {
+							increment: 5
+						}
+					}
+				})
+			}
 		}
 
-		return { nextLesson: null }
+		const nextLesson = await this.prismaService.lesson.findFirst({
+			where: {
+				courseId: lesson.courseId,
+				position: {
+					gt: lesson.position
+				},
+				isPublished: true
+			},
+			orderBy: {
+				position: 'asc'
+			}
+		})
+
+		return { nextLesson: nextLesson ? nextLesson.slug : null }
 	}
 }

@@ -104,12 +104,7 @@ export class LessonService {
 
 		if (!lesson) throw new NotFoundException('Lesson not found')
 
-		const video = await this.kinescopeService.uploadVideo(
-			lesson.title,
-			file.buffer,
-			file.originalname,
-			file.mimetype
-		)
+		const video = await this.kinescopeService.uploadVideo(lesson.slug, file)
 
 		const kinescopeId = video.play_link.replace('https://kinescope.io/', '')
 

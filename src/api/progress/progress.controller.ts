@@ -7,7 +7,7 @@ import {
 	Param,
 	Put
 } from '@nestjs/common'
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import { ApiHeader, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import type { User } from '@prisma/generated'
 
 import { Authorization, Authorized } from '@/common/decorators'
@@ -23,6 +23,10 @@ export class ProgressController {
 	@ApiOkResponse({
 		type: Number
 	})
+	@ApiHeader({
+		name: 'X-Session-Token',
+		required: true
+	})
 	@Authorization()
 	@Get(':courseId')
 	@HttpCode(HttpStatus.OK)
@@ -35,6 +39,10 @@ export class ProgressController {
 
 	@ApiOkResponse({
 		type: CreateProgressResponse
+	})
+	@ApiHeader({
+		name: 'X-Session-Token',
+		required: true
 	})
 	@Authorization()
 	@Put()

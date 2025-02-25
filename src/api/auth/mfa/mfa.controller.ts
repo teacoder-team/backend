@@ -9,7 +9,12 @@ import {
 	Post,
 	Put
 } from '@nestjs/common'
-import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger'
+import {
+	ApiHeader,
+	ApiOkResponse,
+	ApiOperation,
+	ApiTags
+} from '@nestjs/swagger'
 import type { User } from '@prisma/generated'
 
 import { Authorization, Authorized } from '@/common/decorators'
@@ -34,6 +39,10 @@ export class MfaController {
 	@ApiOkResponse({
 		type: MfaStatusResponse
 	})
+	@ApiHeader({
+		name: 'X-Session-Token',
+		required: true
+	})
 	@Authorization()
 	@Get()
 	@HttpCode(HttpStatus.OK)
@@ -47,6 +56,10 @@ export class MfaController {
 	})
 	@ApiOkResponse({
 		type: [String]
+	})
+	@ApiHeader({
+		name: 'X-Session-Token',
+		required: true
 	})
 	@Authorization()
 	@Get('recovery')
@@ -62,6 +75,10 @@ export class MfaController {
 	@ApiOkResponse({
 		type: [String]
 	})
+	@ApiHeader({
+		name: 'X-Session-Token',
+		required: true
+	})
 	@Authorization()
 	@Patch('recovery')
 	@HttpCode(HttpStatus.OK)
@@ -75,6 +92,10 @@ export class MfaController {
 	})
 	@ApiOkResponse({
 		type: Boolean
+	})
+	@ApiHeader({
+		name: 'X-Session-Token',
+		required: true
 	})
 	@Authorization()
 	@Put('totp')
@@ -93,6 +114,10 @@ export class MfaController {
 	@ApiOkResponse({
 		type: TotpGenerateSecretResponse
 	})
+	@ApiHeader({
+		name: 'X-Session-Token',
+		required: true
+	})
 	@Authorization()
 	@Post('totp')
 	@HttpCode(HttpStatus.OK)
@@ -106,6 +131,10 @@ export class MfaController {
 	})
 	@ApiOkResponse({
 		type: Boolean
+	})
+	@ApiHeader({
+		name: 'X-Session-Token',
+		required: true
 	})
 	@Authorization()
 	@Delete('totp')

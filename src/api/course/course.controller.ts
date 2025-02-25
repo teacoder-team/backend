@@ -8,6 +8,7 @@ import {
 	Post
 } from '@nestjs/common'
 import {
+	ApiHeader,
 	ApiOkResponse,
 	ApiOperation,
 	ApiResponse,
@@ -46,7 +47,7 @@ export class CourseController {
 	}
 
 	@ApiOperation({
-		summary: 'Find course by slug',
+		summary: 'Find Course By Slug',
 		description: 'Retrieve a course using its unique slug identifier.'
 	})
 	@ApiResponse({
@@ -69,12 +70,16 @@ export class CourseController {
 	}
 
 	@ApiOperation({
-		summary: 'Create a new course',
-		description: 'Allows an admin to create a new course.'
+		summary: 'Create New Course',
+		description: 'Create a new course.'
 	})
 	@ApiResponse({
 		status: HttpStatus.OK,
 		type: CreateCourseResponse
+	})
+	@ApiHeader({
+		name: 'X-Session-Token',
+		required: true
 	})
 	@Authorization(UserRole.ADMIN)
 	@Post('create')
