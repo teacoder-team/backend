@@ -24,21 +24,19 @@ export class KinescopeService {
 
 	public async uploadVideo(
 		title: string,
-		buffer: Buffer,
-		filename: string,
-		mimetype: string
+		file: Express.Multer.File
 	): Promise<KinescopeVideoResponse> {
 		const url = `https://uploader.kinescope.io/v2/video`
 
 		try {
 			const response = await lastValueFrom(
-				this.httpService.post(url, buffer, {
+				this.httpService.post(url, file.buffer, {
 					headers: {
 						Authorization: `Bearer ${this.token}`,
 						'X-Parent-ID': this.projectId,
 						'X-Video-Title': title,
-						'Content-Type': mimetype,
-						'X-File-Name': filename
+						'Content-Type': file.mimetype,
+						'X-File-Name': file.filename
 					}
 				})
 			)

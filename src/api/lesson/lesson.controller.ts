@@ -12,7 +12,12 @@ import {
 	UseInterceptors
 } from '@nestjs/common'
 import { FileInterceptor } from '@nestjs/platform-express'
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import {
+	ApiHeader,
+	ApiOkResponse,
+	ApiOperation,
+	ApiTags
+} from '@nestjs/swagger'
 import { type User, UserRole } from '@prisma/generated'
 
 import { Authorization, Authorized } from '@/common/decorators'
@@ -31,6 +36,10 @@ import { LessonService } from './lesson.service'
 export class LessonController {
 	public constructor(private readonly lessonService: LessonService) {}
 
+	@ApiOperation({
+		summary: 'Fetch Lesson By Slug',
+		description: 'Retrieve lesson information by slug. '
+	})
 	@ApiOkResponse({
 		type: LessonResponse
 	})
@@ -40,8 +49,17 @@ export class LessonController {
 		return this.lessonService.findBySlug(slug)
 	}
 
+	@ApiOperation({
+		summary: 'Fetch Completed Lessons Progress',
+		description:
+			'Retrieve the IDs of the completed lessons for the given course. '
+	})
 	@ApiOkResponse({
 		type: ProgressResponse
+	})
+	@ApiHeader({
+		name: 'X-Session-Token',
+		required: true
 	})
 	@Authorization()
 	@Get(':id/progress')
@@ -53,8 +71,16 @@ export class LessonController {
 		return this.lessonService.getCompletedLessons(user, id)
 	}
 
+	@ApiOperation({
+		summary: 'Create New Lesson',
+		description: 'Create a new lesson.'
+	})
 	@ApiOkResponse({
 		type: CreateLessonResponse
+	})
+	@ApiHeader({
+		name: 'X-Session-Token',
+		required: true
 	})
 	@Authorization(UserRole.ADMIN)
 	@Post()
@@ -63,6 +89,15 @@ export class LessonController {
 		return this.lessonService.create(dto)
 	}
 
+	@ApiOperation({
+		summary: 'Upload Lesson Video',
+		description: 'Upload a video file associated with the lesson.'
+	})
+	@ApiHeader({
+		name: 'X-Session-Token',
+		required: true
+	})
+	@Authorization(UserRole.ADMIN)
 	@UseInterceptors(
 		FileInterceptor('file', {
 			limits: {
@@ -70,7 +105,6 @@ export class LessonController {
 			}
 		})
 	)
-	@Authorization(UserRole.ADMIN)
 	@Put(':id/upload')
 	@HttpCode(HttpStatus.OK)
 	public async upload(

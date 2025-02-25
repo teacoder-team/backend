@@ -5,6 +5,8 @@ import sharp from 'sharp'
 import { PrismaService } from '@/infra/prisma/prisma.service'
 import { StorageService } from '@/libs/storage/storage.service'
 
+import { PatchUserRequest } from './dto'
+
 @Injectable()
 export class UsersService {
 	public constructor(
@@ -27,6 +29,27 @@ export class UsersService {
 		})
 
 		return users
+	}
+
+	public async patchUser(user: User, dto: PatchUserRequest) {
+		const { displayName } = dto
+
+		await this.prismaService.user.update({
+			where: {
+				id: user.id
+			},
+			data: {
+				displayName
+			},
+			select: {
+				id: true,
+				displayName: true,
+				email: true,
+				avatar: true
+			}
+		})
+
+		return true
 	}
 
 	public async changeAvatar(user: User, file: Express.Multer.File) {

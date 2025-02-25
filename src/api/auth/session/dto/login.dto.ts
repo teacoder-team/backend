@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiExtraModels, ApiProperty, getSchemaPath } from '@nestjs/swagger'
 import {
 	IsEmail,
 	IsNotEmpty,
@@ -109,4 +109,17 @@ export class LoginMfaResponse {
 		example: '84ac0c40-dc6e-4df0-b7bf-9df220fd994a'
 	})
 	public userId: string
+}
+
+@ApiExtraModels(LoginSessionResponse, LoginMfaResponse)
+export class LoginResponse {
+	@ApiProperty({
+		description: 'name',
+		oneOf: [
+			{ $ref: getSchemaPath(LoginSessionResponse) },
+			{ $ref: getSchemaPath(LoginMfaResponse) }
+		],
+		type: () => Object
+	})
+	name: LoginSessionResponse | LoginMfaResponse
 }
