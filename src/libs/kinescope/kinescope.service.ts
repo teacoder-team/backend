@@ -1,5 +1,5 @@
 import { HttpService } from '@nestjs/axios'
-import { Inject, Injectable } from '@nestjs/common'
+import { Inject, Injectable, Logger } from '@nestjs/common'
 import { lastValueFrom } from 'rxjs'
 
 import {
@@ -10,6 +10,8 @@ import {
 
 @Injectable()
 export class KinescopeService {
+	private readonly logger = new Logger(KinescopeService.name)
+
 	private readonly token: string
 	private readonly projectId: string
 
@@ -43,6 +45,10 @@ export class KinescopeService {
 
 			return response.data.data
 		} catch (error) {
+			this.logger.error(
+				`Error when uploading video. Error: ${error.message}`,
+				error.stack
+			)
 			throw new Error(
 				`Error when uploading video. Error: ${error.message}`
 			)

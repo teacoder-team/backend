@@ -207,17 +207,6 @@ exports.Prisma.UserProgressScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
-exports.Prisma.DeletionInfoScalarFieldEnum = {
-  id: 'id',
-  status: 'status',
-  token: 'token',
-  expiry: 'expiry',
-  after: 'after',
-  userId: 'userId',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -243,12 +232,6 @@ exports.TotpStatus = exports.$Enums.TotpStatus = {
   ENABLED: 'ENABLED'
 };
 
-exports.DeletionStatus = exports.$Enums.DeletionStatus = {
-  WAITING_FOR_VERIFICATION: 'WAITING_FOR_VERIFICATION',
-  SCHEDULED: 'SCHEDULED',
-  DELETED: 'DELETED'
-};
-
 exports.Prisma.ModelName = {
   User: 'User',
   PasswordReset: 'PasswordReset',
@@ -257,8 +240,7 @@ exports.Prisma.ModelName = {
   Totp: 'Totp',
   Course: 'Course',
   Lesson: 'Lesson',
-  UserProgress: 'UserProgress',
-  DeletionInfo: 'DeletionInfo'
+  UserProgress: 'UserProgress'
 };
 
 /**

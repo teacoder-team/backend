@@ -19,13 +19,12 @@ export class LoggingInterceptor implements NestInterceptor {
 		const request = context.switchToHttp().getRequest()
 		const method = request.method
 		const url = request.url
-		const ip = request.ip
 		const body = request.body
 
 		const now = Date.now()
 
 		this.logger.log(
-			`Incoming request: ${method} ${url} | IP: ${ip} | Body: ${JSON.stringify(body)}`
+			`Incoming request: ${method} ${url} | Body: ${JSON.stringify(body)}`
 		)
 
 		return next.handle().pipe(

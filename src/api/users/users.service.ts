@@ -53,9 +53,9 @@ export class UsersService {
 	}
 
 	public async changeAvatar(user: User, file: Express.Multer.File) {
-		if (user.avatar) {
-			await this.storageService.deleteFile(user.avatar)
-		}
+		// if (user.avatar) {
+		// 	await this.storageService.deleteFile(user.avatar)
+		// }
 
 		let processedBuffer: Buffer
 
@@ -76,7 +76,6 @@ export class UsersService {
 
 		const uploadedFile = await this.storageService.uploadFile(
 			file,
-			processedBuffer,
 			'avatars'
 		)
 

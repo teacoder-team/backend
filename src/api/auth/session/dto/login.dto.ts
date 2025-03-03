@@ -24,50 +24,14 @@ export class LoginRequest {
 		message: 'Пароль должен содержать не более 128 символов'
 	})
 	public password: string
-}
-
-export class MfaTotpRequest {
-	@ApiProperty({
-		description: 'MFA Ticket',
-		example: 'aca7247545d1333e155cd9bc0d94f9a8f1a49859'
-	})
-	@IsString()
-	@IsNotEmpty()
-	public ticket: string
 
 	@ApiProperty({
-		description: '6-digit code from the authentication application',
-		example: '123456',
-		minLength: 6,
-		maxLength: 6
+		description: 'Captcha verification code',
+		example: '03AFcWeA...'
 	})
-	@IsString()
-	@IsNotEmpty()
-	@MinLength(6)
-	@MaxLength(6)
-	public totpCode: string
-}
-
-export class MfaRecoveryRequest {
-	@ApiProperty({
-		description: 'MFA Ticket',
-		example: 'aca7247545d1333e155cd9bc0d94f9a8f1a49859'
-	})
-	@IsString()
-	@IsNotEmpty()
-	public ticket: string
-
-	@ApiProperty({
-		description: 'One of the recovery codes',
-		example: '73e8d-67c78',
-		minLength: 11,
-		maxLength: 11
-	})
-	@IsString()
-	@IsNotEmpty()
-	@MinLength(11)
-	@MaxLength(11)
-	public recoveryCode: string
+	@IsString({ message: 'Капча должна быть строкой' })
+	@IsNotEmpty({ message: 'Капча обязательна' })
+	public captcha: string
 }
 
 export class LoginSessionResponse implements Session {

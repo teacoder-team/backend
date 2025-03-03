@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 
-import { getKinescopeConfig } from '@/config/kinescope.config'
+import { getKinescopeConfig } from '@/config'
 import { KinescopeModule } from '@/libs/kinescope/kinescope.module'
 
 import { LessonController } from './lesson.controller'

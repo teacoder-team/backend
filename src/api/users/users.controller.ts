@@ -76,13 +76,7 @@ export class UsersController {
 		required: true
 	})
 	@Authorization()
-	@UseInterceptors(
-		FileInterceptor('file', {
-			limits: {
-				files: 1
-			}
-		})
-	)
+	@UseInterceptors(FileInterceptor('file'))
 	@Patch('@me/avatar')
 	@HttpCode(HttpStatus.OK)
 	public async changeAvatar(

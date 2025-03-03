@@ -33,16 +33,10 @@ export class SessionService {
 			throw new NotFoundException('Пользователь не найден')
 		}
 
-		if (!user.password) {
-			throw new BadRequestException(
-				'Вход через пароль недоступен, т.к. вы зарегистрированы через соц. сеть'
-			)
-		}
-
 		const isValidPassword = await verify(user.password, password)
 
 		if (!isValidPassword) {
-			throw new UnauthorizedException('Неправильный пароль')
+			throw new UnauthorizedException('Неверный логин или пароль')
 		}
 
 		const mfa =
@@ -181,11 +175,11 @@ export class SessionService {
 			const sessions = await this.redisService.hgetall(userSession)
 
 			for (const sessionId in sessions) {
-				const sessionExists = await this.redisService.exists(
-					`session:${sessionId}`
+				const existSession = await this.redisService.exists(
+					`sessions:${sessionId}`
 				)
 
-				if (!sessionExists) {
+				if (!existSession) {
 					await this.redisService.hdel(userSession, sessionId)
 				}
 			}
@@ -208,8 +202,8 @@ export class SessionService {
 			}
 		})
 
-		const sessionDetails = await Promise.all(promises)
+		const details = await Promise.all(promises)
 
-		return sessionDetails[0] || null
+		return details[0] || null
 	}
 }

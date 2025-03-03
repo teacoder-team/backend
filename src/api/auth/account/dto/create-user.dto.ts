@@ -43,6 +43,14 @@ export class CreateUserRequest {
 		message: 'Пароль должен содержать не более 128 символов'
 	})
 	public password: string
+
+	@ApiProperty({
+		description: 'Captcha verification code',
+		example: '03AFcWeA...'
+	})
+	@IsString({ message: 'Капча должна быть строкой' })
+	@IsNotEmpty({ message: 'Капча обязательна' })
+	public captcha: string
 }
 
 export class CreateUserResponse extends LoginSessionResponse {}
