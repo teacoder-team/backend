@@ -1,4 +1,3 @@
-export * from './is-dev.util'
-export * from './parse-boolean'
+export * from './is-dev'
 export * from './slugify'
 export * from './swagger'

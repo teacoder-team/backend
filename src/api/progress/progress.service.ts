@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
-import type { User } from '@prisma/generated'
+import type { User, UserProgress } from '@prisma/generated'
 
 import { PrismaService } from '@/infra/prisma/prisma.service'
 
@@ -63,7 +63,7 @@ export class ProgressService {
 				}
 			})
 
-		let userProgress
+		let userProgress: UserProgress
 
 		if (existingProgress) {
 			const wasCompleted = existingProgress.isCompleted
@@ -135,6 +135,9 @@ export class ProgressService {
 			}
 		})
 
-		return { nextLesson: nextLesson ? nextLesson.slug : null }
+		return {
+			nextLesson: nextLesson ? nextLesson.slug : null,
+			isCompleted: userProgress.isCompleted
+		}
 	}
 }

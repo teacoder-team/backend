@@ -10,4 +10,12 @@ export class SendPasswordResetRequest {
 	@IsEmail({}, { message: 'Некорректный формат электронной почты' })
 	@IsNotEmpty({ message: 'Электронная почта обязательна для заполнения' })
 	public email: string
+
+	@ApiProperty({
+		description: 'Captcha verification code',
+		example: '03AFcWeA...'
+	})
+	@IsString({ message: 'Капча должна быть строкой' })
+	@IsNotEmpty({ message: 'Капча обязательна' })
+	public captcha: string
 }

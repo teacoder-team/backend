@@ -53,11 +53,6 @@ export type Lesson = $Result.DefaultSelection<Prisma.$LessonPayload>
  * 
  */
 export type UserProgress = $Result.DefaultSelection<Prisma.$UserProgressPayload>
-/**
- * Model DeletionInfo
- * 
- */
-export type DeletionInfo = $Result.DefaultSelection<Prisma.$DeletionInfoPayload>
 
 /**
  * Enums
@@ -79,15 +74,6 @@ export const TotpStatus: {
 
 export type TotpStatus = (typeof TotpStatus)[keyof typeof TotpStatus]
 
-
-export const DeletionStatus: {
-  WAITING_FOR_VERIFICATION: 'WAITING_FOR_VERIFICATION',
-  SCHEDULED: 'SCHEDULED',
-  DELETED: 'DELETED'
-};
-
-export type DeletionStatus = (typeof DeletionStatus)[keyof typeof DeletionStatus]
-
 }
 
 export type UserRole = $Enums.UserRole
@@ -97,10 +83,6 @@ export const UserRole: typeof $Enums.UserRole
 export type TotpStatus = $Enums.TotpStatus
 
 export const TotpStatus: typeof $Enums.TotpStatus
-
-export type DeletionStatus = $Enums.DeletionStatus
-
-export const DeletionStatus: typeof $Enums.DeletionStatus
 
 /**
  * ##  Prisma Client ʲˢ
@@ -304,16 +286,6 @@ export class PrismaClient<
     * ```
     */
   get userProgress(): Prisma.UserProgressDelegate<ExtArgs>;
-
-  /**
-   * `prisma.deletionInfo`: Exposes CRUD operations for the **DeletionInfo** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more DeletionInfos
-    * const deletionInfos = await prisma.deletionInfo.findMany()
-    * ```
-    */
-  get deletionInfo(): Prisma.DeletionInfoDelegate<ExtArgs>;
 }
 
 export namespace Prisma {
@@ -762,8 +734,7 @@ export namespace Prisma {
     Totp: 'Totp',
     Course: 'Course',
     Lesson: 'Lesson',
-    UserProgress: 'UserProgress',
-    DeletionInfo: 'DeletionInfo'
+    UserProgress: 'UserProgress'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -779,7 +750,7 @@ export namespace Prisma {
 
   export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> = {
     meta: {
-      modelProps: "user" | "passwordReset" | "multiFactorAuthentication" | "passkey" | "totp" | "course" | "lesson" | "userProgress" | "deletionInfo"
+      modelProps: "user" | "passwordReset" | "multiFactorAuthentication" | "passkey" | "totp" | "course" | "lesson" | "userProgress"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1343,76 +1314,6 @@ export namespace Prisma {
           }
         }
       }
-      DeletionInfo: {
-        payload: Prisma.$DeletionInfoPayload<ExtArgs>
-        fields: Prisma.DeletionInfoFieldRefs
-        operations: {
-          findUnique: {
-            args: Prisma.DeletionInfoFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$DeletionInfoPayload> | null
-          }
-          findUniqueOrThrow: {
-            args: Prisma.DeletionInfoFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$DeletionInfoPayload>
-          }
-          findFirst: {
-            args: Prisma.DeletionInfoFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$DeletionInfoPayload> | null
-          }
-          findFirstOrThrow: {
-            args: Prisma.DeletionInfoFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$DeletionInfoPayload>
-          }
-          findMany: {
-            args: Prisma.DeletionInfoFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$DeletionInfoPayload>[]
-          }
-          create: {
-            args: Prisma.DeletionInfoCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$DeletionInfoPayload>
-          }
-          createMany: {
-            args: Prisma.DeletionInfoCreateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          createManyAndReturn: {
-            args: Prisma.DeletionInfoCreateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$DeletionInfoPayload>[]
-          }
-          delete: {
-            args: Prisma.DeletionInfoDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$DeletionInfoPayload>
-          }
-          update: {
-            args: Prisma.DeletionInfoUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$DeletionInfoPayload>
-          }
-          deleteMany: {
-            args: Prisma.DeletionInfoDeleteManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateMany: {
-            args: Prisma.DeletionInfoUpdateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          upsert: {
-            args: Prisma.DeletionInfoUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$DeletionInfoPayload>
-          }
-          aggregate: {
-            args: Prisma.DeletionInfoAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregateDeletionInfo>
-          }
-          groupBy: {
-            args: Prisma.DeletionInfoGroupByArgs<ExtArgs>
-            result: $Utils.Optional<DeletionInfoGroupByOutputType>[]
-          }
-          count: {
-            args: Prisma.DeletionInfoCountArgs<ExtArgs>
-            result: $Utils.Optional<DeletionInfoCountAggregateOutputType> | number
-          }
-        }
-      }
     }
   } & {
     other: {
@@ -1907,7 +1808,6 @@ export namespace Prisma {
     userProgress?: boolean | User$userProgressArgs<ExtArgs>
     passwordReset?: boolean | User$passwordResetArgs<ExtArgs>
     mfa?: boolean | User$mfaArgs<ExtArgs>
-    deletionInfo?: boolean | User$deletionInfoArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -1941,7 +1841,6 @@ export namespace Prisma {
     userProgress?: boolean | User$userProgressArgs<ExtArgs>
     passwordReset?: boolean | User$passwordResetArgs<ExtArgs>
     mfa?: boolean | User$mfaArgs<ExtArgs>
-    deletionInfo?: boolean | User$deletionInfoArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -1952,7 +1851,6 @@ export namespace Prisma {
       userProgress: Prisma.$UserProgressPayload<ExtArgs>[]
       passwordReset: Prisma.$PasswordResetPayload<ExtArgs> | null
       mfa: Prisma.$MultiFactorAuthenticationPayload<ExtArgs> | null
-      deletionInfo: Prisma.$DeletionInfoPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -2332,7 +2230,6 @@ export namespace Prisma {
     userProgress<T extends User$userProgressArgs<ExtArgs> = {}>(args?: Subset<T, User$userProgressArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserProgressPayload<ExtArgs>, T, "findMany"> | Null>
     passwordReset<T extends User$passwordResetArgs<ExtArgs> = {}>(args?: Subset<T, User$passwordResetArgs<ExtArgs>>): Prisma__PasswordResetClient<$Result.GetResult<Prisma.$PasswordResetPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     mfa<T extends User$mfaArgs<ExtArgs> = {}>(args?: Subset<T, User$mfaArgs<ExtArgs>>): Prisma__MultiFactorAuthenticationClient<$Result.GetResult<Prisma.$MultiFactorAuthenticationPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
-    deletionInfo<T extends User$deletionInfoArgs<ExtArgs> = {}>(args?: Subset<T, User$deletionInfoArgs<ExtArgs>>): Prisma__DeletionInfoClient<$Result.GetResult<Prisma.$DeletionInfoPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2733,21 +2630,6 @@ export namespace Prisma {
      */
     include?: MultiFactorAuthenticationInclude<ExtArgs> | null
     where?: MultiFactorAuthenticationWhereInput
-  }
-
-  /**
-   * User.deletionInfo
-   */
-  export type User$deletionInfoArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the DeletionInfo
-     */
-    select?: DeletionInfoSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: DeletionInfoInclude<ExtArgs> | null
-    where?: DeletionInfoWhereInput
   }
 
   /**
@@ -9658,975 +9540,6 @@ export namespace Prisma {
 
 
   /**
-   * Model DeletionInfo
-   */
-
-  export type AggregateDeletionInfo = {
-    _count: DeletionInfoCountAggregateOutputType | null
-    _min: DeletionInfoMinAggregateOutputType | null
-    _max: DeletionInfoMaxAggregateOutputType | null
-  }
-
-  export type DeletionInfoMinAggregateOutputType = {
-    id: string | null
-    status: $Enums.DeletionStatus | null
-    token: string | null
-    expiry: Date | null
-    after: Date | null
-    userId: string | null
-    createdAt: Date | null
-    updatedAt: Date | null
-  }
-
-  export type DeletionInfoMaxAggregateOutputType = {
-    id: string | null
-    status: $Enums.DeletionStatus | null
-    token: string | null
-    expiry: Date | null
-    after: Date | null
-    userId: string | null
-    createdAt: Date | null
-    updatedAt: Date | null
-  }
-
-  export type DeletionInfoCountAggregateOutputType = {
-    id: number
-    status: number
-    token: number
-    expiry: number
-    after: number
-    userId: number
-    createdAt: number
-    updatedAt: number
-    _all: number
-  }
-
-
-  export type DeletionInfoMinAggregateInputType = {
-    id?: true
-    status?: true
-    token?: true
-    expiry?: true
-    after?: true
-    userId?: true
-    createdAt?: true
-    updatedAt?: true
-  }
-
-  export type DeletionInfoMaxAggregateInputType = {
-    id?: true
-    status?: true
-    token?: true
-    expiry?: true
-    after?: true
-    userId?: true
-    createdAt?: true
-    updatedAt?: true
-  }
-
-  export type DeletionInfoCountAggregateInputType = {
-    id?: true
-    status?: true
-    token?: true
-    expiry?: true
-    after?: true
-    userId?: true
-    createdAt?: true
-    updatedAt?: true
-    _all?: true
-  }
-
-  export type DeletionInfoAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which DeletionInfo to aggregate.
-     */
-    where?: DeletionInfoWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of DeletionInfos to fetch.
-     */
-    orderBy?: DeletionInfoOrderByWithRelationInput | DeletionInfoOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the start position
-     */
-    cursor?: DeletionInfoWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` DeletionInfos from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` DeletionInfos.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Count returned DeletionInfos
-    **/
-    _count?: true | DeletionInfoCountAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the minimum value
-    **/
-    _min?: DeletionInfoMinAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the maximum value
-    **/
-    _max?: DeletionInfoMaxAggregateInputType
-  }
-
-  export type GetDeletionInfoAggregateType<T extends DeletionInfoAggregateArgs> = {
-        [P in keyof T & keyof AggregateDeletionInfo]: P extends '_count' | 'count'
-      ? T[P] extends true
-        ? number
-        : GetScalarType<T[P], AggregateDeletionInfo[P]>
-      : GetScalarType<T[P], AggregateDeletionInfo[P]>
-  }
-
-
-
-
-  export type DeletionInfoGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: DeletionInfoWhereInput
-    orderBy?: DeletionInfoOrderByWithAggregationInput | DeletionInfoOrderByWithAggregationInput[]
-    by: DeletionInfoScalarFieldEnum[] | DeletionInfoScalarFieldEnum
-    having?: DeletionInfoScalarWhereWithAggregatesInput
-    take?: number
-    skip?: number
-    _count?: DeletionInfoCountAggregateInputType | true
-    _min?: DeletionInfoMinAggregateInputType
-    _max?: DeletionInfoMaxAggregateInputType
-  }
-
-  export type DeletionInfoGroupByOutputType = {
-    id: string
-    status: $Enums.DeletionStatus
-    token: string | null
-    expiry: Date | null
-    after: Date | null
-    userId: string
-    createdAt: Date
-    updatedAt: Date
-    _count: DeletionInfoCountAggregateOutputType | null
-    _min: DeletionInfoMinAggregateOutputType | null
-    _max: DeletionInfoMaxAggregateOutputType | null
-  }
-
-  type GetDeletionInfoGroupByPayload<T extends DeletionInfoGroupByArgs> = Prisma.PrismaPromise<
-    Array<
-      PickEnumerable<DeletionInfoGroupByOutputType, T['by']> &
-        {
-          [P in ((keyof T) & (keyof DeletionInfoGroupByOutputType))]: P extends '_count'
-            ? T[P] extends boolean
-              ? number
-              : GetScalarType<T[P], DeletionInfoGroupByOutputType[P]>
-            : GetScalarType<T[P], DeletionInfoGroupByOutputType[P]>
-        }
-      >
-    >
-
-
-  export type DeletionInfoSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    status?: boolean
-    token?: boolean
-    expiry?: boolean
-    after?: boolean
-    userId?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["deletionInfo"]>
-
-  export type DeletionInfoSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    status?: boolean
-    token?: boolean
-    expiry?: boolean
-    after?: boolean
-    userId?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    user?: boolean | UserDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["deletionInfo"]>
-
-  export type DeletionInfoSelectScalar = {
-    id?: boolean
-    status?: boolean
-    token?: boolean
-    expiry?: boolean
-    after?: boolean
-    userId?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-  }
-
-  export type DeletionInfoInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
-  }
-  export type DeletionInfoIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    user?: boolean | UserDefaultArgs<ExtArgs>
-  }
-
-  export type $DeletionInfoPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "DeletionInfo"
-    objects: {
-      user: Prisma.$UserPayload<ExtArgs>
-    }
-    scalars: $Extensions.GetPayloadResult<{
-      id: string
-      status: $Enums.DeletionStatus
-      token: string | null
-      expiry: Date | null
-      after: Date | null
-      userId: string
-      createdAt: Date
-      updatedAt: Date
-    }, ExtArgs["result"]["deletionInfo"]>
-    composites: {}
-  }
-
-  type DeletionInfoGetPayload<S extends boolean | null | undefined | DeletionInfoDefaultArgs> = $Result.GetResult<Prisma.$DeletionInfoPayload, S>
-
-  type DeletionInfoCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
-    Omit<DeletionInfoFindManyArgs, 'select' | 'include' | 'distinct'> & {
-      select?: DeletionInfoCountAggregateInputType | true
-    }
-
-  export interface DeletionInfoDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['DeletionInfo'], meta: { name: 'DeletionInfo' } }
-    /**
-     * Find zero or one DeletionInfo that matches the filter.
-     * @param {DeletionInfoFindUniqueArgs} args - Arguments to find a DeletionInfo
-     * @example
-     * // Get one DeletionInfo
-     * const deletionInfo = await prisma.deletionInfo.findUnique({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUnique<T extends DeletionInfoFindUniqueArgs>(args: SelectSubset<T, DeletionInfoFindUniqueArgs<ExtArgs>>): Prisma__DeletionInfoClient<$Result.GetResult<Prisma.$DeletionInfoPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
-
-    /**
-     * Find one DeletionInfo that matches the filter or throw an error with `error.code='P2025'` 
-     * if no matches were found.
-     * @param {DeletionInfoFindUniqueOrThrowArgs} args - Arguments to find a DeletionInfo
-     * @example
-     * // Get one DeletionInfo
-     * const deletionInfo = await prisma.deletionInfo.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUniqueOrThrow<T extends DeletionInfoFindUniqueOrThrowArgs>(args: SelectSubset<T, DeletionInfoFindUniqueOrThrowArgs<ExtArgs>>): Prisma__DeletionInfoClient<$Result.GetResult<Prisma.$DeletionInfoPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
-
-    /**
-     * Find the first DeletionInfo that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {DeletionInfoFindFirstArgs} args - Arguments to find a DeletionInfo
-     * @example
-     * // Get one DeletionInfo
-     * const deletionInfo = await prisma.deletionInfo.findFirst({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirst<T extends DeletionInfoFindFirstArgs>(args?: SelectSubset<T, DeletionInfoFindFirstArgs<ExtArgs>>): Prisma__DeletionInfoClient<$Result.GetResult<Prisma.$DeletionInfoPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
-
-    /**
-     * Find the first DeletionInfo that matches the filter or
-     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {DeletionInfoFindFirstOrThrowArgs} args - Arguments to find a DeletionInfo
-     * @example
-     * // Get one DeletionInfo
-     * const deletionInfo = await prisma.deletionInfo.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirstOrThrow<T extends DeletionInfoFindFirstOrThrowArgs>(args?: SelectSubset<T, DeletionInfoFindFirstOrThrowArgs<ExtArgs>>): Prisma__DeletionInfoClient<$Result.GetResult<Prisma.$DeletionInfoPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
-
-    /**
-     * Find zero or more DeletionInfos that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {DeletionInfoFindManyArgs} args - Arguments to filter and select certain fields only.
-     * @example
-     * // Get all DeletionInfos
-     * const deletionInfos = await prisma.deletionInfo.findMany()
-     * 
-     * // Get first 10 DeletionInfos
-     * const deletionInfos = await prisma.deletionInfo.findMany({ take: 10 })
-     * 
-     * // Only select the `id`
-     * const deletionInfoWithIdOnly = await prisma.deletionInfo.findMany({ select: { id: true } })
-     * 
-     */
-    findMany<T extends DeletionInfoFindManyArgs>(args?: SelectSubset<T, DeletionInfoFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DeletionInfoPayload<ExtArgs>, T, "findMany">>
-
-    /**
-     * Create a DeletionInfo.
-     * @param {DeletionInfoCreateArgs} args - Arguments to create a DeletionInfo.
-     * @example
-     * // Create one DeletionInfo
-     * const DeletionInfo = await prisma.deletionInfo.create({
-     *   data: {
-     *     // ... data to create a DeletionInfo
-     *   }
-     * })
-     * 
-     */
-    create<T extends DeletionInfoCreateArgs>(args: SelectSubset<T, DeletionInfoCreateArgs<ExtArgs>>): Prisma__DeletionInfoClient<$Result.GetResult<Prisma.$DeletionInfoPayload<ExtArgs>, T, "create">, never, ExtArgs>
-
-    /**
-     * Create many DeletionInfos.
-     * @param {DeletionInfoCreateManyArgs} args - Arguments to create many DeletionInfos.
-     * @example
-     * // Create many DeletionInfos
-     * const deletionInfo = await prisma.deletionInfo.createMany({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     *     
-     */
-    createMany<T extends DeletionInfoCreateManyArgs>(args?: SelectSubset<T, DeletionInfoCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create many DeletionInfos and returns the data saved in the database.
-     * @param {DeletionInfoCreateManyAndReturnArgs} args - Arguments to create many DeletionInfos.
-     * @example
-     * // Create many DeletionInfos
-     * const deletionInfo = await prisma.deletionInfo.createManyAndReturn({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Create many DeletionInfos and only return the `id`
-     * const deletionInfoWithIdOnly = await prisma.deletionInfo.createManyAndReturn({ 
-     *   select: { id: true },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    createManyAndReturn<T extends DeletionInfoCreateManyAndReturnArgs>(args?: SelectSubset<T, DeletionInfoCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DeletionInfoPayload<ExtArgs>, T, "createManyAndReturn">>
-
-    /**
-     * Delete a DeletionInfo.
-     * @param {DeletionInfoDeleteArgs} args - Arguments to delete one DeletionInfo.
-     * @example
-     * // Delete one DeletionInfo
-     * const DeletionInfo = await prisma.deletionInfo.delete({
-     *   where: {
-     *     // ... filter to delete one DeletionInfo
-     *   }
-     * })
-     * 
-     */
-    delete<T extends DeletionInfoDeleteArgs>(args: SelectSubset<T, DeletionInfoDeleteArgs<ExtArgs>>): Prisma__DeletionInfoClient<$Result.GetResult<Prisma.$DeletionInfoPayload<ExtArgs>, T, "delete">, never, ExtArgs>
-
-    /**
-     * Update one DeletionInfo.
-     * @param {DeletionInfoUpdateArgs} args - Arguments to update one DeletionInfo.
-     * @example
-     * // Update one DeletionInfo
-     * const deletionInfo = await prisma.deletionInfo.update({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    update<T extends DeletionInfoUpdateArgs>(args: SelectSubset<T, DeletionInfoUpdateArgs<ExtArgs>>): Prisma__DeletionInfoClient<$Result.GetResult<Prisma.$DeletionInfoPayload<ExtArgs>, T, "update">, never, ExtArgs>
-
-    /**
-     * Delete zero or more DeletionInfos.
-     * @param {DeletionInfoDeleteManyArgs} args - Arguments to filter DeletionInfos to delete.
-     * @example
-     * // Delete a few DeletionInfos
-     * const { count } = await prisma.deletionInfo.deleteMany({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     * 
-     */
-    deleteMany<T extends DeletionInfoDeleteManyArgs>(args?: SelectSubset<T, DeletionInfoDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more DeletionInfos.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {DeletionInfoUpdateManyArgs} args - Arguments to update one or more rows.
-     * @example
-     * // Update many DeletionInfos
-     * const deletionInfo = await prisma.deletionInfo.updateMany({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    updateMany<T extends DeletionInfoUpdateManyArgs>(args: SelectSubset<T, DeletionInfoUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create or update one DeletionInfo.
-     * @param {DeletionInfoUpsertArgs} args - Arguments to update or create a DeletionInfo.
-     * @example
-     * // Update or create a DeletionInfo
-     * const deletionInfo = await prisma.deletionInfo.upsert({
-     *   create: {
-     *     // ... data to create a DeletionInfo
-     *   },
-     *   update: {
-     *     // ... in case it already exists, update
-     *   },
-     *   where: {
-     *     // ... the filter for the DeletionInfo we want to update
-     *   }
-     * })
-     */
-    upsert<T extends DeletionInfoUpsertArgs>(args: SelectSubset<T, DeletionInfoUpsertArgs<ExtArgs>>): Prisma__DeletionInfoClient<$Result.GetResult<Prisma.$DeletionInfoPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
-
-
-    /**
-     * Count the number of DeletionInfos.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {DeletionInfoCountArgs} args - Arguments to filter DeletionInfos to count.
-     * @example
-     * // Count the number of DeletionInfos
-     * const count = await prisma.deletionInfo.count({
-     *   where: {
-     *     // ... the filter for the DeletionInfos we want to count
-     *   }
-     * })
-    **/
-    count<T extends DeletionInfoCountArgs>(
-      args?: Subset<T, DeletionInfoCountArgs>,
-    ): Prisma.PrismaPromise<
-      T extends $Utils.Record<'select', any>
-        ? T['select'] extends true
-          ? number
-          : GetScalarType<T['select'], DeletionInfoCountAggregateOutputType>
-        : number
-    >
-
-    /**
-     * Allows you to perform aggregations operations on a DeletionInfo.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {DeletionInfoAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
-     * @example
-     * // Ordered by age ascending
-     * // Where email contains prisma.io
-     * // Limited to the 10 users
-     * const aggregations = await prisma.user.aggregate({
-     *   _avg: {
-     *     age: true,
-     *   },
-     *   where: {
-     *     email: {
-     *       contains: "prisma.io",
-     *     },
-     *   },
-     *   orderBy: {
-     *     age: "asc",
-     *   },
-     *   take: 10,
-     * })
-    **/
-    aggregate<T extends DeletionInfoAggregateArgs>(args: Subset<T, DeletionInfoAggregateArgs>): Prisma.PrismaPromise<GetDeletionInfoAggregateType<T>>
-
-    /**
-     * Group by DeletionInfo.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {DeletionInfoGroupByArgs} args - Group by arguments.
-     * @example
-     * // Group by city, order by createdAt, get count
-     * const result = await prisma.user.groupBy({
-     *   by: ['city', 'createdAt'],
-     *   orderBy: {
-     *     createdAt: true
-     *   },
-     *   _count: {
-     *     _all: true
-     *   },
-     * })
-     * 
-    **/
-    groupBy<
-      T extends DeletionInfoGroupByArgs,
-      HasSelectOrTake extends Or<
-        Extends<'skip', Keys<T>>,
-        Extends<'take', Keys<T>>
-      >,
-      OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: DeletionInfoGroupByArgs['orderBy'] }
-        : { orderBy?: DeletionInfoGroupByArgs['orderBy'] },
-      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
-      ByFields extends MaybeTupleToUnion<T['by']>,
-      ByValid extends Has<ByFields, OrderFields>,
-      HavingFields extends GetHavingFields<T['having']>,
-      HavingValid extends Has<ByFields, HavingFields>,
-      ByEmpty extends T['by'] extends never[] ? True : False,
-      InputErrors extends ByEmpty extends True
-      ? `Error: "by" must not be empty.`
-      : HavingValid extends False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-            : [
-                Error,
-                'Field ',
-                P,
-                ` in "having" needs to be provided in "by"`,
-              ]
-        }[HavingFields]
-      : 'take' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "take", you also need to provide "orderBy"'
-      : 'skip' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "skip", you also need to provide "orderBy"'
-      : ByValid extends True
-      ? {}
-      : {
-          [P in OrderFields]: P extends ByFields
-            ? never
-            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-        }[OrderFields]
-    >(args: SubsetIntersection<T, DeletionInfoGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetDeletionInfoGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
-  /**
-   * Fields of the DeletionInfo model
-   */
-  readonly fields: DeletionInfoFieldRefs;
-  }
-
-  /**
-   * The delegate class that acts as a "Promise-like" for DeletionInfo.
-   * Why is this prefixed with `Prisma__`?
-   * Because we want to prevent naming conflicts as mentioned in
-   * https://github.com/prisma/prisma-client-js/issues/707
-   */
-  export interface Prisma__DeletionInfoClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: "PrismaPromise"
-    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
-    /**
-     * Attaches callbacks for the resolution and/or rejection of the Promise.
-     * @param onfulfilled The callback to execute when the Promise is resolved.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of which ever callback is executed.
-     */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
-    /**
-     * Attaches a callback for only the rejection of the Promise.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of the callback.
-     */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
-    /**
-     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
-     * resolved value cannot be modified from the callback.
-     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
-     * @returns A Promise for the completion of the callback.
-     */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
-  }
-
-
-
-
-  /**
-   * Fields of the DeletionInfo model
-   */ 
-  interface DeletionInfoFieldRefs {
-    readonly id: FieldRef<"DeletionInfo", 'String'>
-    readonly status: FieldRef<"DeletionInfo", 'DeletionStatus'>
-    readonly token: FieldRef<"DeletionInfo", 'String'>
-    readonly expiry: FieldRef<"DeletionInfo", 'DateTime'>
-    readonly after: FieldRef<"DeletionInfo", 'DateTime'>
-    readonly userId: FieldRef<"DeletionInfo", 'String'>
-    readonly createdAt: FieldRef<"DeletionInfo", 'DateTime'>
-    readonly updatedAt: FieldRef<"DeletionInfo", 'DateTime'>
-  }
-    
-
-  // Custom InputTypes
-  /**
-   * DeletionInfo findUnique
-   */
-  export type DeletionInfoFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the DeletionInfo
-     */
-    select?: DeletionInfoSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: DeletionInfoInclude<ExtArgs> | null
-    /**
-     * Filter, which DeletionInfo to fetch.
-     */
-    where: DeletionInfoWhereUniqueInput
-  }
-
-  /**
-   * DeletionInfo findUniqueOrThrow
-   */
-  export type DeletionInfoFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the DeletionInfo
-     */
-    select?: DeletionInfoSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: DeletionInfoInclude<ExtArgs> | null
-    /**
-     * Filter, which DeletionInfo to fetch.
-     */
-    where: DeletionInfoWhereUniqueInput
-  }
-
-  /**
-   * DeletionInfo findFirst
-   */
-  export type DeletionInfoFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the DeletionInfo
-     */
-    select?: DeletionInfoSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: DeletionInfoInclude<ExtArgs> | null
-    /**
-     * Filter, which DeletionInfo to fetch.
-     */
-    where?: DeletionInfoWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of DeletionInfos to fetch.
-     */
-    orderBy?: DeletionInfoOrderByWithRelationInput | DeletionInfoOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for DeletionInfos.
-     */
-    cursor?: DeletionInfoWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` DeletionInfos from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` DeletionInfos.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of DeletionInfos.
-     */
-    distinct?: DeletionInfoScalarFieldEnum | DeletionInfoScalarFieldEnum[]
-  }
-
-  /**
-   * DeletionInfo findFirstOrThrow
-   */
-  export type DeletionInfoFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the DeletionInfo
-     */
-    select?: DeletionInfoSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: DeletionInfoInclude<ExtArgs> | null
-    /**
-     * Filter, which DeletionInfo to fetch.
-     */
-    where?: DeletionInfoWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of DeletionInfos to fetch.
-     */
-    orderBy?: DeletionInfoOrderByWithRelationInput | DeletionInfoOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for DeletionInfos.
-     */
-    cursor?: DeletionInfoWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` DeletionInfos from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` DeletionInfos.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of DeletionInfos.
-     */
-    distinct?: DeletionInfoScalarFieldEnum | DeletionInfoScalarFieldEnum[]
-  }
-
-  /**
-   * DeletionInfo findMany
-   */
-  export type DeletionInfoFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the DeletionInfo
-     */
-    select?: DeletionInfoSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: DeletionInfoInclude<ExtArgs> | null
-    /**
-     * Filter, which DeletionInfos to fetch.
-     */
-    where?: DeletionInfoWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of DeletionInfos to fetch.
-     */
-    orderBy?: DeletionInfoOrderByWithRelationInput | DeletionInfoOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for listing DeletionInfos.
-     */
-    cursor?: DeletionInfoWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` DeletionInfos from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` DeletionInfos.
-     */
-    skip?: number
-    distinct?: DeletionInfoScalarFieldEnum | DeletionInfoScalarFieldEnum[]
-  }
-
-  /**
-   * DeletionInfo create
-   */
-  export type DeletionInfoCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the DeletionInfo
-     */
-    select?: DeletionInfoSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: DeletionInfoInclude<ExtArgs> | null
-    /**
-     * The data needed to create a DeletionInfo.
-     */
-    data: XOR<DeletionInfoCreateInput, DeletionInfoUncheckedCreateInput>
-  }
-
-  /**
-   * DeletionInfo createMany
-   */
-  export type DeletionInfoCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to create many DeletionInfos.
-     */
-    data: DeletionInfoCreateManyInput | DeletionInfoCreateManyInput[]
-    skipDuplicates?: boolean
-  }
-
-  /**
-   * DeletionInfo createManyAndReturn
-   */
-  export type DeletionInfoCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the DeletionInfo
-     */
-    select?: DeletionInfoSelectCreateManyAndReturn<ExtArgs> | null
-    /**
-     * The data used to create many DeletionInfos.
-     */
-    data: DeletionInfoCreateManyInput | DeletionInfoCreateManyInput[]
-    skipDuplicates?: boolean
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: DeletionInfoIncludeCreateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * DeletionInfo update
-   */
-  export type DeletionInfoUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the DeletionInfo
-     */
-    select?: DeletionInfoSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: DeletionInfoInclude<ExtArgs> | null
-    /**
-     * The data needed to update a DeletionInfo.
-     */
-    data: XOR<DeletionInfoUpdateInput, DeletionInfoUncheckedUpdateInput>
-    /**
-     * Choose, which DeletionInfo to update.
-     */
-    where: DeletionInfoWhereUniqueInput
-  }
-
-  /**
-   * DeletionInfo updateMany
-   */
-  export type DeletionInfoUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to update DeletionInfos.
-     */
-    data: XOR<DeletionInfoUpdateManyMutationInput, DeletionInfoUncheckedUpdateManyInput>
-    /**
-     * Filter which DeletionInfos to update
-     */
-    where?: DeletionInfoWhereInput
-  }
-
-  /**
-   * DeletionInfo upsert
-   */
-  export type DeletionInfoUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the DeletionInfo
-     */
-    select?: DeletionInfoSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: DeletionInfoInclude<ExtArgs> | null
-    /**
-     * The filter to search for the DeletionInfo to update in case it exists.
-     */
-    where: DeletionInfoWhereUniqueInput
-    /**
-     * In case the DeletionInfo found by the `where` argument doesn't exist, create a new DeletionInfo with this data.
-     */
-    create: XOR<DeletionInfoCreateInput, DeletionInfoUncheckedCreateInput>
-    /**
-     * In case the DeletionInfo was found with the provided `where` argument, update it with this data.
-     */
-    update: XOR<DeletionInfoUpdateInput, DeletionInfoUncheckedUpdateInput>
-  }
-
-  /**
-   * DeletionInfo delete
-   */
-  export type DeletionInfoDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the DeletionInfo
-     */
-    select?: DeletionInfoSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: DeletionInfoInclude<ExtArgs> | null
-    /**
-     * Filter which DeletionInfo to delete.
-     */
-    where: DeletionInfoWhereUniqueInput
-  }
-
-  /**
-   * DeletionInfo deleteMany
-   */
-  export type DeletionInfoDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which DeletionInfos to delete
-     */
-    where?: DeletionInfoWhereInput
-  }
-
-  /**
-   * DeletionInfo without action
-   */
-  export type DeletionInfoDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the DeletionInfo
-     */
-    select?: DeletionInfoSelect<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: DeletionInfoInclude<ExtArgs> | null
-  }
-
-
-  /**
    * Enums
    */
 
@@ -10749,20 +9662,6 @@ export namespace Prisma {
   export type UserProgressScalarFieldEnum = (typeof UserProgressScalarFieldEnum)[keyof typeof UserProgressScalarFieldEnum]
 
 
-  export const DeletionInfoScalarFieldEnum: {
-    id: 'id',
-    status: 'status',
-    token: 'token',
-    expiry: 'expiry',
-    after: 'after',
-    userId: 'userId',
-    createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
-  };
-
-  export type DeletionInfoScalarFieldEnum = (typeof DeletionInfoScalarFieldEnum)[keyof typeof DeletionInfoScalarFieldEnum]
-
-
   export const SortOrder: {
     asc: 'asc',
     desc: 'desc'
@@ -10870,20 +9769,6 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'DeletionStatus'
-   */
-  export type EnumDeletionStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DeletionStatus'>
-    
-
-
-  /**
-   * Reference to a field of type 'DeletionStatus[]'
-   */
-  export type ListEnumDeletionStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DeletionStatus[]'>
-    
-
-
-  /**
    * Reference to a field of type 'Float'
    */
   export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -10917,7 +9802,6 @@ export namespace Prisma {
     userProgress?: UserProgressListRelationFilter
     passwordReset?: XOR<PasswordResetNullableRelationFilter, PasswordResetWhereInput> | null
     mfa?: XOR<MultiFactorAuthenticationNullableRelationFilter, MultiFactorAuthenticationWhereInput> | null
-    deletionInfo?: XOR<DeletionInfoNullableRelationFilter, DeletionInfoWhereInput> | null
   }
 
   export type UserOrderByWithRelationInput = {
@@ -10934,7 +9818,6 @@ export namespace Prisma {
     userProgress?: UserProgressOrderByRelationAggregateInput
     passwordReset?: PasswordResetOrderByWithRelationInput
     mfa?: MultiFactorAuthenticationOrderByWithRelationInput
-    deletionInfo?: DeletionInfoOrderByWithRelationInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -10954,7 +9837,6 @@ export namespace Prisma {
     userProgress?: UserProgressListRelationFilter
     passwordReset?: XOR<PasswordResetNullableRelationFilter, PasswordResetWhereInput> | null
     mfa?: XOR<MultiFactorAuthenticationNullableRelationFilter, MultiFactorAuthenticationWhereInput> | null
-    deletionInfo?: XOR<DeletionInfoNullableRelationFilter, DeletionInfoWhereInput> | null
   }, "id" | "email" | "username">
 
   export type UserOrderByWithAggregationInput = {
@@ -11473,76 +10355,6 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"UserProgress"> | Date | string
   }
 
-  export type DeletionInfoWhereInput = {
-    AND?: DeletionInfoWhereInput | DeletionInfoWhereInput[]
-    OR?: DeletionInfoWhereInput[]
-    NOT?: DeletionInfoWhereInput | DeletionInfoWhereInput[]
-    id?: StringFilter<"DeletionInfo"> | string
-    status?: EnumDeletionStatusFilter<"DeletionInfo"> | $Enums.DeletionStatus
-    token?: StringNullableFilter<"DeletionInfo"> | string | null
-    expiry?: DateTimeNullableFilter<"DeletionInfo"> | Date | string | null
-    after?: DateTimeNullableFilter<"DeletionInfo"> | Date | string | null
-    userId?: StringFilter<"DeletionInfo"> | string
-    createdAt?: DateTimeFilter<"DeletionInfo"> | Date | string
-    updatedAt?: DateTimeFilter<"DeletionInfo"> | Date | string
-    user?: XOR<UserRelationFilter, UserWhereInput>
-  }
-
-  export type DeletionInfoOrderByWithRelationInput = {
-    id?: SortOrder
-    status?: SortOrder
-    token?: SortOrderInput | SortOrder
-    expiry?: SortOrderInput | SortOrder
-    after?: SortOrderInput | SortOrder
-    userId?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    user?: UserOrderByWithRelationInput
-  }
-
-  export type DeletionInfoWhereUniqueInput = Prisma.AtLeast<{
-    id?: string
-    token?: string
-    userId?: string
-    AND?: DeletionInfoWhereInput | DeletionInfoWhereInput[]
-    OR?: DeletionInfoWhereInput[]
-    NOT?: DeletionInfoWhereInput | DeletionInfoWhereInput[]
-    status?: EnumDeletionStatusFilter<"DeletionInfo"> | $Enums.DeletionStatus
-    expiry?: DateTimeNullableFilter<"DeletionInfo"> | Date | string | null
-    after?: DateTimeNullableFilter<"DeletionInfo"> | Date | string | null
-    createdAt?: DateTimeFilter<"DeletionInfo"> | Date | string
-    updatedAt?: DateTimeFilter<"DeletionInfo"> | Date | string
-    user?: XOR<UserRelationFilter, UserWhereInput>
-  }, "id" | "token" | "userId">
-
-  export type DeletionInfoOrderByWithAggregationInput = {
-    id?: SortOrder
-    status?: SortOrder
-    token?: SortOrderInput | SortOrder
-    expiry?: SortOrderInput | SortOrder
-    after?: SortOrderInput | SortOrder
-    userId?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    _count?: DeletionInfoCountOrderByAggregateInput
-    _max?: DeletionInfoMaxOrderByAggregateInput
-    _min?: DeletionInfoMinOrderByAggregateInput
-  }
-
-  export type DeletionInfoScalarWhereWithAggregatesInput = {
-    AND?: DeletionInfoScalarWhereWithAggregatesInput | DeletionInfoScalarWhereWithAggregatesInput[]
-    OR?: DeletionInfoScalarWhereWithAggregatesInput[]
-    NOT?: DeletionInfoScalarWhereWithAggregatesInput | DeletionInfoScalarWhereWithAggregatesInput[]
-    id?: StringWithAggregatesFilter<"DeletionInfo"> | string
-    status?: EnumDeletionStatusWithAggregatesFilter<"DeletionInfo"> | $Enums.DeletionStatus
-    token?: StringNullableWithAggregatesFilter<"DeletionInfo"> | string | null
-    expiry?: DateTimeNullableWithAggregatesFilter<"DeletionInfo"> | Date | string | null
-    after?: DateTimeNullableWithAggregatesFilter<"DeletionInfo"> | Date | string | null
-    userId?: StringWithAggregatesFilter<"DeletionInfo"> | string
-    createdAt?: DateTimeWithAggregatesFilter<"DeletionInfo"> | Date | string
-    updatedAt?: DateTimeWithAggregatesFilter<"DeletionInfo"> | Date | string
-  }
-
   export type UserCreateInput = {
     id?: string
     email: string
@@ -11557,7 +10369,6 @@ export namespace Prisma {
     userProgress?: UserProgressCreateNestedManyWithoutUserInput
     passwordReset?: PasswordResetCreateNestedOneWithoutUserInput
     mfa?: MultiFactorAuthenticationCreateNestedOneWithoutUserInput
-    deletionInfo?: DeletionInfoCreateNestedOneWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -11574,7 +10385,6 @@ export namespace Prisma {
     userProgress?: UserProgressUncheckedCreateNestedManyWithoutUserInput
     passwordReset?: PasswordResetUncheckedCreateNestedOneWithoutUserInput
     mfa?: MultiFactorAuthenticationUncheckedCreateNestedOneWithoutUserInput
-    deletionInfo?: DeletionInfoUncheckedCreateNestedOneWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -11591,7 +10401,6 @@ export namespace Prisma {
     userProgress?: UserProgressUpdateManyWithoutUserNestedInput
     passwordReset?: PasswordResetUpdateOneWithoutUserNestedInput
     mfa?: MultiFactorAuthenticationUpdateOneWithoutUserNestedInput
-    deletionInfo?: DeletionInfoUpdateOneWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -11608,7 +10417,6 @@ export namespace Prisma {
     userProgress?: UserProgressUncheckedUpdateManyWithoutUserNestedInput
     passwordReset?: PasswordResetUncheckedUpdateOneWithoutUserNestedInput
     mfa?: MultiFactorAuthenticationUncheckedUpdateOneWithoutUserNestedInput
-    deletionInfo?: DeletionInfoUncheckedUpdateOneWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -12163,82 +10971,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type DeletionInfoCreateInput = {
-    id?: string
-    status?: $Enums.DeletionStatus
-    token?: string | null
-    expiry?: Date | string | null
-    after?: Date | string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    user: UserCreateNestedOneWithoutDeletionInfoInput
-  }
-
-  export type DeletionInfoUncheckedCreateInput = {
-    id?: string
-    status?: $Enums.DeletionStatus
-    token?: string | null
-    expiry?: Date | string | null
-    after?: Date | string | null
-    userId: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type DeletionInfoUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    status?: EnumDeletionStatusFieldUpdateOperationsInput | $Enums.DeletionStatus
-    token?: NullableStringFieldUpdateOperationsInput | string | null
-    expiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    after?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    user?: UserUpdateOneRequiredWithoutDeletionInfoNestedInput
-  }
-
-  export type DeletionInfoUncheckedUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    status?: EnumDeletionStatusFieldUpdateOperationsInput | $Enums.DeletionStatus
-    token?: NullableStringFieldUpdateOperationsInput | string | null
-    expiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    after?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    userId?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type DeletionInfoCreateManyInput = {
-    id?: string
-    status?: $Enums.DeletionStatus
-    token?: string | null
-    expiry?: Date | string | null
-    after?: Date | string | null
-    userId: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type DeletionInfoUpdateManyMutationInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    status?: EnumDeletionStatusFieldUpdateOperationsInput | $Enums.DeletionStatus
-    token?: NullableStringFieldUpdateOperationsInput | string | null
-    expiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    after?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type DeletionInfoUncheckedUpdateManyInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    status?: EnumDeletionStatusFieldUpdateOperationsInput | $Enums.DeletionStatus
-    token?: NullableStringFieldUpdateOperationsInput | string | null
-    expiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    after?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    userId?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -12312,11 +11044,6 @@ export namespace Prisma {
   export type MultiFactorAuthenticationNullableRelationFilter = {
     is?: MultiFactorAuthenticationWhereInput | null
     isNot?: MultiFactorAuthenticationWhereInput | null
-  }
-
-  export type DeletionInfoNullableRelationFilter = {
-    is?: DeletionInfoWhereInput | null
-    isNot?: DeletionInfoWhereInput | null
   }
 
   export type SortOrderInput = {
@@ -12759,81 +11486,6 @@ export namespace Prisma {
     updatedAt?: SortOrder
   }
 
-  export type EnumDeletionStatusFilter<$PrismaModel = never> = {
-    equals?: $Enums.DeletionStatus | EnumDeletionStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.DeletionStatus[] | ListEnumDeletionStatusFieldRefInput<$PrismaModel>
-    notIn?: $Enums.DeletionStatus[] | ListEnumDeletionStatusFieldRefInput<$PrismaModel>
-    not?: NestedEnumDeletionStatusFilter<$PrismaModel> | $Enums.DeletionStatus
-  }
-
-  export type DateTimeNullableFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
-  }
-
-  export type DeletionInfoCountOrderByAggregateInput = {
-    id?: SortOrder
-    status?: SortOrder
-    token?: SortOrder
-    expiry?: SortOrder
-    after?: SortOrder
-    userId?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
-  export type DeletionInfoMaxOrderByAggregateInput = {
-    id?: SortOrder
-    status?: SortOrder
-    token?: SortOrder
-    expiry?: SortOrder
-    after?: SortOrder
-    userId?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
-  export type DeletionInfoMinOrderByAggregateInput = {
-    id?: SortOrder
-    status?: SortOrder
-    token?: SortOrder
-    expiry?: SortOrder
-    after?: SortOrder
-    userId?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
-  export type EnumDeletionStatusWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.DeletionStatus | EnumDeletionStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.DeletionStatus[] | ListEnumDeletionStatusFieldRefInput<$PrismaModel>
-    notIn?: $Enums.DeletionStatus[] | ListEnumDeletionStatusFieldRefInput<$PrismaModel>
-    not?: NestedEnumDeletionStatusWithAggregatesFilter<$PrismaModel> | $Enums.DeletionStatus
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumDeletionStatusFilter<$PrismaModel>
-    _max?: NestedEnumDeletionStatusFilter<$PrismaModel>
-  }
-
-  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedDateTimeNullableFilter<$PrismaModel>
-    _max?: NestedDateTimeNullableFilter<$PrismaModel>
-  }
-
   export type UserProgressCreateNestedManyWithoutUserInput = {
     create?: XOR<UserProgressCreateWithoutUserInput, UserProgressUncheckedCreateWithoutUserInput> | UserProgressCreateWithoutUserInput[] | UserProgressUncheckedCreateWithoutUserInput[]
     connectOrCreate?: UserProgressCreateOrConnectWithoutUserInput | UserProgressCreateOrConnectWithoutUserInput[]
@@ -12853,12 +11505,6 @@ export namespace Prisma {
     connect?: MultiFactorAuthenticationWhereUniqueInput
   }
 
-  export type DeletionInfoCreateNestedOneWithoutUserInput = {
-    create?: XOR<DeletionInfoCreateWithoutUserInput, DeletionInfoUncheckedCreateWithoutUserInput>
-    connectOrCreate?: DeletionInfoCreateOrConnectWithoutUserInput
-    connect?: DeletionInfoWhereUniqueInput
-  }
-
   export type UserProgressUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<UserProgressCreateWithoutUserInput, UserProgressUncheckedCreateWithoutUserInput> | UserProgressCreateWithoutUserInput[] | UserProgressUncheckedCreateWithoutUserInput[]
     connectOrCreate?: UserProgressCreateOrConnectWithoutUserInput | UserProgressCreateOrConnectWithoutUserInput[]
@@ -12876,12 +11522,6 @@ export namespace Prisma {
     create?: XOR<MultiFactorAuthenticationCreateWithoutUserInput, MultiFactorAuthenticationUncheckedCreateWithoutUserInput>
     connectOrCreate?: MultiFactorAuthenticationCreateOrConnectWithoutUserInput
     connect?: MultiFactorAuthenticationWhereUniqueInput
-  }
-
-  export type DeletionInfoUncheckedCreateNestedOneWithoutUserInput = {
-    create?: XOR<DeletionInfoCreateWithoutUserInput, DeletionInfoUncheckedCreateWithoutUserInput>
-    connectOrCreate?: DeletionInfoCreateOrConnectWithoutUserInput
-    connect?: DeletionInfoWhereUniqueInput
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -12942,16 +11582,6 @@ export namespace Prisma {
     update?: XOR<XOR<MultiFactorAuthenticationUpdateToOneWithWhereWithoutUserInput, MultiFactorAuthenticationUpdateWithoutUserInput>, MultiFactorAuthenticationUncheckedUpdateWithoutUserInput>
   }
 
-  export type DeletionInfoUpdateOneWithoutUserNestedInput = {
-    create?: XOR<DeletionInfoCreateWithoutUserInput, DeletionInfoUncheckedCreateWithoutUserInput>
-    connectOrCreate?: DeletionInfoCreateOrConnectWithoutUserInput
-    upsert?: DeletionInfoUpsertWithoutUserInput
-    disconnect?: DeletionInfoWhereInput | boolean
-    delete?: DeletionInfoWhereInput | boolean
-    connect?: DeletionInfoWhereUniqueInput
-    update?: XOR<XOR<DeletionInfoUpdateToOneWithWhereWithoutUserInput, DeletionInfoUpdateWithoutUserInput>, DeletionInfoUncheckedUpdateWithoutUserInput>
-  }
-
   export type UserProgressUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<UserProgressCreateWithoutUserInput, UserProgressUncheckedCreateWithoutUserInput> | UserProgressCreateWithoutUserInput[] | UserProgressUncheckedCreateWithoutUserInput[]
     connectOrCreate?: UserProgressCreateOrConnectWithoutUserInput | UserProgressCreateOrConnectWithoutUserInput[]
@@ -12984,16 +11614,6 @@ export namespace Prisma {
     delete?: MultiFactorAuthenticationWhereInput | boolean
     connect?: MultiFactorAuthenticationWhereUniqueInput
     update?: XOR<XOR<MultiFactorAuthenticationUpdateToOneWithWhereWithoutUserInput, MultiFactorAuthenticationUpdateWithoutUserInput>, MultiFactorAuthenticationUncheckedUpdateWithoutUserInput>
-  }
-
-  export type DeletionInfoUncheckedUpdateOneWithoutUserNestedInput = {
-    create?: XOR<DeletionInfoCreateWithoutUserInput, DeletionInfoUncheckedCreateWithoutUserInput>
-    connectOrCreate?: DeletionInfoCreateOrConnectWithoutUserInput
-    upsert?: DeletionInfoUpsertWithoutUserInput
-    disconnect?: DeletionInfoWhereInput | boolean
-    delete?: DeletionInfoWhereInput | boolean
-    connect?: DeletionInfoWhereUniqueInput
-    update?: XOR<XOR<DeletionInfoUpdateToOneWithWhereWithoutUserInput, DeletionInfoUpdateWithoutUserInput>, DeletionInfoUncheckedUpdateWithoutUserInput>
   }
 
   export type UserCreateNestedOneWithoutPasswordResetInput = {
@@ -13263,28 +11883,6 @@ export namespace Prisma {
     update?: XOR<XOR<LessonUpdateToOneWithWhereWithoutUserProgressInput, LessonUpdateWithoutUserProgressInput>, LessonUncheckedUpdateWithoutUserProgressInput>
   }
 
-  export type UserCreateNestedOneWithoutDeletionInfoInput = {
-    create?: XOR<UserCreateWithoutDeletionInfoInput, UserUncheckedCreateWithoutDeletionInfoInput>
-    connectOrCreate?: UserCreateOrConnectWithoutDeletionInfoInput
-    connect?: UserWhereUniqueInput
-  }
-
-  export type EnumDeletionStatusFieldUpdateOperationsInput = {
-    set?: $Enums.DeletionStatus
-  }
-
-  export type NullableDateTimeFieldUpdateOperationsInput = {
-    set?: Date | string | null
-  }
-
-  export type UserUpdateOneRequiredWithoutDeletionInfoNestedInput = {
-    create?: XOR<UserCreateWithoutDeletionInfoInput, UserUncheckedCreateWithoutDeletionInfoInput>
-    connectOrCreate?: UserCreateOrConnectWithoutDeletionInfoInput
-    upsert?: UserUpsertWithoutDeletionInfoInput
-    connect?: UserWhereUniqueInput
-    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutDeletionInfoInput, UserUpdateWithoutDeletionInfoInput>, UserUncheckedUpdateWithoutDeletionInfoInput>
-  }
-
   export type NestedStringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -13468,48 +12066,6 @@ export namespace Prisma {
     _max?: NestedEnumTotpStatusFilter<$PrismaModel>
   }
 
-  export type NestedEnumDeletionStatusFilter<$PrismaModel = never> = {
-    equals?: $Enums.DeletionStatus | EnumDeletionStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.DeletionStatus[] | ListEnumDeletionStatusFieldRefInput<$PrismaModel>
-    notIn?: $Enums.DeletionStatus[] | ListEnumDeletionStatusFieldRefInput<$PrismaModel>
-    not?: NestedEnumDeletionStatusFilter<$PrismaModel> | $Enums.DeletionStatus
-  }
-
-  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
-  }
-
-  export type NestedEnumDeletionStatusWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.DeletionStatus | EnumDeletionStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.DeletionStatus[] | ListEnumDeletionStatusFieldRefInput<$PrismaModel>
-    notIn?: $Enums.DeletionStatus[] | ListEnumDeletionStatusFieldRefInput<$PrismaModel>
-    not?: NestedEnumDeletionStatusWithAggregatesFilter<$PrismaModel> | $Enums.DeletionStatus
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumDeletionStatusFilter<$PrismaModel>
-    _max?: NestedEnumDeletionStatusFilter<$PrismaModel>
-  }
-
-  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedDateTimeNullableFilter<$PrismaModel>
-    _max?: NestedDateTimeNullableFilter<$PrismaModel>
-  }
-
   export type UserProgressCreateWithoutUserInput = {
     id?: string
     isCompleted?: boolean
@@ -13578,31 +12134,6 @@ export namespace Prisma {
   export type MultiFactorAuthenticationCreateOrConnectWithoutUserInput = {
     where: MultiFactorAuthenticationWhereUniqueInput
     create: XOR<MultiFactorAuthenticationCreateWithoutUserInput, MultiFactorAuthenticationUncheckedCreateWithoutUserInput>
-  }
-
-  export type DeletionInfoCreateWithoutUserInput = {
-    id?: string
-    status?: $Enums.DeletionStatus
-    token?: string | null
-    expiry?: Date | string | null
-    after?: Date | string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type DeletionInfoUncheckedCreateWithoutUserInput = {
-    id?: string
-    status?: $Enums.DeletionStatus
-    token?: string | null
-    expiry?: Date | string | null
-    after?: Date | string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type DeletionInfoCreateOrConnectWithoutUserInput = {
-    where: DeletionInfoWhereUniqueInput
-    create: XOR<DeletionInfoCreateWithoutUserInput, DeletionInfoUncheckedCreateWithoutUserInput>
   }
 
   export type UserProgressUpsertWithWhereUniqueWithoutUserInput = {
@@ -13689,37 +12220,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type DeletionInfoUpsertWithoutUserInput = {
-    update: XOR<DeletionInfoUpdateWithoutUserInput, DeletionInfoUncheckedUpdateWithoutUserInput>
-    create: XOR<DeletionInfoCreateWithoutUserInput, DeletionInfoUncheckedCreateWithoutUserInput>
-    where?: DeletionInfoWhereInput
-  }
-
-  export type DeletionInfoUpdateToOneWithWhereWithoutUserInput = {
-    where?: DeletionInfoWhereInput
-    data: XOR<DeletionInfoUpdateWithoutUserInput, DeletionInfoUncheckedUpdateWithoutUserInput>
-  }
-
-  export type DeletionInfoUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    status?: EnumDeletionStatusFieldUpdateOperationsInput | $Enums.DeletionStatus
-    token?: NullableStringFieldUpdateOperationsInput | string | null
-    expiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    after?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type DeletionInfoUncheckedUpdateWithoutUserInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    status?: EnumDeletionStatusFieldUpdateOperationsInput | $Enums.DeletionStatus
-    token?: NullableStringFieldUpdateOperationsInput | string | null
-    expiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    after?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
   export type UserCreateWithoutPasswordResetInput = {
     id?: string
     email: string
@@ -13733,7 +12233,6 @@ export namespace Prisma {
     updatedAt?: Date | string
     userProgress?: UserProgressCreateNestedManyWithoutUserInput
     mfa?: MultiFactorAuthenticationCreateNestedOneWithoutUserInput
-    deletionInfo?: DeletionInfoCreateNestedOneWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutPasswordResetInput = {
@@ -13749,7 +12248,6 @@ export namespace Prisma {
     updatedAt?: Date | string
     userProgress?: UserProgressUncheckedCreateNestedManyWithoutUserInput
     mfa?: MultiFactorAuthenticationUncheckedCreateNestedOneWithoutUserInput
-    deletionInfo?: DeletionInfoUncheckedCreateNestedOneWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutPasswordResetInput = {
@@ -13781,7 +12279,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     userProgress?: UserProgressUpdateManyWithoutUserNestedInput
     mfa?: MultiFactorAuthenticationUpdateOneWithoutUserNestedInput
-    deletionInfo?: DeletionInfoUpdateOneWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPasswordResetInput = {
@@ -13797,7 +12294,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     userProgress?: UserProgressUncheckedUpdateManyWithoutUserNestedInput
     mfa?: MultiFactorAuthenticationUncheckedUpdateOneWithoutUserNestedInput
-    deletionInfo?: DeletionInfoUncheckedUpdateOneWithoutUserNestedInput
   }
 
   export type TotpCreateWithoutMfaInput = {
@@ -13857,7 +12353,6 @@ export namespace Prisma {
     updatedAt?: Date | string
     userProgress?: UserProgressCreateNestedManyWithoutUserInput
     passwordReset?: PasswordResetCreateNestedOneWithoutUserInput
-    deletionInfo?: DeletionInfoCreateNestedOneWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutMfaInput = {
@@ -13873,7 +12368,6 @@ export namespace Prisma {
     updatedAt?: Date | string
     userProgress?: UserProgressUncheckedCreateNestedManyWithoutUserInput
     passwordReset?: PasswordResetUncheckedCreateNestedOneWithoutUserInput
-    deletionInfo?: DeletionInfoUncheckedCreateNestedOneWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutMfaInput = {
@@ -13961,7 +12455,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     userProgress?: UserProgressUpdateManyWithoutUserNestedInput
     passwordReset?: PasswordResetUpdateOneWithoutUserNestedInput
-    deletionInfo?: DeletionInfoUpdateOneWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutMfaInput = {
@@ -13977,7 +12470,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     userProgress?: UserProgressUncheckedUpdateManyWithoutUserNestedInput
     passwordReset?: PasswordResetUncheckedUpdateOneWithoutUserNestedInput
-    deletionInfo?: DeletionInfoUncheckedUpdateOneWithoutUserNestedInput
   }
 
   export type MultiFactorAuthenticationCreateWithoutPasskeyInput = {
@@ -14279,7 +12771,6 @@ export namespace Prisma {
     updatedAt?: Date | string
     passwordReset?: PasswordResetCreateNestedOneWithoutUserInput
     mfa?: MultiFactorAuthenticationCreateNestedOneWithoutUserInput
-    deletionInfo?: DeletionInfoCreateNestedOneWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutUserProgressInput = {
@@ -14295,7 +12786,6 @@ export namespace Prisma {
     updatedAt?: Date | string
     passwordReset?: PasswordResetUncheckedCreateNestedOneWithoutUserInput
     mfa?: MultiFactorAuthenticationUncheckedCreateNestedOneWithoutUserInput
-    deletionInfo?: DeletionInfoUncheckedCreateNestedOneWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutUserProgressInput = {
@@ -14358,7 +12848,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     passwordReset?: PasswordResetUpdateOneWithoutUserNestedInput
     mfa?: MultiFactorAuthenticationUpdateOneWithoutUserNestedInput
-    deletionInfo?: DeletionInfoUpdateOneWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutUserProgressInput = {
@@ -14374,7 +12863,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     passwordReset?: PasswordResetUncheckedUpdateOneWithoutUserNestedInput
     mfa?: MultiFactorAuthenticationUncheckedUpdateOneWithoutUserNestedInput
-    deletionInfo?: DeletionInfoUncheckedUpdateOneWithoutUserNestedInput
   }
 
   export type LessonUpsertWithoutUserProgressInput = {
@@ -14412,86 +12900,6 @@ export namespace Prisma {
     courseId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type UserCreateWithoutDeletionInfoInput = {
-    id?: string
-    email: string
-    password?: string | null
-    username: string
-    displayName: string
-    avatar?: string | null
-    points?: number
-    role?: $Enums.UserRole
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    userProgress?: UserProgressCreateNestedManyWithoutUserInput
-    passwordReset?: PasswordResetCreateNestedOneWithoutUserInput
-    mfa?: MultiFactorAuthenticationCreateNestedOneWithoutUserInput
-  }
-
-  export type UserUncheckedCreateWithoutDeletionInfoInput = {
-    id?: string
-    email: string
-    password?: string | null
-    username: string
-    displayName: string
-    avatar?: string | null
-    points?: number
-    role?: $Enums.UserRole
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    userProgress?: UserProgressUncheckedCreateNestedManyWithoutUserInput
-    passwordReset?: PasswordResetUncheckedCreateNestedOneWithoutUserInput
-    mfa?: MultiFactorAuthenticationUncheckedCreateNestedOneWithoutUserInput
-  }
-
-  export type UserCreateOrConnectWithoutDeletionInfoInput = {
-    where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutDeletionInfoInput, UserUncheckedCreateWithoutDeletionInfoInput>
-  }
-
-  export type UserUpsertWithoutDeletionInfoInput = {
-    update: XOR<UserUpdateWithoutDeletionInfoInput, UserUncheckedUpdateWithoutDeletionInfoInput>
-    create: XOR<UserCreateWithoutDeletionInfoInput, UserUncheckedCreateWithoutDeletionInfoInput>
-    where?: UserWhereInput
-  }
-
-  export type UserUpdateToOneWithWhereWithoutDeletionInfoInput = {
-    where?: UserWhereInput
-    data: XOR<UserUpdateWithoutDeletionInfoInput, UserUncheckedUpdateWithoutDeletionInfoInput>
-  }
-
-  export type UserUpdateWithoutDeletionInfoInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    password?: NullableStringFieldUpdateOperationsInput | string | null
-    username?: StringFieldUpdateOperationsInput | string
-    displayName?: StringFieldUpdateOperationsInput | string
-    avatar?: NullableStringFieldUpdateOperationsInput | string | null
-    points?: IntFieldUpdateOperationsInput | number
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    userProgress?: UserProgressUpdateManyWithoutUserNestedInput
-    passwordReset?: PasswordResetUpdateOneWithoutUserNestedInput
-    mfa?: MultiFactorAuthenticationUpdateOneWithoutUserNestedInput
-  }
-
-  export type UserUncheckedUpdateWithoutDeletionInfoInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    password?: NullableStringFieldUpdateOperationsInput | string | null
-    username?: StringFieldUpdateOperationsInput | string
-    displayName?: StringFieldUpdateOperationsInput | string
-    avatar?: NullableStringFieldUpdateOperationsInput | string | null
-    points?: IntFieldUpdateOperationsInput | number
-    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    userProgress?: UserProgressUncheckedUpdateManyWithoutUserNestedInput
-    passwordReset?: PasswordResetUncheckedUpdateOneWithoutUserNestedInput
-    mfa?: MultiFactorAuthenticationUncheckedUpdateOneWithoutUserNestedInput
   }
 
   export type UserProgressCreateManyUserInput = {
@@ -14657,10 +13065,6 @@ export namespace Prisma {
      * @deprecated Use UserProgressDefaultArgs instead
      */
     export type UserProgressArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = UserProgressDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use DeletionInfoDefaultArgs instead
-     */
-    export type DeletionInfoArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = DeletionInfoDefaultArgs<ExtArgs>
 
   /**
    * Batch Payload for updateMany & deleteMany & createMany

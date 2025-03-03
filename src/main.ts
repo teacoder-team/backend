@@ -8,15 +8,15 @@ import { NestFactory, Reflector } from '@nestjs/core'
 import helmet from 'helmet'
 
 import { AppModule } from './app.module'
-import { LoggingInterceptor } from './common/interceptors/logging.interceptor'
-import { parseBoolean } from './common/utils/parse-boolean'
-import { setupSwagger } from './common/utils/swagger'
-import { getCorsConfig } from './config'
+import { LoggingInterceptor } from './common/interceptors'
+import { setupSwagger } from './common/utils'
+import { getCorsConfig, getValidationPipeConfig } from './config'
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule)
 
 	const config = app.get(ConfigService)
+	const logger = new Logger(AppModule.name)
 
 	app.use(helmet())
 
@@ -25,26 +25,23 @@ async function bootstrap() {
 	)
 	app.useGlobalInterceptors(new LoggingInterceptor())
 
-	app.useGlobalPipes(
-		new ValidationPipe({
-			transform: true
-		})
-	)
+	app.useGlobalPipes(new ValidationPipe(getValidationPipeConfig()))
 
 	app.enableCors(getCorsConfig(config))
 
-	if (parseBoolean(config.getOrThrow<string>('SWAGGER_ENABLED'))) {
-		setupSwagger(app)
-	}
+	setupSwagger(app)
 
-	await app.listen(config.getOrThrow<number>('APPLICATION_PORT'))
-	Logger.log(
-		`🚀 Server is running at: ${config.getOrThrow<string>('APPLICATION_URL')}`
-	)
-	if (parseBoolean(config.getOrThrow<string>('SWAGGER_ENABLED'))) {
-		Logger.log(
-			`📄 Documentation is available at: ${config.getOrThrow<string>('APPLICATION_URL')}${config.getOrThrow<string>('SWAGGER_PREFIX')}`
-		)
+	const port = config.getOrThrow<number>('APPLICATION_PORT')
+	const host = config.getOrThrow<string>('APPLICATION_URL')
+
+	try {
+		await app.listen(port)
+
+		logger.log(`🚀 Server is running at: ${host}`)
+		logger.log(`📄 Documentation is available at: ${host}/docs`)
+	} catch (error) {
+		logger.error(`❌ Error to start server: ${error.message}`, error)
+		process.exit(1)
 	}
 }
 

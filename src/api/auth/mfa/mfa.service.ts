@@ -1,7 +1,8 @@
 import {
 	BadRequestException,
 	Injectable,
-	NotFoundException
+	NotFoundException,
+	UnauthorizedException
 } from '@nestjs/common'
 import { TotpStatus, type User } from '@prisma/generated'
 import { verify } from 'argon2'
@@ -11,12 +12,21 @@ import { TOTP } from 'otpauth'
 import * as QRCode from 'qrcode'
 
 import { PrismaService } from '@/infra/prisma/prisma.service'
+import { RedisService } from '@/infra/redis/redis.service'
 
-import { TotpDisableRequest, TotpEnableRequest } from './dto'
+import {
+	MfaRecoveryRequest,
+	MfaTotpRequest,
+	TotpDisableRequest,
+	TotpEnableRequest
+} from './dto'
 
 @Injectable()
 export class MfaService {
-	public constructor(private readonly prismaService: PrismaService) {}
+	public constructor(
+		private readonly prismaService: PrismaService,
+		protected readonly redisService: RedisService
+	) {}
 
 	public async fetchStatus(user: User) {
 		const mfa =
@@ -234,6 +244,106 @@ export class MfaService {
 				}
 			})
 		}
+
+		return true
+	}
+
+	public async verify(
+		dto: MfaTotpRequest | MfaRecoveryRequest,
+		ip: string,
+		userAgent: string
+	) {
+		const ticket = await this.redisService.hgetall(
+			`mfa_tickets:${dto.ticket}`
+		)
+
+		if (!ticket || !ticket.userId)
+			throw new BadRequestException('Неверный или истекший MFA билет')
+
+		const user = await this.prismaService.user.findUnique({
+			where: {
+				id: ticket.userId
+			}
+		})
+
+		if (!user) throw new NotFoundException('Пользователь не найден')
+
+		if ('totpCode' in dto) {
+			if (!ticket.allowedMethods.includes('Totp')) {
+				throw new BadRequestException('Метод TOTP не разрешен')
+			}
+
+			await this.verifyTotpCode(user, dto.totpCode)
+		} else if ('recoveryCode' in dto) {
+			if (!ticket.allowedMethods.includes('Recovery')) {
+				throw new BadRequestException(
+					'Метод восстановления не разрешен'
+				)
+			}
+
+			await this.verifyRecoveryCode(user, dto.recoveryCode)
+		}
+
+		const session = await this.redisService.createSession(
+			user,
+			ip,
+			userAgent
+		)
+
+		await this.redisService.del(`mfa_tickets:${dto.ticket}`)
+
+		return session
+	}
+
+	private async verifyTotpCode(
+		user: User,
+		totpCode: string
+	): Promise<boolean> {
+		const mfa =
+			await this.prismaService.multiFactorAuthentication.findUnique({
+				where: {
+					userId: user.id
+				},
+				include: {
+					totp: true
+				}
+			})
+
+		if (!mfa || !mfa.totp || mfa.totp.status !== TotpStatus.ENABLED)
+			throw new NotFoundException('TOTP не активирован')
+
+		const totp = new TOTP({
+			issuer: 'TeaCoder',
+			label: `${user.email}`,
+			algorithm: 'SHA1',
+			digits: 6,
+			secret: mfa.totp.secret
+		})
+
+		const isValid = totp.validate({ token: totpCode }) !== null
+
+		if (!isValid) throw new UnauthorizedException('Неверный код')
+
+		return true
+	}
+
+	private async verifyRecoveryCode(
+		user: User,
+		recoveryCode: string
+	): Promise<boolean> {
+		const mfa =
+			await this.prismaService.multiFactorAuthentication.findUnique({
+				where: {
+					userId: user.id
+				}
+			})
+
+		if (
+			!mfa ||
+			!mfa.recoveryCodes ||
+			!mfa.recoveryCodes.includes(recoveryCode)
+		)
+			throw new UnauthorizedException('Неверный код восстановления')
 
 		return true
 	}

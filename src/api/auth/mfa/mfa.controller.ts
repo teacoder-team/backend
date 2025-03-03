@@ -17,10 +17,19 @@ import {
 } from '@nestjs/swagger'
 import type { User } from '@prisma/generated'
 
-import { Authorization, Authorized } from '@/common/decorators'
+import {
+	Authorization,
+	Authorized,
+	ClientIp,
+	UserAgent
+} from '@/common/decorators'
+
+import { LoginSessionResponse } from '../session/dto'
 
 import {
+	MfaRecoveryRequest,
 	MfaStatusResponse,
+	MfaTotpRequest,
 	TotpDisableRequest,
 	TotpEnableRequest,
 	TotpGenerateSecretResponse
@@ -144,5 +153,23 @@ export class MfaController {
 		@Body() dto: TotpDisableRequest
 	) {
 		return this.mfaService.totpDisable(user, dto)
+	}
+
+	@ApiOperation({
+		summary: 'Verify MFA Ticket',
+		description:
+			'Verify the MFA ticket for the authenticated user, either by TOTP code or recovery code.'
+	})
+	@ApiOkResponse({
+		type: LoginSessionResponse
+	})
+	@Post('verify')
+	@HttpCode(HttpStatus.OK)
+	public async verify(
+		@Body() dto: MfaTotpRequest | MfaRecoveryRequest,
+		@ClientIp() ip: string,
+		@UserAgent() userAgent: string
+	) {
+		return this.mfaService.verify(dto, ip, userAgent)
 	}
 }

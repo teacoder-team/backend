@@ -5,8 +5,7 @@ import {
 	HttpCode,
 	HttpStatus,
 	Patch,
-	Post,
-	Put
+	Post
 } from '@nestjs/common'
 import {
 	ApiHeader,
@@ -29,7 +28,6 @@ import {
 	AccountResponse,
 	ChangeEmailRequest,
 	ChangePasswordRequest,
-	ConfirmDeletionRequest,
 	CreateUserRequest,
 	CreateUserResponse,
 	PasswordResetRequest,
@@ -145,45 +143,5 @@ export class AccountController {
 		@Body() dto: ChangePasswordRequest
 	) {
 		return this.accountService.changePassword(user, dto)
-	}
-
-	@ApiOperation({
-		summary: 'Delete Account',
-		description: 'Request to have an account deleted.'
-	})
-	@ApiOkResponse({
-		type: Boolean
-	})
-	@ApiHeader({
-		name: 'X-Session-Token',
-		required: true
-	})
-	@Authorization()
-	@Post('delete')
-	@HttpCode(HttpStatus.OK)
-	public async deleteAccount(@Authorized() user: User) {
-		return this.accountService.deleteAccount(user)
-	}
-
-	@ApiOperation({
-		summary: 'Confirm Account Deletion',
-		description:
-			'Schedule an account for deletion by confirming the received token.'
-	})
-	@ApiOkResponse({
-		type: Boolean
-	})
-	@ApiHeader({
-		name: 'X-Session-Token',
-		required: true
-	})
-	@Authorization()
-	@Put('delete')
-	@HttpCode(HttpStatus.OK)
-	public async confirmDeletion(
-		@Authorized() user: User,
-		@Body() dto: ConfirmDeletionRequest
-	) {
-		return this.accountService.confirmDeletion(user, dto)
 	}
 }
