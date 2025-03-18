@@ -7,7 +7,12 @@ import {
 	Param,
 	Put
 } from '@nestjs/common'
-import { ApiHeader, ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import {
+	ApiHeader,
+	ApiOkResponse,
+	ApiOperation,
+	ApiTags
+} from '@nestjs/swagger'
 import type { User } from '@prisma/generated'
 
 import { Authorization, Authorized } from '@/common/decorators'
@@ -20,6 +25,10 @@ import { ProgressService } from './progress.service'
 export class ProgressController {
 	public constructor(private readonly progressService: ProgressService) {}
 
+	@ApiOperation({
+		summary: 'Get Course Progress',
+		description: 'Retrieve the progress of the user for a specific course.'
+	})
 	@ApiOkResponse({
 		type: Number
 	})
@@ -30,13 +39,18 @@ export class ProgressController {
 	@Authorization()
 	@Get(':courseId')
 	@HttpCode(HttpStatus.OK)
-	public async getProgress(
+	public async getCourseProgress(
 		@Authorized() user: User,
 		@Param('courseId') courseId: string
 	) {
-		return this.progressService.getProgress(user, courseId)
+		return this.progressService.getCourseProgress(user, courseId)
 	}
 
+	@ApiOperation({
+		summary: 'Update Progress',
+		description:
+			'Update or create progress for a user in a specific course.'
+	})
 	@ApiOkResponse({
 		type: CreateProgressResponse
 	})

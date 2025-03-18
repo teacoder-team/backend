@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { NestFactory, Reflector } from '@nestjs/core'
+import { apiReference } from '@scalar/nestjs-api-reference'
 import helmet from 'helmet'
 
 import { AppModule } from './app.module'
@@ -18,7 +19,16 @@ async function bootstrap() {
 	const config = app.get(ConfigService)
 	const logger = new Logger(AppModule.name)
 
-	app.use(helmet())
+	app.use(
+		helmet({
+			contentSecurityPolicy: {
+				directives: {
+					defaultSrc: ["'self'"],
+					scriptSrc: ["'self'", 'https://cdn.jsdelivr.net']
+				}
+			}
+		})
+	)
 
 	app.useGlobalInterceptors(
 		new ClassSerializerInterceptor(app.get(Reflector))
@@ -30,6 +40,16 @@ async function bootstrap() {
 	app.enableCors(getCorsConfig(config))
 
 	setupSwagger(app)
+
+	app.use(
+		'/reference',
+		apiReference({
+			theme: 'purple',
+			spec: {
+				url: '/docs/json'
+			}
+		})
+	)
 
 	const port = config.getOrThrow<number>('APPLICATION_PORT')
 	const host = config.getOrThrow<string>('APPLICATION_URL')

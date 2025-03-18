@@ -35,14 +35,12 @@ export class MfaService {
 					userId: user.id
 				},
 				include: {
-					totp: true,
-					passkey: true
+					totp: true
 				}
 			})
 
 		return {
 			totpMfa: mfa?.totp?.status === TotpStatus.ENABLED,
-			passkeyMfa: mfa?.passkey?.isActivated || false,
 			recoveryActive: mfa?.recoveryCodes.length > 0
 		}
 	}
@@ -209,8 +207,7 @@ export class MfaService {
 					userId: user.id
 				},
 				include: {
-					totp: true,
-					passkey: true
+					totp: true
 				}
 			})
 
@@ -232,18 +229,14 @@ export class MfaService {
 			}
 		})
 
-		const hasPasskey = mfa.passkey?.isActivated
-
-		if (!hasPasskey) {
-			await this.prismaService.multiFactorAuthentication.update({
-				where: {
-					userId: user.id
-				},
-				data: {
-					recoveryCodes: []
-				}
-			})
-		}
+		await this.prismaService.multiFactorAuthentication.update({
+			where: {
+				userId: user.id
+			},
+			data: {
+				recoveryCodes: []
+			}
+		})
 
 		return true
 	}

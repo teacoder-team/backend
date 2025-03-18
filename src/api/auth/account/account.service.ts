@@ -150,6 +150,18 @@ export class AccountService {
 	public async changeEmail(user: User, dto: ChangeEmailRequest) {
 		const { email } = dto
 
+		const isExists = await this.prismaService.user.findFirst({
+			where: {
+				email
+			}
+		})
+
+		if (isExists) {
+			throw new ConflictException(
+				'Эта почта привязана к другому аккаунту'
+			)
+		}
+
 		await this.prismaService.user.update({
 			where: {
 				id: user.id

@@ -10,10 +10,12 @@ import {
 	Put
 } from '@nestjs/common'
 import {
+	ApiBody,
 	ApiHeader,
 	ApiOkResponse,
 	ApiOperation,
-	ApiTags
+	ApiTags,
+	getSchemaPath
 } from '@nestjs/swagger'
 import type { User } from '@prisma/generated'
 
@@ -159,6 +161,14 @@ export class MfaController {
 		summary: 'Verify MFA Ticket',
 		description:
 			'Verify the MFA ticket for the authenticated user, either by TOTP code or recovery code.'
+	})
+	@ApiBody({
+		schema: {
+			anyOf: [
+				{ $ref: getSchemaPath(MfaTotpRequest) },
+				{ $ref: getSchemaPath(MfaRecoveryRequest) }
+			]
+		}
 	})
 	@ApiOkResponse({
 		type: LoginSessionResponse

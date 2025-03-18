@@ -26,7 +26,6 @@ model User {
 
   passwordReset PasswordReset?
   mfa           MultiFactorAuthentication?
-  deletionInfo  DeletionInfo?
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -57,9 +56,6 @@ model MultiFactorAuthentication {
   totp   Totp?   @relation(fields: [totpId], references: [id], onDelete: Cascade)
   totpId String? @unique @map("totp_id")
 
-  passkey   Passkey? @relation(fields: [passkeyId], references: [id])
-  passkeyId String?  @unique @map("passkey_id")
-
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String @unique @map("user_id")
 
@@ -67,21 +63,6 @@ model MultiFactorAuthentication {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("multi_factor_authentication")
-}
-
-model Passkey {
-  id String @id @default(uuid())
-
-  publicKey   String  @map("public_key")
-  privateKey  String  @map("private_key")
-  isActivated Boolean @default(false) @map("is_activated")
-
-  mfa MultiFactorAuthentication?
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  @@map("passkeys")
 }
 
 model Totp {
@@ -165,25 +146,6 @@ model UserProgress {
   @@map("user_progress")
 }
 
-model DeletionInfo {
-  id String @id @default(uuid())
-
-  status DeletionStatus @default(WAITING_FOR_VERIFICATION)
-
-  token  String?   @unique
-  expiry DateTime?
-
-  after DateTime?
-
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String @unique @map("user_id")
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  @@map("deletion_info")
-}
-
 enum UserRole {
   STUDENT
   ADMIN
@@ -204,10 +166,4 @@ enum TotpStatus {
   ENABLED
 
   @@map("totp_statuses")
-}
-
-enum DeletionStatus {
-  WAITING_FOR_VERIFICATION
-  SCHEDULED
-  DELETED
 }
