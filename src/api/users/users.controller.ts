@@ -1,4 +1,5 @@
 import {
+	BadRequestException,
 	Body,
 	Controller,
 	FileTypeValidator,
@@ -76,7 +77,13 @@ export class UsersController {
 		required: true
 	})
 	@Authorization()
-	@UseInterceptors(FileInterceptor('file'))
+	@UseInterceptors(
+		FileInterceptor('file', {
+			limits: {
+				files: 1
+			}
+		})
+	)
 	@Patch('@me/avatar')
 	@HttpCode(HttpStatus.OK)
 	public async changeAvatar(
@@ -96,6 +103,10 @@ export class UsersController {
 		)
 		file: Express.Multer.File
 	) {
+		console.log(file)
+
+		if (!file) throw new BadRequestException('Файл не загружен')
+
 		return this.usersService.changeAvatar(user, file)
 	}
 }

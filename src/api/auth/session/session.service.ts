@@ -45,8 +45,7 @@ export class SessionService {
 					userId: user.id
 				},
 				include: {
-					totp: true,
-					passkey: true
+					totp: true
 				}
 			})
 
@@ -55,8 +54,6 @@ export class SessionService {
 
 			if (mfa.totp?.status === TotpStatus.ENABLED)
 				allowedMethods.push('Totp')
-			if (mfa?.passkey?.isActivated || false)
-				allowedMethods.push('Passkey')
 			if (mfa.recoveryCodes.length > 0) allowedMethods.push('Recovery')
 
 			const ticket = await this.redisService.createMfaTicket(

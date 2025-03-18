@@ -117,7 +117,7 @@ export class LessonService {
 			}
 		})
 
-		return kinescopeId
+		return { kinescopeId }
 	}
 
 	private slugifyWithSuffix(title: string) {

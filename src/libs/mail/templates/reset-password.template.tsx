@@ -23,6 +23,7 @@ interface ResetPasswordEmailProps {
 const baseUrl = process.env['SITE_URL']
 
 export function ResetPasswordEmail({ user, token }: ResetPasswordEmailProps) {
+	const logo = `${baseUrl}/touch-icons/512x512.png`
 	const resetLink = `${baseUrl}/auth/recovery/${token}`
 
 	return (
@@ -43,7 +44,7 @@ export function ResetPasswordEmail({ user, token }: ResetPasswordEmailProps) {
 					<Container className='mx-auto my-10 max-w-[500px] rounded-lg bg-white p-8 shadow-lg'>
 						<Section className='text-center'>
 							<Img
-								src='https://52-dev.ru/touch-icons/512x512.png'
+								src={logo}
 								width='100'
 								height='100'
 								alt='TeaCoder'

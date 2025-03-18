@@ -18,11 +18,11 @@ exports.$Enums = {}
 
 /**
  * Prisma Client JS version: 5.22.0
- * Query Engine version: 34ace0eb2704183d2c05b60b52fba5c43c13f303
+ * Query Engine version: 605197351a3c8bdd595af2d2a9bc3025bca48ea2
  */
 Prisma.prismaVersion = {
   client: "5.22.0",
-  engine: "34ace0eb2704183d2c05b60b52fba5c43c13f303"
+  engine: "605197351a3c8bdd595af2d2a9bc3025bca48ea2"
 }
 
 Prisma.PrismaClientKnownRequestError = () => {
@@ -148,17 +148,7 @@ exports.Prisma.MultiFactorAuthenticationScalarFieldEnum = {
   id: 'id',
   recoveryCodes: 'recoveryCodes',
   totpId: 'totpId',
-  passkeyId: 'passkeyId',
   userId: 'userId',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.PasskeyScalarFieldEnum = {
-  id: 'id',
-  publicKey: 'publicKey',
-  privateKey: 'privateKey',
-  isActivated: 'isActivated',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -236,7 +226,6 @@ exports.Prisma.ModelName = {
   User: 'User',
   PasswordReset: 'PasswordReset',
   MultiFactorAuthentication: 'MultiFactorAuthentication',
-  Passkey: 'Passkey',
   Totp: 'Totp',
   Course: 'Course',
   Lesson: 'Lesson',

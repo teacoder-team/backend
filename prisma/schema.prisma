@@ -56,9 +56,6 @@ model MultiFactorAuthentication {
   totp   Totp?   @relation(fields: [totpId], references: [id], onDelete: Cascade)
   totpId String? @unique @map("totp_id")
 
-  passkey   Passkey? @relation(fields: [passkeyId], references: [id], onDelete: Cascade)
-  passkeyId String?  @unique @map("passkey_id")
-
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String @unique @map("user_id")
 
@@ -66,21 +63,6 @@ model MultiFactorAuthentication {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("multi_factor_authentication")
-}
-
-model Passkey {
-  id String @id @default(uuid())
-
-  publicKey   String  @map("public_key")
-  privateKey  String  @map("private_key")
-  isActivated Boolean @default(false) @map("is_activated")
-
-  mfa MultiFactorAuthentication?
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  @@map("passkeys")
 }
 
 model Totp {
