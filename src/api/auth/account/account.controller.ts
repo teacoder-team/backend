@@ -96,7 +96,6 @@ export class AccountController {
 	@ApiOkResponse({
 		type: Boolean
 	})
-	@Turnstile()
 	@Patch('reset_password')
 	@HttpCode(HttpStatus.OK)
 	public async passwordReset(@Body() dto: PasswordResetRequest) {
