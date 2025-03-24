@@ -54,7 +54,7 @@ export class AccountController {
 	@Get()
 	@HttpCode(HttpStatus.OK)
 	public async me(@Authorized() user: User) {
-		return this.accountService.me(user)
+		return this.accountService.getMe(user)
 	}
 
 	@ApiOperation({

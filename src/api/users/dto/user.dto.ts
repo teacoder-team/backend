@@ -21,7 +21,7 @@ export class UserResponse {
 
 	@ApiProperty({
 		description: 'Identifier of the user avatar',
-		example: 'UCSOW2TFUGL34ZWCOZSAHDFU4W'
+		example: '5KYADI4YLYW3HCYIUDGLXNOC42'
 	})
 	public avatar: string
 }

@@ -9,8 +9,6 @@ import { CreateProgressRequest } from './dto/create-progress.dto'
 export class ProgressService {
 	public constructor(private readonly prismaService: PrismaService) {}
 
-	public async getUserProgress(user: User) {}
-
 	public async getCourseProgress(user: User, courseId: string) {
 		const lessons = await this.prismaService.lesson.findMany({
 			where: {

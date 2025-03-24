@@ -5436,7 +5436,7 @@ export namespace Prisma {
     description: string | null
     thumbnail: string | null
     youtubeUrl: string | null
-    codeUrl: string | null
+    attachment: string | null
     isPublished: boolean | null
     views: number | null
     createdAt: Date | null
@@ -5450,7 +5450,7 @@ export namespace Prisma {
     description: string | null
     thumbnail: string | null
     youtubeUrl: string | null
-    codeUrl: string | null
+    attachment: string | null
     isPublished: boolean | null
     views: number | null
     createdAt: Date | null
@@ -5464,7 +5464,7 @@ export namespace Prisma {
     description: number
     thumbnail: number
     youtubeUrl: number
-    codeUrl: number
+    attachment: number
     isPublished: number
     views: number
     createdAt: number
@@ -5488,7 +5488,7 @@ export namespace Prisma {
     description?: true
     thumbnail?: true
     youtubeUrl?: true
-    codeUrl?: true
+    attachment?: true
     isPublished?: true
     views?: true
     createdAt?: true
@@ -5502,7 +5502,7 @@ export namespace Prisma {
     description?: true
     thumbnail?: true
     youtubeUrl?: true
-    codeUrl?: true
+    attachment?: true
     isPublished?: true
     views?: true
     createdAt?: true
@@ -5516,7 +5516,7 @@ export namespace Prisma {
     description?: true
     thumbnail?: true
     youtubeUrl?: true
-    codeUrl?: true
+    attachment?: true
     isPublished?: true
     views?: true
     createdAt?: true
@@ -5617,7 +5617,7 @@ export namespace Prisma {
     description: string | null
     thumbnail: string | null
     youtubeUrl: string | null
-    codeUrl: string | null
+    attachment: string | null
     isPublished: boolean
     views: number
     createdAt: Date
@@ -5650,7 +5650,7 @@ export namespace Prisma {
     description?: boolean
     thumbnail?: boolean
     youtubeUrl?: boolean
-    codeUrl?: boolean
+    attachment?: boolean
     isPublished?: boolean
     views?: boolean
     createdAt?: boolean
@@ -5666,7 +5666,7 @@ export namespace Prisma {
     description?: boolean
     thumbnail?: boolean
     youtubeUrl?: boolean
-    codeUrl?: boolean
+    attachment?: boolean
     isPublished?: boolean
     views?: boolean
     createdAt?: boolean
@@ -5680,7 +5680,7 @@ export namespace Prisma {
     description?: boolean
     thumbnail?: boolean
     youtubeUrl?: boolean
-    codeUrl?: boolean
+    attachment?: boolean
     isPublished?: boolean
     views?: boolean
     createdAt?: boolean
@@ -5705,7 +5705,7 @@ export namespace Prisma {
       description: string | null
       thumbnail: string | null
       youtubeUrl: string | null
-      codeUrl: string | null
+      attachment: string | null
       isPublished: boolean
       views: number
       createdAt: Date
@@ -6110,7 +6110,7 @@ export namespace Prisma {
     readonly description: FieldRef<"Course", 'String'>
     readonly thumbnail: FieldRef<"Course", 'String'>
     readonly youtubeUrl: FieldRef<"Course", 'String'>
-    readonly codeUrl: FieldRef<"Course", 'String'>
+    readonly attachment: FieldRef<"Course", 'String'>
     readonly isPublished: FieldRef<"Course", 'Boolean'>
     readonly views: FieldRef<"Course", 'Int'>
     readonly createdAt: FieldRef<"Course", 'DateTime'>
@@ -8539,7 +8539,7 @@ export namespace Prisma {
     description: 'description',
     thumbnail: 'thumbnail',
     youtubeUrl: 'youtubeUrl',
-    codeUrl: 'codeUrl',
+    attachment: 'attachment',
     isPublished: 'isPublished',
     views: 'views',
     createdAt: 'createdAt',
@@ -8976,7 +8976,7 @@ export namespace Prisma {
     description?: StringNullableFilter<"Course"> | string | null
     thumbnail?: StringNullableFilter<"Course"> | string | null
     youtubeUrl?: StringNullableFilter<"Course"> | string | null
-    codeUrl?: StringNullableFilter<"Course"> | string | null
+    attachment?: StringNullableFilter<"Course"> | string | null
     isPublished?: BoolFilter<"Course"> | boolean
     views?: IntFilter<"Course"> | number
     createdAt?: DateTimeFilter<"Course"> | Date | string
@@ -8991,7 +8991,7 @@ export namespace Prisma {
     description?: SortOrderInput | SortOrder
     thumbnail?: SortOrderInput | SortOrder
     youtubeUrl?: SortOrderInput | SortOrder
-    codeUrl?: SortOrderInput | SortOrder
+    attachment?: SortOrderInput | SortOrder
     isPublished?: SortOrder
     views?: SortOrder
     createdAt?: SortOrder
@@ -9009,7 +9009,7 @@ export namespace Prisma {
     description?: StringNullableFilter<"Course"> | string | null
     thumbnail?: StringNullableFilter<"Course"> | string | null
     youtubeUrl?: StringNullableFilter<"Course"> | string | null
-    codeUrl?: StringNullableFilter<"Course"> | string | null
+    attachment?: StringNullableFilter<"Course"> | string | null
     isPublished?: BoolFilter<"Course"> | boolean
     views?: IntFilter<"Course"> | number
     createdAt?: DateTimeFilter<"Course"> | Date | string
@@ -9024,7 +9024,7 @@ export namespace Prisma {
     description?: SortOrderInput | SortOrder
     thumbnail?: SortOrderInput | SortOrder
     youtubeUrl?: SortOrderInput | SortOrder
-    codeUrl?: SortOrderInput | SortOrder
+    attachment?: SortOrderInput | SortOrder
     isPublished?: SortOrder
     views?: SortOrder
     createdAt?: SortOrder
@@ -9046,7 +9046,7 @@ export namespace Prisma {
     description?: StringNullableWithAggregatesFilter<"Course"> | string | null
     thumbnail?: StringNullableWithAggregatesFilter<"Course"> | string | null
     youtubeUrl?: StringNullableWithAggregatesFilter<"Course"> | string | null
-    codeUrl?: StringNullableWithAggregatesFilter<"Course"> | string | null
+    attachment?: StringNullableWithAggregatesFilter<"Course"> | string | null
     isPublished?: BoolWithAggregatesFilter<"Course"> | boolean
     views?: IntWithAggregatesFilter<"Course"> | number
     createdAt?: DateTimeWithAggregatesFilter<"Course"> | Date | string
@@ -9495,7 +9495,7 @@ export namespace Prisma {
     description?: string | null
     thumbnail?: string | null
     youtubeUrl?: string | null
-    codeUrl?: string | null
+    attachment?: string | null
     isPublished?: boolean
     views?: number
     createdAt?: Date | string
@@ -9510,7 +9510,7 @@ export namespace Prisma {
     description?: string | null
     thumbnail?: string | null
     youtubeUrl?: string | null
-    codeUrl?: string | null
+    attachment?: string | null
     isPublished?: boolean
     views?: number
     createdAt?: Date | string
@@ -9525,7 +9525,7 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     thumbnail?: NullableStringFieldUpdateOperationsInput | string | null
     youtubeUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    codeUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachment?: NullableStringFieldUpdateOperationsInput | string | null
     isPublished?: BoolFieldUpdateOperationsInput | boolean
     views?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -9540,7 +9540,7 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     thumbnail?: NullableStringFieldUpdateOperationsInput | string | null
     youtubeUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    codeUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachment?: NullableStringFieldUpdateOperationsInput | string | null
     isPublished?: BoolFieldUpdateOperationsInput | boolean
     views?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -9555,7 +9555,7 @@ export namespace Prisma {
     description?: string | null
     thumbnail?: string | null
     youtubeUrl?: string | null
-    codeUrl?: string | null
+    attachment?: string | null
     isPublished?: boolean
     views?: number
     createdAt?: Date | string
@@ -9569,7 +9569,7 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     thumbnail?: NullableStringFieldUpdateOperationsInput | string | null
     youtubeUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    codeUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachment?: NullableStringFieldUpdateOperationsInput | string | null
     isPublished?: BoolFieldUpdateOperationsInput | boolean
     views?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -9583,7 +9583,7 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     thumbnail?: NullableStringFieldUpdateOperationsInput | string | null
     youtubeUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    codeUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachment?: NullableStringFieldUpdateOperationsInput | string | null
     isPublished?: BoolFieldUpdateOperationsInput | boolean
     views?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10085,7 +10085,7 @@ export namespace Prisma {
     description?: SortOrder
     thumbnail?: SortOrder
     youtubeUrl?: SortOrder
-    codeUrl?: SortOrder
+    attachment?: SortOrder
     isPublished?: SortOrder
     views?: SortOrder
     createdAt?: SortOrder
@@ -10103,7 +10103,7 @@ export namespace Prisma {
     description?: SortOrder
     thumbnail?: SortOrder
     youtubeUrl?: SortOrder
-    codeUrl?: SortOrder
+    attachment?: SortOrder
     isPublished?: SortOrder
     views?: SortOrder
     createdAt?: SortOrder
@@ -10117,7 +10117,7 @@ export namespace Prisma {
     description?: SortOrder
     thumbnail?: SortOrder
     youtubeUrl?: SortOrder
-    codeUrl?: SortOrder
+    attachment?: SortOrder
     isPublished?: SortOrder
     views?: SortOrder
     createdAt?: SortOrder
@@ -11256,7 +11256,7 @@ export namespace Prisma {
     description?: string | null
     thumbnail?: string | null
     youtubeUrl?: string | null
-    codeUrl?: string | null
+    attachment?: string | null
     isPublished?: boolean
     views?: number
     createdAt?: Date | string
@@ -11270,7 +11270,7 @@ export namespace Prisma {
     description?: string | null
     thumbnail?: string | null
     youtubeUrl?: string | null
-    codeUrl?: string | null
+    attachment?: string | null
     isPublished?: boolean
     views?: number
     createdAt?: Date | string
@@ -11316,7 +11316,7 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     thumbnail?: NullableStringFieldUpdateOperationsInput | string | null
     youtubeUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    codeUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachment?: NullableStringFieldUpdateOperationsInput | string | null
     isPublished?: BoolFieldUpdateOperationsInput | boolean
     views?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -11330,7 +11330,7 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     thumbnail?: NullableStringFieldUpdateOperationsInput | string | null
     youtubeUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    codeUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachment?: NullableStringFieldUpdateOperationsInput | string | null
     isPublished?: BoolFieldUpdateOperationsInput | boolean
     views?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string

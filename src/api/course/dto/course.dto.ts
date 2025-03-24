@@ -46,7 +46,7 @@ export class CourseResponse implements Course {
 		example: 'UCSOW2TFUGL34ZWCOZSAHDFU4W',
 		nullable: true
 	})
-	public codeUrl: string
+	public attachment: string
 
 	@ApiProperty({
 		description: 'Whether the course is published or not',

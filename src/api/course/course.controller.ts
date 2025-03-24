@@ -5,6 +5,7 @@ import {
 	HttpCode,
 	HttpStatus,
 	Param,
+	Patch,
 	Post
 } from '@nestjs/common'
 import {
@@ -33,7 +34,7 @@ export class CourseController {
 	public constructor(private readonly courseService: CourseService) {}
 
 	@ApiOperation({
-		summary: 'Fetch all courses',
+		summary: 'Fetch All Courses',
 		description: 'Retrieve a list of all available courses.'
 	})
 	@ApiResponse({
@@ -42,12 +43,27 @@ export class CourseController {
 	})
 	@Get()
 	@HttpCode(HttpStatus.OK)
-	public async findAll() {
-		return this.courseService.findAll()
+	public async getAll() {
+		return this.courseService.getAll()
 	}
 
 	@ApiOperation({
-		summary: 'Find Course By Slug',
+		summary: 'Get Popular Courses',
+		description:
+			'Retrieve a list of the most popular courses based on views.'
+	})
+	@ApiResponse({
+		status: HttpStatus.OK,
+		type: [CourseResponse]
+	})
+	@Get('popular')
+	@HttpCode(HttpStatus.OK)
+	public async getPopular() {
+		return this.courseService.getPopular()
+	}
+
+	@ApiOperation({
+		summary: 'Get Course By Slug',
 		description: 'Retrieve a course using its unique slug identifier.'
 	})
 	@ApiResponse({
@@ -56,10 +72,14 @@ export class CourseController {
 	})
 	@Get(':slug')
 	@HttpCode(HttpStatus.OK)
-	public async findBySlug(@Param('slug') slug: string) {
-		return this.courseService.findBySlug(slug)
+	public async getBySlug(@Param('slug') slug: string) {
+		return this.courseService.getBySlug(slug)
 	}
 
+	@ApiOperation({
+		summary: 'Get Lessons For Course',
+		description: 'Retrieve all published lessons of a course.'
+	})
 	@ApiOkResponse({
 		type: [LessonResponse]
 	})
@@ -67,6 +87,19 @@ export class CourseController {
 	@HttpCode(HttpStatus.OK)
 	public async getCourseLessons(@Param('id') id: string) {
 		return this.courseService.getCourseLessons(id)
+	}
+
+	@ApiOperation({
+		summary: 'Increment Course Views',
+		description: 'Increase the view count of a course by 1.'
+	})
+	@ApiResponse({
+		status: HttpStatus.NO_CONTENT
+	})
+	@Patch(':id/views')
+	@HttpCode(HttpStatus.NO_CONTENT)
+	public async incrementViews(@Param('id') id: string) {
+		await this.courseService.incrementViews(id)
 	}
 
 	@ApiOperation({
@@ -82,7 +115,7 @@ export class CourseController {
 		required: true
 	})
 	@Authorization(UserRole.ADMIN)
-	@Post('create')
+	@Post()
 	@HttpCode(HttpStatus.OK)
 	public async create(@Body() dto: CreateCourseRequest) {
 		return this.courseService.create(dto)

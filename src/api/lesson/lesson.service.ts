@@ -15,7 +15,7 @@ export class LessonService {
 		private readonly kinescopeService: KinescopeService
 	) {}
 
-	public async findBySlug(slug: string) {
+	public async getBySlug(slug: string) {
 		const lesson = await this.prismaService.lesson.findUnique({
 			where: {
 				slug,

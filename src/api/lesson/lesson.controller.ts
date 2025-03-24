@@ -37,7 +37,7 @@ export class LessonController {
 	public constructor(private readonly lessonService: LessonService) {}
 
 	@ApiOperation({
-		summary: 'Fetch Lesson By Slug',
+		summary: 'Get Lesson By Slug',
 		description: 'Retrieve lesson information by slug. '
 	})
 	@ApiOkResponse({
@@ -45,8 +45,8 @@ export class LessonController {
 	})
 	@Get(':slug')
 	@HttpCode(HttpStatus.OK)
-	public async findBySlug(@Param('slug') slug: string) {
-		return this.lessonService.findBySlug(slug)
+	public async getBySlug(@Param('slug') slug: string) {
+		return this.lessonService.getBySlug(slug)
 	}
 
 	@ApiOperation({

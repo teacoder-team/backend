@@ -5,6 +5,7 @@ import {
 	Logger,
 	type NestInterceptor
 } from '@nestjs/common'
+import { Request } from 'express'
 import { Observable } from 'rxjs'
 import { tap } from 'rxjs/operators'
 
@@ -16,7 +17,8 @@ export class LoggingInterceptor implements NestInterceptor {
 		context: ExecutionContext,
 		next: CallHandler
 	): Observable<any> {
-		const request = context.switchToHttp().getRequest()
+		const request = context.switchToHttp().getRequest() as Request
+
 		const method = request.method
 		const url = request.url
 		const body = request.body

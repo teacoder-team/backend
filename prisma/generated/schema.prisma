@@ -45,7 +45,7 @@ model PasswordReset {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  @@map("reset_passwords")
+  @@map("password_resets")
 }
 
 model MultiFactorAuthentication {
@@ -89,7 +89,7 @@ model Course {
   thumbnail   String?
 
   youtubeUrl String? @map("youtube_url")
-  codeUrl    String? @map("code_url")
+  attachment String?
 
   isPublished Boolean @default(false) @map("is_published")
 
@@ -151,13 +151,6 @@ enum UserRole {
   ADMIN
 
   @@map("user_roles")
-}
-
-enum EmailVerificationStatus {
-  PENDING
-  VERIFIED
-
-  @@map("email_verification_statuses")
 }
 
 enum TotpStatus {

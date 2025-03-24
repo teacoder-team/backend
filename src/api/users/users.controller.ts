@@ -19,7 +19,13 @@ import { type User, UserRole } from '@prisma/generated'
 import { Authorization } from '@/common/decorators/auth.decorator'
 import { Authorized } from '@/common/decorators/authorized.decorator'
 
-import { PatchUserRequest, UserResponse } from './dto'
+import {
+	LeaderResponse,
+	MeProgressResponse,
+	MeStatisticsResponse,
+	PatchUserRequest,
+	UserResponse
+} from './dto'
 import { UsersService } from './users.service'
 
 @Controller('users')
@@ -40,8 +46,59 @@ export class UsersController {
 	@Authorization(UserRole.ADMIN)
 	@Get()
 	@HttpCode(HttpStatus.OK)
-	public async findAll() {
-		return this.usersService.findAll()
+	public async getAll() {
+		return this.usersService.getAll()
+	}
+
+	@ApiOperation({
+		summary: 'Fetch Top 15 Leaders',
+		description:
+			'Fetch a list of the top 15 users based on their points, sorted in descending order.'
+	})
+	@ApiOkResponse({
+		type: [LeaderResponse]
+	})
+	@Get('leaders')
+	@HttpCode(HttpStatus.OK)
+	public async getLeaders() {
+		return this.usersService.getLeaders()
+	}
+
+	@ApiOperation({
+		summary: 'Fetch User Statistics',
+		description: 'Retrieve statistics for the currently authenticated user.'
+	})
+	@ApiOkResponse({
+		type: MeStatisticsResponse
+	})
+	@ApiHeader({
+		name: 'X-Session-Token',
+		required: true
+	})
+	@Authorization()
+	@Get('@me/statistics')
+	@HttpCode(HttpStatus.OK)
+	public async getMeStatistics(@Authorized() user: User) {
+		return this.usersService.getMeStatistics(user)
+	}
+
+	@ApiOperation({
+		summary: 'Fetch User Progress',
+		description:
+			'Retrieve progress data for the currently authenticated user.'
+	})
+	@ApiOkResponse({
+		type: [MeProgressResponse]
+	})
+	@ApiHeader({
+		name: 'X-Session-Token',
+		required: true
+	})
+	@Authorization()
+	@Get('@me/progress')
+	@HttpCode(HttpStatus.OK)
+	public async getMeProgress(@Authorized() user: User) {
+		return this.usersService.getMeProgress(user)
 	}
 
 	@ApiOperation({
@@ -66,7 +123,7 @@ export class UsersController {
 	}
 
 	@ApiOperation({
-		summary: 'Change user avatar',
+		summary: 'Change User Avatar',
 		description: 'Update the user avatar by uploading a new image.'
 	})
 	@ApiOkResponse({

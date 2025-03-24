@@ -13,7 +13,7 @@ export function getSwaggerConfig() {
 		)
 		.setLicense(
 			'AGPLv3',
-			'https://github.com/teacoder-team/backend/blob/master/LICENSE'
+			'https://github.com/teacoder-team/backend/blob/main/LICENSE'
 		)
 		.build()
 }

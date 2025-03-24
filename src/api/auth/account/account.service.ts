@@ -30,7 +30,7 @@ export class AccountService {
 		private readonly mailService: MailService
 	) {}
 
-	public async me(user: User) {
+	public async getMe(user: User) {
 		return {
 			id: user.id,
 			displayName: user.displayName,

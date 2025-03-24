@@ -13,7 +13,7 @@ export class CourseService {
 		private readonly redisService: RedisService
 	) {}
 
-	public async findAll() {
+	public async getAll() {
 		const courses = await this.prismaService.course.findMany({
 			orderBy: {
 				createdAt: 'desc'
@@ -37,7 +37,32 @@ export class CourseService {
 		}))
 	}
 
-	public async findBySlug(slug: string) {
+	public async getPopular() {
+		const courses = await this.prismaService.course.findMany({
+			orderBy: {
+				views: 'desc'
+			},
+			include: {
+				_count: {
+					select: {
+						lessons: {
+							where: {
+								isPublished: true
+							}
+						}
+					}
+				}
+			},
+			take: 4
+		})
+
+		return courses.map(({ _count, ...course }) => ({
+			...course,
+			lessons: _count.lessons
+		}))
+	}
+
+	public async getBySlug(slug: string) {
 		const cachedCourse = await this.redisService.get(`courses:${slug}`)
 
 		if (cachedCourse) return JSON.parse(cachedCourse)
@@ -82,11 +107,28 @@ export class CourseService {
 			select: {
 				id: true,
 				title: true,
-				slug: true
+				slug: true,
+				description: true,
+				position: true
 			}
 		})
 
 		return lessons
+	}
+
+	public async incrementViews(id: string) {
+		await this.prismaService.course.update({
+			where: {
+				id
+			},
+			data: {
+				views: {
+					increment: 1
+				}
+			}
+		})
+
+		return true
 	}
 
 	public async create(dto: CreateCourseRequest) {
