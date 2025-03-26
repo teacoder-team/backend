@@ -161,6 +161,15 @@ exports.Prisma.TotpScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.RestrictionScalarFieldEnum = {
+  id: 'id',
+  reason: 'reason',
+  until: 'until',
+  status: 'status',
+  userId: 'userId',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.CourseScalarFieldEnum = {
   id: 'id',
   title: 'title',
@@ -222,11 +231,24 @@ exports.TotpStatus = exports.$Enums.TotpStatus = {
   ENABLED: 'ENABLED'
 };
 
+exports.RestrictionReason = exports.$Enums.RestrictionReason = {
+  INAPPROPRIATE_USERNAME: 'INAPPROPRIATE_USERNAME',
+  SPAM: 'SPAM',
+  OFFENSIVE_BEHAVIOR: 'OFFENSIVE_BEHAVIOR'
+};
+
+exports.RestrictionStatus = exports.$Enums.RestrictionStatus = {
+  ACTIVE: 'ACTIVE',
+  EXPIRED: 'EXPIRED',
+  CANCELED: 'CANCELED'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   PasswordReset: 'PasswordReset',
   MultiFactorAuthentication: 'MultiFactorAuthentication',
   Totp: 'Totp',
+  Restriction: 'Restriction',
   Course: 'Course',
   Lesson: 'Lesson',
   UserProgress: 'UserProgress'

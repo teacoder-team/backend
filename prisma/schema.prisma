@@ -26,6 +26,7 @@ model User {
 
   passwordReset PasswordReset?
   mfa           MultiFactorAuthentication?
+  restrictions  Restriction[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -77,6 +78,22 @@ model Totp {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("totps")
+}
+
+model Restriction {
+  id String @id @default(uuid())
+
+  reason RestrictionReason
+  until  DateTime?
+
+  status RestrictionStatus @default(ACTIVE)
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @map("user_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("restrictions")
 }
 
 model Course {
@@ -159,4 +176,16 @@ enum TotpStatus {
   ENABLED
 
   @@map("totp_statuses")
+}
+
+enum RestrictionReason {
+  INAPPROPRIATE_USERNAME
+  SPAM
+  OFFENSIVE_BEHAVIOR
+}
+
+enum RestrictionStatus {
+  ACTIVE
+  EXPIRED
+  CANCELED
 }

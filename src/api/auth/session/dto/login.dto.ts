@@ -10,11 +10,21 @@ import {
 import { Session } from '@/common/interfaces'
 
 export class LoginRequest {
+	@ApiProperty({
+		description: 'Email address',
+		example: 'john.doe@example.com'
+	})
 	@IsString({ message: 'Электронная почта должна быть строкой' })
 	@IsEmail({}, { message: 'Некорректный формат электронной почты' })
 	@IsNotEmpty({ message: 'Электронная почта обязательна для заполнения' })
 	public email: string
 
+	@ApiProperty({
+		description: 'Password',
+		example: '123456',
+		minLength: 6,
+		maxLength: 128
+	})
 	@IsString({ message: 'Пароль должен быть строкой' })
 	@IsNotEmpty({ message: 'Поле пароль не может быть пустым' })
 	@MinLength(6, {

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { User } from '@prisma/generated'
+import { RestrictionStatus, User } from '@prisma/generated'
 import sharp from 'sharp'
 
 import { PrismaService } from '@/infra/prisma/prisma.service'
@@ -213,6 +213,13 @@ export class UsersService {
 
 	public async getLeaders() {
 		const users = await this.prismaService.user.findMany({
+			where: {
+				restrictions: {
+					none: {
+						status: RestrictionStatus.ACTIVE
+					}
+				}
+			},
 			orderBy: {
 				points: 'desc'
 			},

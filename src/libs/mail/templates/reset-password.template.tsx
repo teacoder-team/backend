@@ -1,3 +1,5 @@
+import React from 'react'
+
 import { User } from '@prisma/generated'
 import {
 	Body,
@@ -13,7 +15,6 @@ import {
 	Tailwind,
 	Text
 } from '@react-email/components'
-import React from 'react'
 
 interface ResetPasswordEmailProps {
 	user: User
