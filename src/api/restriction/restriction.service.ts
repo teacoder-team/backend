@@ -5,7 +5,7 @@ import {
 	NotFoundException
 } from '@nestjs/common'
 import { Cron, CronExpression } from '@nestjs/schedule'
-import { RestrictionStatus } from '@prisma/generated'
+import { RestrictionStatus, User } from '@prisma/generated'
 
 import { PrismaService } from '@/infra/prisma/prisma.service'
 import { MailService } from '@/libs/mail/mail.service'
@@ -20,6 +20,36 @@ export class RestrictionService {
 		private readonly prismaService: PrismaService,
 		private readonly mailService: MailService
 	) {}
+
+	public async getActiveRestriction(user: User) {
+		const restriction = await this.prismaService.restriction.findFirst({
+			where: {
+				userId: user.id,
+				status: RestrictionStatus.ACTIVE
+			},
+			select: {
+				id: true,
+				createdAt: true,
+				reason: true,
+				until: true
+			}
+		})
+
+		if (!restriction) return null
+
+		const remainingTime = restriction.until
+			? new Date(restriction.until).toLocaleDateString('ru-RU', {
+					timeZone: 'UTC'
+				})
+			: 'Бессрочно'
+
+		return {
+			createdAt: restriction.createdAt,
+			reason: restriction.reason,
+			until: remainingTime,
+			isPermanent: !restriction.until
+		}
+	}
 
 	public async create(dto: CreateRestrictionRequest) {
 		const { reason, until, userId } = dto
@@ -108,7 +138,7 @@ export class RestrictionService {
 		return true
 	}
 
-	@Cron(CronExpression.EVERY_5_SECONDS)
+	@Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
 	public async expireRestrictionsDaily() {
 		this.logger.log('🕛 Starting daily expiration of restrictions...')
 

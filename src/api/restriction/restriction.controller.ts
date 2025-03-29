@@ -2,6 +2,7 @@ import {
 	Body,
 	Controller,
 	Delete,
+	Get,
 	HttpCode,
 	HttpStatus,
 	Param,
@@ -13,11 +14,12 @@ import {
 	ApiOperation,
 	ApiTags
 } from '@nestjs/swagger'
-import { UserRole } from '@prisma/generated'
+import { User, UserRole } from '@prisma/generated'
 
-import { Authorization } from '@/common/decorators'
+import { Authorization, Authorized } from '@/common/decorators'
 
 import { CreateRestrictionRequest } from './dto'
+import { ActiveRestrictionResponse } from './dto/active-restriction.dto'
 import { RestrictionService } from './restriction.service'
 
 @ApiTags('Restriction')
@@ -26,6 +28,25 @@ export class RestrictionController {
 	public constructor(
 		private readonly restrictionService: RestrictionService
 	) {}
+
+	@ApiOperation({
+		summary: 'Get Active User Ban',
+		description:
+			'Retrieve information about the current active ban of the user, if any'
+	})
+	@ApiOkResponse({
+		type: ActiveRestrictionResponse
+	})
+	@ApiHeader({
+		name: 'X-Session-Token',
+		required: true
+	})
+	@Authorization()
+	@Get()
+	@HttpCode(HttpStatus.OK)
+	public async getActiveRestriction(@Authorized() user: User) {
+		return this.restrictionService.getActiveRestriction(user)
+	}
 
 	@ApiOperation({
 		summary: 'Create Restriction',
