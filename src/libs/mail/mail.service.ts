@@ -22,7 +22,6 @@ export class MailService {
 		restriction: Restriction,
 		violations: number
 	) {
-		console.log('V', violations)
 		const html = await render(
 			RestrictionEmail({ user, restriction, violations })
 		)

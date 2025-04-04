@@ -182,10 +182,14 @@ enum RestrictionReason {
   INAPPROPRIATE_USERNAME
   SPAM
   OFFENSIVE_BEHAVIOR
+
+  @@map("restriction_reasons")
 }
 
 enum RestrictionStatus {
   ACTIVE
   EXPIRED
   CANCELED
+
+  @@map("restriction_statuses")
 }

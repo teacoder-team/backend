@@ -26,8 +26,10 @@ const baseUrl = process.env['SITE_URL']
 export function RestrictionEmail({ user, restriction, violations }: RestrictionEmailProps) {
 	const logo = `${baseUrl}/touch-icons/512x512.png`
 
-	const isPermanentBan = !restriction.until
-	const remainingTime = !isPermanentBan ? `до ${new Date(restriction.until).toLocaleDateString('ru-RU', { timeZone: 'UTC' })}` : 'навсегда';
+	const isUsernameBan = restriction.reason === RestrictionReason.INAPPROPRIATE_USERNAME;
+
+	const isPermanentBan = isUsernameBan || !restriction.until;
+	const remainingTime = isPermanentBan ? 'навсегда' : `до ${new Date(restriction.until).toLocaleDateString('ru-RU', { timeZone: 'UTC' })}`;
 
 	const getReasonText = (reason: string) => {
 		switch (reason) {
@@ -38,7 +40,7 @@ export function RestrictionEmail({ user, restriction, violations }: RestrictionE
 		  case RestrictionReason.OFFENSIVE_BEHAVIOR:
 			return 'неприемлемое поведение';
 		  default:
-			return 'причиной неизвестна';
+			return 'причина неизвестна';
 		}
 	}
 
@@ -86,7 +88,7 @@ export function RestrictionEmail({ user, restriction, violations }: RestrictionE
 								</Text>
 							</Section>
 
-							{violations === 0 && (
+							{!isUsernameBan && violations === 0 && (
 								<Section className='mb-8 rounded-lg border border-yellow-100 bg-yellow-50 p-6'>
 									<Heading className='text-xl font-semibold text-yellow-700'>
 										Важное предупреждение!
@@ -97,7 +99,7 @@ export function RestrictionEmail({ user, restriction, violations }: RestrictionE
 								</Section>
 							)}
 															
-							{violations === 1 && (
+							{!isUsernameBan && violations === 1 && (
 								<Section className='mb-8 rounded-lg border border-yellow-100 bg-yellow-50 p-6'>
 									<Heading className='text-xl font-semibold text-yellow-700'>
 									Важное предупреждение!
@@ -108,7 +110,7 @@ export function RestrictionEmail({ user, restriction, violations }: RestrictionE
 								</Section>
 							)}
 
-							{violations === 2 && (
+							{!isUsernameBan && violations === 2 && (
 								<Section className='mb-8 rounded-lg border border-red-100 bg-red-50 p-6'>
 									<Heading className='text-xl font-semibold text-red-700'>
 										Бан навсегда
