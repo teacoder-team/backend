@@ -18,8 +18,7 @@ import { User, UserRole } from '@prisma/generated'
 
 import { Authorization, Authorized } from '@/common/decorators'
 
-import { CreateRestrictionRequest } from './dto'
-import { ActiveRestrictionResponse } from './dto/active-restriction.dto'
+import { ActiveRestrictionResponse, CreateRestrictionRequest } from './dto'
 import { RestrictionService } from './restriction.service'
 
 @ApiTags('Restriction')

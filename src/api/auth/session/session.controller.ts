@@ -56,6 +56,25 @@ export class SessionController {
 	}
 
 	@ApiOperation({
+		summary: 'Admin Login',
+		description: 'Login as an administrator.'
+	})
+	@ApiExtraModels(LoginSessionResponse, LoginMfaResponse)
+	@ApiOkResponse({
+		schema: { anyOf: refs(LoginSessionResponse, LoginMfaResponse) }
+	})
+	@Turnstile()
+	@Post('login/admin')
+	@HttpCode(HttpStatus.OK)
+	public async loginAdmin(
+		@Body() dto: LoginRequest,
+		@ClientIp() ip: string,
+		@UserAgent() userAgent: string
+	) {
+		return this.sessionService.loginAdmin(dto, ip, userAgent)
+	}
+
+	@ApiOperation({
 		summary: 'Logout',
 		description: 'Delete current session.'
 	})

@@ -12,6 +12,7 @@ import { CourseModule } from './course/course.module'
 import { LessonModule } from './lesson/lesson.module'
 import { ProgressModule } from './progress/progress.module'
 import { RestrictionModule } from './restriction/restriction.module'
+import { StatisticsModule } from './statistics/statistics.module'
 import { UsersModule } from './users/users.module'
 
 @Module({
@@ -29,7 +30,8 @@ import { UsersModule } from './users/users.module'
 		UsersModule,
 		CourseModule,
 		LessonModule,
-		ProgressModule
+		ProgressModule,
+		StatisticsModule
 	]
 })
 export class ApiModule {}
