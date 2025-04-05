@@ -4,11 +4,11 @@ import { SwaggerModule } from '@nestjs/swagger'
 import { getSwaggerConfig } from '@/config'
 
 export function setupSwagger(app: INestApplication) {
-	const swaggerConfig = getSwaggerConfig()
-	const swaggerDocument = SwaggerModule.createDocument(app, swaggerConfig)
+	const config = getSwaggerConfig()
+	const document = SwaggerModule.createDocument(app, config)
 
-	SwaggerModule.setup('/docs', app, swaggerDocument, {
-		jsonDocumentUrl: 'docs/json',
-		yamlDocumentUrl: 'docs/yaml'
+	SwaggerModule.setup('/docs', app, document, {
+		jsonDocumentUrl: 'openapi.json',
+		yamlDocumentUrl: 'openapi.yaml'
 	})
 }

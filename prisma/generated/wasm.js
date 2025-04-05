@@ -135,6 +135,16 @@ exports.Prisma.UserScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.EmailVerificationScalarFieldEnum = {
+  id: 'id',
+  token: 'token',
+  expiry: 'expiry',
+  status: 'status',
+  userId: 'userId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.PasswordResetScalarFieldEnum = {
   id: 'id',
   token: 'token',
@@ -225,6 +235,11 @@ exports.UserRole = exports.$Enums.UserRole = {
   ADMIN: 'ADMIN'
 };
 
+exports.EmailVerificationStatus = exports.$Enums.EmailVerificationStatus = {
+  PENDING: 'PENDING',
+  VERIFIED: 'VERIFIED'
+};
+
 exports.TotpStatus = exports.$Enums.TotpStatus = {
   DISABLED: 'DISABLED',
   PENDING: 'PENDING',
@@ -245,6 +260,7 @@ exports.RestrictionStatus = exports.$Enums.RestrictionStatus = {
 
 exports.Prisma.ModelName = {
   User: 'User',
+  EmailVerification: 'EmailVerification',
   PasswordReset: 'PasswordReset',
   MultiFactorAuthentication: 'MultiFactorAuthentication',
   Totp: 'Totp',

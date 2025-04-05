@@ -4,6 +4,7 @@ import {
 	Get,
 	HttpCode,
 	HttpStatus,
+	Param,
 	Patch,
 	Post
 } from '@nestjs/common'
@@ -73,6 +74,37 @@ export class AccountController {
 		@UserAgent() userAgent: string
 	) {
 		return this.accountService.create(dto, ip, userAgent)
+	}
+
+	@ApiOperation({
+		summary: 'Send Email Verification',
+		description: 'Send a verification email to the user.'
+	})
+	@ApiOkResponse({
+		type: Boolean
+	})
+	@ApiHeader({
+		name: 'X-Session-Token',
+		required: true
+	})
+	@Authorization()
+	@Post('verify')
+	@HttpCode(HttpStatus.OK)
+	public async sendEmailVerification(@Authorized() user: User) {
+		return this.accountService.sendEmailVerification(user)
+	}
+
+	@ApiOperation({
+		summary: 'Verify Email',
+		description: 'Verify an email address.'
+	})
+	@ApiOkResponse({
+		type: Boolean
+	})
+	@Post('verify/:code')
+	@HttpCode(HttpStatus.OK)
+	public async verfiyEmail(@Param() code: string) {
+		return this.accountService.verifyEmail(code)
 	}
 
 	@ApiOperation({

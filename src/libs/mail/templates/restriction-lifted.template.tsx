@@ -15,14 +15,14 @@ import {
 	Text
 } from '@react-email/components'
 
-interface RestrictionLiftedEmailProps {
+interface RestrictionLiftedTemplateProps {
 	user: User
 	violations: number
 }
 
 const baseUrl = process.env['SITE_URL']
 
-export function RestrictionLiftedEmail({ user, violations }: RestrictionLiftedEmailProps) {
+export function RestrictionLiftedTemplate({ user, violations }: RestrictionLiftedTemplateProps) {
 	const logo = `${baseUrl}/touch-icons/512x512.png`
 
 	const remainingViolations = Math.max(0, 3 - violations)

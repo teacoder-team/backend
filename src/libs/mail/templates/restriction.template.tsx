@@ -15,7 +15,7 @@ import {
 	Text
 } from '@react-email/components'
 
-interface RestrictionEmailProps {
+interface RestrictionTemplateProps {
 	user: User
 	restriction: Restriction
 	violations: number
@@ -23,7 +23,7 @@ interface RestrictionEmailProps {
 
 const baseUrl = process.env['SITE_URL']
 
-export function RestrictionEmail({ user, restriction, violations }: RestrictionEmailProps) {
+export function RestrictionTemplate({ user, restriction, violations }: RestrictionTemplateProps) {
 	const logo = `${baseUrl}/touch-icons/512x512.png`
 
 	const isUsernameBan = restriction.reason === RestrictionReason.INAPPROPRIATE_USERNAME;

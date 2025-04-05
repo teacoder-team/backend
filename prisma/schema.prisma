@@ -22,16 +22,35 @@ model User {
 
   role UserRole @default(STUDENT)
 
+  emailVerification EmailVerification?
+  passwordReset     PasswordReset?
+
   userProgress UserProgress[]
 
-  passwordReset PasswordReset?
-  mfa           MultiFactorAuthentication?
-  restrictions  Restriction[]
+  mfa          MultiFactorAuthentication?
+  restrictions Restriction[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("users")
+}
+
+model EmailVerification {
+  id String @id @default(uuid())
+
+  token  String   @unique
+  expiry DateTime
+
+  status EmailVerificationStatus @default(PENDING)
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @unique @map("user_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("email_verification")
 }
 
 model PasswordReset {
@@ -168,6 +187,13 @@ enum UserRole {
   ADMIN
 
   @@map("user_roles")
+}
+
+enum EmailVerificationStatus {
+  PENDING
+  VERIFIED
+
+  @@map("email_verification_statuses")
 }
 
 enum TotpStatus {

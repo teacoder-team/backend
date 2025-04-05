@@ -4,7 +4,7 @@ import {
 	Injectable,
 	NotFoundException
 } from '@nestjs/common'
-import { type User } from '@prisma/generated'
+import { EmailVerificationStatus, type User } from '@prisma/generated'
 import { hash, verify } from 'argon2'
 import { randomBytes } from 'crypto'
 import validate from 'deep-email-validator'
@@ -31,11 +31,21 @@ export class AccountService {
 	) {}
 
 	public async getMe(user: User) {
+		const emailVerification =
+			await this.prismaService.emailVerification.findUnique({
+				where: {
+					userId: user.id
+				}
+			})
+
 		return {
 			id: user.id,
 			displayName: user.displayName,
 			email: user.email,
-			avatar: user.avatar
+			avatar: user.avatar,
+			isEmailVerified: emailVerification
+				? emailVerification.status === EmailVerificationStatus.VERIFIED
+				: false
 		}
 	}
 
@@ -76,6 +86,76 @@ export class AccountService {
 		return session
 	}
 
+	public async sendEmailVerification(user: User) {
+		const emailVerification =
+			await this.prismaService.emailVerification.findUnique({
+				where: {
+					userId: user.id
+				}
+			})
+
+		if (
+			emailVerification &&
+			emailVerification.status === EmailVerificationStatus.VERIFIED
+		) {
+			throw new ConflictException('Эта почта уже подтверждена')
+		}
+
+		const token = randomBytes(64).toString('hex')
+
+		const expiry = new Date()
+		expiry.setHours(expiry.getHours() + 1)
+
+		await this.prismaService.emailVerification.upsert({
+			where: {
+				token,
+				userId: user.id
+			},
+			update: {
+				token,
+				expiry
+			},
+			create: {
+				token,
+				expiry,
+				userId: user.id
+			}
+		})
+
+		await this.mailService.sendEmailVerification(user, token)
+
+		return true
+	}
+
+	public async verifyEmail(token: string) {
+		const emailVerification =
+			await this.prismaService.emailVerification.findUnique({
+				where: {
+					token
+				}
+			})
+
+		if (!emailVerification) {
+			throw new NotFoundException('Токен не найден')
+		}
+
+		if (new Date() > emailVerification.expiry) {
+			throw new BadRequestException('Срок действия токена истек')
+		}
+
+		await this.prismaService.emailVerification.update({
+			where: {
+				token
+			},
+			data: {
+				expiry: null,
+				status: EmailVerificationStatus.VERIFIED
+			}
+		})
+
+		return true
+	}
+
 	public async sendPasswordReset(dto: SendPasswordResetRequest) {
 		const { email } = dto
 
@@ -94,6 +174,7 @@ export class AccountService {
 
 		await this.prismaService.passwordReset.upsert({
 			where: {
+				token,
 				userId: user.id
 			},
 			update: {
