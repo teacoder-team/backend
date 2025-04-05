@@ -5,7 +5,7 @@ import {
 	UnauthorizedException
 } from '@nestjs/common'
 import { Cron, CronExpression } from '@nestjs/schedule'
-import { TotpStatus, User } from '@prisma/generated'
+import { TotpStatus, User, UserRole } from '@prisma/generated'
 import { verify } from 'argon2'
 
 import { PrismaService } from '@/infra/prisma/prisma.service'
@@ -29,15 +29,12 @@ export class SessionService {
 			}
 		})
 
-		if (!user) {
-			throw new NotFoundException('Пользователь не найден')
-		}
+		if (!user) throw new NotFoundException('Неверный логин или пароль')
 
 		const isValidPassword = await verify(user.password, password)
 
-		if (!isValidPassword) {
-			throw new UnauthorizedException('Неверный логин или пароль')
-		}
+		if (!isValidPassword)
+			throw new NotFoundException('Неверный логин или пароль')
 
 		const mfa =
 			await this.prismaService.multiFactorAuthentication.findUnique({
@@ -66,6 +63,57 @@ export class SessionService {
 
 		const session = await this.redisService.createSession(
 			user,
+			ip,
+			userAgent
+		)
+
+		return session
+	}
+
+	public async loginAdmin(dto: LoginRequest, ip: string, userAgent: string) {
+		const { email, password } = dto
+
+		const admin = await this.prismaService.user.findFirst({
+			where: {
+				email,
+				role: UserRole.ADMIN
+			}
+		})
+
+		if (!admin) throw new NotFoundException('Неверный логин или пароль')
+
+		const isValidPassword = await verify(admin.password, password)
+
+		if (!isValidPassword)
+			throw new NotFoundException('Неверный логин или пароль')
+
+		const mfa =
+			await this.prismaService.multiFactorAuthentication.findUnique({
+				where: {
+					userId: admin.id
+				},
+				include: {
+					totp: true
+				}
+			})
+
+		if (mfa && mfa.recoveryCodes.length > 0) {
+			const allowedMethods: string[] = []
+
+			if (mfa.totp?.status === TotpStatus.ENABLED)
+				allowedMethods.push('Totp')
+			if (mfa.recoveryCodes.length > 0) allowedMethods.push('Recovery')
+
+			const ticket = await this.redisService.createMfaTicket(
+				admin.id,
+				allowedMethods
+			)
+
+			return ticket
+		}
+
+		const session = await this.redisService.createSession(
+			admin,
 			ip,
 			userAgent
 		)

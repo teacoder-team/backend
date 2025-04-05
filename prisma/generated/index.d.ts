@@ -34,6 +34,11 @@ export type MultiFactorAuthentication = $Result.DefaultSelection<Prisma.$MultiFa
  */
 export type Totp = $Result.DefaultSelection<Prisma.$TotpPayload>
 /**
+ * Model Restriction
+ * 
+ */
+export type Restriction = $Result.DefaultSelection<Prisma.$RestrictionPayload>
+/**
  * Model Course
  * 
  */
@@ -69,6 +74,24 @@ export const TotpStatus: {
 
 export type TotpStatus = (typeof TotpStatus)[keyof typeof TotpStatus]
 
+
+export const RestrictionReason: {
+  INAPPROPRIATE_USERNAME: 'INAPPROPRIATE_USERNAME',
+  SPAM: 'SPAM',
+  OFFENSIVE_BEHAVIOR: 'OFFENSIVE_BEHAVIOR'
+};
+
+export type RestrictionReason = (typeof RestrictionReason)[keyof typeof RestrictionReason]
+
+
+export const RestrictionStatus: {
+  ACTIVE: 'ACTIVE',
+  EXPIRED: 'EXPIRED',
+  CANCELED: 'CANCELED'
+};
+
+export type RestrictionStatus = (typeof RestrictionStatus)[keyof typeof RestrictionStatus]
+
 }
 
 export type UserRole = $Enums.UserRole
@@ -78,6 +101,14 @@ export const UserRole: typeof $Enums.UserRole
 export type TotpStatus = $Enums.TotpStatus
 
 export const TotpStatus: typeof $Enums.TotpStatus
+
+export type RestrictionReason = $Enums.RestrictionReason
+
+export const RestrictionReason: typeof $Enums.RestrictionReason
+
+export type RestrictionStatus = $Enums.RestrictionStatus
+
+export const RestrictionStatus: typeof $Enums.RestrictionStatus
 
 /**
  * ##  Prisma Client ʲˢ
@@ -241,6 +272,16 @@ export class PrismaClient<
     * ```
     */
   get totp(): Prisma.TotpDelegate<ExtArgs>;
+
+  /**
+   * `prisma.restriction`: Exposes CRUD operations for the **Restriction** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Restrictions
+    * const restrictions = await prisma.restriction.findMany()
+    * ```
+    */
+  get restriction(): Prisma.RestrictionDelegate<ExtArgs>;
 
   /**
    * `prisma.course`: Exposes CRUD operations for the **Course** model.
@@ -716,6 +757,7 @@ export namespace Prisma {
     PasswordReset: 'PasswordReset',
     MultiFactorAuthentication: 'MultiFactorAuthentication',
     Totp: 'Totp',
+    Restriction: 'Restriction',
     Course: 'Course',
     Lesson: 'Lesson',
     UserProgress: 'UserProgress'
@@ -734,7 +776,7 @@ export namespace Prisma {
 
   export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> = {
     meta: {
-      modelProps: "user" | "passwordReset" | "multiFactorAuthentication" | "totp" | "course" | "lesson" | "userProgress"
+      modelProps: "user" | "passwordReset" | "multiFactorAuthentication" | "totp" | "restriction" | "course" | "lesson" | "userProgress"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1015,6 +1057,76 @@ export namespace Prisma {
           count: {
             args: Prisma.TotpCountArgs<ExtArgs>
             result: $Utils.Optional<TotpCountAggregateOutputType> | number
+          }
+        }
+      }
+      Restriction: {
+        payload: Prisma.$RestrictionPayload<ExtArgs>
+        fields: Prisma.RestrictionFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.RestrictionFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RestrictionPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.RestrictionFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RestrictionPayload>
+          }
+          findFirst: {
+            args: Prisma.RestrictionFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RestrictionPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.RestrictionFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RestrictionPayload>
+          }
+          findMany: {
+            args: Prisma.RestrictionFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RestrictionPayload>[]
+          }
+          create: {
+            args: Prisma.RestrictionCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RestrictionPayload>
+          }
+          createMany: {
+            args: Prisma.RestrictionCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.RestrictionCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RestrictionPayload>[]
+          }
+          delete: {
+            args: Prisma.RestrictionDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RestrictionPayload>
+          }
+          update: {
+            args: Prisma.RestrictionUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RestrictionPayload>
+          }
+          deleteMany: {
+            args: Prisma.RestrictionDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.RestrictionUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.RestrictionUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RestrictionPayload>
+          }
+          aggregate: {
+            args: Prisma.RestrictionAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateRestriction>
+          }
+          groupBy: {
+            args: Prisma.RestrictionGroupByArgs<ExtArgs>
+            result: $Utils.Optional<RestrictionGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.RestrictionCountArgs<ExtArgs>
+            result: $Utils.Optional<RestrictionCountAggregateOutputType> | number
           }
         }
       }
@@ -1390,10 +1502,12 @@ export namespace Prisma {
 
   export type UserCountOutputType = {
     userProgress: number
+    restrictions: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     userProgress?: boolean | UserCountOutputTypeCountUserProgressArgs
+    restrictions?: boolean | UserCountOutputTypeCountRestrictionsArgs
   }
 
   // Custom InputTypes
@@ -1412,6 +1526,13 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountUserProgressArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: UserProgressWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountRestrictionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: RestrictionWhereInput
   }
 
 
@@ -1722,6 +1843,7 @@ export namespace Prisma {
     userProgress?: boolean | User$userProgressArgs<ExtArgs>
     passwordReset?: boolean | User$passwordResetArgs<ExtArgs>
     mfa?: boolean | User$mfaArgs<ExtArgs>
+    restrictions?: boolean | User$restrictionsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -1755,6 +1877,7 @@ export namespace Prisma {
     userProgress?: boolean | User$userProgressArgs<ExtArgs>
     passwordReset?: boolean | User$passwordResetArgs<ExtArgs>
     mfa?: boolean | User$mfaArgs<ExtArgs>
+    restrictions?: boolean | User$restrictionsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -1765,6 +1888,7 @@ export namespace Prisma {
       userProgress: Prisma.$UserProgressPayload<ExtArgs>[]
       passwordReset: Prisma.$PasswordResetPayload<ExtArgs> | null
       mfa: Prisma.$MultiFactorAuthenticationPayload<ExtArgs> | null
+      restrictions: Prisma.$RestrictionPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -2144,6 +2268,7 @@ export namespace Prisma {
     userProgress<T extends User$userProgressArgs<ExtArgs> = {}>(args?: Subset<T, User$userProgressArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserProgressPayload<ExtArgs>, T, "findMany"> | Null>
     passwordReset<T extends User$passwordResetArgs<ExtArgs> = {}>(args?: Subset<T, User$passwordResetArgs<ExtArgs>>): Prisma__PasswordResetClient<$Result.GetResult<Prisma.$PasswordResetPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     mfa<T extends User$mfaArgs<ExtArgs> = {}>(args?: Subset<T, User$mfaArgs<ExtArgs>>): Prisma__MultiFactorAuthenticationClient<$Result.GetResult<Prisma.$MultiFactorAuthenticationPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
+    restrictions<T extends User$restrictionsArgs<ExtArgs> = {}>(args?: Subset<T, User$restrictionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RestrictionPayload<ExtArgs>, T, "findMany"> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2544,6 +2669,26 @@ export namespace Prisma {
      */
     include?: MultiFactorAuthenticationInclude<ExtArgs> | null
     where?: MultiFactorAuthenticationWhereInput
+  }
+
+  /**
+   * User.restrictions
+   */
+  export type User$restrictionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Restriction
+     */
+    select?: RestrictionSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RestrictionInclude<ExtArgs> | null
+    where?: RestrictionWhereInput
+    orderBy?: RestrictionOrderByWithRelationInput | RestrictionOrderByWithRelationInput[]
+    cursor?: RestrictionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: RestrictionScalarFieldEnum | RestrictionScalarFieldEnum[]
   }
 
   /**
@@ -5406,6 +5551,951 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: TotpInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Restriction
+   */
+
+  export type AggregateRestriction = {
+    _count: RestrictionCountAggregateOutputType | null
+    _min: RestrictionMinAggregateOutputType | null
+    _max: RestrictionMaxAggregateOutputType | null
+  }
+
+  export type RestrictionMinAggregateOutputType = {
+    id: string | null
+    reason: $Enums.RestrictionReason | null
+    until: Date | null
+    status: $Enums.RestrictionStatus | null
+    userId: string | null
+    createdAt: Date | null
+  }
+
+  export type RestrictionMaxAggregateOutputType = {
+    id: string | null
+    reason: $Enums.RestrictionReason | null
+    until: Date | null
+    status: $Enums.RestrictionStatus | null
+    userId: string | null
+    createdAt: Date | null
+  }
+
+  export type RestrictionCountAggregateOutputType = {
+    id: number
+    reason: number
+    until: number
+    status: number
+    userId: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type RestrictionMinAggregateInputType = {
+    id?: true
+    reason?: true
+    until?: true
+    status?: true
+    userId?: true
+    createdAt?: true
+  }
+
+  export type RestrictionMaxAggregateInputType = {
+    id?: true
+    reason?: true
+    until?: true
+    status?: true
+    userId?: true
+    createdAt?: true
+  }
+
+  export type RestrictionCountAggregateInputType = {
+    id?: true
+    reason?: true
+    until?: true
+    status?: true
+    userId?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type RestrictionAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Restriction to aggregate.
+     */
+    where?: RestrictionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Restrictions to fetch.
+     */
+    orderBy?: RestrictionOrderByWithRelationInput | RestrictionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: RestrictionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Restrictions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Restrictions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Restrictions
+    **/
+    _count?: true | RestrictionCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: RestrictionMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: RestrictionMaxAggregateInputType
+  }
+
+  export type GetRestrictionAggregateType<T extends RestrictionAggregateArgs> = {
+        [P in keyof T & keyof AggregateRestriction]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateRestriction[P]>
+      : GetScalarType<T[P], AggregateRestriction[P]>
+  }
+
+
+
+
+  export type RestrictionGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: RestrictionWhereInput
+    orderBy?: RestrictionOrderByWithAggregationInput | RestrictionOrderByWithAggregationInput[]
+    by: RestrictionScalarFieldEnum[] | RestrictionScalarFieldEnum
+    having?: RestrictionScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: RestrictionCountAggregateInputType | true
+    _min?: RestrictionMinAggregateInputType
+    _max?: RestrictionMaxAggregateInputType
+  }
+
+  export type RestrictionGroupByOutputType = {
+    id: string
+    reason: $Enums.RestrictionReason
+    until: Date | null
+    status: $Enums.RestrictionStatus
+    userId: string
+    createdAt: Date
+    _count: RestrictionCountAggregateOutputType | null
+    _min: RestrictionMinAggregateOutputType | null
+    _max: RestrictionMaxAggregateOutputType | null
+  }
+
+  type GetRestrictionGroupByPayload<T extends RestrictionGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<RestrictionGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof RestrictionGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], RestrictionGroupByOutputType[P]>
+            : GetScalarType<T[P], RestrictionGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type RestrictionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    reason?: boolean
+    until?: boolean
+    status?: boolean
+    userId?: boolean
+    createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["restriction"]>
+
+  export type RestrictionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    reason?: boolean
+    until?: boolean
+    status?: boolean
+    userId?: boolean
+    createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["restriction"]>
+
+  export type RestrictionSelectScalar = {
+    id?: boolean
+    reason?: boolean
+    until?: boolean
+    status?: boolean
+    userId?: boolean
+    createdAt?: boolean
+  }
+
+  export type RestrictionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type RestrictionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $RestrictionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Restriction"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      reason: $Enums.RestrictionReason
+      until: Date | null
+      status: $Enums.RestrictionStatus
+      userId: string
+      createdAt: Date
+    }, ExtArgs["result"]["restriction"]>
+    composites: {}
+  }
+
+  type RestrictionGetPayload<S extends boolean | null | undefined | RestrictionDefaultArgs> = $Result.GetResult<Prisma.$RestrictionPayload, S>
+
+  type RestrictionCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<RestrictionFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: RestrictionCountAggregateInputType | true
+    }
+
+  export interface RestrictionDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Restriction'], meta: { name: 'Restriction' } }
+    /**
+     * Find zero or one Restriction that matches the filter.
+     * @param {RestrictionFindUniqueArgs} args - Arguments to find a Restriction
+     * @example
+     * // Get one Restriction
+     * const restriction = await prisma.restriction.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends RestrictionFindUniqueArgs>(args: SelectSubset<T, RestrictionFindUniqueArgs<ExtArgs>>): Prisma__RestrictionClient<$Result.GetResult<Prisma.$RestrictionPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one Restriction that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {RestrictionFindUniqueOrThrowArgs} args - Arguments to find a Restriction
+     * @example
+     * // Get one Restriction
+     * const restriction = await prisma.restriction.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends RestrictionFindUniqueOrThrowArgs>(args: SelectSubset<T, RestrictionFindUniqueOrThrowArgs<ExtArgs>>): Prisma__RestrictionClient<$Result.GetResult<Prisma.$RestrictionPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first Restriction that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RestrictionFindFirstArgs} args - Arguments to find a Restriction
+     * @example
+     * // Get one Restriction
+     * const restriction = await prisma.restriction.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends RestrictionFindFirstArgs>(args?: SelectSubset<T, RestrictionFindFirstArgs<ExtArgs>>): Prisma__RestrictionClient<$Result.GetResult<Prisma.$RestrictionPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first Restriction that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RestrictionFindFirstOrThrowArgs} args - Arguments to find a Restriction
+     * @example
+     * // Get one Restriction
+     * const restriction = await prisma.restriction.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends RestrictionFindFirstOrThrowArgs>(args?: SelectSubset<T, RestrictionFindFirstOrThrowArgs<ExtArgs>>): Prisma__RestrictionClient<$Result.GetResult<Prisma.$RestrictionPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more Restrictions that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RestrictionFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Restrictions
+     * const restrictions = await prisma.restriction.findMany()
+     * 
+     * // Get first 10 Restrictions
+     * const restrictions = await prisma.restriction.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const restrictionWithIdOnly = await prisma.restriction.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends RestrictionFindManyArgs>(args?: SelectSubset<T, RestrictionFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RestrictionPayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a Restriction.
+     * @param {RestrictionCreateArgs} args - Arguments to create a Restriction.
+     * @example
+     * // Create one Restriction
+     * const Restriction = await prisma.restriction.create({
+     *   data: {
+     *     // ... data to create a Restriction
+     *   }
+     * })
+     * 
+     */
+    create<T extends RestrictionCreateArgs>(args: SelectSubset<T, RestrictionCreateArgs<ExtArgs>>): Prisma__RestrictionClient<$Result.GetResult<Prisma.$RestrictionPayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many Restrictions.
+     * @param {RestrictionCreateManyArgs} args - Arguments to create many Restrictions.
+     * @example
+     * // Create many Restrictions
+     * const restriction = await prisma.restriction.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends RestrictionCreateManyArgs>(args?: SelectSubset<T, RestrictionCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Restrictions and returns the data saved in the database.
+     * @param {RestrictionCreateManyAndReturnArgs} args - Arguments to create many Restrictions.
+     * @example
+     * // Create many Restrictions
+     * const restriction = await prisma.restriction.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Restrictions and only return the `id`
+     * const restrictionWithIdOnly = await prisma.restriction.createManyAndReturn({ 
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends RestrictionCreateManyAndReturnArgs>(args?: SelectSubset<T, RestrictionCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RestrictionPayload<ExtArgs>, T, "createManyAndReturn">>
+
+    /**
+     * Delete a Restriction.
+     * @param {RestrictionDeleteArgs} args - Arguments to delete one Restriction.
+     * @example
+     * // Delete one Restriction
+     * const Restriction = await prisma.restriction.delete({
+     *   where: {
+     *     // ... filter to delete one Restriction
+     *   }
+     * })
+     * 
+     */
+    delete<T extends RestrictionDeleteArgs>(args: SelectSubset<T, RestrictionDeleteArgs<ExtArgs>>): Prisma__RestrictionClient<$Result.GetResult<Prisma.$RestrictionPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one Restriction.
+     * @param {RestrictionUpdateArgs} args - Arguments to update one Restriction.
+     * @example
+     * // Update one Restriction
+     * const restriction = await prisma.restriction.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends RestrictionUpdateArgs>(args: SelectSubset<T, RestrictionUpdateArgs<ExtArgs>>): Prisma__RestrictionClient<$Result.GetResult<Prisma.$RestrictionPayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more Restrictions.
+     * @param {RestrictionDeleteManyArgs} args - Arguments to filter Restrictions to delete.
+     * @example
+     * // Delete a few Restrictions
+     * const { count } = await prisma.restriction.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends RestrictionDeleteManyArgs>(args?: SelectSubset<T, RestrictionDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Restrictions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RestrictionUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Restrictions
+     * const restriction = await prisma.restriction.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends RestrictionUpdateManyArgs>(args: SelectSubset<T, RestrictionUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one Restriction.
+     * @param {RestrictionUpsertArgs} args - Arguments to update or create a Restriction.
+     * @example
+     * // Update or create a Restriction
+     * const restriction = await prisma.restriction.upsert({
+     *   create: {
+     *     // ... data to create a Restriction
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Restriction we want to update
+     *   }
+     * })
+     */
+    upsert<T extends RestrictionUpsertArgs>(args: SelectSubset<T, RestrictionUpsertArgs<ExtArgs>>): Prisma__RestrictionClient<$Result.GetResult<Prisma.$RestrictionPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of Restrictions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RestrictionCountArgs} args - Arguments to filter Restrictions to count.
+     * @example
+     * // Count the number of Restrictions
+     * const count = await prisma.restriction.count({
+     *   where: {
+     *     // ... the filter for the Restrictions we want to count
+     *   }
+     * })
+    **/
+    count<T extends RestrictionCountArgs>(
+      args?: Subset<T, RestrictionCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], RestrictionCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Restriction.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RestrictionAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends RestrictionAggregateArgs>(args: Subset<T, RestrictionAggregateArgs>): Prisma.PrismaPromise<GetRestrictionAggregateType<T>>
+
+    /**
+     * Group by Restriction.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RestrictionGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends RestrictionGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: RestrictionGroupByArgs['orderBy'] }
+        : { orderBy?: RestrictionGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, RestrictionGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetRestrictionGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Restriction model
+   */
+  readonly fields: RestrictionFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Restriction.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__RestrictionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Restriction model
+   */ 
+  interface RestrictionFieldRefs {
+    readonly id: FieldRef<"Restriction", 'String'>
+    readonly reason: FieldRef<"Restriction", 'RestrictionReason'>
+    readonly until: FieldRef<"Restriction", 'DateTime'>
+    readonly status: FieldRef<"Restriction", 'RestrictionStatus'>
+    readonly userId: FieldRef<"Restriction", 'String'>
+    readonly createdAt: FieldRef<"Restriction", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Restriction findUnique
+   */
+  export type RestrictionFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Restriction
+     */
+    select?: RestrictionSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RestrictionInclude<ExtArgs> | null
+    /**
+     * Filter, which Restriction to fetch.
+     */
+    where: RestrictionWhereUniqueInput
+  }
+
+  /**
+   * Restriction findUniqueOrThrow
+   */
+  export type RestrictionFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Restriction
+     */
+    select?: RestrictionSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RestrictionInclude<ExtArgs> | null
+    /**
+     * Filter, which Restriction to fetch.
+     */
+    where: RestrictionWhereUniqueInput
+  }
+
+  /**
+   * Restriction findFirst
+   */
+  export type RestrictionFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Restriction
+     */
+    select?: RestrictionSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RestrictionInclude<ExtArgs> | null
+    /**
+     * Filter, which Restriction to fetch.
+     */
+    where?: RestrictionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Restrictions to fetch.
+     */
+    orderBy?: RestrictionOrderByWithRelationInput | RestrictionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Restrictions.
+     */
+    cursor?: RestrictionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Restrictions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Restrictions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Restrictions.
+     */
+    distinct?: RestrictionScalarFieldEnum | RestrictionScalarFieldEnum[]
+  }
+
+  /**
+   * Restriction findFirstOrThrow
+   */
+  export type RestrictionFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Restriction
+     */
+    select?: RestrictionSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RestrictionInclude<ExtArgs> | null
+    /**
+     * Filter, which Restriction to fetch.
+     */
+    where?: RestrictionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Restrictions to fetch.
+     */
+    orderBy?: RestrictionOrderByWithRelationInput | RestrictionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Restrictions.
+     */
+    cursor?: RestrictionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Restrictions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Restrictions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Restrictions.
+     */
+    distinct?: RestrictionScalarFieldEnum | RestrictionScalarFieldEnum[]
+  }
+
+  /**
+   * Restriction findMany
+   */
+  export type RestrictionFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Restriction
+     */
+    select?: RestrictionSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RestrictionInclude<ExtArgs> | null
+    /**
+     * Filter, which Restrictions to fetch.
+     */
+    where?: RestrictionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Restrictions to fetch.
+     */
+    orderBy?: RestrictionOrderByWithRelationInput | RestrictionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Restrictions.
+     */
+    cursor?: RestrictionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Restrictions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Restrictions.
+     */
+    skip?: number
+    distinct?: RestrictionScalarFieldEnum | RestrictionScalarFieldEnum[]
+  }
+
+  /**
+   * Restriction create
+   */
+  export type RestrictionCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Restriction
+     */
+    select?: RestrictionSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RestrictionInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Restriction.
+     */
+    data: XOR<RestrictionCreateInput, RestrictionUncheckedCreateInput>
+  }
+
+  /**
+   * Restriction createMany
+   */
+  export type RestrictionCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Restrictions.
+     */
+    data: RestrictionCreateManyInput | RestrictionCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Restriction createManyAndReturn
+   */
+  export type RestrictionCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Restriction
+     */
+    select?: RestrictionSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * The data used to create many Restrictions.
+     */
+    data: RestrictionCreateManyInput | RestrictionCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RestrictionIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Restriction update
+   */
+  export type RestrictionUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Restriction
+     */
+    select?: RestrictionSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RestrictionInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Restriction.
+     */
+    data: XOR<RestrictionUpdateInput, RestrictionUncheckedUpdateInput>
+    /**
+     * Choose, which Restriction to update.
+     */
+    where: RestrictionWhereUniqueInput
+  }
+
+  /**
+   * Restriction updateMany
+   */
+  export type RestrictionUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Restrictions.
+     */
+    data: XOR<RestrictionUpdateManyMutationInput, RestrictionUncheckedUpdateManyInput>
+    /**
+     * Filter which Restrictions to update
+     */
+    where?: RestrictionWhereInput
+  }
+
+  /**
+   * Restriction upsert
+   */
+  export type RestrictionUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Restriction
+     */
+    select?: RestrictionSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RestrictionInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Restriction to update in case it exists.
+     */
+    where: RestrictionWhereUniqueInput
+    /**
+     * In case the Restriction found by the `where` argument doesn't exist, create a new Restriction with this data.
+     */
+    create: XOR<RestrictionCreateInput, RestrictionUncheckedCreateInput>
+    /**
+     * In case the Restriction was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<RestrictionUpdateInput, RestrictionUncheckedUpdateInput>
+  }
+
+  /**
+   * Restriction delete
+   */
+  export type RestrictionDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Restriction
+     */
+    select?: RestrictionSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RestrictionInclude<ExtArgs> | null
+    /**
+     * Filter which Restriction to delete.
+     */
+    where: RestrictionWhereUniqueInput
+  }
+
+  /**
+   * Restriction deleteMany
+   */
+  export type RestrictionDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Restrictions to delete
+     */
+    where?: RestrictionWhereInput
+  }
+
+  /**
+   * Restriction without action
+   */
+  export type RestrictionDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Restriction
+     */
+    select?: RestrictionSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RestrictionInclude<ExtArgs> | null
   }
 
 
@@ -8532,6 +9622,18 @@ export namespace Prisma {
   export type TotpScalarFieldEnum = (typeof TotpScalarFieldEnum)[keyof typeof TotpScalarFieldEnum]
 
 
+  export const RestrictionScalarFieldEnum: {
+    id: 'id',
+    reason: 'reason',
+    until: 'until',
+    status: 'status',
+    userId: 'userId',
+    createdAt: 'createdAt'
+  };
+
+  export type RestrictionScalarFieldEnum = (typeof RestrictionScalarFieldEnum)[keyof typeof RestrictionScalarFieldEnum]
+
+
   export const CourseScalarFieldEnum: {
     id: 'id',
     title: 'title',
@@ -8677,6 +9779,34 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'RestrictionReason'
+   */
+  export type EnumRestrictionReasonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RestrictionReason'>
+    
+
+
+  /**
+   * Reference to a field of type 'RestrictionReason[]'
+   */
+  export type ListEnumRestrictionReasonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RestrictionReason[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'RestrictionStatus'
+   */
+  export type EnumRestrictionStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RestrictionStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'RestrictionStatus[]'
+   */
+  export type ListEnumRestrictionStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RestrictionStatus[]'>
+    
+
+
+  /**
    * Reference to a field of type 'Boolean'
    */
   export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
@@ -8717,6 +9847,7 @@ export namespace Prisma {
     userProgress?: UserProgressListRelationFilter
     passwordReset?: XOR<PasswordResetNullableRelationFilter, PasswordResetWhereInput> | null
     mfa?: XOR<MultiFactorAuthenticationNullableRelationFilter, MultiFactorAuthenticationWhereInput> | null
+    restrictions?: RestrictionListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -8733,6 +9864,7 @@ export namespace Prisma {
     userProgress?: UserProgressOrderByRelationAggregateInput
     passwordReset?: PasswordResetOrderByWithRelationInput
     mfa?: MultiFactorAuthenticationOrderByWithRelationInput
+    restrictions?: RestrictionOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -8752,6 +9884,7 @@ export namespace Prisma {
     userProgress?: UserProgressListRelationFilter
     passwordReset?: XOR<PasswordResetNullableRelationFilter, PasswordResetWhereInput> | null
     mfa?: XOR<MultiFactorAuthenticationNullableRelationFilter, MultiFactorAuthenticationWhereInput> | null
+    restrictions?: RestrictionListRelationFilter
   }, "id" | "email" | "username">
 
   export type UserOrderByWithAggregationInput = {
@@ -8964,6 +10097,66 @@ export namespace Prisma {
     secret?: StringNullableWithAggregatesFilter<"Totp"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Totp"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Totp"> | Date | string
+  }
+
+  export type RestrictionWhereInput = {
+    AND?: RestrictionWhereInput | RestrictionWhereInput[]
+    OR?: RestrictionWhereInput[]
+    NOT?: RestrictionWhereInput | RestrictionWhereInput[]
+    id?: StringFilter<"Restriction"> | string
+    reason?: EnumRestrictionReasonFilter<"Restriction"> | $Enums.RestrictionReason
+    until?: DateTimeNullableFilter<"Restriction"> | Date | string | null
+    status?: EnumRestrictionStatusFilter<"Restriction"> | $Enums.RestrictionStatus
+    userId?: StringFilter<"Restriction"> | string
+    createdAt?: DateTimeFilter<"Restriction"> | Date | string
+    user?: XOR<UserRelationFilter, UserWhereInput>
+  }
+
+  export type RestrictionOrderByWithRelationInput = {
+    id?: SortOrder
+    reason?: SortOrder
+    until?: SortOrderInput | SortOrder
+    status?: SortOrder
+    userId?: SortOrder
+    createdAt?: SortOrder
+    user?: UserOrderByWithRelationInput
+  }
+
+  export type RestrictionWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: RestrictionWhereInput | RestrictionWhereInput[]
+    OR?: RestrictionWhereInput[]
+    NOT?: RestrictionWhereInput | RestrictionWhereInput[]
+    reason?: EnumRestrictionReasonFilter<"Restriction"> | $Enums.RestrictionReason
+    until?: DateTimeNullableFilter<"Restriction"> | Date | string | null
+    status?: EnumRestrictionStatusFilter<"Restriction"> | $Enums.RestrictionStatus
+    userId?: StringFilter<"Restriction"> | string
+    createdAt?: DateTimeFilter<"Restriction"> | Date | string
+    user?: XOR<UserRelationFilter, UserWhereInput>
+  }, "id">
+
+  export type RestrictionOrderByWithAggregationInput = {
+    id?: SortOrder
+    reason?: SortOrder
+    until?: SortOrderInput | SortOrder
+    status?: SortOrder
+    userId?: SortOrder
+    createdAt?: SortOrder
+    _count?: RestrictionCountOrderByAggregateInput
+    _max?: RestrictionMaxOrderByAggregateInput
+    _min?: RestrictionMinOrderByAggregateInput
+  }
+
+  export type RestrictionScalarWhereWithAggregatesInput = {
+    AND?: RestrictionScalarWhereWithAggregatesInput | RestrictionScalarWhereWithAggregatesInput[]
+    OR?: RestrictionScalarWhereWithAggregatesInput[]
+    NOT?: RestrictionScalarWhereWithAggregatesInput | RestrictionScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Restriction"> | string
+    reason?: EnumRestrictionReasonWithAggregatesFilter<"Restriction"> | $Enums.RestrictionReason
+    until?: DateTimeNullableWithAggregatesFilter<"Restriction"> | Date | string | null
+    status?: EnumRestrictionStatusWithAggregatesFilter<"Restriction"> | $Enums.RestrictionStatus
+    userId?: StringWithAggregatesFilter<"Restriction"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"Restriction"> | Date | string
   }
 
   export type CourseWhereInput = {
@@ -9216,6 +10409,7 @@ export namespace Prisma {
     userProgress?: UserProgressCreateNestedManyWithoutUserInput
     passwordReset?: PasswordResetCreateNestedOneWithoutUserInput
     mfa?: MultiFactorAuthenticationCreateNestedOneWithoutUserInput
+    restrictions?: RestrictionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -9232,6 +10426,7 @@ export namespace Prisma {
     userProgress?: UserProgressUncheckedCreateNestedManyWithoutUserInput
     passwordReset?: PasswordResetUncheckedCreateNestedOneWithoutUserInput
     mfa?: MultiFactorAuthenticationUncheckedCreateNestedOneWithoutUserInput
+    restrictions?: RestrictionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -9248,6 +10443,7 @@ export namespace Prisma {
     userProgress?: UserProgressUpdateManyWithoutUserNestedInput
     passwordReset?: PasswordResetUpdateOneWithoutUserNestedInput
     mfa?: MultiFactorAuthenticationUpdateOneWithoutUserNestedInput
+    restrictions?: RestrictionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -9264,6 +10460,7 @@ export namespace Prisma {
     userProgress?: UserProgressUncheckedUpdateManyWithoutUserNestedInput
     passwordReset?: PasswordResetUncheckedUpdateOneWithoutUserNestedInput
     mfa?: MultiFactorAuthenticationUncheckedUpdateOneWithoutUserNestedInput
+    restrictions?: RestrictionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -9486,6 +10683,68 @@ export namespace Prisma {
     secret?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RestrictionCreateInput = {
+    id?: string
+    reason: $Enums.RestrictionReason
+    until?: Date | string | null
+    status?: $Enums.RestrictionStatus
+    createdAt?: Date | string
+    user: UserCreateNestedOneWithoutRestrictionsInput
+  }
+
+  export type RestrictionUncheckedCreateInput = {
+    id?: string
+    reason: $Enums.RestrictionReason
+    until?: Date | string | null
+    status?: $Enums.RestrictionStatus
+    userId: string
+    createdAt?: Date | string
+  }
+
+  export type RestrictionUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reason?: EnumRestrictionReasonFieldUpdateOperationsInput | $Enums.RestrictionReason
+    until?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumRestrictionStatusFieldUpdateOperationsInput | $Enums.RestrictionStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutRestrictionsNestedInput
+  }
+
+  export type RestrictionUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reason?: EnumRestrictionReasonFieldUpdateOperationsInput | $Enums.RestrictionReason
+    until?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumRestrictionStatusFieldUpdateOperationsInput | $Enums.RestrictionStatus
+    userId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RestrictionCreateManyInput = {
+    id?: string
+    reason: $Enums.RestrictionReason
+    until?: Date | string | null
+    status?: $Enums.RestrictionStatus
+    userId: string
+    createdAt?: Date | string
+  }
+
+  export type RestrictionUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reason?: EnumRestrictionReasonFieldUpdateOperationsInput | $Enums.RestrictionReason
+    until?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumRestrictionStatusFieldUpdateOperationsInput | $Enums.RestrictionStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RestrictionUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reason?: EnumRestrictionReasonFieldUpdateOperationsInput | $Enums.RestrictionReason
+    until?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumRestrictionStatusFieldUpdateOperationsInput | $Enums.RestrictionStatus
+    userId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type CourseCreateInput = {
@@ -9820,12 +11079,22 @@ export namespace Prisma {
     isNot?: MultiFactorAuthenticationWhereInput | null
   }
 
+  export type RestrictionListRelationFilter = {
+    every?: RestrictionWhereInput
+    some?: RestrictionWhereInput
+    none?: RestrictionWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
   }
 
   export type UserProgressOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type RestrictionOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -10063,6 +11332,92 @@ export namespace Prisma {
     _max?: NestedEnumTotpStatusFilter<$PrismaModel>
   }
 
+  export type EnumRestrictionReasonFilter<$PrismaModel = never> = {
+    equals?: $Enums.RestrictionReason | EnumRestrictionReasonFieldRefInput<$PrismaModel>
+    in?: $Enums.RestrictionReason[] | ListEnumRestrictionReasonFieldRefInput<$PrismaModel>
+    notIn?: $Enums.RestrictionReason[] | ListEnumRestrictionReasonFieldRefInput<$PrismaModel>
+    not?: NestedEnumRestrictionReasonFilter<$PrismaModel> | $Enums.RestrictionReason
+  }
+
+  export type DateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
+  export type EnumRestrictionStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.RestrictionStatus | EnumRestrictionStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.RestrictionStatus[] | ListEnumRestrictionStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.RestrictionStatus[] | ListEnumRestrictionStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumRestrictionStatusFilter<$PrismaModel> | $Enums.RestrictionStatus
+  }
+
+  export type RestrictionCountOrderByAggregateInput = {
+    id?: SortOrder
+    reason?: SortOrder
+    until?: SortOrder
+    status?: SortOrder
+    userId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type RestrictionMaxOrderByAggregateInput = {
+    id?: SortOrder
+    reason?: SortOrder
+    until?: SortOrder
+    status?: SortOrder
+    userId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type RestrictionMinOrderByAggregateInput = {
+    id?: SortOrder
+    reason?: SortOrder
+    until?: SortOrder
+    status?: SortOrder
+    userId?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type EnumRestrictionReasonWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.RestrictionReason | EnumRestrictionReasonFieldRefInput<$PrismaModel>
+    in?: $Enums.RestrictionReason[] | ListEnumRestrictionReasonFieldRefInput<$PrismaModel>
+    notIn?: $Enums.RestrictionReason[] | ListEnumRestrictionReasonFieldRefInput<$PrismaModel>
+    not?: NestedEnumRestrictionReasonWithAggregatesFilter<$PrismaModel> | $Enums.RestrictionReason
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumRestrictionReasonFilter<$PrismaModel>
+    _max?: NestedEnumRestrictionReasonFilter<$PrismaModel>
+  }
+
+  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
+  export type EnumRestrictionStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.RestrictionStatus | EnumRestrictionStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.RestrictionStatus[] | ListEnumRestrictionStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.RestrictionStatus[] | ListEnumRestrictionStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumRestrictionStatusWithAggregatesFilter<$PrismaModel> | $Enums.RestrictionStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumRestrictionStatusFilter<$PrismaModel>
+    _max?: NestedEnumRestrictionStatusFilter<$PrismaModel>
+  }
+
   export type BoolFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolFilter<$PrismaModel> | boolean
@@ -10244,6 +11599,13 @@ export namespace Prisma {
     connect?: MultiFactorAuthenticationWhereUniqueInput
   }
 
+  export type RestrictionCreateNestedManyWithoutUserInput = {
+    create?: XOR<RestrictionCreateWithoutUserInput, RestrictionUncheckedCreateWithoutUserInput> | RestrictionCreateWithoutUserInput[] | RestrictionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: RestrictionCreateOrConnectWithoutUserInput | RestrictionCreateOrConnectWithoutUserInput[]
+    createMany?: RestrictionCreateManyUserInputEnvelope
+    connect?: RestrictionWhereUniqueInput | RestrictionWhereUniqueInput[]
+  }
+
   export type UserProgressUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<UserProgressCreateWithoutUserInput, UserProgressUncheckedCreateWithoutUserInput> | UserProgressCreateWithoutUserInput[] | UserProgressUncheckedCreateWithoutUserInput[]
     connectOrCreate?: UserProgressCreateOrConnectWithoutUserInput | UserProgressCreateOrConnectWithoutUserInput[]
@@ -10261,6 +11623,13 @@ export namespace Prisma {
     create?: XOR<MultiFactorAuthenticationCreateWithoutUserInput, MultiFactorAuthenticationUncheckedCreateWithoutUserInput>
     connectOrCreate?: MultiFactorAuthenticationCreateOrConnectWithoutUserInput
     connect?: MultiFactorAuthenticationWhereUniqueInput
+  }
+
+  export type RestrictionUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<RestrictionCreateWithoutUserInput, RestrictionUncheckedCreateWithoutUserInput> | RestrictionCreateWithoutUserInput[] | RestrictionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: RestrictionCreateOrConnectWithoutUserInput | RestrictionCreateOrConnectWithoutUserInput[]
+    createMany?: RestrictionCreateManyUserInputEnvelope
+    connect?: RestrictionWhereUniqueInput | RestrictionWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -10321,6 +11690,20 @@ export namespace Prisma {
     update?: XOR<XOR<MultiFactorAuthenticationUpdateToOneWithWhereWithoutUserInput, MultiFactorAuthenticationUpdateWithoutUserInput>, MultiFactorAuthenticationUncheckedUpdateWithoutUserInput>
   }
 
+  export type RestrictionUpdateManyWithoutUserNestedInput = {
+    create?: XOR<RestrictionCreateWithoutUserInput, RestrictionUncheckedCreateWithoutUserInput> | RestrictionCreateWithoutUserInput[] | RestrictionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: RestrictionCreateOrConnectWithoutUserInput | RestrictionCreateOrConnectWithoutUserInput[]
+    upsert?: RestrictionUpsertWithWhereUniqueWithoutUserInput | RestrictionUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: RestrictionCreateManyUserInputEnvelope
+    set?: RestrictionWhereUniqueInput | RestrictionWhereUniqueInput[]
+    disconnect?: RestrictionWhereUniqueInput | RestrictionWhereUniqueInput[]
+    delete?: RestrictionWhereUniqueInput | RestrictionWhereUniqueInput[]
+    connect?: RestrictionWhereUniqueInput | RestrictionWhereUniqueInput[]
+    update?: RestrictionUpdateWithWhereUniqueWithoutUserInput | RestrictionUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: RestrictionUpdateManyWithWhereWithoutUserInput | RestrictionUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: RestrictionScalarWhereInput | RestrictionScalarWhereInput[]
+  }
+
   export type UserProgressUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<UserProgressCreateWithoutUserInput, UserProgressUncheckedCreateWithoutUserInput> | UserProgressCreateWithoutUserInput[] | UserProgressUncheckedCreateWithoutUserInput[]
     connectOrCreate?: UserProgressCreateOrConnectWithoutUserInput | UserProgressCreateOrConnectWithoutUserInput[]
@@ -10353,6 +11736,20 @@ export namespace Prisma {
     delete?: MultiFactorAuthenticationWhereInput | boolean
     connect?: MultiFactorAuthenticationWhereUniqueInput
     update?: XOR<XOR<MultiFactorAuthenticationUpdateToOneWithWhereWithoutUserInput, MultiFactorAuthenticationUpdateWithoutUserInput>, MultiFactorAuthenticationUncheckedUpdateWithoutUserInput>
+  }
+
+  export type RestrictionUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<RestrictionCreateWithoutUserInput, RestrictionUncheckedCreateWithoutUserInput> | RestrictionCreateWithoutUserInput[] | RestrictionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: RestrictionCreateOrConnectWithoutUserInput | RestrictionCreateOrConnectWithoutUserInput[]
+    upsert?: RestrictionUpsertWithWhereUniqueWithoutUserInput | RestrictionUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: RestrictionCreateManyUserInputEnvelope
+    set?: RestrictionWhereUniqueInput | RestrictionWhereUniqueInput[]
+    disconnect?: RestrictionWhereUniqueInput | RestrictionWhereUniqueInput[]
+    delete?: RestrictionWhereUniqueInput | RestrictionWhereUniqueInput[]
+    connect?: RestrictionWhereUniqueInput | RestrictionWhereUniqueInput[]
+    update?: RestrictionUpdateWithWhereUniqueWithoutUserInput | RestrictionUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: RestrictionUpdateManyWithWhereWithoutUserInput | RestrictionUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: RestrictionScalarWhereInput | RestrictionScalarWhereInput[]
   }
 
   export type UserCreateNestedOneWithoutPasswordResetInput = {
@@ -10442,6 +11839,32 @@ export namespace Prisma {
     delete?: MultiFactorAuthenticationWhereInput | boolean
     connect?: MultiFactorAuthenticationWhereUniqueInput
     update?: XOR<XOR<MultiFactorAuthenticationUpdateToOneWithWhereWithoutTotpInput, MultiFactorAuthenticationUpdateWithoutTotpInput>, MultiFactorAuthenticationUncheckedUpdateWithoutTotpInput>
+  }
+
+  export type UserCreateNestedOneWithoutRestrictionsInput = {
+    create?: XOR<UserCreateWithoutRestrictionsInput, UserUncheckedCreateWithoutRestrictionsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutRestrictionsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type EnumRestrictionReasonFieldUpdateOperationsInput = {
+    set?: $Enums.RestrictionReason
+  }
+
+  export type NullableDateTimeFieldUpdateOperationsInput = {
+    set?: Date | string | null
+  }
+
+  export type EnumRestrictionStatusFieldUpdateOperationsInput = {
+    set?: $Enums.RestrictionStatus
+  }
+
+  export type UserUpdateOneRequiredWithoutRestrictionsNestedInput = {
+    create?: XOR<UserCreateWithoutRestrictionsInput, UserUncheckedCreateWithoutRestrictionsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutRestrictionsInput
+    upsert?: UserUpsertWithoutRestrictionsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutRestrictionsInput, UserUpdateWithoutRestrictionsInput>, UserUncheckedUpdateWithoutRestrictionsInput>
   }
 
   export type LessonCreateNestedManyWithoutCourseInput = {
@@ -10744,6 +12167,65 @@ export namespace Prisma {
     _max?: NestedEnumTotpStatusFilter<$PrismaModel>
   }
 
+  export type NestedEnumRestrictionReasonFilter<$PrismaModel = never> = {
+    equals?: $Enums.RestrictionReason | EnumRestrictionReasonFieldRefInput<$PrismaModel>
+    in?: $Enums.RestrictionReason[] | ListEnumRestrictionReasonFieldRefInput<$PrismaModel>
+    notIn?: $Enums.RestrictionReason[] | ListEnumRestrictionReasonFieldRefInput<$PrismaModel>
+    not?: NestedEnumRestrictionReasonFilter<$PrismaModel> | $Enums.RestrictionReason
+  }
+
+  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
+  export type NestedEnumRestrictionStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.RestrictionStatus | EnumRestrictionStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.RestrictionStatus[] | ListEnumRestrictionStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.RestrictionStatus[] | ListEnumRestrictionStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumRestrictionStatusFilter<$PrismaModel> | $Enums.RestrictionStatus
+  }
+
+  export type NestedEnumRestrictionReasonWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.RestrictionReason | EnumRestrictionReasonFieldRefInput<$PrismaModel>
+    in?: $Enums.RestrictionReason[] | ListEnumRestrictionReasonFieldRefInput<$PrismaModel>
+    notIn?: $Enums.RestrictionReason[] | ListEnumRestrictionReasonFieldRefInput<$PrismaModel>
+    not?: NestedEnumRestrictionReasonWithAggregatesFilter<$PrismaModel> | $Enums.RestrictionReason
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumRestrictionReasonFilter<$PrismaModel>
+    _max?: NestedEnumRestrictionReasonFilter<$PrismaModel>
+  }
+
+  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
+  export type NestedEnumRestrictionStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.RestrictionStatus | EnumRestrictionStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.RestrictionStatus[] | ListEnumRestrictionStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.RestrictionStatus[] | ListEnumRestrictionStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumRestrictionStatusWithAggregatesFilter<$PrismaModel> | $Enums.RestrictionStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumRestrictionStatusFilter<$PrismaModel>
+    _max?: NestedEnumRestrictionStatusFilter<$PrismaModel>
+  }
+
   export type NestedBoolFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolFilter<$PrismaModel> | boolean
@@ -10823,6 +12305,32 @@ export namespace Prisma {
   export type MultiFactorAuthenticationCreateOrConnectWithoutUserInput = {
     where: MultiFactorAuthenticationWhereUniqueInput
     create: XOR<MultiFactorAuthenticationCreateWithoutUserInput, MultiFactorAuthenticationUncheckedCreateWithoutUserInput>
+  }
+
+  export type RestrictionCreateWithoutUserInput = {
+    id?: string
+    reason: $Enums.RestrictionReason
+    until?: Date | string | null
+    status?: $Enums.RestrictionStatus
+    createdAt?: Date | string
+  }
+
+  export type RestrictionUncheckedCreateWithoutUserInput = {
+    id?: string
+    reason: $Enums.RestrictionReason
+    until?: Date | string | null
+    status?: $Enums.RestrictionStatus
+    createdAt?: Date | string
+  }
+
+  export type RestrictionCreateOrConnectWithoutUserInput = {
+    where: RestrictionWhereUniqueInput
+    create: XOR<RestrictionCreateWithoutUserInput, RestrictionUncheckedCreateWithoutUserInput>
+  }
+
+  export type RestrictionCreateManyUserInputEnvelope = {
+    data: RestrictionCreateManyUserInput | RestrictionCreateManyUserInput[]
+    skipDuplicates?: boolean
   }
 
   export type UserProgressUpsertWithWhereUniqueWithoutUserInput = {
@@ -10907,6 +12415,34 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type RestrictionUpsertWithWhereUniqueWithoutUserInput = {
+    where: RestrictionWhereUniqueInput
+    update: XOR<RestrictionUpdateWithoutUserInput, RestrictionUncheckedUpdateWithoutUserInput>
+    create: XOR<RestrictionCreateWithoutUserInput, RestrictionUncheckedCreateWithoutUserInput>
+  }
+
+  export type RestrictionUpdateWithWhereUniqueWithoutUserInput = {
+    where: RestrictionWhereUniqueInput
+    data: XOR<RestrictionUpdateWithoutUserInput, RestrictionUncheckedUpdateWithoutUserInput>
+  }
+
+  export type RestrictionUpdateManyWithWhereWithoutUserInput = {
+    where: RestrictionScalarWhereInput
+    data: XOR<RestrictionUpdateManyMutationInput, RestrictionUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type RestrictionScalarWhereInput = {
+    AND?: RestrictionScalarWhereInput | RestrictionScalarWhereInput[]
+    OR?: RestrictionScalarWhereInput[]
+    NOT?: RestrictionScalarWhereInput | RestrictionScalarWhereInput[]
+    id?: StringFilter<"Restriction"> | string
+    reason?: EnumRestrictionReasonFilter<"Restriction"> | $Enums.RestrictionReason
+    until?: DateTimeNullableFilter<"Restriction"> | Date | string | null
+    status?: EnumRestrictionStatusFilter<"Restriction"> | $Enums.RestrictionStatus
+    userId?: StringFilter<"Restriction"> | string
+    createdAt?: DateTimeFilter<"Restriction"> | Date | string
+  }
+
   export type UserCreateWithoutPasswordResetInput = {
     id?: string
     email: string
@@ -10920,6 +12456,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     userProgress?: UserProgressCreateNestedManyWithoutUserInput
     mfa?: MultiFactorAuthenticationCreateNestedOneWithoutUserInput
+    restrictions?: RestrictionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutPasswordResetInput = {
@@ -10935,6 +12472,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     userProgress?: UserProgressUncheckedCreateNestedManyWithoutUserInput
     mfa?: MultiFactorAuthenticationUncheckedCreateNestedOneWithoutUserInput
+    restrictions?: RestrictionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutPasswordResetInput = {
@@ -10966,6 +12504,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     userProgress?: UserProgressUpdateManyWithoutUserNestedInput
     mfa?: MultiFactorAuthenticationUpdateOneWithoutUserNestedInput
+    restrictions?: RestrictionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPasswordResetInput = {
@@ -10981,6 +12520,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     userProgress?: UserProgressUncheckedUpdateManyWithoutUserNestedInput
     mfa?: MultiFactorAuthenticationUncheckedUpdateOneWithoutUserNestedInput
+    restrictions?: RestrictionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type TotpCreateWithoutMfaInput = {
@@ -11017,6 +12557,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     userProgress?: UserProgressCreateNestedManyWithoutUserInput
     passwordReset?: PasswordResetCreateNestedOneWithoutUserInput
+    restrictions?: RestrictionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutMfaInput = {
@@ -11032,6 +12573,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     userProgress?: UserProgressUncheckedCreateNestedManyWithoutUserInput
     passwordReset?: PasswordResetUncheckedCreateNestedOneWithoutUserInput
+    restrictions?: RestrictionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutMfaInput = {
@@ -11090,6 +12632,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     userProgress?: UserProgressUpdateManyWithoutUserNestedInput
     passwordReset?: PasswordResetUpdateOneWithoutUserNestedInput
+    restrictions?: RestrictionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutMfaInput = {
@@ -11105,6 +12648,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     userProgress?: UserProgressUncheckedUpdateManyWithoutUserNestedInput
     passwordReset?: PasswordResetUncheckedUpdateOneWithoutUserNestedInput
+    restrictions?: RestrictionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type MultiFactorAuthenticationCreateWithoutTotpInput = {
@@ -11153,6 +12697,86 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserCreateWithoutRestrictionsInput = {
+    id?: string
+    email: string
+    password?: string | null
+    username: string
+    displayName: string
+    avatar?: string | null
+    points?: number
+    role?: $Enums.UserRole
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    userProgress?: UserProgressCreateNestedManyWithoutUserInput
+    passwordReset?: PasswordResetCreateNestedOneWithoutUserInput
+    mfa?: MultiFactorAuthenticationCreateNestedOneWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutRestrictionsInput = {
+    id?: string
+    email: string
+    password?: string | null
+    username: string
+    displayName: string
+    avatar?: string | null
+    points?: number
+    role?: $Enums.UserRole
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    userProgress?: UserProgressUncheckedCreateNestedManyWithoutUserInput
+    passwordReset?: PasswordResetUncheckedCreateNestedOneWithoutUserInput
+    mfa?: MultiFactorAuthenticationUncheckedCreateNestedOneWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutRestrictionsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutRestrictionsInput, UserUncheckedCreateWithoutRestrictionsInput>
+  }
+
+  export type UserUpsertWithoutRestrictionsInput = {
+    update: XOR<UserUpdateWithoutRestrictionsInput, UserUncheckedUpdateWithoutRestrictionsInput>
+    create: XOR<UserCreateWithoutRestrictionsInput, UserUncheckedCreateWithoutRestrictionsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutRestrictionsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutRestrictionsInput, UserUncheckedUpdateWithoutRestrictionsInput>
+  }
+
+  export type UserUpdateWithoutRestrictionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    username?: StringFieldUpdateOperationsInput | string
+    displayName?: StringFieldUpdateOperationsInput | string
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    points?: IntFieldUpdateOperationsInput | number
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    userProgress?: UserProgressUpdateManyWithoutUserNestedInput
+    passwordReset?: PasswordResetUpdateOneWithoutUserNestedInput
+    mfa?: MultiFactorAuthenticationUpdateOneWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutRestrictionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    username?: StringFieldUpdateOperationsInput | string
+    displayName?: StringFieldUpdateOperationsInput | string
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    points?: IntFieldUpdateOperationsInput | number
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    userProgress?: UserProgressUncheckedUpdateManyWithoutUserNestedInput
+    passwordReset?: PasswordResetUncheckedUpdateOneWithoutUserNestedInput
+    mfa?: MultiFactorAuthenticationUncheckedUpdateOneWithoutUserNestedInput
   }
 
   export type LessonCreateWithoutCourseInput = {
@@ -11350,6 +12974,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     passwordReset?: PasswordResetCreateNestedOneWithoutUserInput
     mfa?: MultiFactorAuthenticationCreateNestedOneWithoutUserInput
+    restrictions?: RestrictionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutUserProgressInput = {
@@ -11365,6 +12990,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     passwordReset?: PasswordResetUncheckedCreateNestedOneWithoutUserInput
     mfa?: MultiFactorAuthenticationUncheckedCreateNestedOneWithoutUserInput
+    restrictions?: RestrictionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutUserProgressInput = {
@@ -11427,6 +13053,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     passwordReset?: PasswordResetUpdateOneWithoutUserNestedInput
     mfa?: MultiFactorAuthenticationUpdateOneWithoutUserNestedInput
+    restrictions?: RestrictionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutUserProgressInput = {
@@ -11442,6 +13069,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     passwordReset?: PasswordResetUncheckedUpdateOneWithoutUserNestedInput
     mfa?: MultiFactorAuthenticationUncheckedUpdateOneWithoutUserNestedInput
+    restrictions?: RestrictionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type LessonUpsertWithoutUserProgressInput = {
@@ -11489,6 +13117,14 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
+  export type RestrictionCreateManyUserInput = {
+    id?: string
+    reason: $Enums.RestrictionReason
+    until?: Date | string | null
+    status?: $Enums.RestrictionStatus
+    createdAt?: Date | string
+  }
+
   export type UserProgressUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     isCompleted?: BoolFieldUpdateOperationsInput | boolean
@@ -11511,6 +13147,30 @@ export namespace Prisma {
     lessonId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RestrictionUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reason?: EnumRestrictionReasonFieldUpdateOperationsInput | $Enums.RestrictionReason
+    until?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumRestrictionStatusFieldUpdateOperationsInput | $Enums.RestrictionStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RestrictionUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reason?: EnumRestrictionReasonFieldUpdateOperationsInput | $Enums.RestrictionReason
+    until?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumRestrictionStatusFieldUpdateOperationsInput | $Enums.RestrictionStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RestrictionUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reason?: EnumRestrictionReasonFieldUpdateOperationsInput | $Enums.RestrictionReason
+    until?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumRestrictionStatusFieldUpdateOperationsInput | $Enums.RestrictionStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type LessonCreateManyCourseInput = {
@@ -11628,6 +13288,10 @@ export namespace Prisma {
      * @deprecated Use TotpDefaultArgs instead
      */
     export type TotpArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = TotpDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use RestrictionDefaultArgs instead
+     */
+    export type RestrictionArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = RestrictionDefaultArgs<ExtArgs>
     /**
      * @deprecated Use CourseDefaultArgs instead
      */

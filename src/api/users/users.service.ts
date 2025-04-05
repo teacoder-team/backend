@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { User } from '@prisma/generated'
+import { RestrictionStatus, TotpStatus, User } from '@prisma/generated'
 import sharp from 'sharp'
 
 import { PrismaService } from '@/infra/prisma/prisma.service'
@@ -22,13 +22,44 @@ export class UsersService {
 			select: {
 				id: true,
 				createdAt: true,
-				displayName: true,
 				email: true,
-				role: true
+				username: true,
+				displayName: true,
+				avatar: true,
+				restrictions: {
+					select: {
+						status: true
+					}
+				},
+				mfa: {
+					select: {
+						recoveryCodes: true,
+						totp: {
+							select: {
+								status: true
+							}
+						}
+					}
+				}
 			}
 		})
 
-		return users
+		return users.map(user => ({
+			id: user.id,
+			createdAt: user.createdAt,
+			email: user.email,
+			username: user.username,
+			displayName: user.displayName,
+			isBanned: user.restrictions.some(
+				restriction => restriction.status === RestrictionStatus.ACTIVE
+			),
+			isMfaEnabled: Boolean(
+				user.mfa &&
+					user.mfa.totp?.status === TotpStatus.ENABLED &&
+					Array.isArray(user.mfa.recoveryCodes) &&
+					user.mfa.recoveryCodes.length > 0
+			)
+		}))
 	}
 
 	public async getMeStatistics(user: User) {
@@ -213,6 +244,13 @@ export class UsersService {
 
 	public async getLeaders() {
 		const users = await this.prismaService.user.findMany({
+			where: {
+				restrictions: {
+					none: {
+						status: RestrictionStatus.ACTIVE
+					}
+				}
+			},
 			orderBy: {
 				points: 'desc'
 			},
