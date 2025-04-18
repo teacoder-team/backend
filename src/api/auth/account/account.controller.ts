@@ -103,7 +103,7 @@ export class AccountController {
 	})
 	@Post('verify/:code')
 	@HttpCode(HttpStatus.OK)
-	public async verfiyEmail(@Param() code: string) {
+	public async verfiyEmail(@Param('code') code: string) {
 		return this.accountService.verifyEmail(code)
 	}
 

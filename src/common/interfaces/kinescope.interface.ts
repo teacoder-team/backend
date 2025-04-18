@@ -1,6 +1,6 @@
 import type { FactoryProvider, ModuleMetadata } from '@nestjs/common'
 
-export const KinescopeOptionsSymbol = Symbol()
+export const KinescopeOptionsSymbol = Symbol('KINESCOPE_OPTIONS')
 
 export type KinescopeOptions = {
 	token: string

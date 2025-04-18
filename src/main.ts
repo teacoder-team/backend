@@ -10,7 +10,11 @@ import helmet from 'helmet'
 import { AppModule } from './app.module'
 import { LoggingInterceptor } from './common/interceptors'
 import { setupSwagger } from './common/utils'
-import { getCorsConfig, getValidationPipeConfig } from './config'
+import {
+	getCorsConfig,
+	getHelmetConfig,
+	getValidationPipeConfig
+} from './config'
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule)
@@ -18,7 +22,7 @@ async function bootstrap() {
 	const config = app.get(ConfigService)
 	const logger = new Logger(AppModule.name)
 
-	app.use(helmet())
+	app.use(helmet(getHelmetConfig()))
 
 	app.useGlobalInterceptors(
 		new ClassSerializerInterceptor(app.get(Reflector))

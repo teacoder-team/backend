@@ -1396,6 +1396,11 @@
   resolved "https://registry.yarnpkg.com/@eslint/js/-/js-8.57.1.tgz#de633db3ec2ef6a3c89e2f19038063e8a122e2c2"
   integrity sha512-d9zaMRSTIKDLhctzH12MtXvJKSSUhaHcjV+2Z+GK+EEY7XKpP5yR4x+N3TAcHTcu963nIr+TMcCb4DBCYX1z6Q==
 
+"@fingerprintjs/fingerprintjs-pro-server-api@^6.4.0":
+  version "6.4.0"
+  resolved "https://registry.yarnpkg.com/@fingerprintjs/fingerprintjs-pro-server-api/-/fingerprintjs-pro-server-api-6.4.0.tgz#73af7efae5e5d93b2f2e5a8d0b7d03c4844f9f3e"
+  integrity sha512-WDn271RNJKLTabnyjNVBb595XtoRGWits/p8nqrE0VfEy0YX5n74ThEaw8YWaPObkxPQNoNjPKrHCTjgKH9CZw==
+
 "@humanwhocodes/config-array@^0.13.0":
   version "0.13.0"
   resolved "https://registry.yarnpkg.com/@humanwhocodes/config-array/-/config-array-0.13.0.tgz#fb907624df3256d04b9aa2df50d7aa97ec648748"

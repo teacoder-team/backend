@@ -25,7 +25,8 @@ model User {
   emailVerification EmailVerification?
   passwordReset     PasswordReset?
 
-  userProgress UserProgress[]
+  externalAccounts ExternalAccount[]
+  userProgress     UserProgress[]
 
   mfa          MultiFactorAuthentication?
   restrictions Restriction[]
@@ -34,6 +35,26 @@ model User {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("users")
+}
+
+model ExternalAccount {
+  id String @id @default(uuid())
+
+  provider          AccountProvider
+  providerAccountId String          @unique @map("provider_account_id")
+
+  refreshToken String? @map("refresh_token")
+  accessToken  String? @map("access_token")
+  expiry       Int?
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @map("user_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([userId, provider])
+  @@map("external_accounts")
 }
 
 model EmailVerification {
@@ -189,9 +210,18 @@ enum UserRole {
   @@map("user_roles")
 }
 
+enum AccountProvider {
+  GOOGLE
+  GITHUB
+
+  @@map("account_providers")
+}
+
 enum EmailVerificationStatus {
   PENDING
   VERIFIED
+
+  @@map("email_verification_statuses")
 }
 
 enum TotpStatus {

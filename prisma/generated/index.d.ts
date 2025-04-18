@@ -19,6 +19,11 @@ export type PrismaPromise<T> = $Public.PrismaPromise<T>
  */
 export type User = $Result.DefaultSelection<Prisma.$UserPayload>
 /**
+ * Model ExternalAccount
+ * 
+ */
+export type ExternalAccount = $Result.DefaultSelection<Prisma.$ExternalAccountPayload>
+/**
  * Model EmailVerification
  * 
  */
@@ -71,6 +76,14 @@ export namespace $Enums {
 export type UserRole = (typeof UserRole)[keyof typeof UserRole]
 
 
+export const AccountProvider: {
+  GOOGLE: 'GOOGLE',
+  GITHUB: 'GITHUB'
+};
+
+export type AccountProvider = (typeof AccountProvider)[keyof typeof AccountProvider]
+
+
 export const EmailVerificationStatus: {
   PENDING: 'PENDING',
   VERIFIED: 'VERIFIED'
@@ -110,6 +123,10 @@ export type RestrictionStatus = (typeof RestrictionStatus)[keyof typeof Restrict
 export type UserRole = $Enums.UserRole
 
 export const UserRole: typeof $Enums.UserRole
+
+export type AccountProvider = $Enums.AccountProvider
+
+export const AccountProvider: typeof $Enums.AccountProvider
 
 export type EmailVerificationStatus = $Enums.EmailVerificationStatus
 
@@ -259,6 +276,16 @@ export class PrismaClient<
     * ```
     */
   get user(): Prisma.UserDelegate<ExtArgs>;
+
+  /**
+   * `prisma.externalAccount`: Exposes CRUD operations for the **ExternalAccount** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ExternalAccounts
+    * const externalAccounts = await prisma.externalAccount.findMany()
+    * ```
+    */
+  get externalAccount(): Prisma.ExternalAccountDelegate<ExtArgs>;
 
   /**
    * `prisma.emailVerification`: Exposes CRUD operations for the **EmailVerification** model.
@@ -781,6 +808,7 @@ export namespace Prisma {
 
   export const ModelName: {
     User: 'User',
+    ExternalAccount: 'ExternalAccount',
     EmailVerification: 'EmailVerification',
     PasswordReset: 'PasswordReset',
     MultiFactorAuthentication: 'MultiFactorAuthentication',
@@ -804,7 +832,7 @@ export namespace Prisma {
 
   export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> = {
     meta: {
-      modelProps: "user" | "emailVerification" | "passwordReset" | "multiFactorAuthentication" | "totp" | "restriction" | "course" | "lesson" | "userProgress"
+      modelProps: "user" | "externalAccount" | "emailVerification" | "passwordReset" | "multiFactorAuthentication" | "totp" | "restriction" | "course" | "lesson" | "userProgress"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -875,6 +903,76 @@ export namespace Prisma {
           count: {
             args: Prisma.UserCountArgs<ExtArgs>
             result: $Utils.Optional<UserCountAggregateOutputType> | number
+          }
+        }
+      }
+      ExternalAccount: {
+        payload: Prisma.$ExternalAccountPayload<ExtArgs>
+        fields: Prisma.ExternalAccountFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ExternalAccountFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ExternalAccountPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ExternalAccountFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ExternalAccountPayload>
+          }
+          findFirst: {
+            args: Prisma.ExternalAccountFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ExternalAccountPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ExternalAccountFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ExternalAccountPayload>
+          }
+          findMany: {
+            args: Prisma.ExternalAccountFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ExternalAccountPayload>[]
+          }
+          create: {
+            args: Prisma.ExternalAccountCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ExternalAccountPayload>
+          }
+          createMany: {
+            args: Prisma.ExternalAccountCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ExternalAccountCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ExternalAccountPayload>[]
+          }
+          delete: {
+            args: Prisma.ExternalAccountDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ExternalAccountPayload>
+          }
+          update: {
+            args: Prisma.ExternalAccountUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ExternalAccountPayload>
+          }
+          deleteMany: {
+            args: Prisma.ExternalAccountDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ExternalAccountUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.ExternalAccountUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ExternalAccountPayload>
+          }
+          aggregate: {
+            args: Prisma.ExternalAccountAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateExternalAccount>
+          }
+          groupBy: {
+            args: Prisma.ExternalAccountGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ExternalAccountGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ExternalAccountCountArgs<ExtArgs>
+            result: $Utils.Optional<ExternalAccountCountAggregateOutputType> | number
           }
         }
       }
@@ -1599,11 +1697,13 @@ export namespace Prisma {
    */
 
   export type UserCountOutputType = {
+    externalAccounts: number
     userProgress: number
     restrictions: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    externalAccounts?: boolean | UserCountOutputTypeCountExternalAccountsArgs
     userProgress?: boolean | UserCountOutputTypeCountUserProgressArgs
     restrictions?: boolean | UserCountOutputTypeCountRestrictionsArgs
   }
@@ -1617,6 +1717,13 @@ export namespace Prisma {
      * Select specific fields to fetch from the UserCountOutputType
      */
     select?: UserCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountExternalAccountsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ExternalAccountWhereInput
   }
 
   /**
@@ -1940,6 +2047,7 @@ export namespace Prisma {
     updatedAt?: boolean
     emailVerification?: boolean | User$emailVerificationArgs<ExtArgs>
     passwordReset?: boolean | User$passwordResetArgs<ExtArgs>
+    externalAccounts?: boolean | User$externalAccountsArgs<ExtArgs>
     userProgress?: boolean | User$userProgressArgs<ExtArgs>
     mfa?: boolean | User$mfaArgs<ExtArgs>
     restrictions?: boolean | User$restrictionsArgs<ExtArgs>
@@ -1975,6 +2083,7 @@ export namespace Prisma {
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     emailVerification?: boolean | User$emailVerificationArgs<ExtArgs>
     passwordReset?: boolean | User$passwordResetArgs<ExtArgs>
+    externalAccounts?: boolean | User$externalAccountsArgs<ExtArgs>
     userProgress?: boolean | User$userProgressArgs<ExtArgs>
     mfa?: boolean | User$mfaArgs<ExtArgs>
     restrictions?: boolean | User$restrictionsArgs<ExtArgs>
@@ -1987,6 +2096,7 @@ export namespace Prisma {
     objects: {
       emailVerification: Prisma.$EmailVerificationPayload<ExtArgs> | null
       passwordReset: Prisma.$PasswordResetPayload<ExtArgs> | null
+      externalAccounts: Prisma.$ExternalAccountPayload<ExtArgs>[]
       userProgress: Prisma.$UserProgressPayload<ExtArgs>[]
       mfa: Prisma.$MultiFactorAuthenticationPayload<ExtArgs> | null
       restrictions: Prisma.$RestrictionPayload<ExtArgs>[]
@@ -2368,6 +2478,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     emailVerification<T extends User$emailVerificationArgs<ExtArgs> = {}>(args?: Subset<T, User$emailVerificationArgs<ExtArgs>>): Prisma__EmailVerificationClient<$Result.GetResult<Prisma.$EmailVerificationPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     passwordReset<T extends User$passwordResetArgs<ExtArgs> = {}>(args?: Subset<T, User$passwordResetArgs<ExtArgs>>): Prisma__PasswordResetClient<$Result.GetResult<Prisma.$PasswordResetPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
+    externalAccounts<T extends User$externalAccountsArgs<ExtArgs> = {}>(args?: Subset<T, User$externalAccountsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ExternalAccountPayload<ExtArgs>, T, "findMany"> | Null>
     userProgress<T extends User$userProgressArgs<ExtArgs> = {}>(args?: Subset<T, User$userProgressArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserProgressPayload<ExtArgs>, T, "findMany"> | Null>
     mfa<T extends User$mfaArgs<ExtArgs> = {}>(args?: Subset<T, User$mfaArgs<ExtArgs>>): Prisma__MultiFactorAuthenticationClient<$Result.GetResult<Prisma.$MultiFactorAuthenticationPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     restrictions<T extends User$restrictionsArgs<ExtArgs> = {}>(args?: Subset<T, User$restrictionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RestrictionPayload<ExtArgs>, T, "findMany"> | Null>
@@ -2754,6 +2865,26 @@ export namespace Prisma {
   }
 
   /**
+   * User.externalAccounts
+   */
+  export type User$externalAccountsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ExternalAccount
+     */
+    select?: ExternalAccountSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ExternalAccountInclude<ExtArgs> | null
+    where?: ExternalAccountWhereInput
+    orderBy?: ExternalAccountOrderByWithRelationInput | ExternalAccountOrderByWithRelationInput[]
+    cursor?: ExternalAccountWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ExternalAccountScalarFieldEnum | ExternalAccountScalarFieldEnum[]
+  }
+
+  /**
    * User.userProgress
    */
   export type User$userProgressArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2820,6 +2951,1021 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: UserInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model ExternalAccount
+   */
+
+  export type AggregateExternalAccount = {
+    _count: ExternalAccountCountAggregateOutputType | null
+    _avg: ExternalAccountAvgAggregateOutputType | null
+    _sum: ExternalAccountSumAggregateOutputType | null
+    _min: ExternalAccountMinAggregateOutputType | null
+    _max: ExternalAccountMaxAggregateOutputType | null
+  }
+
+  export type ExternalAccountAvgAggregateOutputType = {
+    expiry: number | null
+  }
+
+  export type ExternalAccountSumAggregateOutputType = {
+    expiry: number | null
+  }
+
+  export type ExternalAccountMinAggregateOutputType = {
+    id: string | null
+    provider: $Enums.AccountProvider | null
+    providerAccountId: string | null
+    refreshToken: string | null
+    accessToken: string | null
+    expiry: number | null
+    userId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ExternalAccountMaxAggregateOutputType = {
+    id: string | null
+    provider: $Enums.AccountProvider | null
+    providerAccountId: string | null
+    refreshToken: string | null
+    accessToken: string | null
+    expiry: number | null
+    userId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ExternalAccountCountAggregateOutputType = {
+    id: number
+    provider: number
+    providerAccountId: number
+    refreshToken: number
+    accessToken: number
+    expiry: number
+    userId: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type ExternalAccountAvgAggregateInputType = {
+    expiry?: true
+  }
+
+  export type ExternalAccountSumAggregateInputType = {
+    expiry?: true
+  }
+
+  export type ExternalAccountMinAggregateInputType = {
+    id?: true
+    provider?: true
+    providerAccountId?: true
+    refreshToken?: true
+    accessToken?: true
+    expiry?: true
+    userId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type ExternalAccountMaxAggregateInputType = {
+    id?: true
+    provider?: true
+    providerAccountId?: true
+    refreshToken?: true
+    accessToken?: true
+    expiry?: true
+    userId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type ExternalAccountCountAggregateInputType = {
+    id?: true
+    provider?: true
+    providerAccountId?: true
+    refreshToken?: true
+    accessToken?: true
+    expiry?: true
+    userId?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type ExternalAccountAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ExternalAccount to aggregate.
+     */
+    where?: ExternalAccountWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ExternalAccounts to fetch.
+     */
+    orderBy?: ExternalAccountOrderByWithRelationInput | ExternalAccountOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ExternalAccountWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ExternalAccounts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ExternalAccounts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ExternalAccounts
+    **/
+    _count?: true | ExternalAccountCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: ExternalAccountAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ExternalAccountSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ExternalAccountMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ExternalAccountMaxAggregateInputType
+  }
+
+  export type GetExternalAccountAggregateType<T extends ExternalAccountAggregateArgs> = {
+        [P in keyof T & keyof AggregateExternalAccount]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateExternalAccount[P]>
+      : GetScalarType<T[P], AggregateExternalAccount[P]>
+  }
+
+
+
+
+  export type ExternalAccountGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ExternalAccountWhereInput
+    orderBy?: ExternalAccountOrderByWithAggregationInput | ExternalAccountOrderByWithAggregationInput[]
+    by: ExternalAccountScalarFieldEnum[] | ExternalAccountScalarFieldEnum
+    having?: ExternalAccountScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ExternalAccountCountAggregateInputType | true
+    _avg?: ExternalAccountAvgAggregateInputType
+    _sum?: ExternalAccountSumAggregateInputType
+    _min?: ExternalAccountMinAggregateInputType
+    _max?: ExternalAccountMaxAggregateInputType
+  }
+
+  export type ExternalAccountGroupByOutputType = {
+    id: string
+    provider: $Enums.AccountProvider
+    providerAccountId: string
+    refreshToken: string | null
+    accessToken: string | null
+    expiry: number | null
+    userId: string
+    createdAt: Date
+    updatedAt: Date
+    _count: ExternalAccountCountAggregateOutputType | null
+    _avg: ExternalAccountAvgAggregateOutputType | null
+    _sum: ExternalAccountSumAggregateOutputType | null
+    _min: ExternalAccountMinAggregateOutputType | null
+    _max: ExternalAccountMaxAggregateOutputType | null
+  }
+
+  type GetExternalAccountGroupByPayload<T extends ExternalAccountGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ExternalAccountGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ExternalAccountGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ExternalAccountGroupByOutputType[P]>
+            : GetScalarType<T[P], ExternalAccountGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ExternalAccountSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    provider?: boolean
+    providerAccountId?: boolean
+    refreshToken?: boolean
+    accessToken?: boolean
+    expiry?: boolean
+    userId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["externalAccount"]>
+
+  export type ExternalAccountSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    provider?: boolean
+    providerAccountId?: boolean
+    refreshToken?: boolean
+    accessToken?: boolean
+    expiry?: boolean
+    userId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["externalAccount"]>
+
+  export type ExternalAccountSelectScalar = {
+    id?: boolean
+    provider?: boolean
+    providerAccountId?: boolean
+    refreshToken?: boolean
+    accessToken?: boolean
+    expiry?: boolean
+    userId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type ExternalAccountInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type ExternalAccountIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $ExternalAccountPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ExternalAccount"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      provider: $Enums.AccountProvider
+      providerAccountId: string
+      refreshToken: string | null
+      accessToken: string | null
+      expiry: number | null
+      userId: string
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["externalAccount"]>
+    composites: {}
+  }
+
+  type ExternalAccountGetPayload<S extends boolean | null | undefined | ExternalAccountDefaultArgs> = $Result.GetResult<Prisma.$ExternalAccountPayload, S>
+
+  type ExternalAccountCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<ExternalAccountFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: ExternalAccountCountAggregateInputType | true
+    }
+
+  export interface ExternalAccountDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ExternalAccount'], meta: { name: 'ExternalAccount' } }
+    /**
+     * Find zero or one ExternalAccount that matches the filter.
+     * @param {ExternalAccountFindUniqueArgs} args - Arguments to find a ExternalAccount
+     * @example
+     * // Get one ExternalAccount
+     * const externalAccount = await prisma.externalAccount.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ExternalAccountFindUniqueArgs>(args: SelectSubset<T, ExternalAccountFindUniqueArgs<ExtArgs>>): Prisma__ExternalAccountClient<$Result.GetResult<Prisma.$ExternalAccountPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one ExternalAccount that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {ExternalAccountFindUniqueOrThrowArgs} args - Arguments to find a ExternalAccount
+     * @example
+     * // Get one ExternalAccount
+     * const externalAccount = await prisma.externalAccount.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ExternalAccountFindUniqueOrThrowArgs>(args: SelectSubset<T, ExternalAccountFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ExternalAccountClient<$Result.GetResult<Prisma.$ExternalAccountPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first ExternalAccount that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ExternalAccountFindFirstArgs} args - Arguments to find a ExternalAccount
+     * @example
+     * // Get one ExternalAccount
+     * const externalAccount = await prisma.externalAccount.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ExternalAccountFindFirstArgs>(args?: SelectSubset<T, ExternalAccountFindFirstArgs<ExtArgs>>): Prisma__ExternalAccountClient<$Result.GetResult<Prisma.$ExternalAccountPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first ExternalAccount that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ExternalAccountFindFirstOrThrowArgs} args - Arguments to find a ExternalAccount
+     * @example
+     * // Get one ExternalAccount
+     * const externalAccount = await prisma.externalAccount.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ExternalAccountFindFirstOrThrowArgs>(args?: SelectSubset<T, ExternalAccountFindFirstOrThrowArgs<ExtArgs>>): Prisma__ExternalAccountClient<$Result.GetResult<Prisma.$ExternalAccountPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more ExternalAccounts that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ExternalAccountFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ExternalAccounts
+     * const externalAccounts = await prisma.externalAccount.findMany()
+     * 
+     * // Get first 10 ExternalAccounts
+     * const externalAccounts = await prisma.externalAccount.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const externalAccountWithIdOnly = await prisma.externalAccount.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ExternalAccountFindManyArgs>(args?: SelectSubset<T, ExternalAccountFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ExternalAccountPayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a ExternalAccount.
+     * @param {ExternalAccountCreateArgs} args - Arguments to create a ExternalAccount.
+     * @example
+     * // Create one ExternalAccount
+     * const ExternalAccount = await prisma.externalAccount.create({
+     *   data: {
+     *     // ... data to create a ExternalAccount
+     *   }
+     * })
+     * 
+     */
+    create<T extends ExternalAccountCreateArgs>(args: SelectSubset<T, ExternalAccountCreateArgs<ExtArgs>>): Prisma__ExternalAccountClient<$Result.GetResult<Prisma.$ExternalAccountPayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many ExternalAccounts.
+     * @param {ExternalAccountCreateManyArgs} args - Arguments to create many ExternalAccounts.
+     * @example
+     * // Create many ExternalAccounts
+     * const externalAccount = await prisma.externalAccount.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ExternalAccountCreateManyArgs>(args?: SelectSubset<T, ExternalAccountCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ExternalAccounts and returns the data saved in the database.
+     * @param {ExternalAccountCreateManyAndReturnArgs} args - Arguments to create many ExternalAccounts.
+     * @example
+     * // Create many ExternalAccounts
+     * const externalAccount = await prisma.externalAccount.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ExternalAccounts and only return the `id`
+     * const externalAccountWithIdOnly = await prisma.externalAccount.createManyAndReturn({ 
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ExternalAccountCreateManyAndReturnArgs>(args?: SelectSubset<T, ExternalAccountCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ExternalAccountPayload<ExtArgs>, T, "createManyAndReturn">>
+
+    /**
+     * Delete a ExternalAccount.
+     * @param {ExternalAccountDeleteArgs} args - Arguments to delete one ExternalAccount.
+     * @example
+     * // Delete one ExternalAccount
+     * const ExternalAccount = await prisma.externalAccount.delete({
+     *   where: {
+     *     // ... filter to delete one ExternalAccount
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ExternalAccountDeleteArgs>(args: SelectSubset<T, ExternalAccountDeleteArgs<ExtArgs>>): Prisma__ExternalAccountClient<$Result.GetResult<Prisma.$ExternalAccountPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one ExternalAccount.
+     * @param {ExternalAccountUpdateArgs} args - Arguments to update one ExternalAccount.
+     * @example
+     * // Update one ExternalAccount
+     * const externalAccount = await prisma.externalAccount.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ExternalAccountUpdateArgs>(args: SelectSubset<T, ExternalAccountUpdateArgs<ExtArgs>>): Prisma__ExternalAccountClient<$Result.GetResult<Prisma.$ExternalAccountPayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more ExternalAccounts.
+     * @param {ExternalAccountDeleteManyArgs} args - Arguments to filter ExternalAccounts to delete.
+     * @example
+     * // Delete a few ExternalAccounts
+     * const { count } = await prisma.externalAccount.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ExternalAccountDeleteManyArgs>(args?: SelectSubset<T, ExternalAccountDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ExternalAccounts.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ExternalAccountUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ExternalAccounts
+     * const externalAccount = await prisma.externalAccount.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ExternalAccountUpdateManyArgs>(args: SelectSubset<T, ExternalAccountUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one ExternalAccount.
+     * @param {ExternalAccountUpsertArgs} args - Arguments to update or create a ExternalAccount.
+     * @example
+     * // Update or create a ExternalAccount
+     * const externalAccount = await prisma.externalAccount.upsert({
+     *   create: {
+     *     // ... data to create a ExternalAccount
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ExternalAccount we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ExternalAccountUpsertArgs>(args: SelectSubset<T, ExternalAccountUpsertArgs<ExtArgs>>): Prisma__ExternalAccountClient<$Result.GetResult<Prisma.$ExternalAccountPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of ExternalAccounts.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ExternalAccountCountArgs} args - Arguments to filter ExternalAccounts to count.
+     * @example
+     * // Count the number of ExternalAccounts
+     * const count = await prisma.externalAccount.count({
+     *   where: {
+     *     // ... the filter for the ExternalAccounts we want to count
+     *   }
+     * })
+    **/
+    count<T extends ExternalAccountCountArgs>(
+      args?: Subset<T, ExternalAccountCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ExternalAccountCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ExternalAccount.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ExternalAccountAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ExternalAccountAggregateArgs>(args: Subset<T, ExternalAccountAggregateArgs>): Prisma.PrismaPromise<GetExternalAccountAggregateType<T>>
+
+    /**
+     * Group by ExternalAccount.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ExternalAccountGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ExternalAccountGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ExternalAccountGroupByArgs['orderBy'] }
+        : { orderBy?: ExternalAccountGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ExternalAccountGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetExternalAccountGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ExternalAccount model
+   */
+  readonly fields: ExternalAccountFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ExternalAccount.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ExternalAccountClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ExternalAccount model
+   */ 
+  interface ExternalAccountFieldRefs {
+    readonly id: FieldRef<"ExternalAccount", 'String'>
+    readonly provider: FieldRef<"ExternalAccount", 'AccountProvider'>
+    readonly providerAccountId: FieldRef<"ExternalAccount", 'String'>
+    readonly refreshToken: FieldRef<"ExternalAccount", 'String'>
+    readonly accessToken: FieldRef<"ExternalAccount", 'String'>
+    readonly expiry: FieldRef<"ExternalAccount", 'Int'>
+    readonly userId: FieldRef<"ExternalAccount", 'String'>
+    readonly createdAt: FieldRef<"ExternalAccount", 'DateTime'>
+    readonly updatedAt: FieldRef<"ExternalAccount", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ExternalAccount findUnique
+   */
+  export type ExternalAccountFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ExternalAccount
+     */
+    select?: ExternalAccountSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ExternalAccountInclude<ExtArgs> | null
+    /**
+     * Filter, which ExternalAccount to fetch.
+     */
+    where: ExternalAccountWhereUniqueInput
+  }
+
+  /**
+   * ExternalAccount findUniqueOrThrow
+   */
+  export type ExternalAccountFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ExternalAccount
+     */
+    select?: ExternalAccountSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ExternalAccountInclude<ExtArgs> | null
+    /**
+     * Filter, which ExternalAccount to fetch.
+     */
+    where: ExternalAccountWhereUniqueInput
+  }
+
+  /**
+   * ExternalAccount findFirst
+   */
+  export type ExternalAccountFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ExternalAccount
+     */
+    select?: ExternalAccountSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ExternalAccountInclude<ExtArgs> | null
+    /**
+     * Filter, which ExternalAccount to fetch.
+     */
+    where?: ExternalAccountWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ExternalAccounts to fetch.
+     */
+    orderBy?: ExternalAccountOrderByWithRelationInput | ExternalAccountOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ExternalAccounts.
+     */
+    cursor?: ExternalAccountWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ExternalAccounts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ExternalAccounts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ExternalAccounts.
+     */
+    distinct?: ExternalAccountScalarFieldEnum | ExternalAccountScalarFieldEnum[]
+  }
+
+  /**
+   * ExternalAccount findFirstOrThrow
+   */
+  export type ExternalAccountFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ExternalAccount
+     */
+    select?: ExternalAccountSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ExternalAccountInclude<ExtArgs> | null
+    /**
+     * Filter, which ExternalAccount to fetch.
+     */
+    where?: ExternalAccountWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ExternalAccounts to fetch.
+     */
+    orderBy?: ExternalAccountOrderByWithRelationInput | ExternalAccountOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ExternalAccounts.
+     */
+    cursor?: ExternalAccountWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ExternalAccounts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ExternalAccounts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ExternalAccounts.
+     */
+    distinct?: ExternalAccountScalarFieldEnum | ExternalAccountScalarFieldEnum[]
+  }
+
+  /**
+   * ExternalAccount findMany
+   */
+  export type ExternalAccountFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ExternalAccount
+     */
+    select?: ExternalAccountSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ExternalAccountInclude<ExtArgs> | null
+    /**
+     * Filter, which ExternalAccounts to fetch.
+     */
+    where?: ExternalAccountWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ExternalAccounts to fetch.
+     */
+    orderBy?: ExternalAccountOrderByWithRelationInput | ExternalAccountOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ExternalAccounts.
+     */
+    cursor?: ExternalAccountWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ExternalAccounts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ExternalAccounts.
+     */
+    skip?: number
+    distinct?: ExternalAccountScalarFieldEnum | ExternalAccountScalarFieldEnum[]
+  }
+
+  /**
+   * ExternalAccount create
+   */
+  export type ExternalAccountCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ExternalAccount
+     */
+    select?: ExternalAccountSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ExternalAccountInclude<ExtArgs> | null
+    /**
+     * The data needed to create a ExternalAccount.
+     */
+    data: XOR<ExternalAccountCreateInput, ExternalAccountUncheckedCreateInput>
+  }
+
+  /**
+   * ExternalAccount createMany
+   */
+  export type ExternalAccountCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ExternalAccounts.
+     */
+    data: ExternalAccountCreateManyInput | ExternalAccountCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ExternalAccount createManyAndReturn
+   */
+  export type ExternalAccountCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ExternalAccount
+     */
+    select?: ExternalAccountSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * The data used to create many ExternalAccounts.
+     */
+    data: ExternalAccountCreateManyInput | ExternalAccountCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ExternalAccountIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ExternalAccount update
+   */
+  export type ExternalAccountUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ExternalAccount
+     */
+    select?: ExternalAccountSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ExternalAccountInclude<ExtArgs> | null
+    /**
+     * The data needed to update a ExternalAccount.
+     */
+    data: XOR<ExternalAccountUpdateInput, ExternalAccountUncheckedUpdateInput>
+    /**
+     * Choose, which ExternalAccount to update.
+     */
+    where: ExternalAccountWhereUniqueInput
+  }
+
+  /**
+   * ExternalAccount updateMany
+   */
+  export type ExternalAccountUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ExternalAccounts.
+     */
+    data: XOR<ExternalAccountUpdateManyMutationInput, ExternalAccountUncheckedUpdateManyInput>
+    /**
+     * Filter which ExternalAccounts to update
+     */
+    where?: ExternalAccountWhereInput
+  }
+
+  /**
+   * ExternalAccount upsert
+   */
+  export type ExternalAccountUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ExternalAccount
+     */
+    select?: ExternalAccountSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ExternalAccountInclude<ExtArgs> | null
+    /**
+     * The filter to search for the ExternalAccount to update in case it exists.
+     */
+    where: ExternalAccountWhereUniqueInput
+    /**
+     * In case the ExternalAccount found by the `where` argument doesn't exist, create a new ExternalAccount with this data.
+     */
+    create: XOR<ExternalAccountCreateInput, ExternalAccountUncheckedCreateInput>
+    /**
+     * In case the ExternalAccount was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ExternalAccountUpdateInput, ExternalAccountUncheckedUpdateInput>
+  }
+
+  /**
+   * ExternalAccount delete
+   */
+  export type ExternalAccountDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ExternalAccount
+     */
+    select?: ExternalAccountSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ExternalAccountInclude<ExtArgs> | null
+    /**
+     * Filter which ExternalAccount to delete.
+     */
+    where: ExternalAccountWhereUniqueInput
+  }
+
+  /**
+   * ExternalAccount deleteMany
+   */
+  export type ExternalAccountDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ExternalAccounts to delete
+     */
+    where?: ExternalAccountWhereInput
+  }
+
+  /**
+   * ExternalAccount without action
+   */
+  export type ExternalAccountDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ExternalAccount
+     */
+    select?: ExternalAccountSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ExternalAccountInclude<ExtArgs> | null
   }
 
 
@@ -2971,7 +4117,7 @@ export namespace Prisma {
   export type EmailVerificationGroupByOutputType = {
     id: string
     token: string
-    expiry: Date
+    expiry: Date | null
     status: $Enums.EmailVerificationStatus
     userId: string
     createdAt: Date
@@ -3042,7 +4188,7 @@ export namespace Prisma {
     scalars: $Extensions.GetPayloadResult<{
       id: string
       token: string
-      expiry: Date
+      expiry: Date | null
       status: $Enums.EmailVerificationStatus
       userId: string
       createdAt: Date
@@ -10661,6 +11807,21 @@ export namespace Prisma {
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
 
 
+  export const ExternalAccountScalarFieldEnum: {
+    id: 'id',
+    provider: 'provider',
+    providerAccountId: 'providerAccountId',
+    refreshToken: 'refreshToken',
+    accessToken: 'accessToken',
+    expiry: 'expiry',
+    userId: 'userId',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type ExternalAccountScalarFieldEnum = (typeof ExternalAccountScalarFieldEnum)[keyof typeof ExternalAccountScalarFieldEnum]
+
+
   export const EmailVerificationScalarFieldEnum: {
     id: 'id',
     token: 'token',
@@ -10852,6 +12013,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'AccountProvider'
+   */
+  export type EnumAccountProviderFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AccountProvider'>
+    
+
+
+  /**
+   * Reference to a field of type 'AccountProvider[]'
+   */
+  export type ListEnumAccountProviderFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AccountProvider[]'>
+    
+
+
+  /**
    * Reference to a field of type 'EmailVerificationStatus'
    */
   export type EnumEmailVerificationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EmailVerificationStatus'>
@@ -10947,6 +12122,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"User"> | Date | string
     emailVerification?: XOR<EmailVerificationNullableRelationFilter, EmailVerificationWhereInput> | null
     passwordReset?: XOR<PasswordResetNullableRelationFilter, PasswordResetWhereInput> | null
+    externalAccounts?: ExternalAccountListRelationFilter
     userProgress?: UserProgressListRelationFilter
     mfa?: XOR<MultiFactorAuthenticationNullableRelationFilter, MultiFactorAuthenticationWhereInput> | null
     restrictions?: RestrictionListRelationFilter
@@ -10965,6 +12141,7 @@ export namespace Prisma {
     updatedAt?: SortOrder
     emailVerification?: EmailVerificationOrderByWithRelationInput
     passwordReset?: PasswordResetOrderByWithRelationInput
+    externalAccounts?: ExternalAccountOrderByRelationAggregateInput
     userProgress?: UserProgressOrderByRelationAggregateInput
     mfa?: MultiFactorAuthenticationOrderByWithRelationInput
     restrictions?: RestrictionOrderByRelationAggregateInput
@@ -10986,6 +12163,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"User"> | Date | string
     emailVerification?: XOR<EmailVerificationNullableRelationFilter, EmailVerificationWhereInput> | null
     passwordReset?: XOR<PasswordResetNullableRelationFilter, PasswordResetWhereInput> | null
+    externalAccounts?: ExternalAccountListRelationFilter
     userProgress?: UserProgressListRelationFilter
     mfa?: XOR<MultiFactorAuthenticationNullableRelationFilter, MultiFactorAuthenticationWhereInput> | null
     restrictions?: RestrictionListRelationFilter
@@ -11025,13 +12203,91 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
   }
 
+  export type ExternalAccountWhereInput = {
+    AND?: ExternalAccountWhereInput | ExternalAccountWhereInput[]
+    OR?: ExternalAccountWhereInput[]
+    NOT?: ExternalAccountWhereInput | ExternalAccountWhereInput[]
+    id?: StringFilter<"ExternalAccount"> | string
+    provider?: EnumAccountProviderFilter<"ExternalAccount"> | $Enums.AccountProvider
+    providerAccountId?: StringFilter<"ExternalAccount"> | string
+    refreshToken?: StringNullableFilter<"ExternalAccount"> | string | null
+    accessToken?: StringNullableFilter<"ExternalAccount"> | string | null
+    expiry?: IntNullableFilter<"ExternalAccount"> | number | null
+    userId?: StringFilter<"ExternalAccount"> | string
+    createdAt?: DateTimeFilter<"ExternalAccount"> | Date | string
+    updatedAt?: DateTimeFilter<"ExternalAccount"> | Date | string
+    user?: XOR<UserRelationFilter, UserWhereInput>
+  }
+
+  export type ExternalAccountOrderByWithRelationInput = {
+    id?: SortOrder
+    provider?: SortOrder
+    providerAccountId?: SortOrder
+    refreshToken?: SortOrderInput | SortOrder
+    accessToken?: SortOrderInput | SortOrder
+    expiry?: SortOrderInput | SortOrder
+    userId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    user?: UserOrderByWithRelationInput
+  }
+
+  export type ExternalAccountWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    providerAccountId?: string
+    userId_provider?: ExternalAccountUserIdProviderCompoundUniqueInput
+    AND?: ExternalAccountWhereInput | ExternalAccountWhereInput[]
+    OR?: ExternalAccountWhereInput[]
+    NOT?: ExternalAccountWhereInput | ExternalAccountWhereInput[]
+    provider?: EnumAccountProviderFilter<"ExternalAccount"> | $Enums.AccountProvider
+    refreshToken?: StringNullableFilter<"ExternalAccount"> | string | null
+    accessToken?: StringNullableFilter<"ExternalAccount"> | string | null
+    expiry?: IntNullableFilter<"ExternalAccount"> | number | null
+    userId?: StringFilter<"ExternalAccount"> | string
+    createdAt?: DateTimeFilter<"ExternalAccount"> | Date | string
+    updatedAt?: DateTimeFilter<"ExternalAccount"> | Date | string
+    user?: XOR<UserRelationFilter, UserWhereInput>
+  }, "id" | "providerAccountId" | "userId_provider">
+
+  export type ExternalAccountOrderByWithAggregationInput = {
+    id?: SortOrder
+    provider?: SortOrder
+    providerAccountId?: SortOrder
+    refreshToken?: SortOrderInput | SortOrder
+    accessToken?: SortOrderInput | SortOrder
+    expiry?: SortOrderInput | SortOrder
+    userId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: ExternalAccountCountOrderByAggregateInput
+    _avg?: ExternalAccountAvgOrderByAggregateInput
+    _max?: ExternalAccountMaxOrderByAggregateInput
+    _min?: ExternalAccountMinOrderByAggregateInput
+    _sum?: ExternalAccountSumOrderByAggregateInput
+  }
+
+  export type ExternalAccountScalarWhereWithAggregatesInput = {
+    AND?: ExternalAccountScalarWhereWithAggregatesInput | ExternalAccountScalarWhereWithAggregatesInput[]
+    OR?: ExternalAccountScalarWhereWithAggregatesInput[]
+    NOT?: ExternalAccountScalarWhereWithAggregatesInput | ExternalAccountScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"ExternalAccount"> | string
+    provider?: EnumAccountProviderWithAggregatesFilter<"ExternalAccount"> | $Enums.AccountProvider
+    providerAccountId?: StringWithAggregatesFilter<"ExternalAccount"> | string
+    refreshToken?: StringNullableWithAggregatesFilter<"ExternalAccount"> | string | null
+    accessToken?: StringNullableWithAggregatesFilter<"ExternalAccount"> | string | null
+    expiry?: IntNullableWithAggregatesFilter<"ExternalAccount"> | number | null
+    userId?: StringWithAggregatesFilter<"ExternalAccount"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"ExternalAccount"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"ExternalAccount"> | Date | string
+  }
+
   export type EmailVerificationWhereInput = {
     AND?: EmailVerificationWhereInput | EmailVerificationWhereInput[]
     OR?: EmailVerificationWhereInput[]
     NOT?: EmailVerificationWhereInput | EmailVerificationWhereInput[]
     id?: StringFilter<"EmailVerification"> | string
     token?: StringFilter<"EmailVerification"> | string
-    expiry?: DateTimeFilter<"EmailVerification"> | Date | string
+    expiry?: DateTimeNullableFilter<"EmailVerification"> | Date | string | null
     status?: EnumEmailVerificationStatusFilter<"EmailVerification"> | $Enums.EmailVerificationStatus
     userId?: StringFilter<"EmailVerification"> | string
     createdAt?: DateTimeFilter<"EmailVerification"> | Date | string
@@ -11042,7 +12298,7 @@ export namespace Prisma {
   export type EmailVerificationOrderByWithRelationInput = {
     id?: SortOrder
     token?: SortOrder
-    expiry?: SortOrder
+    expiry?: SortOrderInput | SortOrder
     status?: SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
@@ -11057,7 +12313,7 @@ export namespace Prisma {
     AND?: EmailVerificationWhereInput | EmailVerificationWhereInput[]
     OR?: EmailVerificationWhereInput[]
     NOT?: EmailVerificationWhereInput | EmailVerificationWhereInput[]
-    expiry?: DateTimeFilter<"EmailVerification"> | Date | string
+    expiry?: DateTimeNullableFilter<"EmailVerification"> | Date | string | null
     status?: EnumEmailVerificationStatusFilter<"EmailVerification"> | $Enums.EmailVerificationStatus
     createdAt?: DateTimeFilter<"EmailVerification"> | Date | string
     updatedAt?: DateTimeFilter<"EmailVerification"> | Date | string
@@ -11067,7 +12323,7 @@ export namespace Prisma {
   export type EmailVerificationOrderByWithAggregationInput = {
     id?: SortOrder
     token?: SortOrder
-    expiry?: SortOrder
+    expiry?: SortOrderInput | SortOrder
     status?: SortOrder
     userId?: SortOrder
     createdAt?: SortOrder
@@ -11083,7 +12339,7 @@ export namespace Prisma {
     NOT?: EmailVerificationScalarWhereWithAggregatesInput | EmailVerificationScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"EmailVerification"> | string
     token?: StringWithAggregatesFilter<"EmailVerification"> | string
-    expiry?: DateTimeWithAggregatesFilter<"EmailVerification"> | Date | string
+    expiry?: DateTimeNullableWithAggregatesFilter<"EmailVerification"> | Date | string | null
     status?: EnumEmailVerificationStatusWithAggregatesFilter<"EmailVerification"> | $Enums.EmailVerificationStatus
     userId?: StringWithAggregatesFilter<"EmailVerification"> | string
     createdAt?: DateTimeWithAggregatesFilter<"EmailVerification"> | Date | string
@@ -11577,6 +12833,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     emailVerification?: EmailVerificationCreateNestedOneWithoutUserInput
     passwordReset?: PasswordResetCreateNestedOneWithoutUserInput
+    externalAccounts?: ExternalAccountCreateNestedManyWithoutUserInput
     userProgress?: UserProgressCreateNestedManyWithoutUserInput
     mfa?: MultiFactorAuthenticationCreateNestedOneWithoutUserInput
     restrictions?: RestrictionCreateNestedManyWithoutUserInput
@@ -11595,6 +12852,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     emailVerification?: EmailVerificationUncheckedCreateNestedOneWithoutUserInput
     passwordReset?: PasswordResetUncheckedCreateNestedOneWithoutUserInput
+    externalAccounts?: ExternalAccountUncheckedCreateNestedManyWithoutUserInput
     userProgress?: UserProgressUncheckedCreateNestedManyWithoutUserInput
     mfa?: MultiFactorAuthenticationUncheckedCreateNestedOneWithoutUserInput
     restrictions?: RestrictionUncheckedCreateNestedManyWithoutUserInput
@@ -11613,6 +12871,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     emailVerification?: EmailVerificationUpdateOneWithoutUserNestedInput
     passwordReset?: PasswordResetUpdateOneWithoutUserNestedInput
+    externalAccounts?: ExternalAccountUpdateManyWithoutUserNestedInput
     userProgress?: UserProgressUpdateManyWithoutUserNestedInput
     mfa?: MultiFactorAuthenticationUpdateOneWithoutUserNestedInput
     restrictions?: RestrictionUpdateManyWithoutUserNestedInput
@@ -11631,6 +12890,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     emailVerification?: EmailVerificationUncheckedUpdateOneWithoutUserNestedInput
     passwordReset?: PasswordResetUncheckedUpdateOneWithoutUserNestedInput
+    externalAccounts?: ExternalAccountUncheckedUpdateManyWithoutUserNestedInput
     userProgress?: UserProgressUncheckedUpdateManyWithoutUserNestedInput
     mfa?: MultiFactorAuthenticationUncheckedUpdateOneWithoutUserNestedInput
     restrictions?: RestrictionUncheckedUpdateManyWithoutUserNestedInput
@@ -11675,10 +12935,93 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type ExternalAccountCreateInput = {
+    id?: string
+    provider: $Enums.AccountProvider
+    providerAccountId: string
+    refreshToken?: string | null
+    accessToken?: string | null
+    expiry?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutExternalAccountsInput
+  }
+
+  export type ExternalAccountUncheckedCreateInput = {
+    id?: string
+    provider: $Enums.AccountProvider
+    providerAccountId: string
+    refreshToken?: string | null
+    accessToken?: string | null
+    expiry?: number | null
+    userId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ExternalAccountUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    provider?: EnumAccountProviderFieldUpdateOperationsInput | $Enums.AccountProvider
+    providerAccountId?: StringFieldUpdateOperationsInput | string
+    refreshToken?: NullableStringFieldUpdateOperationsInput | string | null
+    accessToken?: NullableStringFieldUpdateOperationsInput | string | null
+    expiry?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutExternalAccountsNestedInput
+  }
+
+  export type ExternalAccountUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    provider?: EnumAccountProviderFieldUpdateOperationsInput | $Enums.AccountProvider
+    providerAccountId?: StringFieldUpdateOperationsInput | string
+    refreshToken?: NullableStringFieldUpdateOperationsInput | string | null
+    accessToken?: NullableStringFieldUpdateOperationsInput | string | null
+    expiry?: NullableIntFieldUpdateOperationsInput | number | null
+    userId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ExternalAccountCreateManyInput = {
+    id?: string
+    provider: $Enums.AccountProvider
+    providerAccountId: string
+    refreshToken?: string | null
+    accessToken?: string | null
+    expiry?: number | null
+    userId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ExternalAccountUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    provider?: EnumAccountProviderFieldUpdateOperationsInput | $Enums.AccountProvider
+    providerAccountId?: StringFieldUpdateOperationsInput | string
+    refreshToken?: NullableStringFieldUpdateOperationsInput | string | null
+    accessToken?: NullableStringFieldUpdateOperationsInput | string | null
+    expiry?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ExternalAccountUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    provider?: EnumAccountProviderFieldUpdateOperationsInput | $Enums.AccountProvider
+    providerAccountId?: StringFieldUpdateOperationsInput | string
+    refreshToken?: NullableStringFieldUpdateOperationsInput | string | null
+    accessToken?: NullableStringFieldUpdateOperationsInput | string | null
+    expiry?: NullableIntFieldUpdateOperationsInput | number | null
+    userId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type EmailVerificationCreateInput = {
     id?: string
     token: string
-    expiry: Date | string
+    expiry?: Date | string | null
     status?: $Enums.EmailVerificationStatus
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -11688,7 +13031,7 @@ export namespace Prisma {
   export type EmailVerificationUncheckedCreateInput = {
     id?: string
     token: string
-    expiry: Date | string
+    expiry?: Date | string | null
     status?: $Enums.EmailVerificationStatus
     userId: string
     createdAt?: Date | string
@@ -11698,7 +13041,7 @@ export namespace Prisma {
   export type EmailVerificationUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     token?: StringFieldUpdateOperationsInput | string
-    expiry?: DateTimeFieldUpdateOperationsInput | Date | string
+    expiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumEmailVerificationStatusFieldUpdateOperationsInput | $Enums.EmailVerificationStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -11708,7 +13051,7 @@ export namespace Prisma {
   export type EmailVerificationUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     token?: StringFieldUpdateOperationsInput | string
-    expiry?: DateTimeFieldUpdateOperationsInput | Date | string
+    expiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumEmailVerificationStatusFieldUpdateOperationsInput | $Enums.EmailVerificationStatus
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -11718,7 +13061,7 @@ export namespace Prisma {
   export type EmailVerificationCreateManyInput = {
     id?: string
     token: string
-    expiry: Date | string
+    expiry?: Date | string | null
     status?: $Enums.EmailVerificationStatus
     userId: string
     createdAt?: Date | string
@@ -11728,7 +13071,7 @@ export namespace Prisma {
   export type EmailVerificationUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     token?: StringFieldUpdateOperationsInput | string
-    expiry?: DateTimeFieldUpdateOperationsInput | Date | string
+    expiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumEmailVerificationStatusFieldUpdateOperationsInput | $Enums.EmailVerificationStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -11737,7 +13080,7 @@ export namespace Prisma {
   export type EmailVerificationUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     token?: StringFieldUpdateOperationsInput | string
-    expiry?: DateTimeFieldUpdateOperationsInput | Date | string
+    expiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumEmailVerificationStatusFieldUpdateOperationsInput | $Enums.EmailVerificationStatus
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -12315,6 +13658,12 @@ export namespace Prisma {
     isNot?: PasswordResetWhereInput | null
   }
 
+  export type ExternalAccountListRelationFilter = {
+    every?: ExternalAccountWhereInput
+    some?: ExternalAccountWhereInput
+    none?: ExternalAccountWhereInput
+  }
+
   export type UserProgressListRelationFilter = {
     every?: UserProgressWhereInput
     some?: UserProgressWhereInput
@@ -12335,6 +13684,10 @@ export namespace Prisma {
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
+  }
+
+  export type ExternalAccountOrderByRelationAggregateInput = {
+    _count?: SortOrder
   }
 
   export type UserProgressOrderByRelationAggregateInput = {
@@ -12468,16 +13821,120 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
-  export type EnumEmailVerificationStatusFilter<$PrismaModel = never> = {
-    equals?: $Enums.EmailVerificationStatus | EnumEmailVerificationStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.EmailVerificationStatus[] | ListEnumEmailVerificationStatusFieldRefInput<$PrismaModel>
-    notIn?: $Enums.EmailVerificationStatus[] | ListEnumEmailVerificationStatusFieldRefInput<$PrismaModel>
-    not?: NestedEnumEmailVerificationStatusFilter<$PrismaModel> | $Enums.EmailVerificationStatus
+  export type EnumAccountProviderFilter<$PrismaModel = never> = {
+    equals?: $Enums.AccountProvider | EnumAccountProviderFieldRefInput<$PrismaModel>
+    in?: $Enums.AccountProvider[] | ListEnumAccountProviderFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AccountProvider[] | ListEnumAccountProviderFieldRefInput<$PrismaModel>
+    not?: NestedEnumAccountProviderFilter<$PrismaModel> | $Enums.AccountProvider
+  }
+
+  export type IntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
   export type UserRelationFilter = {
     is?: UserWhereInput
     isNot?: UserWhereInput
+  }
+
+  export type ExternalAccountUserIdProviderCompoundUniqueInput = {
+    userId: string
+    provider: $Enums.AccountProvider
+  }
+
+  export type ExternalAccountCountOrderByAggregateInput = {
+    id?: SortOrder
+    provider?: SortOrder
+    providerAccountId?: SortOrder
+    refreshToken?: SortOrder
+    accessToken?: SortOrder
+    expiry?: SortOrder
+    userId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ExternalAccountAvgOrderByAggregateInput = {
+    expiry?: SortOrder
+  }
+
+  export type ExternalAccountMaxOrderByAggregateInput = {
+    id?: SortOrder
+    provider?: SortOrder
+    providerAccountId?: SortOrder
+    refreshToken?: SortOrder
+    accessToken?: SortOrder
+    expiry?: SortOrder
+    userId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ExternalAccountMinOrderByAggregateInput = {
+    id?: SortOrder
+    provider?: SortOrder
+    providerAccountId?: SortOrder
+    refreshToken?: SortOrder
+    accessToken?: SortOrder
+    expiry?: SortOrder
+    userId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ExternalAccountSumOrderByAggregateInput = {
+    expiry?: SortOrder
+  }
+
+  export type EnumAccountProviderWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.AccountProvider | EnumAccountProviderFieldRefInput<$PrismaModel>
+    in?: $Enums.AccountProvider[] | ListEnumAccountProviderFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AccountProvider[] | ListEnumAccountProviderFieldRefInput<$PrismaModel>
+    not?: NestedEnumAccountProviderWithAggregatesFilter<$PrismaModel> | $Enums.AccountProvider
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumAccountProviderFilter<$PrismaModel>
+    _max?: NestedEnumAccountProviderFilter<$PrismaModel>
+  }
+
+  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
+  }
+
+  export type DateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
+  export type EnumEmailVerificationStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.EmailVerificationStatus | EnumEmailVerificationStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.EmailVerificationStatus[] | ListEnumEmailVerificationStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.EmailVerificationStatus[] | ListEnumEmailVerificationStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumEmailVerificationStatusFilter<$PrismaModel> | $Enums.EmailVerificationStatus
   }
 
   export type EmailVerificationCountOrderByAggregateInput = {
@@ -12508,6 +13965,20 @@ export namespace Prisma {
     userId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+  }
+
+  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type EnumEmailVerificationStatusWithAggregatesFilter<$PrismaModel = never> = {
@@ -12633,17 +14104,6 @@ export namespace Prisma {
     not?: NestedEnumRestrictionReasonFilter<$PrismaModel> | $Enums.RestrictionReason
   }
 
-  export type DateTimeNullableFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
-  }
-
   export type EnumRestrictionStatusFilter<$PrismaModel = never> = {
     equals?: $Enums.RestrictionStatus | EnumRestrictionStatusFieldRefInput<$PrismaModel>
     in?: $Enums.RestrictionStatus[] | ListEnumRestrictionStatusFieldRefInput<$PrismaModel>
@@ -12686,20 +14146,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumRestrictionReasonFilter<$PrismaModel>
     _max?: NestedEnumRestrictionReasonFilter<$PrismaModel>
-  }
-
-  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedDateTimeNullableFilter<$PrismaModel>
-    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type EnumRestrictionStatusWithAggregatesFilter<$PrismaModel = never> = {
@@ -12886,6 +14332,13 @@ export namespace Prisma {
     connect?: PasswordResetWhereUniqueInput
   }
 
+  export type ExternalAccountCreateNestedManyWithoutUserInput = {
+    create?: XOR<ExternalAccountCreateWithoutUserInput, ExternalAccountUncheckedCreateWithoutUserInput> | ExternalAccountCreateWithoutUserInput[] | ExternalAccountUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ExternalAccountCreateOrConnectWithoutUserInput | ExternalAccountCreateOrConnectWithoutUserInput[]
+    createMany?: ExternalAccountCreateManyUserInputEnvelope
+    connect?: ExternalAccountWhereUniqueInput | ExternalAccountWhereUniqueInput[]
+  }
+
   export type UserProgressCreateNestedManyWithoutUserInput = {
     create?: XOR<UserProgressCreateWithoutUserInput, UserProgressUncheckedCreateWithoutUserInput> | UserProgressCreateWithoutUserInput[] | UserProgressUncheckedCreateWithoutUserInput[]
     connectOrCreate?: UserProgressCreateOrConnectWithoutUserInput | UserProgressCreateOrConnectWithoutUserInput[]
@@ -12916,6 +14369,13 @@ export namespace Prisma {
     create?: XOR<PasswordResetCreateWithoutUserInput, PasswordResetUncheckedCreateWithoutUserInput>
     connectOrCreate?: PasswordResetCreateOrConnectWithoutUserInput
     connect?: PasswordResetWhereUniqueInput
+  }
+
+  export type ExternalAccountUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<ExternalAccountCreateWithoutUserInput, ExternalAccountUncheckedCreateWithoutUserInput> | ExternalAccountCreateWithoutUserInput[] | ExternalAccountUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ExternalAccountCreateOrConnectWithoutUserInput | ExternalAccountCreateOrConnectWithoutUserInput[]
+    createMany?: ExternalAccountCreateManyUserInputEnvelope
+    connect?: ExternalAccountWhereUniqueInput | ExternalAccountWhereUniqueInput[]
   }
 
   export type UserProgressUncheckedCreateNestedManyWithoutUserInput = {
@@ -12982,6 +14442,20 @@ export namespace Prisma {
     update?: XOR<XOR<PasswordResetUpdateToOneWithWhereWithoutUserInput, PasswordResetUpdateWithoutUserInput>, PasswordResetUncheckedUpdateWithoutUserInput>
   }
 
+  export type ExternalAccountUpdateManyWithoutUserNestedInput = {
+    create?: XOR<ExternalAccountCreateWithoutUserInput, ExternalAccountUncheckedCreateWithoutUserInput> | ExternalAccountCreateWithoutUserInput[] | ExternalAccountUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ExternalAccountCreateOrConnectWithoutUserInput | ExternalAccountCreateOrConnectWithoutUserInput[]
+    upsert?: ExternalAccountUpsertWithWhereUniqueWithoutUserInput | ExternalAccountUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: ExternalAccountCreateManyUserInputEnvelope
+    set?: ExternalAccountWhereUniqueInput | ExternalAccountWhereUniqueInput[]
+    disconnect?: ExternalAccountWhereUniqueInput | ExternalAccountWhereUniqueInput[]
+    delete?: ExternalAccountWhereUniqueInput | ExternalAccountWhereUniqueInput[]
+    connect?: ExternalAccountWhereUniqueInput | ExternalAccountWhereUniqueInput[]
+    update?: ExternalAccountUpdateWithWhereUniqueWithoutUserInput | ExternalAccountUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: ExternalAccountUpdateManyWithWhereWithoutUserInput | ExternalAccountUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: ExternalAccountScalarWhereInput | ExternalAccountScalarWhereInput[]
+  }
+
   export type UserProgressUpdateManyWithoutUserNestedInput = {
     create?: XOR<UserProgressCreateWithoutUserInput, UserProgressUncheckedCreateWithoutUserInput> | UserProgressCreateWithoutUserInput[] | UserProgressUncheckedCreateWithoutUserInput[]
     connectOrCreate?: UserProgressCreateOrConnectWithoutUserInput | UserProgressCreateOrConnectWithoutUserInput[]
@@ -13040,6 +14514,20 @@ export namespace Prisma {
     update?: XOR<XOR<PasswordResetUpdateToOneWithWhereWithoutUserInput, PasswordResetUpdateWithoutUserInput>, PasswordResetUncheckedUpdateWithoutUserInput>
   }
 
+  export type ExternalAccountUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<ExternalAccountCreateWithoutUserInput, ExternalAccountUncheckedCreateWithoutUserInput> | ExternalAccountCreateWithoutUserInput[] | ExternalAccountUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ExternalAccountCreateOrConnectWithoutUserInput | ExternalAccountCreateOrConnectWithoutUserInput[]
+    upsert?: ExternalAccountUpsertWithWhereUniqueWithoutUserInput | ExternalAccountUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: ExternalAccountCreateManyUserInputEnvelope
+    set?: ExternalAccountWhereUniqueInput | ExternalAccountWhereUniqueInput[]
+    disconnect?: ExternalAccountWhereUniqueInput | ExternalAccountWhereUniqueInput[]
+    delete?: ExternalAccountWhereUniqueInput | ExternalAccountWhereUniqueInput[]
+    connect?: ExternalAccountWhereUniqueInput | ExternalAccountWhereUniqueInput[]
+    update?: ExternalAccountUpdateWithWhereUniqueWithoutUserInput | ExternalAccountUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: ExternalAccountUpdateManyWithWhereWithoutUserInput | ExternalAccountUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: ExternalAccountScalarWhereInput | ExternalAccountScalarWhereInput[]
+  }
+
   export type UserProgressUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<UserProgressCreateWithoutUserInput, UserProgressUncheckedCreateWithoutUserInput> | UserProgressCreateWithoutUserInput[] | UserProgressUncheckedCreateWithoutUserInput[]
     connectOrCreate?: UserProgressCreateOrConnectWithoutUserInput | UserProgressCreateOrConnectWithoutUserInput[]
@@ -13078,10 +14566,40 @@ export namespace Prisma {
     deleteMany?: RestrictionScalarWhereInput | RestrictionScalarWhereInput[]
   }
 
+  export type UserCreateNestedOneWithoutExternalAccountsInput = {
+    create?: XOR<UserCreateWithoutExternalAccountsInput, UserUncheckedCreateWithoutExternalAccountsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutExternalAccountsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type EnumAccountProviderFieldUpdateOperationsInput = {
+    set?: $Enums.AccountProvider
+  }
+
+  export type NullableIntFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
+  export type UserUpdateOneRequiredWithoutExternalAccountsNestedInput = {
+    create?: XOR<UserCreateWithoutExternalAccountsInput, UserUncheckedCreateWithoutExternalAccountsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutExternalAccountsInput
+    upsert?: UserUpsertWithoutExternalAccountsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutExternalAccountsInput, UserUpdateWithoutExternalAccountsInput>, UserUncheckedUpdateWithoutExternalAccountsInput>
+  }
+
   export type UserCreateNestedOneWithoutEmailVerificationInput = {
     create?: XOR<UserCreateWithoutEmailVerificationInput, UserUncheckedCreateWithoutEmailVerificationInput>
     connectOrCreate?: UserCreateOrConnectWithoutEmailVerificationInput
     connect?: UserWhereUniqueInput
+  }
+
+  export type NullableDateTimeFieldUpdateOperationsInput = {
+    set?: Date | string | null
   }
 
   export type EnumEmailVerificationStatusFieldUpdateOperationsInput = {
@@ -13193,10 +14711,6 @@ export namespace Prisma {
 
   export type EnumRestrictionReasonFieldUpdateOperationsInput = {
     set?: $Enums.RestrictionReason
-  }
-
-  export type NullableDateTimeFieldUpdateOperationsInput = {
-    set?: Date | string | null
   }
 
   export type EnumRestrictionStatusFieldUpdateOperationsInput = {
@@ -13494,11 +15008,80 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type NestedEnumAccountProviderFilter<$PrismaModel = never> = {
+    equals?: $Enums.AccountProvider | EnumAccountProviderFieldRefInput<$PrismaModel>
+    in?: $Enums.AccountProvider[] | ListEnumAccountProviderFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AccountProvider[] | ListEnumAccountProviderFieldRefInput<$PrismaModel>
+    not?: NestedEnumAccountProviderFilter<$PrismaModel> | $Enums.AccountProvider
+  }
+
+  export type NestedEnumAccountProviderWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.AccountProvider | EnumAccountProviderFieldRefInput<$PrismaModel>
+    in?: $Enums.AccountProvider[] | ListEnumAccountProviderFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AccountProvider[] | ListEnumAccountProviderFieldRefInput<$PrismaModel>
+    not?: NestedEnumAccountProviderWithAggregatesFilter<$PrismaModel> | $Enums.AccountProvider
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumAccountProviderFilter<$PrismaModel>
+    _max?: NestedEnumAccountProviderFilter<$PrismaModel>
+  }
+
+  export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
+  }
+
+  export type NestedFloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
   export type NestedEnumEmailVerificationStatusFilter<$PrismaModel = never> = {
     equals?: $Enums.EmailVerificationStatus | EnumEmailVerificationStatusFieldRefInput<$PrismaModel>
     in?: $Enums.EmailVerificationStatus[] | ListEnumEmailVerificationStatusFieldRefInput<$PrismaModel>
     notIn?: $Enums.EmailVerificationStatus[] | ListEnumEmailVerificationStatusFieldRefInput<$PrismaModel>
     not?: NestedEnumEmailVerificationStatusFilter<$PrismaModel> | $Enums.EmailVerificationStatus
+  }
+
+  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type NestedEnumEmailVerificationStatusWithAggregatesFilter<$PrismaModel = never> = {
@@ -13535,17 +15118,6 @@ export namespace Prisma {
     not?: NestedEnumRestrictionReasonFilter<$PrismaModel> | $Enums.RestrictionReason
   }
 
-  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
-  }
-
   export type NestedEnumRestrictionStatusFilter<$PrismaModel = never> = {
     equals?: $Enums.RestrictionStatus | EnumRestrictionStatusFieldRefInput<$PrismaModel>
     in?: $Enums.RestrictionStatus[] | ListEnumRestrictionStatusFieldRefInput<$PrismaModel>
@@ -13561,20 +15133,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumRestrictionReasonFilter<$PrismaModel>
     _max?: NestedEnumRestrictionReasonFilter<$PrismaModel>
-  }
-
-  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedDateTimeNullableFilter<$PrismaModel>
-    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type NestedEnumRestrictionStatusWithAggregatesFilter<$PrismaModel = never> = {
@@ -13603,7 +15161,7 @@ export namespace Prisma {
   export type EmailVerificationCreateWithoutUserInput = {
     id?: string
     token: string
-    expiry: Date | string
+    expiry?: Date | string | null
     status?: $Enums.EmailVerificationStatus
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -13612,7 +15170,7 @@ export namespace Prisma {
   export type EmailVerificationUncheckedCreateWithoutUserInput = {
     id?: string
     token: string
-    expiry: Date | string
+    expiry?: Date | string | null
     status?: $Enums.EmailVerificationStatus
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -13642,6 +15200,38 @@ export namespace Prisma {
   export type PasswordResetCreateOrConnectWithoutUserInput = {
     where: PasswordResetWhereUniqueInput
     create: XOR<PasswordResetCreateWithoutUserInput, PasswordResetUncheckedCreateWithoutUserInput>
+  }
+
+  export type ExternalAccountCreateWithoutUserInput = {
+    id?: string
+    provider: $Enums.AccountProvider
+    providerAccountId: string
+    refreshToken?: string | null
+    accessToken?: string | null
+    expiry?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ExternalAccountUncheckedCreateWithoutUserInput = {
+    id?: string
+    provider: $Enums.AccountProvider
+    providerAccountId: string
+    refreshToken?: string | null
+    accessToken?: string | null
+    expiry?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ExternalAccountCreateOrConnectWithoutUserInput = {
+    where: ExternalAccountWhereUniqueInput
+    create: XOR<ExternalAccountCreateWithoutUserInput, ExternalAccountUncheckedCreateWithoutUserInput>
+  }
+
+  export type ExternalAccountCreateManyUserInputEnvelope = {
+    data: ExternalAccountCreateManyUserInput | ExternalAccountCreateManyUserInput[]
+    skipDuplicates?: boolean
   }
 
   export type UserProgressCreateWithoutUserInput = {
@@ -13731,7 +15321,7 @@ export namespace Prisma {
   export type EmailVerificationUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     token?: StringFieldUpdateOperationsInput | string
-    expiry?: DateTimeFieldUpdateOperationsInput | Date | string
+    expiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumEmailVerificationStatusFieldUpdateOperationsInput | $Enums.EmailVerificationStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13740,7 +15330,7 @@ export namespace Prisma {
   export type EmailVerificationUncheckedUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     token?: StringFieldUpdateOperationsInput | string
-    expiry?: DateTimeFieldUpdateOperationsInput | Date | string
+    expiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumEmailVerificationStatusFieldUpdateOperationsInput | $Enums.EmailVerificationStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13771,6 +15361,37 @@ export namespace Prisma {
     expiry?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ExternalAccountUpsertWithWhereUniqueWithoutUserInput = {
+    where: ExternalAccountWhereUniqueInput
+    update: XOR<ExternalAccountUpdateWithoutUserInput, ExternalAccountUncheckedUpdateWithoutUserInput>
+    create: XOR<ExternalAccountCreateWithoutUserInput, ExternalAccountUncheckedCreateWithoutUserInput>
+  }
+
+  export type ExternalAccountUpdateWithWhereUniqueWithoutUserInput = {
+    where: ExternalAccountWhereUniqueInput
+    data: XOR<ExternalAccountUpdateWithoutUserInput, ExternalAccountUncheckedUpdateWithoutUserInput>
+  }
+
+  export type ExternalAccountUpdateManyWithWhereWithoutUserInput = {
+    where: ExternalAccountScalarWhereInput
+    data: XOR<ExternalAccountUpdateManyMutationInput, ExternalAccountUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type ExternalAccountScalarWhereInput = {
+    AND?: ExternalAccountScalarWhereInput | ExternalAccountScalarWhereInput[]
+    OR?: ExternalAccountScalarWhereInput[]
+    NOT?: ExternalAccountScalarWhereInput | ExternalAccountScalarWhereInput[]
+    id?: StringFilter<"ExternalAccount"> | string
+    provider?: EnumAccountProviderFilter<"ExternalAccount"> | $Enums.AccountProvider
+    providerAccountId?: StringFilter<"ExternalAccount"> | string
+    refreshToken?: StringNullableFilter<"ExternalAccount"> | string | null
+    accessToken?: StringNullableFilter<"ExternalAccount"> | string | null
+    expiry?: IntNullableFilter<"ExternalAccount"> | number | null
+    userId?: StringFilter<"ExternalAccount"> | string
+    createdAt?: DateTimeFilter<"ExternalAccount"> | Date | string
+    updatedAt?: DateTimeFilter<"ExternalAccount"> | Date | string
   }
 
   export type UserProgressUpsertWithWhereUniqueWithoutUserInput = {
@@ -13856,6 +15477,94 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Restriction"> | Date | string
   }
 
+  export type UserCreateWithoutExternalAccountsInput = {
+    id?: string
+    email: string
+    password?: string | null
+    username: string
+    displayName: string
+    avatar?: string | null
+    points?: number
+    role?: $Enums.UserRole
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    emailVerification?: EmailVerificationCreateNestedOneWithoutUserInput
+    passwordReset?: PasswordResetCreateNestedOneWithoutUserInput
+    userProgress?: UserProgressCreateNestedManyWithoutUserInput
+    mfa?: MultiFactorAuthenticationCreateNestedOneWithoutUserInput
+    restrictions?: RestrictionCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutExternalAccountsInput = {
+    id?: string
+    email: string
+    password?: string | null
+    username: string
+    displayName: string
+    avatar?: string | null
+    points?: number
+    role?: $Enums.UserRole
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    emailVerification?: EmailVerificationUncheckedCreateNestedOneWithoutUserInput
+    passwordReset?: PasswordResetUncheckedCreateNestedOneWithoutUserInput
+    userProgress?: UserProgressUncheckedCreateNestedManyWithoutUserInput
+    mfa?: MultiFactorAuthenticationUncheckedCreateNestedOneWithoutUserInput
+    restrictions?: RestrictionUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutExternalAccountsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutExternalAccountsInput, UserUncheckedCreateWithoutExternalAccountsInput>
+  }
+
+  export type UserUpsertWithoutExternalAccountsInput = {
+    update: XOR<UserUpdateWithoutExternalAccountsInput, UserUncheckedUpdateWithoutExternalAccountsInput>
+    create: XOR<UserCreateWithoutExternalAccountsInput, UserUncheckedCreateWithoutExternalAccountsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutExternalAccountsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutExternalAccountsInput, UserUncheckedUpdateWithoutExternalAccountsInput>
+  }
+
+  export type UserUpdateWithoutExternalAccountsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    username?: StringFieldUpdateOperationsInput | string
+    displayName?: StringFieldUpdateOperationsInput | string
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    points?: IntFieldUpdateOperationsInput | number
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    emailVerification?: EmailVerificationUpdateOneWithoutUserNestedInput
+    passwordReset?: PasswordResetUpdateOneWithoutUserNestedInput
+    userProgress?: UserProgressUpdateManyWithoutUserNestedInput
+    mfa?: MultiFactorAuthenticationUpdateOneWithoutUserNestedInput
+    restrictions?: RestrictionUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutExternalAccountsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    username?: StringFieldUpdateOperationsInput | string
+    displayName?: StringFieldUpdateOperationsInput | string
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    points?: IntFieldUpdateOperationsInput | number
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    emailVerification?: EmailVerificationUncheckedUpdateOneWithoutUserNestedInput
+    passwordReset?: PasswordResetUncheckedUpdateOneWithoutUserNestedInput
+    userProgress?: UserProgressUncheckedUpdateManyWithoutUserNestedInput
+    mfa?: MultiFactorAuthenticationUncheckedUpdateOneWithoutUserNestedInput
+    restrictions?: RestrictionUncheckedUpdateManyWithoutUserNestedInput
+  }
+
   export type UserCreateWithoutEmailVerificationInput = {
     id?: string
     email: string
@@ -13868,6 +15577,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     passwordReset?: PasswordResetCreateNestedOneWithoutUserInput
+    externalAccounts?: ExternalAccountCreateNestedManyWithoutUserInput
     userProgress?: UserProgressCreateNestedManyWithoutUserInput
     mfa?: MultiFactorAuthenticationCreateNestedOneWithoutUserInput
     restrictions?: RestrictionCreateNestedManyWithoutUserInput
@@ -13885,6 +15595,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     passwordReset?: PasswordResetUncheckedCreateNestedOneWithoutUserInput
+    externalAccounts?: ExternalAccountUncheckedCreateNestedManyWithoutUserInput
     userProgress?: UserProgressUncheckedCreateNestedManyWithoutUserInput
     mfa?: MultiFactorAuthenticationUncheckedCreateNestedOneWithoutUserInput
     restrictions?: RestrictionUncheckedCreateNestedManyWithoutUserInput
@@ -13918,6 +15629,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     passwordReset?: PasswordResetUpdateOneWithoutUserNestedInput
+    externalAccounts?: ExternalAccountUpdateManyWithoutUserNestedInput
     userProgress?: UserProgressUpdateManyWithoutUserNestedInput
     mfa?: MultiFactorAuthenticationUpdateOneWithoutUserNestedInput
     restrictions?: RestrictionUpdateManyWithoutUserNestedInput
@@ -13935,6 +15647,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     passwordReset?: PasswordResetUncheckedUpdateOneWithoutUserNestedInput
+    externalAccounts?: ExternalAccountUncheckedUpdateManyWithoutUserNestedInput
     userProgress?: UserProgressUncheckedUpdateManyWithoutUserNestedInput
     mfa?: MultiFactorAuthenticationUncheckedUpdateOneWithoutUserNestedInput
     restrictions?: RestrictionUncheckedUpdateManyWithoutUserNestedInput
@@ -13952,6 +15665,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     emailVerification?: EmailVerificationCreateNestedOneWithoutUserInput
+    externalAccounts?: ExternalAccountCreateNestedManyWithoutUserInput
     userProgress?: UserProgressCreateNestedManyWithoutUserInput
     mfa?: MultiFactorAuthenticationCreateNestedOneWithoutUserInput
     restrictions?: RestrictionCreateNestedManyWithoutUserInput
@@ -13969,6 +15683,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     emailVerification?: EmailVerificationUncheckedCreateNestedOneWithoutUserInput
+    externalAccounts?: ExternalAccountUncheckedCreateNestedManyWithoutUserInput
     userProgress?: UserProgressUncheckedCreateNestedManyWithoutUserInput
     mfa?: MultiFactorAuthenticationUncheckedCreateNestedOneWithoutUserInput
     restrictions?: RestrictionUncheckedCreateNestedManyWithoutUserInput
@@ -14002,6 +15717,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     emailVerification?: EmailVerificationUpdateOneWithoutUserNestedInput
+    externalAccounts?: ExternalAccountUpdateManyWithoutUserNestedInput
     userProgress?: UserProgressUpdateManyWithoutUserNestedInput
     mfa?: MultiFactorAuthenticationUpdateOneWithoutUserNestedInput
     restrictions?: RestrictionUpdateManyWithoutUserNestedInput
@@ -14019,6 +15735,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     emailVerification?: EmailVerificationUncheckedUpdateOneWithoutUserNestedInput
+    externalAccounts?: ExternalAccountUncheckedUpdateManyWithoutUserNestedInput
     userProgress?: UserProgressUncheckedUpdateManyWithoutUserNestedInput
     mfa?: MultiFactorAuthenticationUncheckedUpdateOneWithoutUserNestedInput
     restrictions?: RestrictionUncheckedUpdateManyWithoutUserNestedInput
@@ -14058,6 +15775,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     emailVerification?: EmailVerificationCreateNestedOneWithoutUserInput
     passwordReset?: PasswordResetCreateNestedOneWithoutUserInput
+    externalAccounts?: ExternalAccountCreateNestedManyWithoutUserInput
     userProgress?: UserProgressCreateNestedManyWithoutUserInput
     restrictions?: RestrictionCreateNestedManyWithoutUserInput
   }
@@ -14075,6 +15793,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     emailVerification?: EmailVerificationUncheckedCreateNestedOneWithoutUserInput
     passwordReset?: PasswordResetUncheckedCreateNestedOneWithoutUserInput
+    externalAccounts?: ExternalAccountUncheckedCreateNestedManyWithoutUserInput
     userProgress?: UserProgressUncheckedCreateNestedManyWithoutUserInput
     restrictions?: RestrictionUncheckedCreateNestedManyWithoutUserInput
   }
@@ -14135,6 +15854,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     emailVerification?: EmailVerificationUpdateOneWithoutUserNestedInput
     passwordReset?: PasswordResetUpdateOneWithoutUserNestedInput
+    externalAccounts?: ExternalAccountUpdateManyWithoutUserNestedInput
     userProgress?: UserProgressUpdateManyWithoutUserNestedInput
     restrictions?: RestrictionUpdateManyWithoutUserNestedInput
   }
@@ -14152,6 +15872,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     emailVerification?: EmailVerificationUncheckedUpdateOneWithoutUserNestedInput
     passwordReset?: PasswordResetUncheckedUpdateOneWithoutUserNestedInput
+    externalAccounts?: ExternalAccountUncheckedUpdateManyWithoutUserNestedInput
     userProgress?: UserProgressUncheckedUpdateManyWithoutUserNestedInput
     restrictions?: RestrictionUncheckedUpdateManyWithoutUserNestedInput
   }
@@ -14217,6 +15938,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     emailVerification?: EmailVerificationCreateNestedOneWithoutUserInput
     passwordReset?: PasswordResetCreateNestedOneWithoutUserInput
+    externalAccounts?: ExternalAccountCreateNestedManyWithoutUserInput
     userProgress?: UserProgressCreateNestedManyWithoutUserInput
     mfa?: MultiFactorAuthenticationCreateNestedOneWithoutUserInput
   }
@@ -14234,6 +15956,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     emailVerification?: EmailVerificationUncheckedCreateNestedOneWithoutUserInput
     passwordReset?: PasswordResetUncheckedCreateNestedOneWithoutUserInput
+    externalAccounts?: ExternalAccountUncheckedCreateNestedManyWithoutUserInput
     userProgress?: UserProgressUncheckedCreateNestedManyWithoutUserInput
     mfa?: MultiFactorAuthenticationUncheckedCreateNestedOneWithoutUserInput
   }
@@ -14267,6 +15990,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     emailVerification?: EmailVerificationUpdateOneWithoutUserNestedInput
     passwordReset?: PasswordResetUpdateOneWithoutUserNestedInput
+    externalAccounts?: ExternalAccountUpdateManyWithoutUserNestedInput
     userProgress?: UserProgressUpdateManyWithoutUserNestedInput
     mfa?: MultiFactorAuthenticationUpdateOneWithoutUserNestedInput
   }
@@ -14284,6 +16008,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     emailVerification?: EmailVerificationUncheckedUpdateOneWithoutUserNestedInput
     passwordReset?: PasswordResetUncheckedUpdateOneWithoutUserNestedInput
+    externalAccounts?: ExternalAccountUncheckedUpdateManyWithoutUserNestedInput
     userProgress?: UserProgressUncheckedUpdateManyWithoutUserNestedInput
     mfa?: MultiFactorAuthenticationUncheckedUpdateOneWithoutUserNestedInput
   }
@@ -14483,6 +16208,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     emailVerification?: EmailVerificationCreateNestedOneWithoutUserInput
     passwordReset?: PasswordResetCreateNestedOneWithoutUserInput
+    externalAccounts?: ExternalAccountCreateNestedManyWithoutUserInput
     mfa?: MultiFactorAuthenticationCreateNestedOneWithoutUserInput
     restrictions?: RestrictionCreateNestedManyWithoutUserInput
   }
@@ -14500,6 +16226,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     emailVerification?: EmailVerificationUncheckedCreateNestedOneWithoutUserInput
     passwordReset?: PasswordResetUncheckedCreateNestedOneWithoutUserInput
+    externalAccounts?: ExternalAccountUncheckedCreateNestedManyWithoutUserInput
     mfa?: MultiFactorAuthenticationUncheckedCreateNestedOneWithoutUserInput
     restrictions?: RestrictionUncheckedCreateNestedManyWithoutUserInput
   }
@@ -14564,6 +16291,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     emailVerification?: EmailVerificationUpdateOneWithoutUserNestedInput
     passwordReset?: PasswordResetUpdateOneWithoutUserNestedInput
+    externalAccounts?: ExternalAccountUpdateManyWithoutUserNestedInput
     mfa?: MultiFactorAuthenticationUpdateOneWithoutUserNestedInput
     restrictions?: RestrictionUpdateManyWithoutUserNestedInput
   }
@@ -14581,6 +16309,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     emailVerification?: EmailVerificationUncheckedUpdateOneWithoutUserNestedInput
     passwordReset?: PasswordResetUncheckedUpdateOneWithoutUserNestedInput
+    externalAccounts?: ExternalAccountUncheckedUpdateManyWithoutUserNestedInput
     mfa?: MultiFactorAuthenticationUncheckedUpdateOneWithoutUserNestedInput
     restrictions?: RestrictionUncheckedUpdateManyWithoutUserNestedInput
   }
@@ -14622,6 +16351,17 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type ExternalAccountCreateManyUserInput = {
+    id?: string
+    provider: $Enums.AccountProvider
+    providerAccountId: string
+    refreshToken?: string | null
+    accessToken?: string | null
+    expiry?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type UserProgressCreateManyUserInput = {
     id?: string
     isCompleted?: boolean
@@ -14636,6 +16376,39 @@ export namespace Prisma {
     until?: Date | string | null
     status?: $Enums.RestrictionStatus
     createdAt?: Date | string
+  }
+
+  export type ExternalAccountUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    provider?: EnumAccountProviderFieldUpdateOperationsInput | $Enums.AccountProvider
+    providerAccountId?: StringFieldUpdateOperationsInput | string
+    refreshToken?: NullableStringFieldUpdateOperationsInput | string | null
+    accessToken?: NullableStringFieldUpdateOperationsInput | string | null
+    expiry?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ExternalAccountUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    provider?: EnumAccountProviderFieldUpdateOperationsInput | $Enums.AccountProvider
+    providerAccountId?: StringFieldUpdateOperationsInput | string
+    refreshToken?: NullableStringFieldUpdateOperationsInput | string | null
+    accessToken?: NullableStringFieldUpdateOperationsInput | string | null
+    expiry?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ExternalAccountUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    provider?: EnumAccountProviderFieldUpdateOperationsInput | $Enums.AccountProvider
+    providerAccountId?: StringFieldUpdateOperationsInput | string
+    refreshToken?: NullableStringFieldUpdateOperationsInput | string | null
+    accessToken?: NullableStringFieldUpdateOperationsInput | string | null
+    expiry?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type UserProgressUpdateWithoutUserInput = {
@@ -14789,6 +16562,10 @@ export namespace Prisma {
      * @deprecated Use UserDefaultArgs instead
      */
     export type UserArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = UserDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use ExternalAccountDefaultArgs instead
+     */
+    export type ExternalAccountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = ExternalAccountDefaultArgs<ExtArgs>
     /**
      * @deprecated Use EmailVerificationDefaultArgs instead
      */

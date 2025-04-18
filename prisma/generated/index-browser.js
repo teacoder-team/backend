@@ -135,6 +135,18 @@ exports.Prisma.UserScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.ExternalAccountScalarFieldEnum = {
+  id: 'id',
+  provider: 'provider',
+  providerAccountId: 'providerAccountId',
+  refreshToken: 'refreshToken',
+  accessToken: 'accessToken',
+  expiry: 'expiry',
+  userId: 'userId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.EmailVerificationScalarFieldEnum = {
   id: 'id',
   token: 'token',
@@ -235,6 +247,11 @@ exports.UserRole = exports.$Enums.UserRole = {
   ADMIN: 'ADMIN'
 };
 
+exports.AccountProvider = exports.$Enums.AccountProvider = {
+  GOOGLE: 'GOOGLE',
+  GITHUB: 'GITHUB'
+};
+
 exports.EmailVerificationStatus = exports.$Enums.EmailVerificationStatus = {
   PENDING: 'PENDING',
   VERIFIED: 'VERIFIED'
@@ -260,6 +277,7 @@ exports.RestrictionStatus = exports.$Enums.RestrictionStatus = {
 
 exports.Prisma.ModelName = {
   User: 'User',
+  ExternalAccount: 'ExternalAccount',
   EmailVerification: 'EmailVerification',
   PasswordReset: 'PasswordReset',
   MultiFactorAuthentication: 'MultiFactorAuthentication',
