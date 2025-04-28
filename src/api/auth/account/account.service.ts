@@ -101,6 +101,14 @@ export class AccountService {
 			throw new ConflictException('Эта почта уже подтверждена')
 		}
 
+		if (emailVerification) {
+			await this.prismaService.emailVerification.delete({
+				where: {
+					userId: user.id
+				}
+			})
+		}
+
 		const token = randomBytes(64).toString('hex')
 
 		const expiry = new Date()

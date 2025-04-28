@@ -145,7 +145,7 @@ export class ExternalController {
 			)
 
 			return res.redirect(
-				`http://localhost:14701/auth/callback?token=${result.token}`
+				`http://localhost:14701/auth/callback#token=${result.token}`
 			)
 		} else {
 			throw new BadRequestException('Unknown action in state')

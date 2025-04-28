@@ -60,8 +60,8 @@ model ExternalAccount {
 model EmailVerification {
   id String @id @default(uuid())
 
-  token  String   @unique
-  expiry DateTime
+  token  String    @unique
+  expiry DateTime?
 
   status EmailVerificationStatus @default(PENDING)
 
