@@ -126,7 +126,11 @@ export class AccountService {
 			create: {
 				token,
 				expiry,
-				userId: user.id
+				user: {
+					connect: {
+						id: user.id
+					}
+				}
 			}
 		})
 
@@ -264,13 +268,13 @@ export class AccountService {
 	}
 
 	public async changePassword(user: User, dto: ChangePasswordRequest) {
-		const { currentPassword, newPassword } = dto
+		const { newPassword } = dto
 
-		const isValidPassword = await verify(user.password, currentPassword)
+		// const isValidPassword = await verify(user.password, currentPassword)
 
-		if (!isValidPassword) {
-			throw new BadRequestException('Неверный старый пароль')
-		}
+		// if (!isValidPassword) {
+		// 	throw new BadRequestException('Неверный старый пароль')
+		// }
 
 		await this.prismaService.user.update({
 			where: {

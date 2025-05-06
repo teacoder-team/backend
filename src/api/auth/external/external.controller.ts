@@ -11,6 +11,7 @@ import {
 	Res,
 	UseGuards
 } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
 import {
 	ApiHeader,
 	ApiOkResponse,
@@ -30,7 +31,7 @@ import {
 } from '@/common/decorators'
 import { ProviderGuard } from '@/common/guards'
 
-import { ExternalConnectResponse, ExternalStatusResponse } from './dto'
+import { ExternalStatusResponse } from './dto'
 import { ExternalService } from './external.service'
 
 @ApiTags('External')
@@ -38,7 +39,8 @@ import { ExternalService } from './external.service'
 export class ExternalController {
 	public constructor(
 		private readonly externalService: ExternalService,
-		private readonly oauthService: OAuthService
+		private readonly oauthService: OAuthService,
+		private readonly configService: ConfigService
 	) {}
 
 	@ApiOperation({
@@ -122,33 +124,50 @@ export class ExternalController {
 	) {
 		if (!code) throw new BadRequestException('No code provided')
 
+		const siteUrl = this.configService.getOrThrow<string>('SITE_URL')
+
 		const parsedState = state
 			? JSON.parse(Buffer.from(state, 'base64').toString('utf-8'))
 			: null
 
 		let result
 
-		if (parsedState.action === 'connect' && parsedState.userId) {
-			result = await this.externalService.connect(
-				provider,
-				code,
-				parsedState.userId
-			)
+		try {
+			if (parsedState.action === 'connect' && parsedState.userId) {
+				await this.externalService.connect(
+					provider,
+					code,
+					parsedState.userId
+				)
 
-			return res.redirect('http://localhost:14701/account/integrations')
-		} else if (parsedState.action === 'login') {
-			result = await this.externalService.login(
-				provider,
-				code,
-				ip,
-				userAgent
-			)
+				return res.redirect(`${siteUrl}/account/connections`)
+			} else if (parsedState.action === 'login') {
+				const result = await this.externalService.login(
+					provider,
+					code,
+					ip,
+					userAgent
+				)
 
-			return res.redirect(
-				`http://localhost:14701/auth/callback#token=${result.token}`
-			)
-		} else {
-			throw new BadRequestException('Unknown action in state')
+				return res.redirect(
+					`${siteUrl}/auth/callback#token=${result.token}`
+				)
+			} else {
+				throw new BadRequestException('Unknown action in state')
+			}
+		} catch (error) {
+			const message = error?.message ?? 'unknown'
+
+			let errorCode = 'unknown'
+
+			if (message.includes('уже привязан')) errorCode = 'already-linked'
+			else if (message.includes('почтой')) errorCode = 'email-taken'
+
+			if (parsedState.action === 'connect') {
+				return res.redirect(
+					`${siteUrl}/account/connections?error=${errorCode}`
+				)
+			}
 		}
 	}
 

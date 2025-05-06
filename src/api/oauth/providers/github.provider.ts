@@ -23,7 +23,7 @@ export class GithubProvider extends BaseService {
 	}
 
 	public async extractUserInfo(data: GithubProfile): Promise<BaseUserInfo> {
-		console.log(data)
+		console.log('GITHUB: ', data)
 
 		return super.extractUserInfo({
 			id: data.id.toString(),

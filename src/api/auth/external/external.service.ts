@@ -9,6 +9,7 @@ import {
 	type User
 } from '@prisma/generated'
 import { randomBytes } from 'crypto'
+import { Response } from 'express'
 
 import { AllowedProvider } from '@/api/oauth/interfaces'
 import { OAuthService } from '@/api/oauth/oauth.service'
@@ -60,7 +61,9 @@ export class ExternalService {
 
 		const existingAccount =
 			await this.prismaService.externalAccount.findUnique({
-				where: { providerAccountId: external.id }
+				where: {
+					providerAccountId: external.id
+				}
 			})
 
 		if (existingAccount) {
@@ -78,6 +81,7 @@ export class ExternalService {
 					}
 				}
 			})
+
 		if (sameEmailAccount) {
 			throw new BadRequestException(
 				`Аккаунт с этой почтой уже привязан через ${provider}`
@@ -140,26 +144,22 @@ export class ExternalService {
 						}
 					})
 
-				if (alreadyLinked) {
-					throw new BadRequestException(
-						`Вы уже привязали аккаунт ${provider} к своему профилю`
-					)
-				}
-
-				await this.prismaService.externalAccount.create({
-					data: {
-						provider: providerEnum,
-						providerAccountId: external.id,
-						refreshToken: external.refreshToken,
-						accessToken: external.accessToken,
-						expiry: external.expiry,
-						user: {
-							connect: {
-								id: user.id
+				if (!alreadyLinked) {
+					await this.prismaService.externalAccount.create({
+						data: {
+							provider: providerEnum,
+							providerAccountId: external.id,
+							refreshToken: external.refreshToken,
+							accessToken: external.accessToken,
+							expiry: external.expiry,
+							user: {
+								connect: {
+									id: user.id
+								}
 							}
 						}
-					}
-				})
+					})
+				}
 			} else {
 				const token = randomBytes(64).toString('hex')
 

@@ -31,6 +31,12 @@ export class SessionService {
 
 		if (!user) throw new NotFoundException('Неверный логин или пароль')
 
+		if (!user.password) {
+			throw new BadRequestException(
+				'Этот аккаунт зарегистрирован через внешний провайдер (Google или GitHub)'
+			)
+		}
+
 		const isValidPassword = await verify(user.password, password)
 
 		if (!isValidPassword)

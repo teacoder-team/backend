@@ -92,6 +92,7 @@ model PasswordReset {
 model MultiFactorAuthentication {
   id String @id @default(uuid())
 
+  emailOtp      Boolean  @default(false) @map("email_otp")
   recoveryCodes String[] @default([]) @map("recovery_codes")
 
   totp   Totp?   @relation(fields: [totpId], references: [id], onDelete: Cascade)
