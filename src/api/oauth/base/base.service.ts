@@ -8,7 +8,10 @@ export class BaseService {
 
 	public constructor(private readonly options: BaseProviderOptions) {}
 
-	protected async extractUserInfo(data: any): Promise<BaseUserInfo> {
+	protected async extractUserInfo(
+		data: any,
+		accessToken?: string
+	): Promise<BaseUserInfo> {
 		return {
 			...data,
 			provider: this.options.name
@@ -50,8 +53,6 @@ export class BaseService {
 			}
 		})
 
-		console.log(tokensRequest)
-
 		if (!tokensRequest.ok) {
 			throw new BadRequestException(
 				`Failed to fetch tokens from ${this.options.accessUrl}`
@@ -78,7 +79,7 @@ export class BaseService {
 
 		const user = await userRequest.json()
 
-		const userData = await this.extractUserInfo(user)
+		const userData = await this.extractUserInfo(user, tokens.access_token)
 
 		return {
 			...userData,

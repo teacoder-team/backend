@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { BadRequestException, Injectable } from '@nestjs/common'
 
 import { BaseService } from '../base/base.service'
 import {
@@ -22,13 +22,36 @@ export class GithubProvider extends BaseService {
 		})
 	}
 
-	public async extractUserInfo(data: GithubProfile): Promise<BaseUserInfo> {
-		console.log('GITHUB: ', data)
+	public override async extractUserInfo(
+		data: GithubProfile,
+		accessToken?: string
+	): Promise<BaseUserInfo> {
+		let email = ''
+
+		if (accessToken) {
+			const response = await fetch('https://api.github.com/user/emails', {
+				headers: {
+					Authorization: `Bearer ${accessToken}`,
+					Accept: 'application/json'
+				}
+			})
+
+			if (!response.ok) {
+				throw new BadRequestException('Failed to fetch GitHub emails')
+			}
+
+			const emails = await response.json()
+
+			console.log('EMAILS:', emails)
+
+			email =
+				emails.find((e: any) => e.primary && e.verified)?.email ?? ''
+		}
 
 		return super.extractUserInfo({
 			id: data.id.toString(),
-			name: data.name,
-			email: data.email,
+			name: data.name || data.login,
+			email,
 			avatar: data.avatar_url
 		})
 	}
