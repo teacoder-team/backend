@@ -15,6 +15,9 @@ export class CourseService {
 
 	public async getAll() {
 		const courses = await this.prismaService.course.findMany({
+			where: {
+				isPublished: true
+			},
 			orderBy: {
 				createdAt: 'desc'
 			},
