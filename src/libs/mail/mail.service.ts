@@ -1,20 +1,44 @@
 import { MailerService } from '@nestjs-modules/mailer'
+import { InjectQueue } from '@nestjs/bullmq'
 import { Injectable } from '@nestjs/common'
 import type { Restriction, User } from '@prisma/generated'
 import { render } from '@react-email/components'
+import { Queue } from 'bullmq'
 
-import { ResetPasswordEmail } from './templates/reset-password.template'
-import { RestrictionLiftedEmail } from './templates/restriction-lifted.template'
-import { RestrictionEmail } from './templates/restriction.template'
+import { EmailVerificationTemplate } from './templates/email-verification.template'
+import { ResetPasswordTemplate } from './templates/reset-password.template'
+import { RestrictionLiftedTemplate } from './templates/restriction-lifted.template'
+import { RestrictionTemplate } from './templates/restriction.template'
 
 @Injectable()
 export class MailService {
-	public constructor(private readonly mailerService: MailerService) {}
+	public constructor(
+		private readonly mailerService: MailerService,
+		@InjectQueue('mail') private readonly queue: Queue
+	) {}
+
+	public async sendEmailVerification(user: User, token: string) {
+		const html = await render(EmailVerificationTemplate({ user, token }))
+
+		await this.queue.add(
+			'send-email',
+			{ email: user.email, subject: 'Верификация почты', html },
+			{ removeOnComplete: true }
+		)
+
+		return true
+	}
 
 	public async sendPasswordReset(user: User, token: string) {
-		const html = await render(ResetPasswordEmail({ user, token }))
+		const html = await render(ResetPasswordTemplate({ user, token }))
 
-		return this.sendMail(user.email, 'Сброс пароля', html)
+		await this.queue.add(
+			'send-email',
+			{ email: user.email, subject: 'Сброс пароля', html },
+			{ removeOnComplete: true }
+		)
+
+		return true
 	}
 
 	public async sendRestrictionEmail(
@@ -23,19 +47,33 @@ export class MailService {
 		violations: number
 	) {
 		const html = await render(
-			RestrictionEmail({ user, restriction, violations })
+			RestrictionTemplate({ user, restriction, violations })
 		)
 
-		return this.sendMail(user.email, 'Ваш аккаунт был ограничен', html)
+		await this.queue.add(
+			'send-email',
+			{ email: user.email, subject: 'Ваш аккаунт был ограничен', html },
+			{ removeOnComplete: true }
+		)
+
+		return true
 	}
 
 	public async sendRestrictionLiftedEmail(user: User, violations: number) {
-		const html = await render(RestrictionLiftedEmail({ user, violations }))
+		const html = await render(
+			RestrictionLiftedTemplate({ user, violations })
+		)
 
-		return this.sendMail(user.email, 'Ограничение снято', html)
+		await this.queue.add(
+			'send-email',
+			{ email: user.email, subject: 'Ограничение снято', html },
+			{ removeOnComplete: true }
+		)
+
+		return true
 	}
 
-	private sendMail(email: string, subject: string, html: string) {
+	public sendMail(email: string, subject: string, html: string) {
 		return this.mailerService.sendMail({
 			to: email,
 			subject,

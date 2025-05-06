@@ -16,16 +16,16 @@ import {
 	Text
 } from '@react-email/components'
 
-interface ResetPasswordTemplateProps {
+interface EmailVerificationTemplateProps {
 	user: User
 	token: string
 }
 
 const baseUrl = process.env['SITE_URL']
 
-export function ResetPasswordTemplate({ user, token }: ResetPasswordTemplateProps) {
+export function EmailVerificationTemplate({ user, token }: EmailVerificationTemplateProps) {
 	const logo = `${baseUrl}/touch-icons/512x512.png`
-	const resetLink = `${baseUrl}/auth/recovery/${token}`
+	const verfiyLink = `${baseUrl}/auth/verify/${token}`
 
 	return (
 		<Html>
@@ -41,7 +41,7 @@ export function ResetPasswordTemplate({ user, token }: ResetPasswordTemplateProp
 			</Head>
 			<Tailwind>
 				<Body>
-					<Preview>Сброс пароля на TeaCoder</Preview>
+					<Preview>Верификация почты на TeaCoder</Preview>
 					<Container className='mx-auto my-10 max-w-[500px] rounded-lg bg-white p-8 shadow-lg'>
 						<Section className='text-center'>
 							<Img
@@ -52,25 +52,25 @@ export function ResetPasswordTemplate({ user, token }: ResetPasswordTemplateProp
 								className='mx-auto mb-4'
 							/>
 							<Heading className='text-2xl font-bold text-blue-600' style={{ fontFamily: 'Geist, Arial' }}>
-								Сброс пароля
+							    Верификация почты
 							</Heading>
 							<Text className='mb-6 text-gray-500' style={{ fontFamily: 'Geist, Arial' }}>
-								Привет, {user.displayName}! Мы получили запрос на сброс пароля для вашего аккаунта.
+							    Привет, {user.displayName}! Мы получили запрос на верификацию вашей почты.
 							</Text>
 							<Section className='mb-8 rounded-lg border border-blue-100 bg-blue-50 p-6'>
 								<Text className='mb-4 text-gray-800' style={{ fontFamily: 'Geist, Arial' }}>
-									Нажмите на кнопку ниже, чтобы создать новый пароль. Ссылка действительна в течение 1 часа.
+								    Нажмите на кнопку ниже, чтобы подтвердить ваш адрес электронной почты. Ссылка действительна в течение 1 часа.
 								</Text>
 								<Button
-									href={resetLink}
+									href={verfiyLink}
 									className='inline-flex items-center justify-center rounded-full bg-blue-600 px-8 py-3 text-sm font-medium text-white hover:bg-blue-600/90 leading-none'
 									style={{ fontFamily: 'Geist, Arial' }}
 								>
-									Сбросить пароль
+									Подтвердить почту
 								</Button>
 							</Section>
 							<Text className='text-sm text-gray-500' style={{ fontFamily: 'Geist, Arial' }}>
-								Если вы не запрашивали сброс пароля, просто проигнорируйте это письмо.
+							    Если вы не запрашивали верификацию почты, просто проигнорируйте это письмо.
 							</Text>
 							<Text className='mt-6 text-sm text-gray-400' style={{ fontFamily: 'Geist, Arial' }}>
 								© {new Date().getFullYear()} TeaCoder. Все права защищены.

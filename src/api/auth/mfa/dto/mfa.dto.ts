@@ -8,12 +8,6 @@ export class MfaStatusResponse {
 	public totpMfa: boolean
 
 	@ApiProperty({
-		description: 'Indicates if Passkey MFA is enabled for the account',
-		example: false
-	})
-	public passkeyMfa: boolean
-
-	@ApiProperty({
 		description: 'Indicates if recovery codes are active for the account',
 		example: true
 	})
