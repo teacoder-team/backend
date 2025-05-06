@@ -24,4 +24,11 @@ export class AccountResponse {
 		example: 'UCSOW2TFUGL34ZWCOZSAHDFU4W'
 	})
 	public avatar: string
+
+	@ApiProperty({
+		description:
+			'Indicates whether the user has verified their email address',
+		example: true
+	})
+	public isEmailVerified: boolean
 }

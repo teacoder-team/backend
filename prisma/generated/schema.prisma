@@ -22,16 +22,56 @@ model User {
 
   role UserRole @default(STUDENT)
 
-  userProgress UserProgress[]
+  emailVerification EmailVerification?
+  passwordReset     PasswordReset?
 
-  passwordReset PasswordReset?
-  mfa           MultiFactorAuthentication?
-  restrictions  Restriction[]
+  externalAccounts ExternalAccount[]
+  userProgress     UserProgress[]
+
+  mfa          MultiFactorAuthentication?
+  restrictions Restriction[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("users")
+}
+
+model ExternalAccount {
+  id String @id @default(uuid())
+
+  provider          AccountProvider
+  providerAccountId String          @unique @map("provider_account_id")
+
+  refreshToken String? @map("refresh_token")
+  accessToken  String? @map("access_token")
+  expiry       Int?
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @map("user_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([userId, provider])
+  @@map("external_accounts")
+}
+
+model EmailVerification {
+  id String @id @default(uuid())
+
+  token  String    @unique
+  expiry DateTime?
+
+  status EmailVerificationStatus @default(PENDING)
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @unique @map("user_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("email_verification")
 }
 
 model PasswordReset {
@@ -52,6 +92,7 @@ model PasswordReset {
 model MultiFactorAuthentication {
   id String @id @default(uuid())
 
+  emailOtp      Boolean  @default(false) @map("email_otp")
   recoveryCodes String[] @default([]) @map("recovery_codes")
 
   totp   Totp?   @relation(fields: [totpId], references: [id], onDelete: Cascade)
@@ -168,6 +209,20 @@ enum UserRole {
   ADMIN
 
   @@map("user_roles")
+}
+
+enum AccountProvider {
+  GOOGLE
+  GITHUB
+
+  @@map("account_providers")
+}
+
+enum EmailVerificationStatus {
+  PENDING
+  VERIFIED
+
+  @@map("email_verification_statuses")
 }
 
 enum TotpStatus {

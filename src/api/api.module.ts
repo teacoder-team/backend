@@ -3,9 +3,10 @@ import { ConfigModule, ConfigService } from '@nestjs/config'
 import { ScheduleModule } from '@nestjs/schedule'
 import { TurnstileModule } from 'nestjs-cloudflare-captcha'
 
-import { getTurnstileConfig } from '@/config/turnstile.config'
+import { getTurnstileConfig } from '@/config'
 
 import { AccountModule } from './auth/account/account.module'
+import { ExternalModule } from './auth/external/external.module'
 import { MfaModule } from './auth/mfa/mfa.module'
 import { SessionModule } from './auth/session/session.module'
 import { CourseModule } from './course/course.module'
@@ -24,6 +25,7 @@ import { UsersModule } from './users/users.module'
 		}),
 		ScheduleModule.forRoot(),
 		AccountModule,
+		ExternalModule,
 		SessionModule,
 		MfaModule,
 		RestrictionModule,

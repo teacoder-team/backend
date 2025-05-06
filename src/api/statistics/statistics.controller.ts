@@ -1,5 +1,8 @@
 import { Controller, Get, HttpCode, HttpStatus } from '@nestjs/common'
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger'
+import { UserRole } from '@prisma/generated'
+
+import { Authorization } from '@/common/decorators'
 
 import { RegistrationsResponse, StatisticsResponse } from './dto'
 import { StatisticsService } from './statistics.service'
@@ -16,6 +19,7 @@ export class StatisticsController {
 	@ApiOkResponse({
 		type: StatisticsResponse
 	})
+	@Authorization(UserRole.ADMIN)
 	@Get()
 	@HttpCode(HttpStatus.OK)
 	public async getStatistics() {
@@ -29,6 +33,7 @@ export class StatisticsController {
 	@ApiOkResponse({
 		type: [RegistrationsResponse]
 	})
+	@Authorization(UserRole.ADMIN)
 	@Get('registrations')
 	@HttpCode(HttpStatus.OK)
 	public async getUserRegistrations() {
