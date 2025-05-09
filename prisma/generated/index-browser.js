@@ -228,6 +228,28 @@ exports.Prisma.UserProgressScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.ArticleScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  slug: 'slug',
+  thumbnail: 'thumbnail',
+  content: 'content',
+  isPublished: 'isPublished',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CommentScalarFieldEnum = {
+  id: 'id',
+  content: 'content',
+  edited: 'edited',
+  deleted: 'deleted',
+  authorId: 'authorId',
+  articleId: 'articleId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -285,7 +307,9 @@ exports.Prisma.ModelName = {
   Restriction: 'Restriction',
   Course: 'Course',
   Lesson: 'Lesson',
-  UserProgress: 'UserProgress'
+  UserProgress: 'UserProgress',
+  Article: 'Article',
+  Comment: 'Comment'
 };
 
 /**

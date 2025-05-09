@@ -28,6 +28,8 @@ model User {
   externalAccounts ExternalAccount[]
   userProgress     UserProgress[]
 
+  comments Comment[]
+
   mfa          MultiFactorAuthentication?
   restrictions Restriction[]
 
@@ -201,6 +203,45 @@ model UserProgress {
   @@unique([userId, lessonId])
   @@index([lessonId])
   @@map("user_progress")
+}
+
+model Article {
+  id String @id @default(uuid())
+
+  title     String
+  slug      String  @unique
+  thumbnail String?
+
+  content String
+
+  isPublished Boolean @default(false) @map("is_published")
+
+  comments Comment[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("articles")
+}
+
+model Comment {
+  id String @id @default(uuid())
+
+  content String
+
+  edited  Boolean @default(false)
+  deleted Boolean @default(false)
+
+  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId String @map("author_id")
+
+  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  articleId String  @map("article_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("comments")
 }
 
 enum UserRole {
