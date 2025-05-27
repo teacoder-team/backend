@@ -28,6 +28,8 @@ model User {
   externalAccounts ExternalAccount[]
   userProgress     UserProgress[]
 
+  comments Comment[]
+
   mfa          MultiFactorAuthentication?
   restrictions Restriction[]
 
@@ -94,6 +96,8 @@ model MultiFactorAuthentication {
 
   recoveryCodes String[] @default([]) @map("recovery_codes")
 
+  passkeys Passkey[]
+
   totp   Totp?   @relation(fields: [totpId], references: [id], onDelete: Cascade)
   totpId String? @unique @map("totp_id")
 
@@ -118,6 +122,30 @@ model Totp {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("totps")
+}
+
+model Passkey {
+  id String @id @default(uuid())
+
+  deviceName String @map("device_name")
+
+  credentialId String   @unique @map("credential_id")
+  publicKey    String   @map("public_key")
+  counter      Int      @default(0)
+  transports   String[]
+
+  lastUsedAt DateTime? @map("last_used_at")
+
+  ip        String
+  userAgent String @map("user_agent")
+
+  mfa   MultiFactorAuthentication @relation(fields: [mfaId], references: [id], onDelete: Cascade)
+  mfaId String                    @map("mfa_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("passkeys")
 }
 
 model Restriction {
@@ -201,6 +229,45 @@ model UserProgress {
   @@unique([userId, lessonId])
   @@index([lessonId])
   @@map("user_progress")
+}
+
+model Article {
+  id String @id @default(uuid())
+
+  title     String
+  slug      String  @unique
+  thumbnail String?
+
+  content String
+
+  isPublished Boolean @default(false) @map("is_published")
+
+  comments Comment[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("articles")
+}
+
+model Comment {
+  id String @id @default(uuid())
+
+  content String
+
+  edited  Boolean @default(false)
+  deleted Boolean @default(false)
+
+  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId String @map("author_id")
+
+  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  articleId String  @map("article_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("comments")
 }
 
 enum UserRole {

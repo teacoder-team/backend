@@ -77,7 +77,7 @@ export class CourseService {
 			}
 		})
 
-		if (!course) throw new NotFoundException('Course not found')
+		if (!course) throw new NotFoundException('Курс не найден')
 
 		await this.redisService.set(
 			`courses:${course.slug}`,

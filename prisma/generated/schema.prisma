@@ -28,6 +28,11 @@ model User {
   externalAccounts ExternalAccount[]
   userProgress     UserProgress[]
 
+<<<<<<< HEAD
+=======
+  comments Comment[]
+
+>>>>>>> feature/auth
   mfa          MultiFactorAuthentication?
   restrictions Restriction[]
 
@@ -92,9 +97,16 @@ model PasswordReset {
 model MultiFactorAuthentication {
   id String @id @default(uuid())
 
+<<<<<<< HEAD
   emailOtp      Boolean  @default(false) @map("email_otp")
   recoveryCodes String[] @default([]) @map("recovery_codes")
 
+=======
+  recoveryCodes String[] @default([]) @map("recovery_codes")
+
+  passkeys Passkey[]
+
+>>>>>>> feature/auth
   totp   Totp?   @relation(fields: [totpId], references: [id], onDelete: Cascade)
   totpId String? @unique @map("totp_id")
 
@@ -121,6 +133,33 @@ model Totp {
   @@map("totps")
 }
 
+<<<<<<< HEAD
+=======
+model Passkey {
+  id String @id @default(uuid())
+
+  deviceName String @map("device_name")
+
+  credentialId String   @unique @map("credential_id")
+  publicKey    String   @map("public_key")
+  counter      Int      @default(0)
+  transports   String[]
+
+  lastUsedAt DateTime? @map("last_used_at")
+
+  ip        String
+  userAgent String @map("user_agent")
+
+  mfa   MultiFactorAuthentication @relation(fields: [mfaId], references: [id], onDelete: Cascade)
+  mfaId String                    @map("mfa_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("passkeys")
+}
+
+>>>>>>> feature/auth
 model Restriction {
   id String @id @default(uuid())
 
@@ -204,6 +243,48 @@ model UserProgress {
   @@map("user_progress")
 }
 
+<<<<<<< HEAD
+=======
+model Article {
+  id String @id @default(uuid())
+
+  title     String
+  slug      String  @unique
+  thumbnail String?
+
+  content String
+
+  isPublished Boolean @default(false) @map("is_published")
+
+  comments Comment[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("articles")
+}
+
+model Comment {
+  id String @id @default(uuid())
+
+  content String
+
+  edited  Boolean @default(false)
+  deleted Boolean @default(false)
+
+  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId String @map("author_id")
+
+  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  articleId String  @map("article_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("comments")
+}
+
+>>>>>>> feature/auth
 enum UserRole {
   STUDENT
   ADMIN

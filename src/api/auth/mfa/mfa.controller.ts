@@ -32,6 +32,9 @@ import {
 	MfaRecoveryRequest,
 	MfaStatusResponse,
 	MfaTotpRequest,
+	PasskeyResponse,
+	RegisterPasskeyRequest,
+	RegisterPasskeyResponse,
 	TotpDisableRequest,
 	TotpEnableRequest,
 	TotpGenerateSecretResponse
@@ -95,6 +98,48 @@ export class MfaController {
 	@HttpCode(HttpStatus.OK)
 	public async regenerateRecovery(@Authorized() user: User) {
 		return this.mfaService.regenerateRecovery(user)
+	}
+
+	@ApiOperation({
+		summary: 'Fetch Passkeys',
+		description:
+			'Retrieve the list of registered passkeys for the authenticated user.'
+	})
+	@ApiOkResponse({
+		type: [PasskeyResponse]
+	})
+	@ApiHeader({
+		name: 'X-Session-Token',
+		required: true
+	})
+	@Authorization()
+	@Get('passkey')
+	@HttpCode(HttpStatus.OK)
+	public async fetchPasskeys(@Authorized() user: User) {
+		return this.mfaService.fetchPasskeys(user)
+	}
+
+	@ApiOperation({
+		summary: 'Register Passkey​​',
+		description: 'Register a passkey for an account.'
+	})
+	@ApiOkResponse({
+		type: RegisterPasskeyResponse
+	})
+	@ApiHeader({
+		name: 'X-Session-Token',
+		required: true
+	})
+	@Authorization()
+	@Post('passkey')
+	@HttpCode(HttpStatus.OK)
+	public async registerPasskey(
+		@Authorized() user: User,
+		@Body() dto: RegisterPasskeyRequest,
+		@ClientIp() ip: string,
+		@UserAgent() userAgent: string
+	) {
+		return this.mfaService.registerPasskey(user, dto, ip, userAgent)
 	}
 
 	@ApiOperation({

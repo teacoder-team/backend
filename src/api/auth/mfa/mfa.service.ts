@@ -17,6 +17,7 @@ import { RedisService } from '@/infra/redis/redis.service'
 import {
 	MfaRecoveryRequest,
 	MfaTotpRequest,
+	RegisterPasskeyRequest,
 	TotpDisableRequest,
 	TotpEnableRequest
 } from './dto'
@@ -39,8 +40,17 @@ export class MfaService {
 				}
 			})
 
+		if (!mfa) {
+			return {
+				totpMfa: false,
+				passkeyMfa: false,
+				recoveryActive: false
+			}
+		}
+
 		return {
 			totpMfa: mfa?.totp?.status === TotpStatus.ENABLED,
+			passkeyMfa: mfa.passkeys.length > 0,
 			recoveryActive: mfa?.recoveryCodes.length > 0
 		}
 	}
@@ -75,6 +85,88 @@ export class MfaService {
 		})
 
 		return mfa.recoveryCodes
+	}
+
+	public async fetchPasskeys(user: User) {
+		const mfa =
+			await this.prismaService.multiFactorAuthentication.findUnique({
+				where: {
+					userId: user.id
+				},
+				include: {
+					passkeys: {
+						select: {
+							id: true,
+							deviceName: true,
+							lastUsedAt: true,
+							createdAt: true
+						}
+					}
+				}
+			})
+
+		if (!mfa || !mfa.passkeys) {
+			throw new NotFoundException(
+				'Многофакторная аутентификация не включена'
+			)
+		}
+
+		return mfa.passkeys
+	}
+
+	public async registerPasskey(
+		user: User,
+		dto: RegisterPasskeyRequest,
+		ip: string,
+		userAgent: string
+	) {
+		const { deviceName, credentialId, publicKey, transports } = dto
+
+		let mfa = await this.prismaService.multiFactorAuthentication.findUnique(
+			{
+				where: {
+					userId: user.id
+				},
+				include: {
+					passkeys: true
+				}
+			}
+		)
+
+		if (!mfa) {
+			mfa = await this.prismaService.multiFactorAuthentication.create({
+				data: {
+					userId: user.id
+				},
+				include: {
+					passkeys: true
+				}
+			})
+		}
+
+		const passkey = await this.prismaService.passkey.create({
+			data: {
+				deviceName,
+				credentialId,
+				publicKey,
+				transports,
+				lastUsedAt: new Date(),
+				ip,
+				userAgent,
+				mfa: {
+					connect: {
+						id: mfa.id
+					}
+				}
+			},
+			select: {
+				id: true,
+				deviceName: true,
+				transports: true
+			}
+		})
+
+		return passkey
 	}
 
 	public async totpEnable(user: User, dto: TotpEnableRequest) {
