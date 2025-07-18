@@ -183,8 +183,6 @@ exports.Prisma.TotpScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
-<<<<<<< HEAD
-=======
 exports.Prisma.PasskeyScalarFieldEnum = {
   id: 'id',
   deviceName: 'deviceName',
@@ -200,7 +198,6 @@ exports.Prisma.PasskeyScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
->>>>>>> feature/auth
 exports.Prisma.RestrictionScalarFieldEnum = {
   id: 'id',
   reason: 'reason',
@@ -246,8 +243,6 @@ exports.Prisma.UserProgressScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
-<<<<<<< HEAD
-=======
 exports.Prisma.ArticleScalarFieldEnum = {
   id: 'id',
   title: 'title',
@@ -270,7 +265,6 @@ exports.Prisma.CommentScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
->>>>>>> feature/auth
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -325,12 +319,6 @@ exports.Prisma.ModelName = {
   PasswordReset: 'PasswordReset',
   MultiFactorAuthentication: 'MultiFactorAuthentication',
   Totp: 'Totp',
-<<<<<<< HEAD
-  Restriction: 'Restriction',
-  Course: 'Course',
-  Lesson: 'Lesson',
-  UserProgress: 'UserProgress'
-=======
   Passkey: 'Passkey',
   Restriction: 'Restriction',
   Course: 'Course',
@@ -338,7 +326,6 @@ exports.Prisma.ModelName = {
   UserProgress: 'UserProgress',
   Article: 'Article',
   Comment: 'Comment'
->>>>>>> feature/auth
 };
 
 /**

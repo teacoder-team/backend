@@ -28,11 +28,8 @@ model User {
   externalAccounts ExternalAccount[]
   userProgress     UserProgress[]
 
-<<<<<<< HEAD
-=======
   comments Comment[]
 
->>>>>>> feature/auth
   mfa          MultiFactorAuthentication?
   restrictions Restriction[]
 
@@ -97,16 +94,10 @@ model PasswordReset {
 model MultiFactorAuthentication {
   id String @id @default(uuid())
 
-<<<<<<< HEAD
-  emailOtp      Boolean  @default(false) @map("email_otp")
-  recoveryCodes String[] @default([]) @map("recovery_codes")
-
-=======
   recoveryCodes String[] @default([]) @map("recovery_codes")
 
   passkeys Passkey[]
 
->>>>>>> feature/auth
   totp   Totp?   @relation(fields: [totpId], references: [id], onDelete: Cascade)
   totpId String? @unique @map("totp_id")
 
@@ -133,8 +124,6 @@ model Totp {
   @@map("totps")
 }
 
-<<<<<<< HEAD
-=======
 model Passkey {
   id String @id @default(uuid())
 
@@ -159,7 +148,6 @@ model Passkey {
   @@map("passkeys")
 }
 
->>>>>>> feature/auth
 model Restriction {
   id String @id @default(uuid())
 
@@ -243,8 +231,6 @@ model UserProgress {
   @@map("user_progress")
 }
 
-<<<<<<< HEAD
-=======
 model Article {
   id String @id @default(uuid())
 
@@ -284,7 +270,6 @@ model Comment {
   @@map("comments")
 }
 
->>>>>>> feature/auth
 enum UserRole {
   STUDENT
   ADMIN

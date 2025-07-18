@@ -44,14 +44,11 @@ export type MultiFactorAuthentication = $Result.DefaultSelection<Prisma.$MultiFa
  */
 export type Totp = $Result.DefaultSelection<Prisma.$TotpPayload>
 /**
-<<<<<<< HEAD
-=======
  * Model Passkey
  * 
  */
 export type Passkey = $Result.DefaultSelection<Prisma.$PasskeyPayload>
 /**
->>>>>>> feature/auth
  * Model Restriction
  * 
  */
@@ -71,8 +68,6 @@ export type Lesson = $Result.DefaultSelection<Prisma.$LessonPayload>
  * 
  */
 export type UserProgress = $Result.DefaultSelection<Prisma.$UserProgressPayload>
-<<<<<<< HEAD
-=======
 /**
  * Model Article
  * 
@@ -83,7 +78,6 @@ export type Article = $Result.DefaultSelection<Prisma.$ArticlePayload>
  * 
  */
 export type Comment = $Result.DefaultSelection<Prisma.$CommentPayload>
->>>>>>> feature/auth
 
 /**
  * Enums
@@ -349,8 +343,6 @@ export class PrismaClient<
   get totp(): Prisma.TotpDelegate<ExtArgs>;
 
   /**
-<<<<<<< HEAD
-=======
    * `prisma.passkey`: Exposes CRUD operations for the **Passkey** model.
     * Example usage:
     * ```ts
@@ -361,7 +353,6 @@ export class PrismaClient<
   get passkey(): Prisma.PasskeyDelegate<ExtArgs>;
 
   /**
->>>>>>> feature/auth
    * `prisma.restriction`: Exposes CRUD operations for the **Restriction** model.
     * Example usage:
     * ```ts
@@ -400,8 +391,6 @@ export class PrismaClient<
     * ```
     */
   get userProgress(): Prisma.UserProgressDelegate<ExtArgs>;
-<<<<<<< HEAD
-=======
 
   /**
    * `prisma.article`: Exposes CRUD operations for the **Article** model.
@@ -422,7 +411,6 @@ export class PrismaClient<
     * ```
     */
   get comment(): Prisma.CommentDelegate<ExtArgs>;
->>>>>>> feature/auth
 }
 
 export namespace Prisma {
@@ -870,12 +858,6 @@ export namespace Prisma {
     PasswordReset: 'PasswordReset',
     MultiFactorAuthentication: 'MultiFactorAuthentication',
     Totp: 'Totp',
-<<<<<<< HEAD
-    Restriction: 'Restriction',
-    Course: 'Course',
-    Lesson: 'Lesson',
-    UserProgress: 'UserProgress'
-=======
     Passkey: 'Passkey',
     Restriction: 'Restriction',
     Course: 'Course',
@@ -883,7 +865,6 @@ export namespace Prisma {
     UserProgress: 'UserProgress',
     Article: 'Article',
     Comment: 'Comment'
->>>>>>> feature/auth
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -899,11 +880,7 @@ export namespace Prisma {
 
   export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> = {
     meta: {
-<<<<<<< HEAD
-      modelProps: "user" | "externalAccount" | "emailVerification" | "passwordReset" | "multiFactorAuthentication" | "totp" | "restriction" | "course" | "lesson" | "userProgress"
-=======
       modelProps: "user" | "externalAccount" | "emailVerification" | "passwordReset" | "multiFactorAuthentication" | "totp" | "passkey" | "restriction" | "course" | "lesson" | "userProgress" | "article" | "comment"
->>>>>>> feature/auth
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1327,8 +1304,6 @@ export namespace Prisma {
           }
         }
       }
-<<<<<<< HEAD
-=======
       Passkey: {
         payload: Prisma.$PasskeyPayload<ExtArgs>
         fields: Prisma.PasskeyFieldRefs
@@ -1399,7 +1374,6 @@ export namespace Prisma {
           }
         }
       }
->>>>>>> feature/auth
       Restriction: {
         payload: Prisma.$RestrictionPayload<ExtArgs>
         fields: Prisma.RestrictionFieldRefs
@@ -1680,8 +1654,6 @@ export namespace Prisma {
           }
         }
       }
-<<<<<<< HEAD
-=======
       Article: {
         payload: Prisma.$ArticlePayload<ExtArgs>
         fields: Prisma.ArticleFieldRefs
@@ -1822,7 +1794,6 @@ export namespace Prisma {
           }
         }
       }
->>>>>>> feature/auth
     }
   } & {
     other: {
@@ -1986,20 +1957,14 @@ export namespace Prisma {
   export type UserCountOutputType = {
     externalAccounts: number
     userProgress: number
-<<<<<<< HEAD
-=======
     comments: number
->>>>>>> feature/auth
     restrictions: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     externalAccounts?: boolean | UserCountOutputTypeCountExternalAccountsArgs
     userProgress?: boolean | UserCountOutputTypeCountUserProgressArgs
-<<<<<<< HEAD
-=======
     comments?: boolean | UserCountOutputTypeCountCommentsArgs
->>>>>>> feature/auth
     restrictions?: boolean | UserCountOutputTypeCountRestrictionsArgs
   }
 
@@ -2031,8 +1996,6 @@ export namespace Prisma {
   /**
    * UserCountOutputType without action
    */
-<<<<<<< HEAD
-=======
   export type UserCountOutputTypeCountCommentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: CommentWhereInput
   }
@@ -2040,15 +2003,12 @@ export namespace Prisma {
   /**
    * UserCountOutputType without action
    */
->>>>>>> feature/auth
   export type UserCountOutputTypeCountRestrictionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: RestrictionWhereInput
   }
 
 
   /**
-<<<<<<< HEAD
-=======
    * Count Type MultiFactorAuthenticationCountOutputType
    */
 
@@ -2080,7 +2040,6 @@ export namespace Prisma {
 
 
   /**
->>>>>>> feature/auth
    * Count Type CourseCountOutputType
    */
 
@@ -2143,8 +2102,6 @@ export namespace Prisma {
 
 
   /**
-<<<<<<< HEAD
-=======
    * Count Type ArticleCountOutputType
    */
 
@@ -2176,7 +2133,6 @@ export namespace Prisma {
 
 
   /**
->>>>>>> feature/auth
    * Models
    */
 
@@ -2422,10 +2378,7 @@ export namespace Prisma {
     passwordReset?: boolean | User$passwordResetArgs<ExtArgs>
     externalAccounts?: boolean | User$externalAccountsArgs<ExtArgs>
     userProgress?: boolean | User$userProgressArgs<ExtArgs>
-<<<<<<< HEAD
-=======
     comments?: boolean | User$commentsArgs<ExtArgs>
->>>>>>> feature/auth
     mfa?: boolean | User$mfaArgs<ExtArgs>
     restrictions?: boolean | User$restrictionsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
@@ -2462,10 +2415,7 @@ export namespace Prisma {
     passwordReset?: boolean | User$passwordResetArgs<ExtArgs>
     externalAccounts?: boolean | User$externalAccountsArgs<ExtArgs>
     userProgress?: boolean | User$userProgressArgs<ExtArgs>
-<<<<<<< HEAD
-=======
     comments?: boolean | User$commentsArgs<ExtArgs>
->>>>>>> feature/auth
     mfa?: boolean | User$mfaArgs<ExtArgs>
     restrictions?: boolean | User$restrictionsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
@@ -2479,10 +2429,7 @@ export namespace Prisma {
       passwordReset: Prisma.$PasswordResetPayload<ExtArgs> | null
       externalAccounts: Prisma.$ExternalAccountPayload<ExtArgs>[]
       userProgress: Prisma.$UserProgressPayload<ExtArgs>[]
-<<<<<<< HEAD
-=======
       comments: Prisma.$CommentPayload<ExtArgs>[]
->>>>>>> feature/auth
       mfa: Prisma.$MultiFactorAuthenticationPayload<ExtArgs> | null
       restrictions: Prisma.$RestrictionPayload<ExtArgs>[]
     }
@@ -2865,10 +2812,7 @@ export namespace Prisma {
     passwordReset<T extends User$passwordResetArgs<ExtArgs> = {}>(args?: Subset<T, User$passwordResetArgs<ExtArgs>>): Prisma__PasswordResetClient<$Result.GetResult<Prisma.$PasswordResetPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     externalAccounts<T extends User$externalAccountsArgs<ExtArgs> = {}>(args?: Subset<T, User$externalAccountsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ExternalAccountPayload<ExtArgs>, T, "findMany"> | Null>
     userProgress<T extends User$userProgressArgs<ExtArgs> = {}>(args?: Subset<T, User$userProgressArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserProgressPayload<ExtArgs>, T, "findMany"> | Null>
-<<<<<<< HEAD
-=======
     comments<T extends User$commentsArgs<ExtArgs> = {}>(args?: Subset<T, User$commentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "findMany"> | Null>
->>>>>>> feature/auth
     mfa<T extends User$mfaArgs<ExtArgs> = {}>(args?: Subset<T, User$mfaArgs<ExtArgs>>): Prisma__MultiFactorAuthenticationClient<$Result.GetResult<Prisma.$MultiFactorAuthenticationPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     restrictions<T extends User$restrictionsArgs<ExtArgs> = {}>(args?: Subset<T, User$restrictionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RestrictionPayload<ExtArgs>, T, "findMany"> | Null>
     /**
@@ -3294,8 +3238,6 @@ export namespace Prisma {
   }
 
   /**
-<<<<<<< HEAD
-=======
    * User.comments
    */
   export type User$commentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3316,7 +3258,6 @@ export namespace Prisma {
   }
 
   /**
->>>>>>> feature/auth
    * User.mfa
    */
   export type User$mfaArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -6451,15 +6392,10 @@ export namespace Prisma {
     userId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-<<<<<<< HEAD
-    totp?: boolean | MultiFactorAuthentication$totpArgs<ExtArgs>
-    user?: boolean | UserDefaultArgs<ExtArgs>
-=======
     passkeys?: boolean | MultiFactorAuthentication$passkeysArgs<ExtArgs>
     totp?: boolean | MultiFactorAuthentication$totpArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
     _count?: boolean | MultiFactorAuthenticationCountOutputTypeDefaultArgs<ExtArgs>
->>>>>>> feature/auth
   }, ExtArgs["result"]["multiFactorAuthentication"]>
 
   export type MultiFactorAuthenticationSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -6483,15 +6419,10 @@ export namespace Prisma {
   }
 
   export type MultiFactorAuthenticationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-<<<<<<< HEAD
-    totp?: boolean | MultiFactorAuthentication$totpArgs<ExtArgs>
-    user?: boolean | UserDefaultArgs<ExtArgs>
-=======
     passkeys?: boolean | MultiFactorAuthentication$passkeysArgs<ExtArgs>
     totp?: boolean | MultiFactorAuthentication$totpArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
     _count?: boolean | MultiFactorAuthenticationCountOutputTypeDefaultArgs<ExtArgs>
->>>>>>> feature/auth
   }
   export type MultiFactorAuthenticationIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     totp?: boolean | MultiFactorAuthentication$totpArgs<ExtArgs>
@@ -6501,10 +6432,7 @@ export namespace Prisma {
   export type $MultiFactorAuthenticationPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "MultiFactorAuthentication"
     objects: {
-<<<<<<< HEAD
-=======
       passkeys: Prisma.$PasskeyPayload<ExtArgs>[]
->>>>>>> feature/auth
       totp: Prisma.$TotpPayload<ExtArgs> | null
       user: Prisma.$UserPayload<ExtArgs>
     }
@@ -6879,10 +6807,7 @@ export namespace Prisma {
    */
   export interface Prisma__MultiFactorAuthenticationClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-<<<<<<< HEAD
-=======
     passkeys<T extends MultiFactorAuthentication$passkeysArgs<ExtArgs> = {}>(args?: Subset<T, MultiFactorAuthentication$passkeysArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PasskeyPayload<ExtArgs>, T, "findMany"> | Null>
->>>>>>> feature/auth
     totp<T extends MultiFactorAuthentication$totpArgs<ExtArgs> = {}>(args?: Subset<T, MultiFactorAuthentication$totpArgs<ExtArgs>>): Prisma__TotpClient<$Result.GetResult<Prisma.$TotpPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
     /**
@@ -7238,8 +7163,6 @@ export namespace Prisma {
   }
 
   /**
-<<<<<<< HEAD
-=======
    * MultiFactorAuthentication.passkeys
    */
   export type MultiFactorAuthentication$passkeysArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -7260,7 +7183,6 @@ export namespace Prisma {
   }
 
   /**
->>>>>>> feature/auth
    * MultiFactorAuthentication.totp
    */
   export type MultiFactorAuthentication$totpArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -8232,8 +8154,6 @@ export namespace Prisma {
 
 
   /**
-<<<<<<< HEAD
-=======
    * Model Passkey
    */
 
@@ -9281,7 +9201,6 @@ export namespace Prisma {
 
 
   /**
->>>>>>> feature/auth
    * Model Restriction
    */
 
@@ -13285,8 +13204,6 @@ export namespace Prisma {
 
 
   /**
-<<<<<<< HEAD
-=======
    * Model Article
    */
 
@@ -15246,7 +15163,6 @@ export namespace Prisma {
 
 
   /**
->>>>>>> feature/auth
    * Enums
    */
 
@@ -15339,8 +15255,6 @@ export namespace Prisma {
   export type TotpScalarFieldEnum = (typeof TotpScalarFieldEnum)[keyof typeof TotpScalarFieldEnum]
 
 
-<<<<<<< HEAD
-=======
   export const PasskeyScalarFieldEnum: {
     id: 'id',
     deviceName: 'deviceName',
@@ -15359,7 +15273,6 @@ export namespace Prisma {
   export type PasskeyScalarFieldEnum = (typeof PasskeyScalarFieldEnum)[keyof typeof PasskeyScalarFieldEnum]
 
 
->>>>>>> feature/auth
   export const RestrictionScalarFieldEnum: {
     id: 'id',
     reason: 'reason',
@@ -15417,8 +15330,6 @@ export namespace Prisma {
   export type UserProgressScalarFieldEnum = (typeof UserProgressScalarFieldEnum)[keyof typeof UserProgressScalarFieldEnum]
 
 
-<<<<<<< HEAD
-=======
   export const ArticleScalarFieldEnum: {
     id: 'id',
     title: 'title',
@@ -15447,7 +15358,6 @@ export namespace Prisma {
   export type CommentScalarFieldEnum = (typeof CommentScalarFieldEnum)[keyof typeof CommentScalarFieldEnum]
 
 
->>>>>>> feature/auth
   export const SortOrder: {
     asc: 'asc',
     desc: 'desc'
@@ -15645,10 +15555,7 @@ export namespace Prisma {
     passwordReset?: XOR<PasswordResetNullableRelationFilter, PasswordResetWhereInput> | null
     externalAccounts?: ExternalAccountListRelationFilter
     userProgress?: UserProgressListRelationFilter
-<<<<<<< HEAD
-=======
     comments?: CommentListRelationFilter
->>>>>>> feature/auth
     mfa?: XOR<MultiFactorAuthenticationNullableRelationFilter, MultiFactorAuthenticationWhereInput> | null
     restrictions?: RestrictionListRelationFilter
   }
@@ -15668,10 +15575,7 @@ export namespace Prisma {
     passwordReset?: PasswordResetOrderByWithRelationInput
     externalAccounts?: ExternalAccountOrderByRelationAggregateInput
     userProgress?: UserProgressOrderByRelationAggregateInput
-<<<<<<< HEAD
-=======
     comments?: CommentOrderByRelationAggregateInput
->>>>>>> feature/auth
     mfa?: MultiFactorAuthenticationOrderByWithRelationInput
     restrictions?: RestrictionOrderByRelationAggregateInput
   }
@@ -15694,10 +15598,7 @@ export namespace Prisma {
     passwordReset?: XOR<PasswordResetNullableRelationFilter, PasswordResetWhereInput> | null
     externalAccounts?: ExternalAccountListRelationFilter
     userProgress?: UserProgressListRelationFilter
-<<<<<<< HEAD
-=======
     comments?: CommentListRelationFilter
->>>>>>> feature/auth
     mfa?: XOR<MultiFactorAuthenticationNullableRelationFilter, MultiFactorAuthenticationWhereInput> | null
     restrictions?: RestrictionListRelationFilter
   }, "id" | "email" | "username">
@@ -15949,10 +15850,7 @@ export namespace Prisma {
     userId?: StringFilter<"MultiFactorAuthentication"> | string
     createdAt?: DateTimeFilter<"MultiFactorAuthentication"> | Date | string
     updatedAt?: DateTimeFilter<"MultiFactorAuthentication"> | Date | string
-<<<<<<< HEAD
-=======
     passkeys?: PasskeyListRelationFilter
->>>>>>> feature/auth
     totp?: XOR<TotpNullableRelationFilter, TotpWhereInput> | null
     user?: XOR<UserRelationFilter, UserWhereInput>
   }
@@ -15964,10 +15862,7 @@ export namespace Prisma {
     userId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-<<<<<<< HEAD
-=======
     passkeys?: PasskeyOrderByRelationAggregateInput
->>>>>>> feature/auth
     totp?: TotpOrderByWithRelationInput
     user?: UserOrderByWithRelationInput
   }
@@ -15982,10 +15877,7 @@ export namespace Prisma {
     recoveryCodes?: StringNullableListFilter<"MultiFactorAuthentication">
     createdAt?: DateTimeFilter<"MultiFactorAuthentication"> | Date | string
     updatedAt?: DateTimeFilter<"MultiFactorAuthentication"> | Date | string
-<<<<<<< HEAD
-=======
     passkeys?: PasskeyListRelationFilter
->>>>>>> feature/auth
     totp?: XOR<TotpNullableRelationFilter, TotpWhereInput> | null
     user?: XOR<UserRelationFilter, UserWhereInput>
   }, "id" | "totpId" | "userId">
@@ -16069,8 +15961,6 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"Totp"> | Date | string
   }
 
-<<<<<<< HEAD
-=======
   export type PasskeyWhereInput = {
     AND?: PasskeyWhereInput | PasskeyWhereInput[]
     OR?: PasskeyWhereInput[]
@@ -16163,7 +16053,6 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"Passkey"> | Date | string
   }
 
->>>>>>> feature/auth
   export type RestrictionWhereInput = {
     AND?: RestrictionWhereInput | RestrictionWhereInput[]
     OR?: RestrictionWhereInput[]
@@ -16460,8 +16349,6 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"UserProgress"> | Date | string
   }
 
-<<<<<<< HEAD
-=======
   export type ArticleWhereInput = {
     AND?: ArticleWhereInput | ArticleWhereInput[]
     OR?: ArticleWhereInput[]
@@ -16605,7 +16492,6 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"Comment"> | Date | string
   }
 
->>>>>>> feature/auth
   export type UserCreateInput = {
     id?: string
     email: string
@@ -16621,10 +16507,7 @@ export namespace Prisma {
     passwordReset?: PasswordResetCreateNestedOneWithoutUserInput
     externalAccounts?: ExternalAccountCreateNestedManyWithoutUserInput
     userProgress?: UserProgressCreateNestedManyWithoutUserInput
-<<<<<<< HEAD
-=======
     comments?: CommentCreateNestedManyWithoutAuthorInput
->>>>>>> feature/auth
     mfa?: MultiFactorAuthenticationCreateNestedOneWithoutUserInput
     restrictions?: RestrictionCreateNestedManyWithoutUserInput
   }
@@ -16644,10 +16527,7 @@ export namespace Prisma {
     passwordReset?: PasswordResetUncheckedCreateNestedOneWithoutUserInput
     externalAccounts?: ExternalAccountUncheckedCreateNestedManyWithoutUserInput
     userProgress?: UserProgressUncheckedCreateNestedManyWithoutUserInput
-<<<<<<< HEAD
-=======
     comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
->>>>>>> feature/auth
     mfa?: MultiFactorAuthenticationUncheckedCreateNestedOneWithoutUserInput
     restrictions?: RestrictionUncheckedCreateNestedManyWithoutUserInput
   }
@@ -16667,10 +16547,7 @@ export namespace Prisma {
     passwordReset?: PasswordResetUpdateOneWithoutUserNestedInput
     externalAccounts?: ExternalAccountUpdateManyWithoutUserNestedInput
     userProgress?: UserProgressUpdateManyWithoutUserNestedInput
-<<<<<<< HEAD
-=======
     comments?: CommentUpdateManyWithoutAuthorNestedInput
->>>>>>> feature/auth
     mfa?: MultiFactorAuthenticationUpdateOneWithoutUserNestedInput
     restrictions?: RestrictionUpdateManyWithoutUserNestedInput
   }
@@ -16690,10 +16567,7 @@ export namespace Prisma {
     passwordReset?: PasswordResetUncheckedUpdateOneWithoutUserNestedInput
     externalAccounts?: ExternalAccountUncheckedUpdateManyWithoutUserNestedInput
     userProgress?: UserProgressUncheckedUpdateManyWithoutUserNestedInput
-<<<<<<< HEAD
-=======
     comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
->>>>>>> feature/auth
     mfa?: MultiFactorAuthenticationUncheckedUpdateOneWithoutUserNestedInput
     restrictions?: RestrictionUncheckedUpdateManyWithoutUserNestedInput
   }
@@ -16956,10 +16830,7 @@ export namespace Prisma {
     recoveryCodes?: MultiFactorAuthenticationCreaterecoveryCodesInput | string[]
     createdAt?: Date | string
     updatedAt?: Date | string
-<<<<<<< HEAD
-=======
     passkeys?: PasskeyCreateNestedManyWithoutMfaInput
->>>>>>> feature/auth
     totp?: TotpCreateNestedOneWithoutMfaInput
     user: UserCreateNestedOneWithoutMfaInput
   }
@@ -16971,10 +16842,7 @@ export namespace Prisma {
     userId: string
     createdAt?: Date | string
     updatedAt?: Date | string
-<<<<<<< HEAD
-=======
     passkeys?: PasskeyUncheckedCreateNestedManyWithoutMfaInput
->>>>>>> feature/auth
   }
 
   export type MultiFactorAuthenticationUpdateInput = {
@@ -16982,10 +16850,7 @@ export namespace Prisma {
     recoveryCodes?: MultiFactorAuthenticationUpdaterecoveryCodesInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-<<<<<<< HEAD
-=======
     passkeys?: PasskeyUpdateManyWithoutMfaNestedInput
->>>>>>> feature/auth
     totp?: TotpUpdateOneWithoutMfaNestedInput
     user?: UserUpdateOneRequiredWithoutMfaNestedInput
   }
@@ -16997,10 +16862,7 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-<<<<<<< HEAD
-=======
     passkeys?: PasskeyUncheckedUpdateManyWithoutMfaNestedInput
->>>>>>> feature/auth
   }
 
   export type MultiFactorAuthenticationCreateManyInput = {
@@ -17088,8 +16950,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-<<<<<<< HEAD
-=======
   export type PasskeyCreateInput = {
     id?: string
     deviceName: string
@@ -17194,7 +17054,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
->>>>>>> feature/auth
   export type RestrictionCreateInput = {
     id?: string
     reason: $Enums.RestrictionReason
@@ -17514,8 +17373,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-<<<<<<< HEAD
-=======
   export type ArticleCreateInput = {
     id?: string
     title: string
@@ -17672,7 +17529,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
->>>>>>> feature/auth
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -17754,15 +17610,12 @@ export namespace Prisma {
     none?: UserProgressWhereInput
   }
 
-<<<<<<< HEAD
-=======
   export type CommentListRelationFilter = {
     every?: CommentWhereInput
     some?: CommentWhereInput
     none?: CommentWhereInput
   }
 
->>>>>>> feature/auth
   export type MultiFactorAuthenticationNullableRelationFilter = {
     is?: MultiFactorAuthenticationWhereInput | null
     isNot?: MultiFactorAuthenticationWhereInput | null
@@ -17787,13 +17640,10 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
-<<<<<<< HEAD
-=======
   export type CommentOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
->>>>>>> feature/auth
   export type RestrictionOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -18126,27 +17976,21 @@ export namespace Prisma {
     isEmpty?: boolean
   }
 
-<<<<<<< HEAD
-=======
   export type PasskeyListRelationFilter = {
     every?: PasskeyWhereInput
     some?: PasskeyWhereInput
     none?: PasskeyWhereInput
   }
 
->>>>>>> feature/auth
   export type TotpNullableRelationFilter = {
     is?: TotpWhereInput | null
     isNot?: TotpWhereInput | null
   }
 
-<<<<<<< HEAD
-=======
   export type PasskeyOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
->>>>>>> feature/auth
   export type MultiFactorAuthenticationCountOrderByAggregateInput = {
     id?: SortOrder
     recoveryCodes?: SortOrder
@@ -18213,8 +18057,6 @@ export namespace Prisma {
     _max?: NestedEnumTotpStatusFilter<$PrismaModel>
   }
 
-<<<<<<< HEAD
-=======
   export type MultiFactorAuthenticationRelationFilter = {
     is?: MultiFactorAuthenticationWhereInput
     isNot?: MultiFactorAuthenticationWhereInput
@@ -18271,7 +18113,6 @@ export namespace Prisma {
     counter?: SortOrder
   }
 
->>>>>>> feature/auth
   export type EnumRestrictionReasonFilter<$PrismaModel = never> = {
     equals?: $Enums.RestrictionReason | EnumRestrictionReasonFieldRefInput<$PrismaModel>
     in?: $Enums.RestrictionReason[] | ListEnumRestrictionReasonFieldRefInput<$PrismaModel>
@@ -18495,8 +18336,6 @@ export namespace Prisma {
     updatedAt?: SortOrder
   }
 
-<<<<<<< HEAD
-=======
   export type ArticleCountOrderByAggregateInput = {
     id?: SortOrder
     title?: SortOrder
@@ -18568,7 +18407,6 @@ export namespace Prisma {
     updatedAt?: SortOrder
   }
 
->>>>>>> feature/auth
   export type EmailVerificationCreateNestedOneWithoutUserInput = {
     create?: XOR<EmailVerificationCreateWithoutUserInput, EmailVerificationUncheckedCreateWithoutUserInput>
     connectOrCreate?: EmailVerificationCreateOrConnectWithoutUserInput
@@ -18595,8 +18433,6 @@ export namespace Prisma {
     connect?: UserProgressWhereUniqueInput | UserProgressWhereUniqueInput[]
   }
 
-<<<<<<< HEAD
-=======
   export type CommentCreateNestedManyWithoutAuthorInput = {
     create?: XOR<CommentCreateWithoutAuthorInput, CommentUncheckedCreateWithoutAuthorInput> | CommentCreateWithoutAuthorInput[] | CommentUncheckedCreateWithoutAuthorInput[]
     connectOrCreate?: CommentCreateOrConnectWithoutAuthorInput | CommentCreateOrConnectWithoutAuthorInput[]
@@ -18604,7 +18440,6 @@ export namespace Prisma {
     connect?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
   }
 
->>>>>>> feature/auth
   export type MultiFactorAuthenticationCreateNestedOneWithoutUserInput = {
     create?: XOR<MultiFactorAuthenticationCreateWithoutUserInput, MultiFactorAuthenticationUncheckedCreateWithoutUserInput>
     connectOrCreate?: MultiFactorAuthenticationCreateOrConnectWithoutUserInput
@@ -18644,8 +18479,6 @@ export namespace Prisma {
     connect?: UserProgressWhereUniqueInput | UserProgressWhereUniqueInput[]
   }
 
-<<<<<<< HEAD
-=======
   export type CommentUncheckedCreateNestedManyWithoutAuthorInput = {
     create?: XOR<CommentCreateWithoutAuthorInput, CommentUncheckedCreateWithoutAuthorInput> | CommentCreateWithoutAuthorInput[] | CommentUncheckedCreateWithoutAuthorInput[]
     connectOrCreate?: CommentCreateOrConnectWithoutAuthorInput | CommentCreateOrConnectWithoutAuthorInput[]
@@ -18653,7 +18486,6 @@ export namespace Prisma {
     connect?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
   }
 
->>>>>>> feature/auth
   export type MultiFactorAuthenticationUncheckedCreateNestedOneWithoutUserInput = {
     create?: XOR<MultiFactorAuthenticationCreateWithoutUserInput, MultiFactorAuthenticationUncheckedCreateWithoutUserInput>
     connectOrCreate?: MultiFactorAuthenticationCreateOrConnectWithoutUserInput
@@ -18739,8 +18571,6 @@ export namespace Prisma {
     deleteMany?: UserProgressScalarWhereInput | UserProgressScalarWhereInput[]
   }
 
-<<<<<<< HEAD
-=======
   export type CommentUpdateManyWithoutAuthorNestedInput = {
     create?: XOR<CommentCreateWithoutAuthorInput, CommentUncheckedCreateWithoutAuthorInput> | CommentCreateWithoutAuthorInput[] | CommentUncheckedCreateWithoutAuthorInput[]
     connectOrCreate?: CommentCreateOrConnectWithoutAuthorInput | CommentCreateOrConnectWithoutAuthorInput[]
@@ -18755,7 +18585,6 @@ export namespace Prisma {
     deleteMany?: CommentScalarWhereInput | CommentScalarWhereInput[]
   }
 
->>>>>>> feature/auth
   export type MultiFactorAuthenticationUpdateOneWithoutUserNestedInput = {
     create?: XOR<MultiFactorAuthenticationCreateWithoutUserInput, MultiFactorAuthenticationUncheckedCreateWithoutUserInput>
     connectOrCreate?: MultiFactorAuthenticationCreateOrConnectWithoutUserInput
@@ -18828,8 +18657,6 @@ export namespace Prisma {
     deleteMany?: UserProgressScalarWhereInput | UserProgressScalarWhereInput[]
   }
 
-<<<<<<< HEAD
-=======
   export type CommentUncheckedUpdateManyWithoutAuthorNestedInput = {
     create?: XOR<CommentCreateWithoutAuthorInput, CommentUncheckedCreateWithoutAuthorInput> | CommentCreateWithoutAuthorInput[] | CommentUncheckedCreateWithoutAuthorInput[]
     connectOrCreate?: CommentCreateOrConnectWithoutAuthorInput | CommentCreateOrConnectWithoutAuthorInput[]
@@ -18844,7 +18671,6 @@ export namespace Prisma {
     deleteMany?: CommentScalarWhereInput | CommentScalarWhereInput[]
   }
 
->>>>>>> feature/auth
   export type MultiFactorAuthenticationUncheckedUpdateOneWithoutUserNestedInput = {
     create?: XOR<MultiFactorAuthenticationCreateWithoutUserInput, MultiFactorAuthenticationUncheckedCreateWithoutUserInput>
     connectOrCreate?: MultiFactorAuthenticationCreateOrConnectWithoutUserInput
@@ -18935,8 +18761,6 @@ export namespace Prisma {
     set: string[]
   }
 
-<<<<<<< HEAD
-=======
   export type PasskeyCreateNestedManyWithoutMfaInput = {
     create?: XOR<PasskeyCreateWithoutMfaInput, PasskeyUncheckedCreateWithoutMfaInput> | PasskeyCreateWithoutMfaInput[] | PasskeyUncheckedCreateWithoutMfaInput[]
     connectOrCreate?: PasskeyCreateOrConnectWithoutMfaInput | PasskeyCreateOrConnectWithoutMfaInput[]
@@ -18944,7 +18768,6 @@ export namespace Prisma {
     connect?: PasskeyWhereUniqueInput | PasskeyWhereUniqueInput[]
   }
 
->>>>>>> feature/auth
   export type TotpCreateNestedOneWithoutMfaInput = {
     create?: XOR<TotpCreateWithoutMfaInput, TotpUncheckedCreateWithoutMfaInput>
     connectOrCreate?: TotpCreateOrConnectWithoutMfaInput
@@ -18957,8 +18780,6 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
-<<<<<<< HEAD
-=======
   export type PasskeyUncheckedCreateNestedManyWithoutMfaInput = {
     create?: XOR<PasskeyCreateWithoutMfaInput, PasskeyUncheckedCreateWithoutMfaInput> | PasskeyCreateWithoutMfaInput[] | PasskeyUncheckedCreateWithoutMfaInput[]
     connectOrCreate?: PasskeyCreateOrConnectWithoutMfaInput | PasskeyCreateOrConnectWithoutMfaInput[]
@@ -18966,14 +18787,11 @@ export namespace Prisma {
     connect?: PasskeyWhereUniqueInput | PasskeyWhereUniqueInput[]
   }
 
->>>>>>> feature/auth
   export type MultiFactorAuthenticationUpdaterecoveryCodesInput = {
     set?: string[]
     push?: string | string[]
   }
 
-<<<<<<< HEAD
-=======
   export type PasskeyUpdateManyWithoutMfaNestedInput = {
     create?: XOR<PasskeyCreateWithoutMfaInput, PasskeyUncheckedCreateWithoutMfaInput> | PasskeyCreateWithoutMfaInput[] | PasskeyUncheckedCreateWithoutMfaInput[]
     connectOrCreate?: PasskeyCreateOrConnectWithoutMfaInput | PasskeyCreateOrConnectWithoutMfaInput[]
@@ -18988,7 +18806,6 @@ export namespace Prisma {
     deleteMany?: PasskeyScalarWhereInput | PasskeyScalarWhereInput[]
   }
 
->>>>>>> feature/auth
   export type TotpUpdateOneWithoutMfaNestedInput = {
     create?: XOR<TotpCreateWithoutMfaInput, TotpUncheckedCreateWithoutMfaInput>
     connectOrCreate?: TotpCreateOrConnectWithoutMfaInput
@@ -19007,8 +18824,6 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutMfaInput, UserUpdateWithoutMfaInput>, UserUncheckedUpdateWithoutMfaInput>
   }
 
-<<<<<<< HEAD
-=======
   export type PasskeyUncheckedUpdateManyWithoutMfaNestedInput = {
     create?: XOR<PasskeyCreateWithoutMfaInput, PasskeyUncheckedCreateWithoutMfaInput> | PasskeyCreateWithoutMfaInput[] | PasskeyUncheckedCreateWithoutMfaInput[]
     connectOrCreate?: PasskeyCreateOrConnectWithoutMfaInput | PasskeyCreateOrConnectWithoutMfaInput[]
@@ -19023,7 +18838,6 @@ export namespace Prisma {
     deleteMany?: PasskeyScalarWhereInput | PasskeyScalarWhereInput[]
   }
 
->>>>>>> feature/auth
   export type MultiFactorAuthenticationCreateNestedOneWithoutTotpInput = {
     create?: XOR<MultiFactorAuthenticationCreateWithoutTotpInput, MultiFactorAuthenticationUncheckedCreateWithoutTotpInput>
     connectOrCreate?: MultiFactorAuthenticationCreateOrConnectWithoutTotpInput
@@ -19060,8 +18874,6 @@ export namespace Prisma {
     update?: XOR<XOR<MultiFactorAuthenticationUpdateToOneWithWhereWithoutTotpInput, MultiFactorAuthenticationUpdateWithoutTotpInput>, MultiFactorAuthenticationUncheckedUpdateWithoutTotpInput>
   }
 
-<<<<<<< HEAD
-=======
   export type PasskeyCreatetransportsInput = {
     set: string[]
   }
@@ -19085,7 +18897,6 @@ export namespace Prisma {
     update?: XOR<XOR<MultiFactorAuthenticationUpdateToOneWithWhereWithoutPasskeysInput, MultiFactorAuthenticationUpdateWithoutPasskeysInput>, MultiFactorAuthenticationUncheckedUpdateWithoutPasskeysInput>
   }
 
->>>>>>> feature/auth
   export type UserCreateNestedOneWithoutRestrictionsInput = {
     create?: XOR<UserCreateWithoutRestrictionsInput, UserUncheckedCreateWithoutRestrictionsInput>
     connectOrCreate?: UserCreateOrConnectWithoutRestrictionsInput
@@ -19238,8 +19049,6 @@ export namespace Prisma {
     update?: XOR<XOR<LessonUpdateToOneWithWhereWithoutUserProgressInput, LessonUpdateWithoutUserProgressInput>, LessonUncheckedUpdateWithoutUserProgressInput>
   }
 
-<<<<<<< HEAD
-=======
   export type CommentCreateNestedManyWithoutArticleInput = {
     create?: XOR<CommentCreateWithoutArticleInput, CommentUncheckedCreateWithoutArticleInput> | CommentCreateWithoutArticleInput[] | CommentUncheckedCreateWithoutArticleInput[]
     connectOrCreate?: CommentCreateOrConnectWithoutArticleInput | CommentCreateOrConnectWithoutArticleInput[]
@@ -19310,7 +19119,6 @@ export namespace Prisma {
     update?: XOR<XOR<ArticleUpdateToOneWithWhereWithoutCommentsInput, ArticleUpdateWithoutCommentsInput>, ArticleUncheckedUpdateWithoutCommentsInput>
   }
 
->>>>>>> feature/auth
   export type NestedStringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -19716,8 +19524,6 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-<<<<<<< HEAD
-=======
   export type CommentCreateWithoutAuthorInput = {
     id?: string
     content: string
@@ -19748,16 +19554,12 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
->>>>>>> feature/auth
   export type MultiFactorAuthenticationCreateWithoutUserInput = {
     id?: string
     recoveryCodes?: MultiFactorAuthenticationCreaterecoveryCodesInput | string[]
     createdAt?: Date | string
     updatedAt?: Date | string
-<<<<<<< HEAD
-=======
     passkeys?: PasskeyCreateNestedManyWithoutMfaInput
->>>>>>> feature/auth
     totp?: TotpCreateNestedOneWithoutMfaInput
   }
 
@@ -19767,10 +19569,7 @@ export namespace Prisma {
     totpId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-<<<<<<< HEAD
-=======
     passkeys?: PasskeyUncheckedCreateNestedManyWithoutMfaInput
->>>>>>> feature/auth
   }
 
   export type MultiFactorAuthenticationCreateOrConnectWithoutUserInput = {
@@ -19919,8 +19718,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"UserProgress"> | Date | string
   }
 
-<<<<<<< HEAD
-=======
   export type CommentUpsertWithWhereUniqueWithoutAuthorInput = {
     where: CommentWhereUniqueInput
     update: XOR<CommentUpdateWithoutAuthorInput, CommentUncheckedUpdateWithoutAuthorInput>
@@ -19951,7 +19748,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Comment"> | Date | string
   }
 
->>>>>>> feature/auth
   export type MultiFactorAuthenticationUpsertWithoutUserInput = {
     update: XOR<MultiFactorAuthenticationUpdateWithoutUserInput, MultiFactorAuthenticationUncheckedUpdateWithoutUserInput>
     create: XOR<MultiFactorAuthenticationCreateWithoutUserInput, MultiFactorAuthenticationUncheckedCreateWithoutUserInput>
@@ -19968,10 +19764,7 @@ export namespace Prisma {
     recoveryCodes?: MultiFactorAuthenticationUpdaterecoveryCodesInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-<<<<<<< HEAD
-=======
     passkeys?: PasskeyUpdateManyWithoutMfaNestedInput
->>>>>>> feature/auth
     totp?: TotpUpdateOneWithoutMfaNestedInput
   }
 
@@ -19981,10 +19774,7 @@ export namespace Prisma {
     totpId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-<<<<<<< HEAD
-=======
     passkeys?: PasskeyUncheckedUpdateManyWithoutMfaNestedInput
->>>>>>> feature/auth
   }
 
   export type RestrictionUpsertWithWhereUniqueWithoutUserInput = {
@@ -20029,10 +19819,7 @@ export namespace Prisma {
     emailVerification?: EmailVerificationCreateNestedOneWithoutUserInput
     passwordReset?: PasswordResetCreateNestedOneWithoutUserInput
     userProgress?: UserProgressCreateNestedManyWithoutUserInput
-<<<<<<< HEAD
-=======
     comments?: CommentCreateNestedManyWithoutAuthorInput
->>>>>>> feature/auth
     mfa?: MultiFactorAuthenticationCreateNestedOneWithoutUserInput
     restrictions?: RestrictionCreateNestedManyWithoutUserInput
   }
@@ -20051,10 +19838,7 @@ export namespace Prisma {
     emailVerification?: EmailVerificationUncheckedCreateNestedOneWithoutUserInput
     passwordReset?: PasswordResetUncheckedCreateNestedOneWithoutUserInput
     userProgress?: UserProgressUncheckedCreateNestedManyWithoutUserInput
-<<<<<<< HEAD
-=======
     comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
->>>>>>> feature/auth
     mfa?: MultiFactorAuthenticationUncheckedCreateNestedOneWithoutUserInput
     restrictions?: RestrictionUncheckedCreateNestedManyWithoutUserInput
   }
@@ -20089,10 +19873,7 @@ export namespace Prisma {
     emailVerification?: EmailVerificationUpdateOneWithoutUserNestedInput
     passwordReset?: PasswordResetUpdateOneWithoutUserNestedInput
     userProgress?: UserProgressUpdateManyWithoutUserNestedInput
-<<<<<<< HEAD
-=======
     comments?: CommentUpdateManyWithoutAuthorNestedInput
->>>>>>> feature/auth
     mfa?: MultiFactorAuthenticationUpdateOneWithoutUserNestedInput
     restrictions?: RestrictionUpdateManyWithoutUserNestedInput
   }
@@ -20111,10 +19892,7 @@ export namespace Prisma {
     emailVerification?: EmailVerificationUncheckedUpdateOneWithoutUserNestedInput
     passwordReset?: PasswordResetUncheckedUpdateOneWithoutUserNestedInput
     userProgress?: UserProgressUncheckedUpdateManyWithoutUserNestedInput
-<<<<<<< HEAD
-=======
     comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
->>>>>>> feature/auth
     mfa?: MultiFactorAuthenticationUncheckedUpdateOneWithoutUserNestedInput
     restrictions?: RestrictionUncheckedUpdateManyWithoutUserNestedInput
   }
@@ -20133,10 +19911,7 @@ export namespace Prisma {
     passwordReset?: PasswordResetCreateNestedOneWithoutUserInput
     externalAccounts?: ExternalAccountCreateNestedManyWithoutUserInput
     userProgress?: UserProgressCreateNestedManyWithoutUserInput
-<<<<<<< HEAD
-=======
     comments?: CommentCreateNestedManyWithoutAuthorInput
->>>>>>> feature/auth
     mfa?: MultiFactorAuthenticationCreateNestedOneWithoutUserInput
     restrictions?: RestrictionCreateNestedManyWithoutUserInput
   }
@@ -20155,10 +19930,7 @@ export namespace Prisma {
     passwordReset?: PasswordResetUncheckedCreateNestedOneWithoutUserInput
     externalAccounts?: ExternalAccountUncheckedCreateNestedManyWithoutUserInput
     userProgress?: UserProgressUncheckedCreateNestedManyWithoutUserInput
-<<<<<<< HEAD
-=======
     comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
->>>>>>> feature/auth
     mfa?: MultiFactorAuthenticationUncheckedCreateNestedOneWithoutUserInput
     restrictions?: RestrictionUncheckedCreateNestedManyWithoutUserInput
   }
@@ -20193,10 +19965,7 @@ export namespace Prisma {
     passwordReset?: PasswordResetUpdateOneWithoutUserNestedInput
     externalAccounts?: ExternalAccountUpdateManyWithoutUserNestedInput
     userProgress?: UserProgressUpdateManyWithoutUserNestedInput
-<<<<<<< HEAD
-=======
     comments?: CommentUpdateManyWithoutAuthorNestedInput
->>>>>>> feature/auth
     mfa?: MultiFactorAuthenticationUpdateOneWithoutUserNestedInput
     restrictions?: RestrictionUpdateManyWithoutUserNestedInput
   }
@@ -20215,10 +19984,7 @@ export namespace Prisma {
     passwordReset?: PasswordResetUncheckedUpdateOneWithoutUserNestedInput
     externalAccounts?: ExternalAccountUncheckedUpdateManyWithoutUserNestedInput
     userProgress?: UserProgressUncheckedUpdateManyWithoutUserNestedInput
-<<<<<<< HEAD
-=======
     comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
->>>>>>> feature/auth
     mfa?: MultiFactorAuthenticationUncheckedUpdateOneWithoutUserNestedInput
     restrictions?: RestrictionUncheckedUpdateManyWithoutUserNestedInput
   }
@@ -20237,10 +20003,7 @@ export namespace Prisma {
     emailVerification?: EmailVerificationCreateNestedOneWithoutUserInput
     externalAccounts?: ExternalAccountCreateNestedManyWithoutUserInput
     userProgress?: UserProgressCreateNestedManyWithoutUserInput
-<<<<<<< HEAD
-=======
     comments?: CommentCreateNestedManyWithoutAuthorInput
->>>>>>> feature/auth
     mfa?: MultiFactorAuthenticationCreateNestedOneWithoutUserInput
     restrictions?: RestrictionCreateNestedManyWithoutUserInput
   }
@@ -20259,10 +20022,7 @@ export namespace Prisma {
     emailVerification?: EmailVerificationUncheckedCreateNestedOneWithoutUserInput
     externalAccounts?: ExternalAccountUncheckedCreateNestedManyWithoutUserInput
     userProgress?: UserProgressUncheckedCreateNestedManyWithoutUserInput
-<<<<<<< HEAD
-=======
     comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
->>>>>>> feature/auth
     mfa?: MultiFactorAuthenticationUncheckedCreateNestedOneWithoutUserInput
     restrictions?: RestrictionUncheckedCreateNestedManyWithoutUserInput
   }
@@ -20297,10 +20057,7 @@ export namespace Prisma {
     emailVerification?: EmailVerificationUpdateOneWithoutUserNestedInput
     externalAccounts?: ExternalAccountUpdateManyWithoutUserNestedInput
     userProgress?: UserProgressUpdateManyWithoutUserNestedInput
-<<<<<<< HEAD
-=======
     comments?: CommentUpdateManyWithoutAuthorNestedInput
->>>>>>> feature/auth
     mfa?: MultiFactorAuthenticationUpdateOneWithoutUserNestedInput
     restrictions?: RestrictionUpdateManyWithoutUserNestedInput
   }
@@ -20319,16 +20076,11 @@ export namespace Prisma {
     emailVerification?: EmailVerificationUncheckedUpdateOneWithoutUserNestedInput
     externalAccounts?: ExternalAccountUncheckedUpdateManyWithoutUserNestedInput
     userProgress?: UserProgressUncheckedUpdateManyWithoutUserNestedInput
-<<<<<<< HEAD
-=======
     comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
->>>>>>> feature/auth
     mfa?: MultiFactorAuthenticationUncheckedUpdateOneWithoutUserNestedInput
     restrictions?: RestrictionUncheckedUpdateManyWithoutUserNestedInput
   }
 
-<<<<<<< HEAD
-=======
   export type PasskeyCreateWithoutMfaInput = {
     id?: string
     deviceName: string
@@ -20367,7 +20119,6 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
->>>>>>> feature/auth
   export type TotpCreateWithoutMfaInput = {
     id?: string
     status?: $Enums.TotpStatus
@@ -20404,10 +20155,7 @@ export namespace Prisma {
     passwordReset?: PasswordResetCreateNestedOneWithoutUserInput
     externalAccounts?: ExternalAccountCreateNestedManyWithoutUserInput
     userProgress?: UserProgressCreateNestedManyWithoutUserInput
-<<<<<<< HEAD
-=======
     comments?: CommentCreateNestedManyWithoutAuthorInput
->>>>>>> feature/auth
     restrictions?: RestrictionCreateNestedManyWithoutUserInput
   }
 
@@ -20426,10 +20174,7 @@ export namespace Prisma {
     passwordReset?: PasswordResetUncheckedCreateNestedOneWithoutUserInput
     externalAccounts?: ExternalAccountUncheckedCreateNestedManyWithoutUserInput
     userProgress?: UserProgressUncheckedCreateNestedManyWithoutUserInput
-<<<<<<< HEAD
-=======
     comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
->>>>>>> feature/auth
     restrictions?: RestrictionUncheckedCreateNestedManyWithoutUserInput
   }
 
@@ -20438,8 +20183,6 @@ export namespace Prisma {
     create: XOR<UserCreateWithoutMfaInput, UserUncheckedCreateWithoutMfaInput>
   }
 
-<<<<<<< HEAD
-=======
   export type PasskeyUpsertWithWhereUniqueWithoutMfaInput = {
     where: PasskeyWhereUniqueInput
     update: XOR<PasskeyUpdateWithoutMfaInput, PasskeyUncheckedUpdateWithoutMfaInput>
@@ -20474,7 +20217,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Passkey"> | Date | string
   }
 
->>>>>>> feature/auth
   export type TotpUpsertWithoutMfaInput = {
     update: XOR<TotpUpdateWithoutMfaInput, TotpUncheckedUpdateWithoutMfaInput>
     create: XOR<TotpCreateWithoutMfaInput, TotpUncheckedCreateWithoutMfaInput>
@@ -20528,10 +20270,7 @@ export namespace Prisma {
     passwordReset?: PasswordResetUpdateOneWithoutUserNestedInput
     externalAccounts?: ExternalAccountUpdateManyWithoutUserNestedInput
     userProgress?: UserProgressUpdateManyWithoutUserNestedInput
-<<<<<<< HEAD
-=======
     comments?: CommentUpdateManyWithoutAuthorNestedInput
->>>>>>> feature/auth
     restrictions?: RestrictionUpdateManyWithoutUserNestedInput
   }
 
@@ -20550,10 +20289,7 @@ export namespace Prisma {
     passwordReset?: PasswordResetUncheckedUpdateOneWithoutUserNestedInput
     externalAccounts?: ExternalAccountUncheckedUpdateManyWithoutUserNestedInput
     userProgress?: UserProgressUncheckedUpdateManyWithoutUserNestedInput
-<<<<<<< HEAD
-=======
     comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
->>>>>>> feature/auth
     restrictions?: RestrictionUncheckedUpdateManyWithoutUserNestedInput
   }
 
@@ -20562,10 +20298,7 @@ export namespace Prisma {
     recoveryCodes?: MultiFactorAuthenticationCreaterecoveryCodesInput | string[]
     createdAt?: Date | string
     updatedAt?: Date | string
-<<<<<<< HEAD
-=======
     passkeys?: PasskeyCreateNestedManyWithoutMfaInput
->>>>>>> feature/auth
     user: UserCreateNestedOneWithoutMfaInput
   }
 
@@ -20575,10 +20308,7 @@ export namespace Prisma {
     userId: string
     createdAt?: Date | string
     updatedAt?: Date | string
-<<<<<<< HEAD
-=======
     passkeys?: PasskeyUncheckedCreateNestedManyWithoutMfaInput
->>>>>>> feature/auth
   }
 
   export type MultiFactorAuthenticationCreateOrConnectWithoutTotpInput = {
@@ -20602,10 +20332,7 @@ export namespace Prisma {
     recoveryCodes?: MultiFactorAuthenticationUpdaterecoveryCodesInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-<<<<<<< HEAD
-=======
     passkeys?: PasskeyUpdateManyWithoutMfaNestedInput
->>>>>>> feature/auth
     user?: UserUpdateOneRequiredWithoutMfaNestedInput
   }
 
@@ -20615,8 +20342,6 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-<<<<<<< HEAD
-=======
     passkeys?: PasskeyUncheckedUpdateManyWithoutMfaNestedInput
   }
 
@@ -20670,7 +20395,6 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
->>>>>>> feature/auth
   }
 
   export type UserCreateWithoutRestrictionsInput = {
@@ -20688,10 +20412,7 @@ export namespace Prisma {
     passwordReset?: PasswordResetCreateNestedOneWithoutUserInput
     externalAccounts?: ExternalAccountCreateNestedManyWithoutUserInput
     userProgress?: UserProgressCreateNestedManyWithoutUserInput
-<<<<<<< HEAD
-=======
     comments?: CommentCreateNestedManyWithoutAuthorInput
->>>>>>> feature/auth
     mfa?: MultiFactorAuthenticationCreateNestedOneWithoutUserInput
   }
 
@@ -20710,10 +20431,7 @@ export namespace Prisma {
     passwordReset?: PasswordResetUncheckedCreateNestedOneWithoutUserInput
     externalAccounts?: ExternalAccountUncheckedCreateNestedManyWithoutUserInput
     userProgress?: UserProgressUncheckedCreateNestedManyWithoutUserInput
-<<<<<<< HEAD
-=======
     comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
->>>>>>> feature/auth
     mfa?: MultiFactorAuthenticationUncheckedCreateNestedOneWithoutUserInput
   }
 
@@ -20748,10 +20466,7 @@ export namespace Prisma {
     passwordReset?: PasswordResetUpdateOneWithoutUserNestedInput
     externalAccounts?: ExternalAccountUpdateManyWithoutUserNestedInput
     userProgress?: UserProgressUpdateManyWithoutUserNestedInput
-<<<<<<< HEAD
-=======
     comments?: CommentUpdateManyWithoutAuthorNestedInput
->>>>>>> feature/auth
     mfa?: MultiFactorAuthenticationUpdateOneWithoutUserNestedInput
   }
 
@@ -20770,10 +20485,7 @@ export namespace Prisma {
     passwordReset?: PasswordResetUncheckedUpdateOneWithoutUserNestedInput
     externalAccounts?: ExternalAccountUncheckedUpdateManyWithoutUserNestedInput
     userProgress?: UserProgressUncheckedUpdateManyWithoutUserNestedInput
-<<<<<<< HEAD
-=======
     comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
->>>>>>> feature/auth
     mfa?: MultiFactorAuthenticationUncheckedUpdateOneWithoutUserNestedInput
   }
 
@@ -20973,10 +20685,7 @@ export namespace Prisma {
     emailVerification?: EmailVerificationCreateNestedOneWithoutUserInput
     passwordReset?: PasswordResetCreateNestedOneWithoutUserInput
     externalAccounts?: ExternalAccountCreateNestedManyWithoutUserInput
-<<<<<<< HEAD
-=======
     comments?: CommentCreateNestedManyWithoutAuthorInput
->>>>>>> feature/auth
     mfa?: MultiFactorAuthenticationCreateNestedOneWithoutUserInput
     restrictions?: RestrictionCreateNestedManyWithoutUserInput
   }
@@ -20995,10 +20704,7 @@ export namespace Prisma {
     emailVerification?: EmailVerificationUncheckedCreateNestedOneWithoutUserInput
     passwordReset?: PasswordResetUncheckedCreateNestedOneWithoutUserInput
     externalAccounts?: ExternalAccountUncheckedCreateNestedManyWithoutUserInput
-<<<<<<< HEAD
-=======
     comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
->>>>>>> feature/auth
     mfa?: MultiFactorAuthenticationUncheckedCreateNestedOneWithoutUserInput
     restrictions?: RestrictionUncheckedCreateNestedManyWithoutUserInput
   }
@@ -21064,10 +20770,7 @@ export namespace Prisma {
     emailVerification?: EmailVerificationUpdateOneWithoutUserNestedInput
     passwordReset?: PasswordResetUpdateOneWithoutUserNestedInput
     externalAccounts?: ExternalAccountUpdateManyWithoutUserNestedInput
-<<<<<<< HEAD
-=======
     comments?: CommentUpdateManyWithoutAuthorNestedInput
->>>>>>> feature/auth
     mfa?: MultiFactorAuthenticationUpdateOneWithoutUserNestedInput
     restrictions?: RestrictionUpdateManyWithoutUserNestedInput
   }
@@ -21086,10 +20789,7 @@ export namespace Prisma {
     emailVerification?: EmailVerificationUncheckedUpdateOneWithoutUserNestedInput
     passwordReset?: PasswordResetUncheckedUpdateOneWithoutUserNestedInput
     externalAccounts?: ExternalAccountUncheckedUpdateManyWithoutUserNestedInput
-<<<<<<< HEAD
-=======
     comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
->>>>>>> feature/auth
     mfa?: MultiFactorAuthenticationUncheckedUpdateOneWithoutUserNestedInput
     restrictions?: RestrictionUncheckedUpdateManyWithoutUserNestedInput
   }
@@ -21131,8 +20831,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-<<<<<<< HEAD
-=======
   export type CommentCreateWithoutArticleInput = {
     id?: string
     content: string
@@ -21331,7 +21029,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
->>>>>>> feature/auth
   export type ExternalAccountCreateManyUserInput = {
     id?: string
     provider: $Enums.AccountProvider
@@ -21351,8 +21048,6 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
-<<<<<<< HEAD
-=======
   export type CommentCreateManyAuthorInput = {
     id?: string
     content: string
@@ -21363,7 +21058,6 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
->>>>>>> feature/auth
   export type RestrictionCreateManyUserInput = {
     id?: string
     reason: $Enums.RestrictionReason
@@ -21429,8 +21123,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-<<<<<<< HEAD
-=======
   export type CommentUpdateWithoutAuthorInput = {
     id?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
@@ -21461,7 +21153,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
->>>>>>> feature/auth
   export type RestrictionUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     reason?: EnumRestrictionReasonFieldUpdateOperationsInput | $Enums.RestrictionReason
@@ -21486,8 +21177,6 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-<<<<<<< HEAD
-=======
   export type PasskeyCreateManyMfaInput = {
     id?: string
     deviceName: string
@@ -21544,7 +21233,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
->>>>>>> feature/auth
   export type LessonCreateManyCourseInput = {
     id?: string
     title: string
@@ -21627,8 +21315,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-<<<<<<< HEAD
-=======
   export type CommentCreateManyArticleInput = {
     id?: string
     content: string
@@ -21669,7 +21355,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
->>>>>>> feature/auth
 
 
   /**
@@ -21680,13 +21365,10 @@ export namespace Prisma {
      */
     export type UserCountOutputTypeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = UserCountOutputTypeDefaultArgs<ExtArgs>
     /**
-<<<<<<< HEAD
-=======
      * @deprecated Use MultiFactorAuthenticationCountOutputTypeDefaultArgs instead
      */
     export type MultiFactorAuthenticationCountOutputTypeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = MultiFactorAuthenticationCountOutputTypeDefaultArgs<ExtArgs>
     /**
->>>>>>> feature/auth
      * @deprecated Use CourseCountOutputTypeDefaultArgs instead
      */
     export type CourseCountOutputTypeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = CourseCountOutputTypeDefaultArgs<ExtArgs>
@@ -21695,13 +21377,10 @@ export namespace Prisma {
      */
     export type LessonCountOutputTypeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = LessonCountOutputTypeDefaultArgs<ExtArgs>
     /**
-<<<<<<< HEAD
-=======
      * @deprecated Use ArticleCountOutputTypeDefaultArgs instead
      */
     export type ArticleCountOutputTypeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = ArticleCountOutputTypeDefaultArgs<ExtArgs>
     /**
->>>>>>> feature/auth
      * @deprecated Use UserDefaultArgs instead
      */
     export type UserArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = UserDefaultArgs<ExtArgs>
@@ -21726,13 +21405,10 @@ export namespace Prisma {
      */
     export type TotpArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = TotpDefaultArgs<ExtArgs>
     /**
-<<<<<<< HEAD
-=======
      * @deprecated Use PasskeyDefaultArgs instead
      */
     export type PasskeyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = PasskeyDefaultArgs<ExtArgs>
     /**
->>>>>>> feature/auth
      * @deprecated Use RestrictionDefaultArgs instead
      */
     export type RestrictionArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = RestrictionDefaultArgs<ExtArgs>
@@ -21748,8 +21424,6 @@ export namespace Prisma {
      * @deprecated Use UserProgressDefaultArgs instead
      */
     export type UserProgressArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = UserProgressDefaultArgs<ExtArgs>
-<<<<<<< HEAD
-=======
     /**
      * @deprecated Use ArticleDefaultArgs instead
      */
@@ -21758,7 +21432,6 @@ export namespace Prisma {
      * @deprecated Use CommentDefaultArgs instead
      */
     export type CommentArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = CommentDefaultArgs<ExtArgs>
->>>>>>> feature/auth
 
   /**
    * Batch Payload for updateMany & deleteMany & createMany

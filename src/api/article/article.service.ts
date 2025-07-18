@@ -24,9 +24,9 @@ export class ArticleService {
 	}
 
 	public async getBySlug(slug: string) {
-		const cachedArticle = await this.redisService.get(`articles:${slug}`)
+		const cached = await this.redisService.get(`articles:${slug}`)
 
-		if (cachedArticle) return JSON.parse(cachedArticle)
+		if (cached) return JSON.parse(cached)
 
 		const article = await this.prismaService.article.findUnique({
 			where: {
