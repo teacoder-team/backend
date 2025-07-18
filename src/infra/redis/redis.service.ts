@@ -66,6 +66,7 @@ export class RedisService
 			userId: user.id
 		}
 
+		await this.del(`sessions:${session.id}`)
 		await this.hmset(`sessions:${session.id}`, session)
 		await this.expire(`sessions:${session.id}`, 7 * 24 * 60 * 60)
 

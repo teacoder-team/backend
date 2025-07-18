@@ -183,6 +183,21 @@ exports.Prisma.TotpScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.PasskeyScalarFieldEnum = {
+  id: 'id',
+  deviceName: 'deviceName',
+  credentialId: 'credentialId',
+  publicKey: 'publicKey',
+  counter: 'counter',
+  transports: 'transports',
+  lastUsedAt: 'lastUsedAt',
+  ip: 'ip',
+  userAgent: 'userAgent',
+  mfaId: 'mfaId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.RestrictionScalarFieldEnum = {
   id: 'id',
   reason: 'reason',
@@ -224,6 +239,28 @@ exports.Prisma.UserProgressScalarFieldEnum = {
   isCompleted: 'isCompleted',
   userId: 'userId',
   lessonId: 'lessonId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ArticleScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  slug: 'slug',
+  thumbnail: 'thumbnail',
+  content: 'content',
+  isPublished: 'isPublished',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CommentScalarFieldEnum = {
+  id: 'id',
+  content: 'content',
+  edited: 'edited',
+  deleted: 'deleted',
+  authorId: 'authorId',
+  articleId: 'articleId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -282,10 +319,13 @@ exports.Prisma.ModelName = {
   PasswordReset: 'PasswordReset',
   MultiFactorAuthentication: 'MultiFactorAuthentication',
   Totp: 'Totp',
+  Passkey: 'Passkey',
   Restriction: 'Restriction',
   Course: 'Course',
   Lesson: 'Lesson',
-  UserProgress: 'UserProgress'
+  UserProgress: 'UserProgress',
+  Article: 'Article',
+  Comment: 'Comment'
 };
 
 /**
