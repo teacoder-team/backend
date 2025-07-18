@@ -42,8 +42,6 @@ export class GithubProvider extends BaseService {
 
 			const emails = await response.json()
 
-			console.log('EMAILS:', emails)
-
 			email =
 				emails.find((e: any) => e.primary && e.verified)?.email ?? ''
 		}

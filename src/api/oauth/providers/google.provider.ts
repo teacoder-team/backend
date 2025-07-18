@@ -23,7 +23,6 @@ export class GoogleProvider extends BaseService {
 	}
 
 	public async extractUserInfo(data: GoogleProfile): Promise<BaseUserInfo> {
-		console.log('GOOGLE: ', data)
 		return super.extractUserInfo({
 			id: data.sub,
 			name: data.name,

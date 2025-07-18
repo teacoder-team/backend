@@ -28,6 +28,7 @@
 	},
 	"dependencies": {
 		"@aws-sdk/client-s3": "^3.693.0",
+		"@nest-lab/throttler-storage-redis": "^1.1.0",
 		"@nestjs-modules/mailer": "^2.0.2",
 		"@nestjs/axios": "^4.0.0",
 		"@nestjs/bullmq": "^11.0.2",
@@ -37,6 +38,7 @@
 		"@nestjs/platform-express": "^10.4.8",
 		"@nestjs/schedule": "^4.1.1",
 		"@nestjs/swagger": "^8.0.7",
+		"@nestjs/throttler": "^6.4.0",
 		"@prisma/client": "^5.22.0",
 		"@react-email/components": "0.0.33",
 		"argon2": "^0.41.1",
