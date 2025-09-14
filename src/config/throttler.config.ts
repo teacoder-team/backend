@@ -13,18 +13,18 @@ export function getThrottlerConfig(
 		throttlers: [
 			{
 				name: 'strict',
-				ttl: seconds(1),
-				limit: 3
+				ttl: seconds(10),
+				limit: 10
 			},
 			{
 				name: 'moderate',
-				ttl: seconds(10),
-				limit: 20
+				ttl: seconds(60),
+				limit: 60
 			},
 			{
 				name: 'relaxed',
-				ttl: seconds(60),
-				limit: 100
+				ttl: seconds(300),
+				limit: 500
 			}
 		],
 		errorMessage:
