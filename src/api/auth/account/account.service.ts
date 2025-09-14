@@ -52,11 +52,11 @@ export class AccountService {
 	public async create(dto: CreateUserRequest, ip: string, userAgent: string) {
 		const { name, email, password } = dto
 
-		const { valid } = await validate(email)
+		// const { valid } = await validate(email)
 
-		if (!valid) {
-			throw new BadRequestException('Невалидная почта')
-		}
+		// if (!valid) {
+		// 	throw new BadRequestException('Невалидная почта')
+		// }
 
 		const isExists = await this.prismaService.user.findFirst({
 			where: {

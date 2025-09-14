@@ -35,13 +35,8 @@ export class PasskeyController {
 		description:
 			'Retrieve the list of registered passkeys for the authenticated user.'
 	})
-	@ApiOkResponse({
-		type: [PasskeyResponse]
-	})
-	@ApiHeader({
-		name: 'X-Session-Token',
-		required: true
-	})
+	@ApiOkResponse({ type: [PasskeyResponse] })
+	@ApiHeader({ name: 'X-Session-Token', required: true })
 	@Authorization()
 	@Get()
 	@HttpCode(HttpStatus.OK)
@@ -53,13 +48,8 @@ export class PasskeyController {
 		summary: 'Register Passkey​​',
 		description: 'Register a passkey for an account.'
 	})
-	@ApiOkResponse({
-		type: RegisterPasskeyResponse
-	})
-	@ApiHeader({
-		name: 'X-Session-Token',
-		required: true
-	})
+	@ApiOkResponse({ type: RegisterPasskeyResponse })
+	@ApiHeader({ name: 'X-Session-Token', required: true })
 	@Authorization()
 	@Post()
 	@HttpCode(HttpStatus.OK)
@@ -90,28 +80,20 @@ export class PasskeyController {
 			'Generate options required to initiate WebAuthn registration.'
 	})
 	@ApiOkResponse({ type: GeneratePasskeyOptionsResponse })
-	@ApiHeader({
-		name: 'X-Session-Token',
-		required: true
-	})
+	@ApiHeader({ name: 'X-Session-Token', required: true })
 	@Authorization()
-	@Post('options')
+	@Post('register-options')
 	@HttpCode(HttpStatus.OK)
 	public async generatePasskeyOptions(@Authorized() user: User) {
-		return this.passkeyService.generatePasskeyOptions(user)
+		return this.passkeyService.generateRegisterOptions(user)
 	}
 
 	@ApiOperation({
 		summary: 'Delete Passkey',
 		description: 'Delete a registered passkey by its ID.'
 	})
-	@ApiOkResponse({
-		type: Boolean
-	})
-	@ApiHeader({
-		name: 'X-Session-Token',
-		required: true
-	})
+	@ApiOkResponse({ type: Boolean })
+	@ApiHeader({ name: 'X-Session-Token', required: true })
 	@Authorization()
 	@Delete(':id')
 	@HttpCode(HttpStatus.OK)
