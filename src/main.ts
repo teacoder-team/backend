@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { NestFactory, Reflector } from '@nestjs/core'
+import { ThrottlerGuard } from '@nestjs/throttler'
 import helmet from 'helmet'
 
 import { AppModule } from './app.module'

@@ -4,6 +4,7 @@ import {
 	NotFoundException,
 	UnauthorizedException
 } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
 import { Cron, CronExpression } from '@nestjs/schedule'
 import { TotpStatus, User, UserRole } from '@prisma/generated'
 import { verify } from 'argon2'
@@ -17,7 +18,8 @@ import { LoginRequest } from './dto'
 export class SessionService {
 	public constructor(
 		private readonly prismaService: PrismaService,
-		private readonly redisService: RedisService
+		private readonly redisService: RedisService,
+		private readonly configService: ConfigService
 	) {}
 
 	public async login(dto: LoginRequest, ip: string, userAgent: string) {
@@ -48,7 +50,8 @@ export class SessionService {
 					userId: user.id
 				},
 				include: {
-					totp: true
+					totp: true,
+					passkeys: true
 				}
 			})
 
@@ -57,6 +60,7 @@ export class SessionService {
 
 			if (mfa.totp?.status === TotpStatus.ENABLED)
 				allowedMethods.push('Totp')
+			if (mfa.passkeys.length > 0) allowedMethods.push('Passkey')
 			if (mfa.recoveryCodes.length > 0) allowedMethods.push('Recovery')
 
 			const ticket = await this.redisService.createMfaTicket(
@@ -99,7 +103,8 @@ export class SessionService {
 					userId: admin.id
 				},
 				include: {
-					totp: true
+					totp: true,
+					passkeys: true
 				}
 			})
 
@@ -108,6 +113,7 @@ export class SessionService {
 
 			if (mfa.totp?.status === TotpStatus.ENABLED)
 				allowedMethods.push('Totp')
+			if (mfa.passkeys.length > 0) allowedMethods.push('Passkey')
 			if (mfa.recoveryCodes.length > 0) allowedMethods.push('Recovery')
 
 			const ticket = await this.redisService.createMfaTicket(

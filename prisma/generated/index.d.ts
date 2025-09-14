@@ -44,6 +44,11 @@ export type MultiFactorAuthentication = $Result.DefaultSelection<Prisma.$MultiFa
  */
 export type Totp = $Result.DefaultSelection<Prisma.$TotpPayload>
 /**
+ * Model Passkey
+ * 
+ */
+export type Passkey = $Result.DefaultSelection<Prisma.$PasskeyPayload>
+/**
  * Model Restriction
  * 
  */
@@ -63,6 +68,16 @@ export type Lesson = $Result.DefaultSelection<Prisma.$LessonPayload>
  * 
  */
 export type UserProgress = $Result.DefaultSelection<Prisma.$UserProgressPayload>
+/**
+ * Model Article
+ * 
+ */
+export type Article = $Result.DefaultSelection<Prisma.$ArticlePayload>
+/**
+ * Model Comment
+ * 
+ */
+export type Comment = $Result.DefaultSelection<Prisma.$CommentPayload>
 
 /**
  * Enums
@@ -146,7 +161,7 @@ export const RestrictionStatus: typeof $Enums.RestrictionStatus
 
 /**
  * ##  Prisma Client ʲˢ
- * 
+ *
  * Type-safe database client for TypeScript & Node.js
  * @example
  * ```
@@ -155,7 +170,7 @@ export const RestrictionStatus: typeof $Enums.RestrictionStatus
  * const users = await prisma.user.findMany()
  * ```
  *
- * 
+ *
  * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client).
  */
 export class PrismaClient<
@@ -167,7 +182,7 @@ export class PrismaClient<
 
     /**
    * ##  Prisma Client ʲˢ
-   * 
+   *
    * Type-safe database client for TypeScript & Node.js
    * @example
    * ```
@@ -176,12 +191,12 @@ export class PrismaClient<
    * const users = await prisma.user.findMany()
    * ```
    *
-   * 
+   *
    * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client).
    */
 
   constructor(optionsArg ?: Prisma.Subset<ClientOptions, Prisma.PrismaClientOptions>);
-  $on<V extends U>(eventType: V, callback: (event: V extends 'query' ? Prisma.QueryEvent : Prisma.LogEvent) => void): void;
+  $on<V extends U>(eventType: V, callback: (event: V extends 'query' ? Prisma.QueryEvent : Prisma.LogEvent) => void): PrismaClient;
 
   /**
    * Connect with the database
@@ -206,7 +221,7 @@ export class PrismaClient<
    * ```
    * const result = await prisma.$executeRaw`UPDATE User SET cool = ${true} WHERE email = ${'user@email.com'};`
    * ```
-   * 
+   *
    * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
    */
   $executeRaw<T = unknown>(query: TemplateStringsArray | Prisma.Sql, ...values: any[]): Prisma.PrismaPromise<number>;
@@ -218,7 +233,7 @@ export class PrismaClient<
    * ```
    * const result = await prisma.$executeRawUnsafe('UPDATE User SET cool = $1 WHERE email = $2 ;', true, 'user@email.com')
    * ```
-   * 
+   *
    * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
    */
   $executeRawUnsafe<T = unknown>(query: string, ...values: any[]): Prisma.PrismaPromise<number>;
@@ -229,7 +244,7 @@ export class PrismaClient<
    * ```
    * const result = await prisma.$queryRaw`SELECT * FROM User WHERE id = ${1} OR email = ${'user@email.com'};`
    * ```
-   * 
+   *
    * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
    */
   $queryRaw<T = unknown>(query: TemplateStringsArray | Prisma.Sql, ...values: any[]): Prisma.PrismaPromise<T>;
@@ -241,7 +256,7 @@ export class PrismaClient<
    * ```
    * const result = await prisma.$queryRawUnsafe('SELECT * FROM User WHERE id = $1 OR email = $2;', 1, 'user@email.com')
    * ```
-   * 
+   *
    * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
    */
   $queryRawUnsafe<T = unknown>(query: string, ...values: any[]): Prisma.PrismaPromise<T>;
@@ -265,7 +280,9 @@ export class PrismaClient<
   $transaction<R>(fn: (prisma: Omit<PrismaClient, runtime.ITXClientDenyList>) => $Utils.JsPromise<R>, options?: { maxWait?: number, timeout?: number, isolationLevel?: Prisma.TransactionIsolationLevel }): $Utils.JsPromise<R>
 
 
-  $extends: $Extensions.ExtendsHook<"extends", Prisma.TypeMapCb, ExtArgs>
+  $extends: $Extensions.ExtendsHook<"extends", Prisma.TypeMapCb<ClientOptions>, ExtArgs, $Utils.Call<Prisma.TypeMapCb<ClientOptions>, {
+    extArgs: ExtArgs
+  }>>
 
       /**
    * `prisma.user`: Exposes CRUD operations for the **User** model.
@@ -275,7 +292,7 @@ export class PrismaClient<
     * const users = await prisma.user.findMany()
     * ```
     */
-  get user(): Prisma.UserDelegate<ExtArgs>;
+  get user(): Prisma.UserDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.externalAccount`: Exposes CRUD operations for the **ExternalAccount** model.
@@ -285,7 +302,7 @@ export class PrismaClient<
     * const externalAccounts = await prisma.externalAccount.findMany()
     * ```
     */
-  get externalAccount(): Prisma.ExternalAccountDelegate<ExtArgs>;
+  get externalAccount(): Prisma.ExternalAccountDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.emailVerification`: Exposes CRUD operations for the **EmailVerification** model.
@@ -295,7 +312,7 @@ export class PrismaClient<
     * const emailVerifications = await prisma.emailVerification.findMany()
     * ```
     */
-  get emailVerification(): Prisma.EmailVerificationDelegate<ExtArgs>;
+  get emailVerification(): Prisma.EmailVerificationDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.passwordReset`: Exposes CRUD operations for the **PasswordReset** model.
@@ -305,7 +322,7 @@ export class PrismaClient<
     * const passwordResets = await prisma.passwordReset.findMany()
     * ```
     */
-  get passwordReset(): Prisma.PasswordResetDelegate<ExtArgs>;
+  get passwordReset(): Prisma.PasswordResetDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.multiFactorAuthentication`: Exposes CRUD operations for the **MultiFactorAuthentication** model.
@@ -315,7 +332,7 @@ export class PrismaClient<
     * const multiFactorAuthentications = await prisma.multiFactorAuthentication.findMany()
     * ```
     */
-  get multiFactorAuthentication(): Prisma.MultiFactorAuthenticationDelegate<ExtArgs>;
+  get multiFactorAuthentication(): Prisma.MultiFactorAuthenticationDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.totp`: Exposes CRUD operations for the **Totp** model.
@@ -325,7 +342,17 @@ export class PrismaClient<
     * const totps = await prisma.totp.findMany()
     * ```
     */
-  get totp(): Prisma.TotpDelegate<ExtArgs>;
+  get totp(): Prisma.TotpDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.passkey`: Exposes CRUD operations for the **Passkey** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Passkeys
+    * const passkeys = await prisma.passkey.findMany()
+    * ```
+    */
+  get passkey(): Prisma.PasskeyDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.restriction`: Exposes CRUD operations for the **Restriction** model.
@@ -335,7 +362,7 @@ export class PrismaClient<
     * const restrictions = await prisma.restriction.findMany()
     * ```
     */
-  get restriction(): Prisma.RestrictionDelegate<ExtArgs>;
+  get restriction(): Prisma.RestrictionDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.course`: Exposes CRUD operations for the **Course** model.
@@ -345,7 +372,7 @@ export class PrismaClient<
     * const courses = await prisma.course.findMany()
     * ```
     */
-  get course(): Prisma.CourseDelegate<ExtArgs>;
+  get course(): Prisma.CourseDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.lesson`: Exposes CRUD operations for the **Lesson** model.
@@ -355,7 +382,7 @@ export class PrismaClient<
     * const lessons = await prisma.lesson.findMany()
     * ```
     */
-  get lesson(): Prisma.LessonDelegate<ExtArgs>;
+  get lesson(): Prisma.LessonDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.userProgress`: Exposes CRUD operations for the **UserProgress** model.
@@ -365,7 +392,27 @@ export class PrismaClient<
     * const userProgresses = await prisma.userProgress.findMany()
     * ```
     */
-  get userProgress(): Prisma.UserProgressDelegate<ExtArgs>;
+  get userProgress(): Prisma.UserProgressDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.article`: Exposes CRUD operations for the **Article** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Articles
+    * const articles = await prisma.article.findMany()
+    * ```
+    */
+  get article(): Prisma.ArticleDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.comment`: Exposes CRUD operations for the **Comment** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Comments
+    * const comments = await prisma.comment.findMany()
+    * ```
+    */
+  get comment(): Prisma.CommentDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -386,7 +433,6 @@ export namespace Prisma {
   export import PrismaClientRustPanicError = runtime.PrismaClientRustPanicError
   export import PrismaClientInitializationError = runtime.PrismaClientInitializationError
   export import PrismaClientValidationError = runtime.PrismaClientValidationError
-  export import NotFoundError = runtime.NotFoundError
 
   /**
    * Re-export of sql-template-tag
@@ -407,7 +453,7 @@ export namespace Prisma {
   export type DecimalJsLike = runtime.DecimalJsLike
 
   /**
-   * Metrics 
+   * Metrics
    */
   export type Metrics = runtime.Metrics
   export type Metric<T> = runtime.Metric<T>
@@ -425,14 +471,14 @@ export namespace Prisma {
   export import Exact = $Public.Exact
 
   /**
-   * Prisma Client JS version: 5.22.0
+   * Prisma Client JS version: 6.12.0
    * Query Engine version: 605197351a3c8bdd595af2d2a9bc3025bca48ea2
    */
   export type PrismaVersion = {
     client: string
   }
 
-  export const prismaVersion: PrismaVersion 
+  export const prismaVersion: PrismaVersion
 
   /**
    * Utility Types
@@ -448,15 +494,15 @@ export namespace Prisma {
 
   /**
    * Types of the values used to represent different kinds of `null` values when working with JSON fields.
-   * 
+   *
    * @see https://www.prisma.io/docs/concepts/components/prisma-client/working-with-fields/working-with-json-fields#filtering-on-a-json-field
    */
   namespace NullTypes {
     /**
     * Type of `Prisma.DbNull`.
-    * 
+    *
     * You cannot use other instances of this class. Please use the `Prisma.DbNull` value.
-    * 
+    *
     * @see https://www.prisma.io/docs/concepts/components/prisma-client/working-with-fields/working-with-json-fields#filtering-on-a-json-field
     */
     class DbNull {
@@ -466,9 +512,9 @@ export namespace Prisma {
 
     /**
     * Type of `Prisma.JsonNull`.
-    * 
+    *
     * You cannot use other instances of this class. Please use the `Prisma.JsonNull` value.
-    * 
+    *
     * @see https://www.prisma.io/docs/concepts/components/prisma-client/working-with-fields/working-with-json-fields#filtering-on-a-json-field
     */
     class JsonNull {
@@ -478,9 +524,9 @@ export namespace Prisma {
 
     /**
     * Type of `Prisma.AnyNull`.
-    * 
+    *
     * You cannot use other instances of this class. Please use the `Prisma.AnyNull` value.
-    * 
+    *
     * @see https://www.prisma.io/docs/concepts/components/prisma-client/working-with-fields/working-with-json-fields#filtering-on-a-json-field
     */
     class AnyNull {
@@ -491,21 +537,21 @@ export namespace Prisma {
 
   /**
    * Helper for filtering JSON entries that have `null` on the database (empty on the db)
-   * 
+   *
    * @see https://www.prisma.io/docs/concepts/components/prisma-client/working-with-fields/working-with-json-fields#filtering-on-a-json-field
    */
   export const DbNull: NullTypes.DbNull
 
   /**
    * Helper for filtering JSON entries that have JSON `null` values (not empty on the db)
-   * 
+   *
    * @see https://www.prisma.io/docs/concepts/components/prisma-client/working-with-fields/working-with-json-fields#filtering-on-a-json-field
    */
   export const JsonNull: NullTypes.JsonNull
 
   /**
    * Helper for filtering JSON entries that are `Prisma.DbNull` or `Prisma.JsonNull`
-   * 
+   *
    * @see https://www.prisma.io/docs/concepts/components/prisma-client/working-with-fields/working-with-json-fields#filtering-on-a-json-field
    */
   export const AnyNull: NullTypes.AnyNull
@@ -693,7 +739,7 @@ export namespace Prisma {
   type AtLeast<O extends object, K extends string> = NoExpand<
     O extends unknown
     ? | (K extends keyof O ? { [P in K]: O[P] } & O : O)
-      | {[P in keyof O as P extends K ? K : never]-?: O[P]} & O
+      | {[P in keyof O as P extends K ? P : never]-?: O[P]} & O
     : never>;
 
   type _Strict<U, _U = U> = U extends unknown ? U & OptionalFlat<_Record<Exclude<Keys<_U>, keyof U>, never>> : never;
@@ -813,10 +859,13 @@ export namespace Prisma {
     PasswordReset: 'PasswordReset',
     MultiFactorAuthentication: 'MultiFactorAuthentication',
     Totp: 'Totp',
+    Passkey: 'Passkey',
     Restriction: 'Restriction',
     Course: 'Course',
     Lesson: 'Lesson',
-    UserProgress: 'UserProgress'
+    UserProgress: 'UserProgress',
+    Article: 'Article',
+    Comment: 'Comment'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -826,13 +875,16 @@ export namespace Prisma {
     db?: Datasource
   }
 
-  interface TypeMapCb extends $Utils.Fn<{extArgs: $Extensions.InternalArgs, clientOptions: PrismaClientOptions }, $Utils.Record<string, any>> {
-    returns: Prisma.TypeMap<this['params']['extArgs'], this['params']['clientOptions']>
+  interface TypeMapCb<ClientOptions = {}> extends $Utils.Fn<{extArgs: $Extensions.InternalArgs }, $Utils.Record<string, any>> {
+    returns: Prisma.TypeMap<this['params']['extArgs'], ClientOptions extends { omit: infer OmitOptions } ? OmitOptions : {}>
   }
 
-  export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> = {
+  export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> = {
+    globalOmitOptions: {
+      omit: GlobalOmitOptions
+    }
     meta: {
-      modelProps: "user" | "externalAccount" | "emailVerification" | "passwordReset" | "multiFactorAuthentication" | "totp" | "restriction" | "course" | "lesson" | "userProgress"
+      modelProps: "user" | "externalAccount" | "emailVerification" | "passwordReset" | "multiFactorAuthentication" | "totp" | "passkey" | "restriction" | "course" | "lesson" | "userProgress" | "article" | "comment"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1256,6 +1308,76 @@ export namespace Prisma {
           }
         }
       }
+      Passkey: {
+        payload: Prisma.$PasskeyPayload<ExtArgs>
+        fields: Prisma.PasskeyFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.PasskeyFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PasskeyPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.PasskeyFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PasskeyPayload>
+          }
+          findFirst: {
+            args: Prisma.PasskeyFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PasskeyPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.PasskeyFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PasskeyPayload>
+          }
+          findMany: {
+            args: Prisma.PasskeyFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PasskeyPayload>[]
+          }
+          create: {
+            args: Prisma.PasskeyCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PasskeyPayload>
+          }
+          createMany: {
+            args: Prisma.PasskeyCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.PasskeyCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PasskeyPayload>[]
+          }
+          delete: {
+            args: Prisma.PasskeyDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PasskeyPayload>
+          }
+          update: {
+            args: Prisma.PasskeyUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PasskeyPayload>
+          }
+          deleteMany: {
+            args: Prisma.PasskeyDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.PasskeyUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.PasskeyUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PasskeyPayload>
+          }
+          aggregate: {
+            args: Prisma.PasskeyAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregatePasskey>
+          }
+          groupBy: {
+            args: Prisma.PasskeyGroupByArgs<ExtArgs>
+            result: $Utils.Optional<PasskeyGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.PasskeyCountArgs<ExtArgs>
+            result: $Utils.Optional<PasskeyCountAggregateOutputType> | number
+          }
+        }
+      }
       Restriction: {
         payload: Prisma.$RestrictionPayload<ExtArgs>
         fields: Prisma.RestrictionFieldRefs
@@ -1536,6 +1658,146 @@ export namespace Prisma {
           }
         }
       }
+      Article: {
+        payload: Prisma.$ArticlePayload<ExtArgs>
+        fields: Prisma.ArticleFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ArticleFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArticlePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ArticleFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArticlePayload>
+          }
+          findFirst: {
+            args: Prisma.ArticleFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArticlePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ArticleFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArticlePayload>
+          }
+          findMany: {
+            args: Prisma.ArticleFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArticlePayload>[]
+          }
+          create: {
+            args: Prisma.ArticleCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArticlePayload>
+          }
+          createMany: {
+            args: Prisma.ArticleCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ArticleCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArticlePayload>[]
+          }
+          delete: {
+            args: Prisma.ArticleDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArticlePayload>
+          }
+          update: {
+            args: Prisma.ArticleUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArticlePayload>
+          }
+          deleteMany: {
+            args: Prisma.ArticleDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ArticleUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.ArticleUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArticlePayload>
+          }
+          aggregate: {
+            args: Prisma.ArticleAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateArticle>
+          }
+          groupBy: {
+            args: Prisma.ArticleGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ArticleGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ArticleCountArgs<ExtArgs>
+            result: $Utils.Optional<ArticleCountAggregateOutputType> | number
+          }
+        }
+      }
+      Comment: {
+        payload: Prisma.$CommentPayload<ExtArgs>
+        fields: Prisma.CommentFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.CommentFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommentPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.CommentFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommentPayload>
+          }
+          findFirst: {
+            args: Prisma.CommentFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommentPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.CommentFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommentPayload>
+          }
+          findMany: {
+            args: Prisma.CommentFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommentPayload>[]
+          }
+          create: {
+            args: Prisma.CommentCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommentPayload>
+          }
+          createMany: {
+            args: Prisma.CommentCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.CommentCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommentPayload>[]
+          }
+          delete: {
+            args: Prisma.CommentDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommentPayload>
+          }
+          update: {
+            args: Prisma.CommentUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommentPayload>
+          }
+          deleteMany: {
+            args: Prisma.CommentDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.CommentUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.CommentUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommentPayload>
+          }
+          aggregate: {
+            args: Prisma.CommentAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateComment>
+          }
+          groupBy: {
+            args: Prisma.CommentGroupByArgs<ExtArgs>
+            result: $Utils.Optional<CommentGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.CommentCountArgs<ExtArgs>
+            result: $Utils.Optional<CommentCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1603,8 +1865,37 @@ export namespace Prisma {
       timeout?: number
       isolationLevel?: Prisma.TransactionIsolationLevel
     }
+    /**
+     * Global configuration for omitting model fields by default.
+     * 
+     * @example
+     * ```
+     * const prisma = new PrismaClient({
+     *   omit: {
+     *     user: {
+     *       password: true
+     *     }
+     *   }
+     * })
+     * ```
+     */
+    omit?: Prisma.GlobalOmitConfig
   }
-
+  export type GlobalOmitConfig = {
+    user?: UserOmit
+    externalAccount?: ExternalAccountOmit
+    emailVerification?: EmailVerificationOmit
+    passwordReset?: PasswordResetOmit
+    multiFactorAuthentication?: MultiFactorAuthenticationOmit
+    totp?: TotpOmit
+    passkey?: PasskeyOmit
+    restriction?: RestrictionOmit
+    course?: CourseOmit
+    lesson?: LessonOmit
+    userProgress?: UserProgressOmit
+    article?: ArticleOmit
+    comment?: CommentOmit
+  }
 
   /* Types for Logging */
   export type LogLevel = 'info' | 'query' | 'warn' | 'error'
@@ -1645,6 +1936,7 @@ export namespace Prisma {
     | 'createManyAndReturn'
     | 'update'
     | 'updateMany'
+    | 'updateManyAndReturn'
     | 'upsert'
     | 'delete'
     | 'deleteMany'
@@ -1699,12 +1991,14 @@ export namespace Prisma {
   export type UserCountOutputType = {
     externalAccounts: number
     userProgress: number
+    comments: number
     restrictions: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     externalAccounts?: boolean | UserCountOutputTypeCountExternalAccountsArgs
     userProgress?: boolean | UserCountOutputTypeCountUserProgressArgs
+    comments?: boolean | UserCountOutputTypeCountCommentsArgs
     restrictions?: boolean | UserCountOutputTypeCountRestrictionsArgs
   }
 
@@ -1736,8 +2030,46 @@ export namespace Prisma {
   /**
    * UserCountOutputType without action
    */
+  export type UserCountOutputTypeCountCommentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CommentWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
   export type UserCountOutputTypeCountRestrictionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: RestrictionWhereInput
+  }
+
+
+  /**
+   * Count Type MultiFactorAuthenticationCountOutputType
+   */
+
+  export type MultiFactorAuthenticationCountOutputType = {
+    passkeys: number
+  }
+
+  export type MultiFactorAuthenticationCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    passkeys?: boolean | MultiFactorAuthenticationCountOutputTypeCountPasskeysArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * MultiFactorAuthenticationCountOutputType without action
+   */
+  export type MultiFactorAuthenticationCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MultiFactorAuthenticationCountOutputType
+     */
+    select?: MultiFactorAuthenticationCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * MultiFactorAuthenticationCountOutputType without action
+   */
+  export type MultiFactorAuthenticationCountOutputTypeCountPasskeysArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PasskeyWhereInput
   }
 
 
@@ -1800,6 +2132,37 @@ export namespace Prisma {
    */
   export type LessonCountOutputTypeCountUserProgressArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: UserProgressWhereInput
+  }
+
+
+  /**
+   * Count Type ArticleCountOutputType
+   */
+
+  export type ArticleCountOutputType = {
+    comments: number
+  }
+
+  export type ArticleCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    comments?: boolean | ArticleCountOutputTypeCountCommentsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * ArticleCountOutputType without action
+   */
+  export type ArticleCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArticleCountOutputType
+     */
+    select?: ArticleCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * ArticleCountOutputType without action
+   */
+  export type ArticleCountOutputTypeCountCommentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CommentWhereInput
   }
 
 
@@ -2049,6 +2412,7 @@ export namespace Prisma {
     passwordReset?: boolean | User$passwordResetArgs<ExtArgs>
     externalAccounts?: boolean | User$externalAccountsArgs<ExtArgs>
     userProgress?: boolean | User$userProgressArgs<ExtArgs>
+    comments?: boolean | User$commentsArgs<ExtArgs>
     mfa?: boolean | User$mfaArgs<ExtArgs>
     restrictions?: boolean | User$restrictionsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
@@ -2067,6 +2431,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }, ExtArgs["result"]["user"]>
 
+
   export type UserSelectScalar = {
     id?: boolean
     email?: boolean
@@ -2080,11 +2445,13 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "password" | "username" | "displayName" | "avatar" | "points" | "role" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     emailVerification?: boolean | User$emailVerificationArgs<ExtArgs>
     passwordReset?: boolean | User$passwordResetArgs<ExtArgs>
     externalAccounts?: boolean | User$externalAccountsArgs<ExtArgs>
     userProgress?: boolean | User$userProgressArgs<ExtArgs>
+    comments?: boolean | User$commentsArgs<ExtArgs>
     mfa?: boolean | User$mfaArgs<ExtArgs>
     restrictions?: boolean | User$restrictionsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
@@ -2098,6 +2465,7 @@ export namespace Prisma {
       passwordReset: Prisma.$PasswordResetPayload<ExtArgs> | null
       externalAccounts: Prisma.$ExternalAccountPayload<ExtArgs>[]
       userProgress: Prisma.$UserProgressPayload<ExtArgs>[]
+      comments: Prisma.$CommentPayload<ExtArgs>[]
       mfa: Prisma.$MultiFactorAuthenticationPayload<ExtArgs> | null
       restrictions: Prisma.$RestrictionPayload<ExtArgs>[]
     }
@@ -2118,12 +2486,12 @@ export namespace Prisma {
 
   type UserGetPayload<S extends boolean | null | undefined | UserDefaultArgs> = $Result.GetResult<Prisma.$UserPayload, S>
 
-  type UserCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
-    Omit<UserFindManyArgs, 'select' | 'include' | 'distinct'> & {
+  type UserCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<UserFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
       select?: UserCountAggregateInputType | true
     }
 
-  export interface UserDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+  export interface UserDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
     [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['User'], meta: { name: 'User' } }
     /**
      * Find zero or one User that matches the filter.
@@ -2136,10 +2504,10 @@ export namespace Prisma {
      *   }
      * })
      */
-    findUnique<T extends UserFindUniqueArgs>(args: SelectSubset<T, UserFindUniqueArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+    findUnique<T extends UserFindUniqueArgs>(args: SelectSubset<T, UserFindUniqueArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Find one User that matches the filter or throw an error with `error.code='P2025'` 
+     * Find one User that matches the filter or throw an error with `error.code='P2025'`
      * if no matches were found.
      * @param {UserFindUniqueOrThrowArgs} args - Arguments to find a User
      * @example
@@ -2150,7 +2518,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findUniqueOrThrow<T extends UserFindUniqueOrThrowArgs>(args: SelectSubset<T, UserFindUniqueOrThrowArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+    findUniqueOrThrow<T extends UserFindUniqueOrThrowArgs>(args: SelectSubset<T, UserFindUniqueOrThrowArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find the first User that matches the filter.
@@ -2165,7 +2533,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findFirst<T extends UserFindFirstArgs>(args?: SelectSubset<T, UserFindFirstArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+    findFirst<T extends UserFindFirstArgs>(args?: SelectSubset<T, UserFindFirstArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find the first User that matches the filter or
@@ -2181,7 +2549,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findFirstOrThrow<T extends UserFindFirstOrThrowArgs>(args?: SelectSubset<T, UserFindFirstOrThrowArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+    findFirstOrThrow<T extends UserFindFirstOrThrowArgs>(args?: SelectSubset<T, UserFindFirstOrThrowArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find zero or more Users that matches the filter.
@@ -2199,7 +2567,7 @@ export namespace Prisma {
      * const userWithIdOnly = await prisma.user.findMany({ select: { id: true } })
      * 
      */
-    findMany<T extends UserFindManyArgs>(args?: SelectSubset<T, UserFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany">>
+    findMany<T extends UserFindManyArgs>(args?: SelectSubset<T, UserFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
     /**
      * Create a User.
@@ -2213,7 +2581,7 @@ export namespace Prisma {
      * })
      * 
      */
-    create<T extends UserCreateArgs>(args: SelectSubset<T, UserCreateArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "create">, never, ExtArgs>
+    create<T extends UserCreateArgs>(args: SelectSubset<T, UserCreateArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Create many Users.
@@ -2241,7 +2609,7 @@ export namespace Prisma {
      * })
      * 
      * // Create many Users and only return the `id`
-     * const userWithIdOnly = await prisma.user.createManyAndReturn({ 
+     * const userWithIdOnly = await prisma.user.createManyAndReturn({
      *   select: { id: true },
      *   data: [
      *     // ... provide data here
@@ -2251,7 +2619,7 @@ export namespace Prisma {
      * Read more here: https://pris.ly/d/null-undefined
      * 
      */
-    createManyAndReturn<T extends UserCreateManyAndReturnArgs>(args?: SelectSubset<T, UserCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "createManyAndReturn">>
+    createManyAndReturn<T extends UserCreateManyAndReturnArgs>(args?: SelectSubset<T, UserCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
     /**
      * Delete a User.
@@ -2265,7 +2633,7 @@ export namespace Prisma {
      * })
      * 
      */
-    delete<T extends UserDeleteArgs>(args: SelectSubset<T, UserDeleteArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+    delete<T extends UserDeleteArgs>(args: SelectSubset<T, UserDeleteArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Update one User.
@@ -2282,7 +2650,7 @@ export namespace Prisma {
      * })
      * 
      */
-    update<T extends UserUpdateArgs>(args: SelectSubset<T, UserUpdateArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "update">, never, ExtArgs>
+    update<T extends UserUpdateArgs>(args: SelectSubset<T, UserUpdateArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Delete zero or more Users.
@@ -2334,7 +2702,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    upsert<T extends UserUpsertArgs>(args: SelectSubset<T, UserUpsertArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+    upsert<T extends UserUpsertArgs>(args: SelectSubset<T, UserUpsertArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
 
     /**
@@ -2474,14 +2842,15 @@ export namespace Prisma {
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export interface Prisma__UserClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+  export interface Prisma__UserClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    emailVerification<T extends User$emailVerificationArgs<ExtArgs> = {}>(args?: Subset<T, User$emailVerificationArgs<ExtArgs>>): Prisma__EmailVerificationClient<$Result.GetResult<Prisma.$EmailVerificationPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
-    passwordReset<T extends User$passwordResetArgs<ExtArgs> = {}>(args?: Subset<T, User$passwordResetArgs<ExtArgs>>): Prisma__PasswordResetClient<$Result.GetResult<Prisma.$PasswordResetPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
-    externalAccounts<T extends User$externalAccountsArgs<ExtArgs> = {}>(args?: Subset<T, User$externalAccountsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ExternalAccountPayload<ExtArgs>, T, "findMany"> | Null>
-    userProgress<T extends User$userProgressArgs<ExtArgs> = {}>(args?: Subset<T, User$userProgressArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserProgressPayload<ExtArgs>, T, "findMany"> | Null>
-    mfa<T extends User$mfaArgs<ExtArgs> = {}>(args?: Subset<T, User$mfaArgs<ExtArgs>>): Prisma__MultiFactorAuthenticationClient<$Result.GetResult<Prisma.$MultiFactorAuthenticationPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
-    restrictions<T extends User$restrictionsArgs<ExtArgs> = {}>(args?: Subset<T, User$restrictionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RestrictionPayload<ExtArgs>, T, "findMany"> | Null>
+    emailVerification<T extends User$emailVerificationArgs<ExtArgs> = {}>(args?: Subset<T, User$emailVerificationArgs<ExtArgs>>): Prisma__EmailVerificationClient<$Result.GetResult<Prisma.$EmailVerificationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    passwordReset<T extends User$passwordResetArgs<ExtArgs> = {}>(args?: Subset<T, User$passwordResetArgs<ExtArgs>>): Prisma__PasswordResetClient<$Result.GetResult<Prisma.$PasswordResetPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    externalAccounts<T extends User$externalAccountsArgs<ExtArgs> = {}>(args?: Subset<T, User$externalAccountsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ExternalAccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    userProgress<T extends User$userProgressArgs<ExtArgs> = {}>(args?: Subset<T, User$userProgressArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserProgressPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    comments<T extends User$commentsArgs<ExtArgs> = {}>(args?: Subset<T, User$commentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    mfa<T extends User$mfaArgs<ExtArgs> = {}>(args?: Subset<T, User$mfaArgs<ExtArgs>>): Prisma__MultiFactorAuthenticationClient<$Result.GetResult<Prisma.$MultiFactorAuthenticationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    restrictions<T extends User$restrictionsArgs<ExtArgs> = {}>(args?: Subset<T, User$restrictionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RestrictionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2509,7 +2878,7 @@ export namespace Prisma {
 
   /**
    * Fields of the User model
-   */ 
+   */
   interface UserFieldRefs {
     readonly id: FieldRef<"User", 'String'>
     readonly email: FieldRef<"User", 'String'>
@@ -2534,6 +2903,10 @@ export namespace Prisma {
      */
     select?: UserSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: UserInclude<ExtArgs> | null
@@ -2552,6 +2925,10 @@ export namespace Prisma {
      */
     select?: UserSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: UserInclude<ExtArgs> | null
@@ -2569,6 +2946,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the User
      */
     select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -2618,6 +2999,10 @@ export namespace Prisma {
      */
     select?: UserSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: UserInclude<ExtArgs> | null
@@ -2666,6 +3051,10 @@ export namespace Prisma {
      */
     select?: UserSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: UserInclude<ExtArgs> | null
@@ -2709,6 +3098,10 @@ export namespace Prisma {
      */
     select?: UserSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: UserInclude<ExtArgs> | null
@@ -2738,6 +3131,10 @@ export namespace Prisma {
      */
     select?: UserSelectCreateManyAndReturn<ExtArgs> | null
     /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
      * The data used to create many Users.
      */
     data: UserCreateManyInput | UserCreateManyInput[]
@@ -2752,6 +3149,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the User
      */
     select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -2789,6 +3190,10 @@ export namespace Prisma {
      */
     select?: UserSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: UserInclude<ExtArgs> | null
@@ -2814,6 +3219,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the User
      */
     select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -2843,6 +3252,10 @@ export namespace Prisma {
      */
     select?: EmailVerificationSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the EmailVerification
+     */
+    omit?: EmailVerificationOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: EmailVerificationInclude<ExtArgs> | null
@@ -2858,6 +3271,10 @@ export namespace Prisma {
      */
     select?: PasswordResetSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the PasswordReset
+     */
+    omit?: PasswordResetOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: PasswordResetInclude<ExtArgs> | null
@@ -2872,6 +3289,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the ExternalAccount
      */
     select?: ExternalAccountSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ExternalAccount
+     */
+    omit?: ExternalAccountOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -2893,6 +3314,10 @@ export namespace Prisma {
      */
     select?: UserProgressSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the UserProgress
+     */
+    omit?: UserProgressOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: UserProgressInclude<ExtArgs> | null
@@ -2905,6 +3330,30 @@ export namespace Prisma {
   }
 
   /**
+   * User.comments
+   */
+  export type User$commentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Comment
+     */
+    select?: CommentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Comment
+     */
+    omit?: CommentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommentInclude<ExtArgs> | null
+    where?: CommentWhereInput
+    orderBy?: CommentOrderByWithRelationInput | CommentOrderByWithRelationInput[]
+    cursor?: CommentWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: CommentScalarFieldEnum | CommentScalarFieldEnum[]
+  }
+
+  /**
    * User.mfa
    */
   export type User$mfaArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2912,6 +3361,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the MultiFactorAuthentication
      */
     select?: MultiFactorAuthenticationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MultiFactorAuthentication
+     */
+    omit?: MultiFactorAuthenticationOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -2927,6 +3380,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the Restriction
      */
     select?: RestrictionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Restriction
+     */
+    omit?: RestrictionOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -2947,6 +3404,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the User
      */
     select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -3200,6 +3661,7 @@ export namespace Prisma {
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["externalAccount"]>
 
+
   export type ExternalAccountSelectScalar = {
     id?: boolean
     provider?: boolean
@@ -3212,6 +3674,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
+  export type ExternalAccountOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "provider" | "providerAccountId" | "refreshToken" | "accessToken" | "expiry" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["externalAccount"]>
   export type ExternalAccountInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -3240,12 +3703,12 @@ export namespace Prisma {
 
   type ExternalAccountGetPayload<S extends boolean | null | undefined | ExternalAccountDefaultArgs> = $Result.GetResult<Prisma.$ExternalAccountPayload, S>
 
-  type ExternalAccountCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
-    Omit<ExternalAccountFindManyArgs, 'select' | 'include' | 'distinct'> & {
+  type ExternalAccountCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ExternalAccountFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
       select?: ExternalAccountCountAggregateInputType | true
     }
 
-  export interface ExternalAccountDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+  export interface ExternalAccountDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
     [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ExternalAccount'], meta: { name: 'ExternalAccount' } }
     /**
      * Find zero or one ExternalAccount that matches the filter.
@@ -3258,10 +3721,10 @@ export namespace Prisma {
      *   }
      * })
      */
-    findUnique<T extends ExternalAccountFindUniqueArgs>(args: SelectSubset<T, ExternalAccountFindUniqueArgs<ExtArgs>>): Prisma__ExternalAccountClient<$Result.GetResult<Prisma.$ExternalAccountPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+    findUnique<T extends ExternalAccountFindUniqueArgs>(args: SelectSubset<T, ExternalAccountFindUniqueArgs<ExtArgs>>): Prisma__ExternalAccountClient<$Result.GetResult<Prisma.$ExternalAccountPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Find one ExternalAccount that matches the filter or throw an error with `error.code='P2025'` 
+     * Find one ExternalAccount that matches the filter or throw an error with `error.code='P2025'`
      * if no matches were found.
      * @param {ExternalAccountFindUniqueOrThrowArgs} args - Arguments to find a ExternalAccount
      * @example
@@ -3272,7 +3735,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findUniqueOrThrow<T extends ExternalAccountFindUniqueOrThrowArgs>(args: SelectSubset<T, ExternalAccountFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ExternalAccountClient<$Result.GetResult<Prisma.$ExternalAccountPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+    findUniqueOrThrow<T extends ExternalAccountFindUniqueOrThrowArgs>(args: SelectSubset<T, ExternalAccountFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ExternalAccountClient<$Result.GetResult<Prisma.$ExternalAccountPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find the first ExternalAccount that matches the filter.
@@ -3287,7 +3750,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findFirst<T extends ExternalAccountFindFirstArgs>(args?: SelectSubset<T, ExternalAccountFindFirstArgs<ExtArgs>>): Prisma__ExternalAccountClient<$Result.GetResult<Prisma.$ExternalAccountPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+    findFirst<T extends ExternalAccountFindFirstArgs>(args?: SelectSubset<T, ExternalAccountFindFirstArgs<ExtArgs>>): Prisma__ExternalAccountClient<$Result.GetResult<Prisma.$ExternalAccountPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find the first ExternalAccount that matches the filter or
@@ -3303,7 +3766,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findFirstOrThrow<T extends ExternalAccountFindFirstOrThrowArgs>(args?: SelectSubset<T, ExternalAccountFindFirstOrThrowArgs<ExtArgs>>): Prisma__ExternalAccountClient<$Result.GetResult<Prisma.$ExternalAccountPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+    findFirstOrThrow<T extends ExternalAccountFindFirstOrThrowArgs>(args?: SelectSubset<T, ExternalAccountFindFirstOrThrowArgs<ExtArgs>>): Prisma__ExternalAccountClient<$Result.GetResult<Prisma.$ExternalAccountPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find zero or more ExternalAccounts that matches the filter.
@@ -3321,7 +3784,7 @@ export namespace Prisma {
      * const externalAccountWithIdOnly = await prisma.externalAccount.findMany({ select: { id: true } })
      * 
      */
-    findMany<T extends ExternalAccountFindManyArgs>(args?: SelectSubset<T, ExternalAccountFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ExternalAccountPayload<ExtArgs>, T, "findMany">>
+    findMany<T extends ExternalAccountFindManyArgs>(args?: SelectSubset<T, ExternalAccountFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ExternalAccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
     /**
      * Create a ExternalAccount.
@@ -3335,7 +3798,7 @@ export namespace Prisma {
      * })
      * 
      */
-    create<T extends ExternalAccountCreateArgs>(args: SelectSubset<T, ExternalAccountCreateArgs<ExtArgs>>): Prisma__ExternalAccountClient<$Result.GetResult<Prisma.$ExternalAccountPayload<ExtArgs>, T, "create">, never, ExtArgs>
+    create<T extends ExternalAccountCreateArgs>(args: SelectSubset<T, ExternalAccountCreateArgs<ExtArgs>>): Prisma__ExternalAccountClient<$Result.GetResult<Prisma.$ExternalAccountPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Create many ExternalAccounts.
@@ -3363,7 +3826,7 @@ export namespace Prisma {
      * })
      * 
      * // Create many ExternalAccounts and only return the `id`
-     * const externalAccountWithIdOnly = await prisma.externalAccount.createManyAndReturn({ 
+     * const externalAccountWithIdOnly = await prisma.externalAccount.createManyAndReturn({
      *   select: { id: true },
      *   data: [
      *     // ... provide data here
@@ -3373,7 +3836,7 @@ export namespace Prisma {
      * Read more here: https://pris.ly/d/null-undefined
      * 
      */
-    createManyAndReturn<T extends ExternalAccountCreateManyAndReturnArgs>(args?: SelectSubset<T, ExternalAccountCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ExternalAccountPayload<ExtArgs>, T, "createManyAndReturn">>
+    createManyAndReturn<T extends ExternalAccountCreateManyAndReturnArgs>(args?: SelectSubset<T, ExternalAccountCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ExternalAccountPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
     /**
      * Delete a ExternalAccount.
@@ -3387,7 +3850,7 @@ export namespace Prisma {
      * })
      * 
      */
-    delete<T extends ExternalAccountDeleteArgs>(args: SelectSubset<T, ExternalAccountDeleteArgs<ExtArgs>>): Prisma__ExternalAccountClient<$Result.GetResult<Prisma.$ExternalAccountPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+    delete<T extends ExternalAccountDeleteArgs>(args: SelectSubset<T, ExternalAccountDeleteArgs<ExtArgs>>): Prisma__ExternalAccountClient<$Result.GetResult<Prisma.$ExternalAccountPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Update one ExternalAccount.
@@ -3404,7 +3867,7 @@ export namespace Prisma {
      * })
      * 
      */
-    update<T extends ExternalAccountUpdateArgs>(args: SelectSubset<T, ExternalAccountUpdateArgs<ExtArgs>>): Prisma__ExternalAccountClient<$Result.GetResult<Prisma.$ExternalAccountPayload<ExtArgs>, T, "update">, never, ExtArgs>
+    update<T extends ExternalAccountUpdateArgs>(args: SelectSubset<T, ExternalAccountUpdateArgs<ExtArgs>>): Prisma__ExternalAccountClient<$Result.GetResult<Prisma.$ExternalAccountPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Delete zero or more ExternalAccounts.
@@ -3456,7 +3919,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    upsert<T extends ExternalAccountUpsertArgs>(args: SelectSubset<T, ExternalAccountUpsertArgs<ExtArgs>>): Prisma__ExternalAccountClient<$Result.GetResult<Prisma.$ExternalAccountPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+    upsert<T extends ExternalAccountUpsertArgs>(args: SelectSubset<T, ExternalAccountUpsertArgs<ExtArgs>>): Prisma__ExternalAccountClient<$Result.GetResult<Prisma.$ExternalAccountPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
 
     /**
@@ -3596,9 +4059,9 @@ export namespace Prisma {
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export interface Prisma__ExternalAccountClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+  export interface Prisma__ExternalAccountClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3626,7 +4089,7 @@ export namespace Prisma {
 
   /**
    * Fields of the ExternalAccount model
-   */ 
+   */
   interface ExternalAccountFieldRefs {
     readonly id: FieldRef<"ExternalAccount", 'String'>
     readonly provider: FieldRef<"ExternalAccount", 'AccountProvider'>
@@ -3650,6 +4113,10 @@ export namespace Prisma {
      */
     select?: ExternalAccountSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the ExternalAccount
+     */
+    omit?: ExternalAccountOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: ExternalAccountInclude<ExtArgs> | null
@@ -3668,6 +4135,10 @@ export namespace Prisma {
      */
     select?: ExternalAccountSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the ExternalAccount
+     */
+    omit?: ExternalAccountOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: ExternalAccountInclude<ExtArgs> | null
@@ -3685,6 +4156,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the ExternalAccount
      */
     select?: ExternalAccountSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ExternalAccount
+     */
+    omit?: ExternalAccountOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -3734,6 +4209,10 @@ export namespace Prisma {
      */
     select?: ExternalAccountSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the ExternalAccount
+     */
+    omit?: ExternalAccountOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: ExternalAccountInclude<ExtArgs> | null
@@ -3782,6 +4261,10 @@ export namespace Prisma {
      */
     select?: ExternalAccountSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the ExternalAccount
+     */
+    omit?: ExternalAccountOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: ExternalAccountInclude<ExtArgs> | null
@@ -3825,6 +4308,10 @@ export namespace Prisma {
      */
     select?: ExternalAccountSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the ExternalAccount
+     */
+    omit?: ExternalAccountOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: ExternalAccountInclude<ExtArgs> | null
@@ -3854,6 +4341,10 @@ export namespace Prisma {
      */
     select?: ExternalAccountSelectCreateManyAndReturn<ExtArgs> | null
     /**
+     * Omit specific fields from the ExternalAccount
+     */
+    omit?: ExternalAccountOmit<ExtArgs> | null
+    /**
      * The data used to create many ExternalAccounts.
      */
     data: ExternalAccountCreateManyInput | ExternalAccountCreateManyInput[]
@@ -3872,6 +4363,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the ExternalAccount
      */
     select?: ExternalAccountSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ExternalAccount
+     */
+    omit?: ExternalAccountOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -3909,6 +4404,10 @@ export namespace Prisma {
      */
     select?: ExternalAccountSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the ExternalAccount
+     */
+    omit?: ExternalAccountOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: ExternalAccountInclude<ExtArgs> | null
@@ -3934,6 +4433,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the ExternalAccount
      */
     select?: ExternalAccountSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ExternalAccount
+     */
+    omit?: ExternalAccountOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -3962,6 +4465,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the ExternalAccount
      */
     select?: ExternalAccountSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ExternalAccount
+     */
+    omit?: ExternalAccountOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -4163,6 +4670,7 @@ export namespace Prisma {
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["emailVerification"]>
 
+
   export type EmailVerificationSelectScalar = {
     id?: boolean
     token?: boolean
@@ -4173,6 +4681,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
+  export type EmailVerificationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "token" | "expiry" | "status" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["emailVerification"]>
   export type EmailVerificationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -4199,12 +4708,12 @@ export namespace Prisma {
 
   type EmailVerificationGetPayload<S extends boolean | null | undefined | EmailVerificationDefaultArgs> = $Result.GetResult<Prisma.$EmailVerificationPayload, S>
 
-  type EmailVerificationCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
-    Omit<EmailVerificationFindManyArgs, 'select' | 'include' | 'distinct'> & {
+  type EmailVerificationCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<EmailVerificationFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
       select?: EmailVerificationCountAggregateInputType | true
     }
 
-  export interface EmailVerificationDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+  export interface EmailVerificationDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
     [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['EmailVerification'], meta: { name: 'EmailVerification' } }
     /**
      * Find zero or one EmailVerification that matches the filter.
@@ -4217,10 +4726,10 @@ export namespace Prisma {
      *   }
      * })
      */
-    findUnique<T extends EmailVerificationFindUniqueArgs>(args: SelectSubset<T, EmailVerificationFindUniqueArgs<ExtArgs>>): Prisma__EmailVerificationClient<$Result.GetResult<Prisma.$EmailVerificationPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+    findUnique<T extends EmailVerificationFindUniqueArgs>(args: SelectSubset<T, EmailVerificationFindUniqueArgs<ExtArgs>>): Prisma__EmailVerificationClient<$Result.GetResult<Prisma.$EmailVerificationPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Find one EmailVerification that matches the filter or throw an error with `error.code='P2025'` 
+     * Find one EmailVerification that matches the filter or throw an error with `error.code='P2025'`
      * if no matches were found.
      * @param {EmailVerificationFindUniqueOrThrowArgs} args - Arguments to find a EmailVerification
      * @example
@@ -4231,7 +4740,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findUniqueOrThrow<T extends EmailVerificationFindUniqueOrThrowArgs>(args: SelectSubset<T, EmailVerificationFindUniqueOrThrowArgs<ExtArgs>>): Prisma__EmailVerificationClient<$Result.GetResult<Prisma.$EmailVerificationPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+    findUniqueOrThrow<T extends EmailVerificationFindUniqueOrThrowArgs>(args: SelectSubset<T, EmailVerificationFindUniqueOrThrowArgs<ExtArgs>>): Prisma__EmailVerificationClient<$Result.GetResult<Prisma.$EmailVerificationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find the first EmailVerification that matches the filter.
@@ -4246,7 +4755,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findFirst<T extends EmailVerificationFindFirstArgs>(args?: SelectSubset<T, EmailVerificationFindFirstArgs<ExtArgs>>): Prisma__EmailVerificationClient<$Result.GetResult<Prisma.$EmailVerificationPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+    findFirst<T extends EmailVerificationFindFirstArgs>(args?: SelectSubset<T, EmailVerificationFindFirstArgs<ExtArgs>>): Prisma__EmailVerificationClient<$Result.GetResult<Prisma.$EmailVerificationPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find the first EmailVerification that matches the filter or
@@ -4262,7 +4771,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findFirstOrThrow<T extends EmailVerificationFindFirstOrThrowArgs>(args?: SelectSubset<T, EmailVerificationFindFirstOrThrowArgs<ExtArgs>>): Prisma__EmailVerificationClient<$Result.GetResult<Prisma.$EmailVerificationPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+    findFirstOrThrow<T extends EmailVerificationFindFirstOrThrowArgs>(args?: SelectSubset<T, EmailVerificationFindFirstOrThrowArgs<ExtArgs>>): Prisma__EmailVerificationClient<$Result.GetResult<Prisma.$EmailVerificationPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find zero or more EmailVerifications that matches the filter.
@@ -4280,7 +4789,7 @@ export namespace Prisma {
      * const emailVerificationWithIdOnly = await prisma.emailVerification.findMany({ select: { id: true } })
      * 
      */
-    findMany<T extends EmailVerificationFindManyArgs>(args?: SelectSubset<T, EmailVerificationFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EmailVerificationPayload<ExtArgs>, T, "findMany">>
+    findMany<T extends EmailVerificationFindManyArgs>(args?: SelectSubset<T, EmailVerificationFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EmailVerificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
     /**
      * Create a EmailVerification.
@@ -4294,7 +4803,7 @@ export namespace Prisma {
      * })
      * 
      */
-    create<T extends EmailVerificationCreateArgs>(args: SelectSubset<T, EmailVerificationCreateArgs<ExtArgs>>): Prisma__EmailVerificationClient<$Result.GetResult<Prisma.$EmailVerificationPayload<ExtArgs>, T, "create">, never, ExtArgs>
+    create<T extends EmailVerificationCreateArgs>(args: SelectSubset<T, EmailVerificationCreateArgs<ExtArgs>>): Prisma__EmailVerificationClient<$Result.GetResult<Prisma.$EmailVerificationPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Create many EmailVerifications.
@@ -4322,7 +4831,7 @@ export namespace Prisma {
      * })
      * 
      * // Create many EmailVerifications and only return the `id`
-     * const emailVerificationWithIdOnly = await prisma.emailVerification.createManyAndReturn({ 
+     * const emailVerificationWithIdOnly = await prisma.emailVerification.createManyAndReturn({
      *   select: { id: true },
      *   data: [
      *     // ... provide data here
@@ -4332,7 +4841,7 @@ export namespace Prisma {
      * Read more here: https://pris.ly/d/null-undefined
      * 
      */
-    createManyAndReturn<T extends EmailVerificationCreateManyAndReturnArgs>(args?: SelectSubset<T, EmailVerificationCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EmailVerificationPayload<ExtArgs>, T, "createManyAndReturn">>
+    createManyAndReturn<T extends EmailVerificationCreateManyAndReturnArgs>(args?: SelectSubset<T, EmailVerificationCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$EmailVerificationPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
     /**
      * Delete a EmailVerification.
@@ -4346,7 +4855,7 @@ export namespace Prisma {
      * })
      * 
      */
-    delete<T extends EmailVerificationDeleteArgs>(args: SelectSubset<T, EmailVerificationDeleteArgs<ExtArgs>>): Prisma__EmailVerificationClient<$Result.GetResult<Prisma.$EmailVerificationPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+    delete<T extends EmailVerificationDeleteArgs>(args: SelectSubset<T, EmailVerificationDeleteArgs<ExtArgs>>): Prisma__EmailVerificationClient<$Result.GetResult<Prisma.$EmailVerificationPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Update one EmailVerification.
@@ -4363,7 +4872,7 @@ export namespace Prisma {
      * })
      * 
      */
-    update<T extends EmailVerificationUpdateArgs>(args: SelectSubset<T, EmailVerificationUpdateArgs<ExtArgs>>): Prisma__EmailVerificationClient<$Result.GetResult<Prisma.$EmailVerificationPayload<ExtArgs>, T, "update">, never, ExtArgs>
+    update<T extends EmailVerificationUpdateArgs>(args: SelectSubset<T, EmailVerificationUpdateArgs<ExtArgs>>): Prisma__EmailVerificationClient<$Result.GetResult<Prisma.$EmailVerificationPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Delete zero or more EmailVerifications.
@@ -4415,7 +4924,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    upsert<T extends EmailVerificationUpsertArgs>(args: SelectSubset<T, EmailVerificationUpsertArgs<ExtArgs>>): Prisma__EmailVerificationClient<$Result.GetResult<Prisma.$EmailVerificationPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+    upsert<T extends EmailVerificationUpsertArgs>(args: SelectSubset<T, EmailVerificationUpsertArgs<ExtArgs>>): Prisma__EmailVerificationClient<$Result.GetResult<Prisma.$EmailVerificationPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
 
     /**
@@ -4555,9 +5064,9 @@ export namespace Prisma {
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export interface Prisma__EmailVerificationClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+  export interface Prisma__EmailVerificationClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4585,7 +5094,7 @@ export namespace Prisma {
 
   /**
    * Fields of the EmailVerification model
-   */ 
+   */
   interface EmailVerificationFieldRefs {
     readonly id: FieldRef<"EmailVerification", 'String'>
     readonly token: FieldRef<"EmailVerification", 'String'>
@@ -4607,6 +5116,10 @@ export namespace Prisma {
      */
     select?: EmailVerificationSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the EmailVerification
+     */
+    omit?: EmailVerificationOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: EmailVerificationInclude<ExtArgs> | null
@@ -4625,6 +5138,10 @@ export namespace Prisma {
      */
     select?: EmailVerificationSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the EmailVerification
+     */
+    omit?: EmailVerificationOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: EmailVerificationInclude<ExtArgs> | null
@@ -4642,6 +5159,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the EmailVerification
      */
     select?: EmailVerificationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmailVerification
+     */
+    omit?: EmailVerificationOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -4691,6 +5212,10 @@ export namespace Prisma {
      */
     select?: EmailVerificationSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the EmailVerification
+     */
+    omit?: EmailVerificationOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: EmailVerificationInclude<ExtArgs> | null
@@ -4739,6 +5264,10 @@ export namespace Prisma {
      */
     select?: EmailVerificationSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the EmailVerification
+     */
+    omit?: EmailVerificationOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: EmailVerificationInclude<ExtArgs> | null
@@ -4782,6 +5311,10 @@ export namespace Prisma {
      */
     select?: EmailVerificationSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the EmailVerification
+     */
+    omit?: EmailVerificationOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: EmailVerificationInclude<ExtArgs> | null
@@ -4811,6 +5344,10 @@ export namespace Prisma {
      */
     select?: EmailVerificationSelectCreateManyAndReturn<ExtArgs> | null
     /**
+     * Omit specific fields from the EmailVerification
+     */
+    omit?: EmailVerificationOmit<ExtArgs> | null
+    /**
      * The data used to create many EmailVerifications.
      */
     data: EmailVerificationCreateManyInput | EmailVerificationCreateManyInput[]
@@ -4829,6 +5366,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the EmailVerification
      */
     select?: EmailVerificationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmailVerification
+     */
+    omit?: EmailVerificationOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -4866,6 +5407,10 @@ export namespace Prisma {
      */
     select?: EmailVerificationSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the EmailVerification
+     */
+    omit?: EmailVerificationOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: EmailVerificationInclude<ExtArgs> | null
@@ -4891,6 +5436,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the EmailVerification
      */
     select?: EmailVerificationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmailVerification
+     */
+    omit?: EmailVerificationOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -4919,6 +5468,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the EmailVerification
      */
     select?: EmailVerificationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the EmailVerification
+     */
+    omit?: EmailVerificationOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -5111,6 +5664,7 @@ export namespace Prisma {
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["passwordReset"]>
 
+
   export type PasswordResetSelectScalar = {
     id?: boolean
     token?: boolean
@@ -5120,6 +5674,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
+  export type PasswordResetOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "token" | "expiry" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["passwordReset"]>
   export type PasswordResetInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -5145,12 +5700,12 @@ export namespace Prisma {
 
   type PasswordResetGetPayload<S extends boolean | null | undefined | PasswordResetDefaultArgs> = $Result.GetResult<Prisma.$PasswordResetPayload, S>
 
-  type PasswordResetCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
-    Omit<PasswordResetFindManyArgs, 'select' | 'include' | 'distinct'> & {
+  type PasswordResetCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<PasswordResetFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
       select?: PasswordResetCountAggregateInputType | true
     }
 
-  export interface PasswordResetDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+  export interface PasswordResetDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
     [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['PasswordReset'], meta: { name: 'PasswordReset' } }
     /**
      * Find zero or one PasswordReset that matches the filter.
@@ -5163,10 +5718,10 @@ export namespace Prisma {
      *   }
      * })
      */
-    findUnique<T extends PasswordResetFindUniqueArgs>(args: SelectSubset<T, PasswordResetFindUniqueArgs<ExtArgs>>): Prisma__PasswordResetClient<$Result.GetResult<Prisma.$PasswordResetPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+    findUnique<T extends PasswordResetFindUniqueArgs>(args: SelectSubset<T, PasswordResetFindUniqueArgs<ExtArgs>>): Prisma__PasswordResetClient<$Result.GetResult<Prisma.$PasswordResetPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Find one PasswordReset that matches the filter or throw an error with `error.code='P2025'` 
+     * Find one PasswordReset that matches the filter or throw an error with `error.code='P2025'`
      * if no matches were found.
      * @param {PasswordResetFindUniqueOrThrowArgs} args - Arguments to find a PasswordReset
      * @example
@@ -5177,7 +5732,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findUniqueOrThrow<T extends PasswordResetFindUniqueOrThrowArgs>(args: SelectSubset<T, PasswordResetFindUniqueOrThrowArgs<ExtArgs>>): Prisma__PasswordResetClient<$Result.GetResult<Prisma.$PasswordResetPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+    findUniqueOrThrow<T extends PasswordResetFindUniqueOrThrowArgs>(args: SelectSubset<T, PasswordResetFindUniqueOrThrowArgs<ExtArgs>>): Prisma__PasswordResetClient<$Result.GetResult<Prisma.$PasswordResetPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find the first PasswordReset that matches the filter.
@@ -5192,7 +5747,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findFirst<T extends PasswordResetFindFirstArgs>(args?: SelectSubset<T, PasswordResetFindFirstArgs<ExtArgs>>): Prisma__PasswordResetClient<$Result.GetResult<Prisma.$PasswordResetPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+    findFirst<T extends PasswordResetFindFirstArgs>(args?: SelectSubset<T, PasswordResetFindFirstArgs<ExtArgs>>): Prisma__PasswordResetClient<$Result.GetResult<Prisma.$PasswordResetPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find the first PasswordReset that matches the filter or
@@ -5208,7 +5763,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findFirstOrThrow<T extends PasswordResetFindFirstOrThrowArgs>(args?: SelectSubset<T, PasswordResetFindFirstOrThrowArgs<ExtArgs>>): Prisma__PasswordResetClient<$Result.GetResult<Prisma.$PasswordResetPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+    findFirstOrThrow<T extends PasswordResetFindFirstOrThrowArgs>(args?: SelectSubset<T, PasswordResetFindFirstOrThrowArgs<ExtArgs>>): Prisma__PasswordResetClient<$Result.GetResult<Prisma.$PasswordResetPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find zero or more PasswordResets that matches the filter.
@@ -5226,7 +5781,7 @@ export namespace Prisma {
      * const passwordResetWithIdOnly = await prisma.passwordReset.findMany({ select: { id: true } })
      * 
      */
-    findMany<T extends PasswordResetFindManyArgs>(args?: SelectSubset<T, PasswordResetFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PasswordResetPayload<ExtArgs>, T, "findMany">>
+    findMany<T extends PasswordResetFindManyArgs>(args?: SelectSubset<T, PasswordResetFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PasswordResetPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
     /**
      * Create a PasswordReset.
@@ -5240,7 +5795,7 @@ export namespace Prisma {
      * })
      * 
      */
-    create<T extends PasswordResetCreateArgs>(args: SelectSubset<T, PasswordResetCreateArgs<ExtArgs>>): Prisma__PasswordResetClient<$Result.GetResult<Prisma.$PasswordResetPayload<ExtArgs>, T, "create">, never, ExtArgs>
+    create<T extends PasswordResetCreateArgs>(args: SelectSubset<T, PasswordResetCreateArgs<ExtArgs>>): Prisma__PasswordResetClient<$Result.GetResult<Prisma.$PasswordResetPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Create many PasswordResets.
@@ -5268,7 +5823,7 @@ export namespace Prisma {
      * })
      * 
      * // Create many PasswordResets and only return the `id`
-     * const passwordResetWithIdOnly = await prisma.passwordReset.createManyAndReturn({ 
+     * const passwordResetWithIdOnly = await prisma.passwordReset.createManyAndReturn({
      *   select: { id: true },
      *   data: [
      *     // ... provide data here
@@ -5278,7 +5833,7 @@ export namespace Prisma {
      * Read more here: https://pris.ly/d/null-undefined
      * 
      */
-    createManyAndReturn<T extends PasswordResetCreateManyAndReturnArgs>(args?: SelectSubset<T, PasswordResetCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PasswordResetPayload<ExtArgs>, T, "createManyAndReturn">>
+    createManyAndReturn<T extends PasswordResetCreateManyAndReturnArgs>(args?: SelectSubset<T, PasswordResetCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PasswordResetPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
     /**
      * Delete a PasswordReset.
@@ -5292,7 +5847,7 @@ export namespace Prisma {
      * })
      * 
      */
-    delete<T extends PasswordResetDeleteArgs>(args: SelectSubset<T, PasswordResetDeleteArgs<ExtArgs>>): Prisma__PasswordResetClient<$Result.GetResult<Prisma.$PasswordResetPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+    delete<T extends PasswordResetDeleteArgs>(args: SelectSubset<T, PasswordResetDeleteArgs<ExtArgs>>): Prisma__PasswordResetClient<$Result.GetResult<Prisma.$PasswordResetPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Update one PasswordReset.
@@ -5309,7 +5864,7 @@ export namespace Prisma {
      * })
      * 
      */
-    update<T extends PasswordResetUpdateArgs>(args: SelectSubset<T, PasswordResetUpdateArgs<ExtArgs>>): Prisma__PasswordResetClient<$Result.GetResult<Prisma.$PasswordResetPayload<ExtArgs>, T, "update">, never, ExtArgs>
+    update<T extends PasswordResetUpdateArgs>(args: SelectSubset<T, PasswordResetUpdateArgs<ExtArgs>>): Prisma__PasswordResetClient<$Result.GetResult<Prisma.$PasswordResetPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Delete zero or more PasswordResets.
@@ -5361,7 +5916,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    upsert<T extends PasswordResetUpsertArgs>(args: SelectSubset<T, PasswordResetUpsertArgs<ExtArgs>>): Prisma__PasswordResetClient<$Result.GetResult<Prisma.$PasswordResetPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+    upsert<T extends PasswordResetUpsertArgs>(args: SelectSubset<T, PasswordResetUpsertArgs<ExtArgs>>): Prisma__PasswordResetClient<$Result.GetResult<Prisma.$PasswordResetPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
 
     /**
@@ -5501,9 +6056,9 @@ export namespace Prisma {
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export interface Prisma__PasswordResetClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+  export interface Prisma__PasswordResetClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5531,7 +6086,7 @@ export namespace Prisma {
 
   /**
    * Fields of the PasswordReset model
-   */ 
+   */
   interface PasswordResetFieldRefs {
     readonly id: FieldRef<"PasswordReset", 'String'>
     readonly token: FieldRef<"PasswordReset", 'String'>
@@ -5552,6 +6107,10 @@ export namespace Prisma {
      */
     select?: PasswordResetSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the PasswordReset
+     */
+    omit?: PasswordResetOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: PasswordResetInclude<ExtArgs> | null
@@ -5570,6 +6129,10 @@ export namespace Prisma {
      */
     select?: PasswordResetSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the PasswordReset
+     */
+    omit?: PasswordResetOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: PasswordResetInclude<ExtArgs> | null
@@ -5587,6 +6150,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the PasswordReset
      */
     select?: PasswordResetSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PasswordReset
+     */
+    omit?: PasswordResetOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -5636,6 +6203,10 @@ export namespace Prisma {
      */
     select?: PasswordResetSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the PasswordReset
+     */
+    omit?: PasswordResetOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: PasswordResetInclude<ExtArgs> | null
@@ -5684,6 +6255,10 @@ export namespace Prisma {
      */
     select?: PasswordResetSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the PasswordReset
+     */
+    omit?: PasswordResetOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: PasswordResetInclude<ExtArgs> | null
@@ -5727,6 +6302,10 @@ export namespace Prisma {
      */
     select?: PasswordResetSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the PasswordReset
+     */
+    omit?: PasswordResetOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: PasswordResetInclude<ExtArgs> | null
@@ -5756,6 +6335,10 @@ export namespace Prisma {
      */
     select?: PasswordResetSelectCreateManyAndReturn<ExtArgs> | null
     /**
+     * Omit specific fields from the PasswordReset
+     */
+    omit?: PasswordResetOmit<ExtArgs> | null
+    /**
      * The data used to create many PasswordResets.
      */
     data: PasswordResetCreateManyInput | PasswordResetCreateManyInput[]
@@ -5774,6 +6357,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the PasswordReset
      */
     select?: PasswordResetSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PasswordReset
+     */
+    omit?: PasswordResetOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -5811,6 +6398,10 @@ export namespace Prisma {
      */
     select?: PasswordResetSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the PasswordReset
+     */
+    omit?: PasswordResetOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: PasswordResetInclude<ExtArgs> | null
@@ -5836,6 +6427,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the PasswordReset
      */
     select?: PasswordResetSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PasswordReset
+     */
+    omit?: PasswordResetOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -5864,6 +6459,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the PasswordReset
      */
     select?: PasswordResetSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PasswordReset
+     */
+    omit?: PasswordResetOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -6039,8 +6638,10 @@ export namespace Prisma {
     userId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    passkeys?: boolean | MultiFactorAuthentication$passkeysArgs<ExtArgs>
     totp?: boolean | MultiFactorAuthentication$totpArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
+    _count?: boolean | MultiFactorAuthenticationCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["multiFactorAuthentication"]>
 
   export type MultiFactorAuthenticationSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -6054,6 +6655,7 @@ export namespace Prisma {
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["multiFactorAuthentication"]>
 
+
   export type MultiFactorAuthenticationSelectScalar = {
     id?: boolean
     recoveryCodes?: boolean
@@ -6063,9 +6665,12 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
+  export type MultiFactorAuthenticationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "recoveryCodes" | "totpId" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["multiFactorAuthentication"]>
   export type MultiFactorAuthenticationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    passkeys?: boolean | MultiFactorAuthentication$passkeysArgs<ExtArgs>
     totp?: boolean | MultiFactorAuthentication$totpArgs<ExtArgs>
     user?: boolean | UserDefaultArgs<ExtArgs>
+    _count?: boolean | MultiFactorAuthenticationCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type MultiFactorAuthenticationIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     totp?: boolean | MultiFactorAuthentication$totpArgs<ExtArgs>
@@ -6075,6 +6680,7 @@ export namespace Prisma {
   export type $MultiFactorAuthenticationPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "MultiFactorAuthentication"
     objects: {
+      passkeys: Prisma.$PasskeyPayload<ExtArgs>[]
       totp: Prisma.$TotpPayload<ExtArgs> | null
       user: Prisma.$UserPayload<ExtArgs>
     }
@@ -6091,12 +6697,12 @@ export namespace Prisma {
 
   type MultiFactorAuthenticationGetPayload<S extends boolean | null | undefined | MultiFactorAuthenticationDefaultArgs> = $Result.GetResult<Prisma.$MultiFactorAuthenticationPayload, S>
 
-  type MultiFactorAuthenticationCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
-    Omit<MultiFactorAuthenticationFindManyArgs, 'select' | 'include' | 'distinct'> & {
+  type MultiFactorAuthenticationCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<MultiFactorAuthenticationFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
       select?: MultiFactorAuthenticationCountAggregateInputType | true
     }
 
-  export interface MultiFactorAuthenticationDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+  export interface MultiFactorAuthenticationDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
     [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['MultiFactorAuthentication'], meta: { name: 'MultiFactorAuthentication' } }
     /**
      * Find zero or one MultiFactorAuthentication that matches the filter.
@@ -6109,10 +6715,10 @@ export namespace Prisma {
      *   }
      * })
      */
-    findUnique<T extends MultiFactorAuthenticationFindUniqueArgs>(args: SelectSubset<T, MultiFactorAuthenticationFindUniqueArgs<ExtArgs>>): Prisma__MultiFactorAuthenticationClient<$Result.GetResult<Prisma.$MultiFactorAuthenticationPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+    findUnique<T extends MultiFactorAuthenticationFindUniqueArgs>(args: SelectSubset<T, MultiFactorAuthenticationFindUniqueArgs<ExtArgs>>): Prisma__MultiFactorAuthenticationClient<$Result.GetResult<Prisma.$MultiFactorAuthenticationPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Find one MultiFactorAuthentication that matches the filter or throw an error with `error.code='P2025'` 
+     * Find one MultiFactorAuthentication that matches the filter or throw an error with `error.code='P2025'`
      * if no matches were found.
      * @param {MultiFactorAuthenticationFindUniqueOrThrowArgs} args - Arguments to find a MultiFactorAuthentication
      * @example
@@ -6123,7 +6729,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findUniqueOrThrow<T extends MultiFactorAuthenticationFindUniqueOrThrowArgs>(args: SelectSubset<T, MultiFactorAuthenticationFindUniqueOrThrowArgs<ExtArgs>>): Prisma__MultiFactorAuthenticationClient<$Result.GetResult<Prisma.$MultiFactorAuthenticationPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+    findUniqueOrThrow<T extends MultiFactorAuthenticationFindUniqueOrThrowArgs>(args: SelectSubset<T, MultiFactorAuthenticationFindUniqueOrThrowArgs<ExtArgs>>): Prisma__MultiFactorAuthenticationClient<$Result.GetResult<Prisma.$MultiFactorAuthenticationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find the first MultiFactorAuthentication that matches the filter.
@@ -6138,7 +6744,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findFirst<T extends MultiFactorAuthenticationFindFirstArgs>(args?: SelectSubset<T, MultiFactorAuthenticationFindFirstArgs<ExtArgs>>): Prisma__MultiFactorAuthenticationClient<$Result.GetResult<Prisma.$MultiFactorAuthenticationPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+    findFirst<T extends MultiFactorAuthenticationFindFirstArgs>(args?: SelectSubset<T, MultiFactorAuthenticationFindFirstArgs<ExtArgs>>): Prisma__MultiFactorAuthenticationClient<$Result.GetResult<Prisma.$MultiFactorAuthenticationPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find the first MultiFactorAuthentication that matches the filter or
@@ -6154,7 +6760,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findFirstOrThrow<T extends MultiFactorAuthenticationFindFirstOrThrowArgs>(args?: SelectSubset<T, MultiFactorAuthenticationFindFirstOrThrowArgs<ExtArgs>>): Prisma__MultiFactorAuthenticationClient<$Result.GetResult<Prisma.$MultiFactorAuthenticationPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+    findFirstOrThrow<T extends MultiFactorAuthenticationFindFirstOrThrowArgs>(args?: SelectSubset<T, MultiFactorAuthenticationFindFirstOrThrowArgs<ExtArgs>>): Prisma__MultiFactorAuthenticationClient<$Result.GetResult<Prisma.$MultiFactorAuthenticationPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find zero or more MultiFactorAuthentications that matches the filter.
@@ -6172,7 +6778,7 @@ export namespace Prisma {
      * const multiFactorAuthenticationWithIdOnly = await prisma.multiFactorAuthentication.findMany({ select: { id: true } })
      * 
      */
-    findMany<T extends MultiFactorAuthenticationFindManyArgs>(args?: SelectSubset<T, MultiFactorAuthenticationFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MultiFactorAuthenticationPayload<ExtArgs>, T, "findMany">>
+    findMany<T extends MultiFactorAuthenticationFindManyArgs>(args?: SelectSubset<T, MultiFactorAuthenticationFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MultiFactorAuthenticationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
     /**
      * Create a MultiFactorAuthentication.
@@ -6186,7 +6792,7 @@ export namespace Prisma {
      * })
      * 
      */
-    create<T extends MultiFactorAuthenticationCreateArgs>(args: SelectSubset<T, MultiFactorAuthenticationCreateArgs<ExtArgs>>): Prisma__MultiFactorAuthenticationClient<$Result.GetResult<Prisma.$MultiFactorAuthenticationPayload<ExtArgs>, T, "create">, never, ExtArgs>
+    create<T extends MultiFactorAuthenticationCreateArgs>(args: SelectSubset<T, MultiFactorAuthenticationCreateArgs<ExtArgs>>): Prisma__MultiFactorAuthenticationClient<$Result.GetResult<Prisma.$MultiFactorAuthenticationPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Create many MultiFactorAuthentications.
@@ -6214,7 +6820,7 @@ export namespace Prisma {
      * })
      * 
      * // Create many MultiFactorAuthentications and only return the `id`
-     * const multiFactorAuthenticationWithIdOnly = await prisma.multiFactorAuthentication.createManyAndReturn({ 
+     * const multiFactorAuthenticationWithIdOnly = await prisma.multiFactorAuthentication.createManyAndReturn({
      *   select: { id: true },
      *   data: [
      *     // ... provide data here
@@ -6224,7 +6830,7 @@ export namespace Prisma {
      * Read more here: https://pris.ly/d/null-undefined
      * 
      */
-    createManyAndReturn<T extends MultiFactorAuthenticationCreateManyAndReturnArgs>(args?: SelectSubset<T, MultiFactorAuthenticationCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MultiFactorAuthenticationPayload<ExtArgs>, T, "createManyAndReturn">>
+    createManyAndReturn<T extends MultiFactorAuthenticationCreateManyAndReturnArgs>(args?: SelectSubset<T, MultiFactorAuthenticationCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MultiFactorAuthenticationPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
     /**
      * Delete a MultiFactorAuthentication.
@@ -6238,7 +6844,7 @@ export namespace Prisma {
      * })
      * 
      */
-    delete<T extends MultiFactorAuthenticationDeleteArgs>(args: SelectSubset<T, MultiFactorAuthenticationDeleteArgs<ExtArgs>>): Prisma__MultiFactorAuthenticationClient<$Result.GetResult<Prisma.$MultiFactorAuthenticationPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+    delete<T extends MultiFactorAuthenticationDeleteArgs>(args: SelectSubset<T, MultiFactorAuthenticationDeleteArgs<ExtArgs>>): Prisma__MultiFactorAuthenticationClient<$Result.GetResult<Prisma.$MultiFactorAuthenticationPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Update one MultiFactorAuthentication.
@@ -6255,7 +6861,7 @@ export namespace Prisma {
      * })
      * 
      */
-    update<T extends MultiFactorAuthenticationUpdateArgs>(args: SelectSubset<T, MultiFactorAuthenticationUpdateArgs<ExtArgs>>): Prisma__MultiFactorAuthenticationClient<$Result.GetResult<Prisma.$MultiFactorAuthenticationPayload<ExtArgs>, T, "update">, never, ExtArgs>
+    update<T extends MultiFactorAuthenticationUpdateArgs>(args: SelectSubset<T, MultiFactorAuthenticationUpdateArgs<ExtArgs>>): Prisma__MultiFactorAuthenticationClient<$Result.GetResult<Prisma.$MultiFactorAuthenticationPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Delete zero or more MultiFactorAuthentications.
@@ -6307,7 +6913,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    upsert<T extends MultiFactorAuthenticationUpsertArgs>(args: SelectSubset<T, MultiFactorAuthenticationUpsertArgs<ExtArgs>>): Prisma__MultiFactorAuthenticationClient<$Result.GetResult<Prisma.$MultiFactorAuthenticationPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+    upsert<T extends MultiFactorAuthenticationUpsertArgs>(args: SelectSubset<T, MultiFactorAuthenticationUpsertArgs<ExtArgs>>): Prisma__MultiFactorAuthenticationClient<$Result.GetResult<Prisma.$MultiFactorAuthenticationPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
 
     /**
@@ -6447,10 +7053,11 @@ export namespace Prisma {
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export interface Prisma__MultiFactorAuthenticationClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+  export interface Prisma__MultiFactorAuthenticationClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    totp<T extends MultiFactorAuthentication$totpArgs<ExtArgs> = {}>(args?: Subset<T, MultiFactorAuthentication$totpArgs<ExtArgs>>): Prisma__TotpClient<$Result.GetResult<Prisma.$TotpPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
-    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    passkeys<T extends MultiFactorAuthentication$passkeysArgs<ExtArgs> = {}>(args?: Subset<T, MultiFactorAuthentication$passkeysArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PasskeyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    totp<T extends MultiFactorAuthentication$totpArgs<ExtArgs> = {}>(args?: Subset<T, MultiFactorAuthentication$totpArgs<ExtArgs>>): Prisma__TotpClient<$Result.GetResult<Prisma.$TotpPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -6478,7 +7085,7 @@ export namespace Prisma {
 
   /**
    * Fields of the MultiFactorAuthentication model
-   */ 
+   */
   interface MultiFactorAuthenticationFieldRefs {
     readonly id: FieldRef<"MultiFactorAuthentication", 'String'>
     readonly recoveryCodes: FieldRef<"MultiFactorAuthentication", 'String[]'>
@@ -6499,6 +7106,10 @@ export namespace Prisma {
      */
     select?: MultiFactorAuthenticationSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the MultiFactorAuthentication
+     */
+    omit?: MultiFactorAuthenticationOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: MultiFactorAuthenticationInclude<ExtArgs> | null
@@ -6517,6 +7128,10 @@ export namespace Prisma {
      */
     select?: MultiFactorAuthenticationSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the MultiFactorAuthentication
+     */
+    omit?: MultiFactorAuthenticationOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: MultiFactorAuthenticationInclude<ExtArgs> | null
@@ -6534,6 +7149,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the MultiFactorAuthentication
      */
     select?: MultiFactorAuthenticationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MultiFactorAuthentication
+     */
+    omit?: MultiFactorAuthenticationOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -6583,6 +7202,10 @@ export namespace Prisma {
      */
     select?: MultiFactorAuthenticationSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the MultiFactorAuthentication
+     */
+    omit?: MultiFactorAuthenticationOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: MultiFactorAuthenticationInclude<ExtArgs> | null
@@ -6631,6 +7254,10 @@ export namespace Prisma {
      */
     select?: MultiFactorAuthenticationSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the MultiFactorAuthentication
+     */
+    omit?: MultiFactorAuthenticationOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: MultiFactorAuthenticationInclude<ExtArgs> | null
@@ -6674,6 +7301,10 @@ export namespace Prisma {
      */
     select?: MultiFactorAuthenticationSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the MultiFactorAuthentication
+     */
+    omit?: MultiFactorAuthenticationOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: MultiFactorAuthenticationInclude<ExtArgs> | null
@@ -6703,6 +7334,10 @@ export namespace Prisma {
      */
     select?: MultiFactorAuthenticationSelectCreateManyAndReturn<ExtArgs> | null
     /**
+     * Omit specific fields from the MultiFactorAuthentication
+     */
+    omit?: MultiFactorAuthenticationOmit<ExtArgs> | null
+    /**
      * The data used to create many MultiFactorAuthentications.
      */
     data: MultiFactorAuthenticationCreateManyInput | MultiFactorAuthenticationCreateManyInput[]
@@ -6721,6 +7356,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the MultiFactorAuthentication
      */
     select?: MultiFactorAuthenticationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MultiFactorAuthentication
+     */
+    omit?: MultiFactorAuthenticationOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -6758,6 +7397,10 @@ export namespace Prisma {
      */
     select?: MultiFactorAuthenticationSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the MultiFactorAuthentication
+     */
+    omit?: MultiFactorAuthenticationOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: MultiFactorAuthenticationInclude<ExtArgs> | null
@@ -6784,6 +7427,10 @@ export namespace Prisma {
      */
     select?: MultiFactorAuthenticationSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the MultiFactorAuthentication
+     */
+    omit?: MultiFactorAuthenticationOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: MultiFactorAuthenticationInclude<ExtArgs> | null
@@ -6804,6 +7451,30 @@ export namespace Prisma {
   }
 
   /**
+   * MultiFactorAuthentication.passkeys
+   */
+  export type MultiFactorAuthentication$passkeysArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Passkey
+     */
+    select?: PasskeySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Passkey
+     */
+    omit?: PasskeyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PasskeyInclude<ExtArgs> | null
+    where?: PasskeyWhereInput
+    orderBy?: PasskeyOrderByWithRelationInput | PasskeyOrderByWithRelationInput[]
+    cursor?: PasskeyWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: PasskeyScalarFieldEnum | PasskeyScalarFieldEnum[]
+  }
+
+  /**
    * MultiFactorAuthentication.totp
    */
   export type MultiFactorAuthentication$totpArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -6811,6 +7482,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the Totp
      */
     select?: TotpSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Totp
+     */
+    omit?: TotpOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -6826,6 +7501,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the MultiFactorAuthentication
      */
     select?: MultiFactorAuthenticationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MultiFactorAuthentication
+     */
+    omit?: MultiFactorAuthenticationOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -7008,6 +7687,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }, ExtArgs["result"]["totp"]>
 
+
   export type TotpSelectScalar = {
     id?: boolean
     status?: boolean
@@ -7016,6 +7696,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
+  export type TotpOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "status" | "secret" | "createdAt" | "updatedAt", ExtArgs["result"]["totp"]>
   export type TotpInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     mfa?: boolean | Totp$mfaArgs<ExtArgs>
   }
@@ -7038,12 +7719,12 @@ export namespace Prisma {
 
   type TotpGetPayload<S extends boolean | null | undefined | TotpDefaultArgs> = $Result.GetResult<Prisma.$TotpPayload, S>
 
-  type TotpCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
-    Omit<TotpFindManyArgs, 'select' | 'include' | 'distinct'> & {
+  type TotpCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<TotpFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
       select?: TotpCountAggregateInputType | true
     }
 
-  export interface TotpDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+  export interface TotpDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
     [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Totp'], meta: { name: 'Totp' } }
     /**
      * Find zero or one Totp that matches the filter.
@@ -7056,10 +7737,10 @@ export namespace Prisma {
      *   }
      * })
      */
-    findUnique<T extends TotpFindUniqueArgs>(args: SelectSubset<T, TotpFindUniqueArgs<ExtArgs>>): Prisma__TotpClient<$Result.GetResult<Prisma.$TotpPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+    findUnique<T extends TotpFindUniqueArgs>(args: SelectSubset<T, TotpFindUniqueArgs<ExtArgs>>): Prisma__TotpClient<$Result.GetResult<Prisma.$TotpPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Find one Totp that matches the filter or throw an error with `error.code='P2025'` 
+     * Find one Totp that matches the filter or throw an error with `error.code='P2025'`
      * if no matches were found.
      * @param {TotpFindUniqueOrThrowArgs} args - Arguments to find a Totp
      * @example
@@ -7070,7 +7751,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findUniqueOrThrow<T extends TotpFindUniqueOrThrowArgs>(args: SelectSubset<T, TotpFindUniqueOrThrowArgs<ExtArgs>>): Prisma__TotpClient<$Result.GetResult<Prisma.$TotpPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+    findUniqueOrThrow<T extends TotpFindUniqueOrThrowArgs>(args: SelectSubset<T, TotpFindUniqueOrThrowArgs<ExtArgs>>): Prisma__TotpClient<$Result.GetResult<Prisma.$TotpPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find the first Totp that matches the filter.
@@ -7085,7 +7766,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findFirst<T extends TotpFindFirstArgs>(args?: SelectSubset<T, TotpFindFirstArgs<ExtArgs>>): Prisma__TotpClient<$Result.GetResult<Prisma.$TotpPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+    findFirst<T extends TotpFindFirstArgs>(args?: SelectSubset<T, TotpFindFirstArgs<ExtArgs>>): Prisma__TotpClient<$Result.GetResult<Prisma.$TotpPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find the first Totp that matches the filter or
@@ -7101,7 +7782,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findFirstOrThrow<T extends TotpFindFirstOrThrowArgs>(args?: SelectSubset<T, TotpFindFirstOrThrowArgs<ExtArgs>>): Prisma__TotpClient<$Result.GetResult<Prisma.$TotpPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+    findFirstOrThrow<T extends TotpFindFirstOrThrowArgs>(args?: SelectSubset<T, TotpFindFirstOrThrowArgs<ExtArgs>>): Prisma__TotpClient<$Result.GetResult<Prisma.$TotpPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find zero or more Totps that matches the filter.
@@ -7119,7 +7800,7 @@ export namespace Prisma {
      * const totpWithIdOnly = await prisma.totp.findMany({ select: { id: true } })
      * 
      */
-    findMany<T extends TotpFindManyArgs>(args?: SelectSubset<T, TotpFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TotpPayload<ExtArgs>, T, "findMany">>
+    findMany<T extends TotpFindManyArgs>(args?: SelectSubset<T, TotpFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TotpPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
     /**
      * Create a Totp.
@@ -7133,7 +7814,7 @@ export namespace Prisma {
      * })
      * 
      */
-    create<T extends TotpCreateArgs>(args: SelectSubset<T, TotpCreateArgs<ExtArgs>>): Prisma__TotpClient<$Result.GetResult<Prisma.$TotpPayload<ExtArgs>, T, "create">, never, ExtArgs>
+    create<T extends TotpCreateArgs>(args: SelectSubset<T, TotpCreateArgs<ExtArgs>>): Prisma__TotpClient<$Result.GetResult<Prisma.$TotpPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Create many Totps.
@@ -7161,7 +7842,7 @@ export namespace Prisma {
      * })
      * 
      * // Create many Totps and only return the `id`
-     * const totpWithIdOnly = await prisma.totp.createManyAndReturn({ 
+     * const totpWithIdOnly = await prisma.totp.createManyAndReturn({
      *   select: { id: true },
      *   data: [
      *     // ... provide data here
@@ -7171,7 +7852,7 @@ export namespace Prisma {
      * Read more here: https://pris.ly/d/null-undefined
      * 
      */
-    createManyAndReturn<T extends TotpCreateManyAndReturnArgs>(args?: SelectSubset<T, TotpCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TotpPayload<ExtArgs>, T, "createManyAndReturn">>
+    createManyAndReturn<T extends TotpCreateManyAndReturnArgs>(args?: SelectSubset<T, TotpCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TotpPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
     /**
      * Delete a Totp.
@@ -7185,7 +7866,7 @@ export namespace Prisma {
      * })
      * 
      */
-    delete<T extends TotpDeleteArgs>(args: SelectSubset<T, TotpDeleteArgs<ExtArgs>>): Prisma__TotpClient<$Result.GetResult<Prisma.$TotpPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+    delete<T extends TotpDeleteArgs>(args: SelectSubset<T, TotpDeleteArgs<ExtArgs>>): Prisma__TotpClient<$Result.GetResult<Prisma.$TotpPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Update one Totp.
@@ -7202,7 +7883,7 @@ export namespace Prisma {
      * })
      * 
      */
-    update<T extends TotpUpdateArgs>(args: SelectSubset<T, TotpUpdateArgs<ExtArgs>>): Prisma__TotpClient<$Result.GetResult<Prisma.$TotpPayload<ExtArgs>, T, "update">, never, ExtArgs>
+    update<T extends TotpUpdateArgs>(args: SelectSubset<T, TotpUpdateArgs<ExtArgs>>): Prisma__TotpClient<$Result.GetResult<Prisma.$TotpPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Delete zero or more Totps.
@@ -7254,7 +7935,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    upsert<T extends TotpUpsertArgs>(args: SelectSubset<T, TotpUpsertArgs<ExtArgs>>): Prisma__TotpClient<$Result.GetResult<Prisma.$TotpPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+    upsert<T extends TotpUpsertArgs>(args: SelectSubset<T, TotpUpsertArgs<ExtArgs>>): Prisma__TotpClient<$Result.GetResult<Prisma.$TotpPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
 
     /**
@@ -7394,9 +8075,9 @@ export namespace Prisma {
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export interface Prisma__TotpClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+  export interface Prisma__TotpClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    mfa<T extends Totp$mfaArgs<ExtArgs> = {}>(args?: Subset<T, Totp$mfaArgs<ExtArgs>>): Prisma__MultiFactorAuthenticationClient<$Result.GetResult<Prisma.$MultiFactorAuthenticationPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
+    mfa<T extends Totp$mfaArgs<ExtArgs> = {}>(args?: Subset<T, Totp$mfaArgs<ExtArgs>>): Prisma__MultiFactorAuthenticationClient<$Result.GetResult<Prisma.$MultiFactorAuthenticationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -7424,7 +8105,7 @@ export namespace Prisma {
 
   /**
    * Fields of the Totp model
-   */ 
+   */
   interface TotpFieldRefs {
     readonly id: FieldRef<"Totp", 'String'>
     readonly status: FieldRef<"Totp", 'TotpStatus'>
@@ -7444,6 +8125,10 @@ export namespace Prisma {
      */
     select?: TotpSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Totp
+     */
+    omit?: TotpOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: TotpInclude<ExtArgs> | null
@@ -7462,6 +8147,10 @@ export namespace Prisma {
      */
     select?: TotpSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Totp
+     */
+    omit?: TotpOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: TotpInclude<ExtArgs> | null
@@ -7479,6 +8168,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the Totp
      */
     select?: TotpSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Totp
+     */
+    omit?: TotpOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -7528,6 +8221,10 @@ export namespace Prisma {
      */
     select?: TotpSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Totp
+     */
+    omit?: TotpOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: TotpInclude<ExtArgs> | null
@@ -7576,6 +8273,10 @@ export namespace Prisma {
      */
     select?: TotpSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Totp
+     */
+    omit?: TotpOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: TotpInclude<ExtArgs> | null
@@ -7619,6 +8320,10 @@ export namespace Prisma {
      */
     select?: TotpSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Totp
+     */
+    omit?: TotpOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: TotpInclude<ExtArgs> | null
@@ -7648,6 +8353,10 @@ export namespace Prisma {
      */
     select?: TotpSelectCreateManyAndReturn<ExtArgs> | null
     /**
+     * Omit specific fields from the Totp
+     */
+    omit?: TotpOmit<ExtArgs> | null
+    /**
      * The data used to create many Totps.
      */
     data: TotpCreateManyInput | TotpCreateManyInput[]
@@ -7662,6 +8371,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the Totp
      */
     select?: TotpSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Totp
+     */
+    omit?: TotpOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -7699,6 +8412,10 @@ export namespace Prisma {
      */
     select?: TotpSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Totp
+     */
+    omit?: TotpOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: TotpInclude<ExtArgs> | null
@@ -7724,6 +8441,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the Totp
      */
     select?: TotpSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Totp
+     */
+    omit?: TotpOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -7753,6 +8474,10 @@ export namespace Prisma {
      */
     select?: MultiFactorAuthenticationSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the MultiFactorAuthentication
+     */
+    omit?: MultiFactorAuthenticationOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: MultiFactorAuthenticationInclude<ExtArgs> | null
@@ -7768,9 +8493,1106 @@ export namespace Prisma {
      */
     select?: TotpSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Totp
+     */
+    omit?: TotpOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: TotpInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Passkey
+   */
+
+  export type AggregatePasskey = {
+    _count: PasskeyCountAggregateOutputType | null
+    _avg: PasskeyAvgAggregateOutputType | null
+    _sum: PasskeySumAggregateOutputType | null
+    _min: PasskeyMinAggregateOutputType | null
+    _max: PasskeyMaxAggregateOutputType | null
+  }
+
+  export type PasskeyAvgAggregateOutputType = {
+    counter: number | null
+  }
+
+  export type PasskeySumAggregateOutputType = {
+    counter: number | null
+  }
+
+  export type PasskeyMinAggregateOutputType = {
+    id: string | null
+    deviceName: string | null
+    credentialId: string | null
+    publicKey: string | null
+    counter: number | null
+    lastUsedAt: Date | null
+    ip: string | null
+    userAgent: string | null
+    mfaId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type PasskeyMaxAggregateOutputType = {
+    id: string | null
+    deviceName: string | null
+    credentialId: string | null
+    publicKey: string | null
+    counter: number | null
+    lastUsedAt: Date | null
+    ip: string | null
+    userAgent: string | null
+    mfaId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type PasskeyCountAggregateOutputType = {
+    id: number
+    deviceName: number
+    credentialId: number
+    publicKey: number
+    counter: number
+    transports: number
+    lastUsedAt: number
+    ip: number
+    userAgent: number
+    mfaId: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type PasskeyAvgAggregateInputType = {
+    counter?: true
+  }
+
+  export type PasskeySumAggregateInputType = {
+    counter?: true
+  }
+
+  export type PasskeyMinAggregateInputType = {
+    id?: true
+    deviceName?: true
+    credentialId?: true
+    publicKey?: true
+    counter?: true
+    lastUsedAt?: true
+    ip?: true
+    userAgent?: true
+    mfaId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type PasskeyMaxAggregateInputType = {
+    id?: true
+    deviceName?: true
+    credentialId?: true
+    publicKey?: true
+    counter?: true
+    lastUsedAt?: true
+    ip?: true
+    userAgent?: true
+    mfaId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type PasskeyCountAggregateInputType = {
+    id?: true
+    deviceName?: true
+    credentialId?: true
+    publicKey?: true
+    counter?: true
+    transports?: true
+    lastUsedAt?: true
+    ip?: true
+    userAgent?: true
+    mfaId?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type PasskeyAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Passkey to aggregate.
+     */
+    where?: PasskeyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Passkeys to fetch.
+     */
+    orderBy?: PasskeyOrderByWithRelationInput | PasskeyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: PasskeyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Passkeys from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Passkeys.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Passkeys
+    **/
+    _count?: true | PasskeyCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: PasskeyAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: PasskeySumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: PasskeyMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: PasskeyMaxAggregateInputType
+  }
+
+  export type GetPasskeyAggregateType<T extends PasskeyAggregateArgs> = {
+        [P in keyof T & keyof AggregatePasskey]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregatePasskey[P]>
+      : GetScalarType<T[P], AggregatePasskey[P]>
+  }
+
+
+
+
+  export type PasskeyGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PasskeyWhereInput
+    orderBy?: PasskeyOrderByWithAggregationInput | PasskeyOrderByWithAggregationInput[]
+    by: PasskeyScalarFieldEnum[] | PasskeyScalarFieldEnum
+    having?: PasskeyScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: PasskeyCountAggregateInputType | true
+    _avg?: PasskeyAvgAggregateInputType
+    _sum?: PasskeySumAggregateInputType
+    _min?: PasskeyMinAggregateInputType
+    _max?: PasskeyMaxAggregateInputType
+  }
+
+  export type PasskeyGroupByOutputType = {
+    id: string
+    deviceName: string
+    credentialId: string
+    publicKey: string
+    counter: number
+    transports: string[]
+    lastUsedAt: Date | null
+    ip: string
+    userAgent: string
+    mfaId: string
+    createdAt: Date
+    updatedAt: Date
+    _count: PasskeyCountAggregateOutputType | null
+    _avg: PasskeyAvgAggregateOutputType | null
+    _sum: PasskeySumAggregateOutputType | null
+    _min: PasskeyMinAggregateOutputType | null
+    _max: PasskeyMaxAggregateOutputType | null
+  }
+
+  type GetPasskeyGroupByPayload<T extends PasskeyGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<PasskeyGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof PasskeyGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], PasskeyGroupByOutputType[P]>
+            : GetScalarType<T[P], PasskeyGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type PasskeySelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    deviceName?: boolean
+    credentialId?: boolean
+    publicKey?: boolean
+    counter?: boolean
+    transports?: boolean
+    lastUsedAt?: boolean
+    ip?: boolean
+    userAgent?: boolean
+    mfaId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    mfa?: boolean | MultiFactorAuthenticationDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["passkey"]>
+
+  export type PasskeySelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    deviceName?: boolean
+    credentialId?: boolean
+    publicKey?: boolean
+    counter?: boolean
+    transports?: boolean
+    lastUsedAt?: boolean
+    ip?: boolean
+    userAgent?: boolean
+    mfaId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    mfa?: boolean | MultiFactorAuthenticationDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["passkey"]>
+
+
+  export type PasskeySelectScalar = {
+    id?: boolean
+    deviceName?: boolean
+    credentialId?: boolean
+    publicKey?: boolean
+    counter?: boolean
+    transports?: boolean
+    lastUsedAt?: boolean
+    ip?: boolean
+    userAgent?: boolean
+    mfaId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type PasskeyOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "deviceName" | "credentialId" | "publicKey" | "counter" | "transports" | "lastUsedAt" | "ip" | "userAgent" | "mfaId" | "createdAt" | "updatedAt", ExtArgs["result"]["passkey"]>
+  export type PasskeyInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    mfa?: boolean | MultiFactorAuthenticationDefaultArgs<ExtArgs>
+  }
+  export type PasskeyIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    mfa?: boolean | MultiFactorAuthenticationDefaultArgs<ExtArgs>
+  }
+
+  export type $PasskeyPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Passkey"
+    objects: {
+      mfa: Prisma.$MultiFactorAuthenticationPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      deviceName: string
+      credentialId: string
+      publicKey: string
+      counter: number
+      transports: string[]
+      lastUsedAt: Date | null
+      ip: string
+      userAgent: string
+      mfaId: string
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["passkey"]>
+    composites: {}
+  }
+
+  type PasskeyGetPayload<S extends boolean | null | undefined | PasskeyDefaultArgs> = $Result.GetResult<Prisma.$PasskeyPayload, S>
+
+  type PasskeyCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<PasskeyFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: PasskeyCountAggregateInputType | true
+    }
+
+  export interface PasskeyDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Passkey'], meta: { name: 'Passkey' } }
+    /**
+     * Find zero or one Passkey that matches the filter.
+     * @param {PasskeyFindUniqueArgs} args - Arguments to find a Passkey
+     * @example
+     * // Get one Passkey
+     * const passkey = await prisma.passkey.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends PasskeyFindUniqueArgs>(args: SelectSubset<T, PasskeyFindUniqueArgs<ExtArgs>>): Prisma__PasskeyClient<$Result.GetResult<Prisma.$PasskeyPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Passkey that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {PasskeyFindUniqueOrThrowArgs} args - Arguments to find a Passkey
+     * @example
+     * // Get one Passkey
+     * const passkey = await prisma.passkey.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends PasskeyFindUniqueOrThrowArgs>(args: SelectSubset<T, PasskeyFindUniqueOrThrowArgs<ExtArgs>>): Prisma__PasskeyClient<$Result.GetResult<Prisma.$PasskeyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Passkey that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PasskeyFindFirstArgs} args - Arguments to find a Passkey
+     * @example
+     * // Get one Passkey
+     * const passkey = await prisma.passkey.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends PasskeyFindFirstArgs>(args?: SelectSubset<T, PasskeyFindFirstArgs<ExtArgs>>): Prisma__PasskeyClient<$Result.GetResult<Prisma.$PasskeyPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Passkey that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PasskeyFindFirstOrThrowArgs} args - Arguments to find a Passkey
+     * @example
+     * // Get one Passkey
+     * const passkey = await prisma.passkey.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends PasskeyFindFirstOrThrowArgs>(args?: SelectSubset<T, PasskeyFindFirstOrThrowArgs<ExtArgs>>): Prisma__PasskeyClient<$Result.GetResult<Prisma.$PasskeyPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Passkeys that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PasskeyFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Passkeys
+     * const passkeys = await prisma.passkey.findMany()
+     * 
+     * // Get first 10 Passkeys
+     * const passkeys = await prisma.passkey.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const passkeyWithIdOnly = await prisma.passkey.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends PasskeyFindManyArgs>(args?: SelectSubset<T, PasskeyFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PasskeyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Passkey.
+     * @param {PasskeyCreateArgs} args - Arguments to create a Passkey.
+     * @example
+     * // Create one Passkey
+     * const Passkey = await prisma.passkey.create({
+     *   data: {
+     *     // ... data to create a Passkey
+     *   }
+     * })
+     * 
+     */
+    create<T extends PasskeyCreateArgs>(args: SelectSubset<T, PasskeyCreateArgs<ExtArgs>>): Prisma__PasskeyClient<$Result.GetResult<Prisma.$PasskeyPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Passkeys.
+     * @param {PasskeyCreateManyArgs} args - Arguments to create many Passkeys.
+     * @example
+     * // Create many Passkeys
+     * const passkey = await prisma.passkey.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends PasskeyCreateManyArgs>(args?: SelectSubset<T, PasskeyCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Passkeys and returns the data saved in the database.
+     * @param {PasskeyCreateManyAndReturnArgs} args - Arguments to create many Passkeys.
+     * @example
+     * // Create many Passkeys
+     * const passkey = await prisma.passkey.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Passkeys and only return the `id`
+     * const passkeyWithIdOnly = await prisma.passkey.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends PasskeyCreateManyAndReturnArgs>(args?: SelectSubset<T, PasskeyCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PasskeyPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Passkey.
+     * @param {PasskeyDeleteArgs} args - Arguments to delete one Passkey.
+     * @example
+     * // Delete one Passkey
+     * const Passkey = await prisma.passkey.delete({
+     *   where: {
+     *     // ... filter to delete one Passkey
+     *   }
+     * })
+     * 
+     */
+    delete<T extends PasskeyDeleteArgs>(args: SelectSubset<T, PasskeyDeleteArgs<ExtArgs>>): Prisma__PasskeyClient<$Result.GetResult<Prisma.$PasskeyPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Passkey.
+     * @param {PasskeyUpdateArgs} args - Arguments to update one Passkey.
+     * @example
+     * // Update one Passkey
+     * const passkey = await prisma.passkey.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends PasskeyUpdateArgs>(args: SelectSubset<T, PasskeyUpdateArgs<ExtArgs>>): Prisma__PasskeyClient<$Result.GetResult<Prisma.$PasskeyPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Passkeys.
+     * @param {PasskeyDeleteManyArgs} args - Arguments to filter Passkeys to delete.
+     * @example
+     * // Delete a few Passkeys
+     * const { count } = await prisma.passkey.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends PasskeyDeleteManyArgs>(args?: SelectSubset<T, PasskeyDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Passkeys.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PasskeyUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Passkeys
+     * const passkey = await prisma.passkey.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends PasskeyUpdateManyArgs>(args: SelectSubset<T, PasskeyUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one Passkey.
+     * @param {PasskeyUpsertArgs} args - Arguments to update or create a Passkey.
+     * @example
+     * // Update or create a Passkey
+     * const passkey = await prisma.passkey.upsert({
+     *   create: {
+     *     // ... data to create a Passkey
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Passkey we want to update
+     *   }
+     * })
+     */
+    upsert<T extends PasskeyUpsertArgs>(args: SelectSubset<T, PasskeyUpsertArgs<ExtArgs>>): Prisma__PasskeyClient<$Result.GetResult<Prisma.$PasskeyPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Passkeys.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PasskeyCountArgs} args - Arguments to filter Passkeys to count.
+     * @example
+     * // Count the number of Passkeys
+     * const count = await prisma.passkey.count({
+     *   where: {
+     *     // ... the filter for the Passkeys we want to count
+     *   }
+     * })
+    **/
+    count<T extends PasskeyCountArgs>(
+      args?: Subset<T, PasskeyCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], PasskeyCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Passkey.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PasskeyAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends PasskeyAggregateArgs>(args: Subset<T, PasskeyAggregateArgs>): Prisma.PrismaPromise<GetPasskeyAggregateType<T>>
+
+    /**
+     * Group by Passkey.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PasskeyGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends PasskeyGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: PasskeyGroupByArgs['orderBy'] }
+        : { orderBy?: PasskeyGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, PasskeyGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetPasskeyGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Passkey model
+   */
+  readonly fields: PasskeyFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Passkey.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__PasskeyClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    mfa<T extends MultiFactorAuthenticationDefaultArgs<ExtArgs> = {}>(args?: Subset<T, MultiFactorAuthenticationDefaultArgs<ExtArgs>>): Prisma__MultiFactorAuthenticationClient<$Result.GetResult<Prisma.$MultiFactorAuthenticationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Passkey model
+   */
+  interface PasskeyFieldRefs {
+    readonly id: FieldRef<"Passkey", 'String'>
+    readonly deviceName: FieldRef<"Passkey", 'String'>
+    readonly credentialId: FieldRef<"Passkey", 'String'>
+    readonly publicKey: FieldRef<"Passkey", 'String'>
+    readonly counter: FieldRef<"Passkey", 'Int'>
+    readonly transports: FieldRef<"Passkey", 'String[]'>
+    readonly lastUsedAt: FieldRef<"Passkey", 'DateTime'>
+    readonly ip: FieldRef<"Passkey", 'String'>
+    readonly userAgent: FieldRef<"Passkey", 'String'>
+    readonly mfaId: FieldRef<"Passkey", 'String'>
+    readonly createdAt: FieldRef<"Passkey", 'DateTime'>
+    readonly updatedAt: FieldRef<"Passkey", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Passkey findUnique
+   */
+  export type PasskeyFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Passkey
+     */
+    select?: PasskeySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Passkey
+     */
+    omit?: PasskeyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PasskeyInclude<ExtArgs> | null
+    /**
+     * Filter, which Passkey to fetch.
+     */
+    where: PasskeyWhereUniqueInput
+  }
+
+  /**
+   * Passkey findUniqueOrThrow
+   */
+  export type PasskeyFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Passkey
+     */
+    select?: PasskeySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Passkey
+     */
+    omit?: PasskeyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PasskeyInclude<ExtArgs> | null
+    /**
+     * Filter, which Passkey to fetch.
+     */
+    where: PasskeyWhereUniqueInput
+  }
+
+  /**
+   * Passkey findFirst
+   */
+  export type PasskeyFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Passkey
+     */
+    select?: PasskeySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Passkey
+     */
+    omit?: PasskeyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PasskeyInclude<ExtArgs> | null
+    /**
+     * Filter, which Passkey to fetch.
+     */
+    where?: PasskeyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Passkeys to fetch.
+     */
+    orderBy?: PasskeyOrderByWithRelationInput | PasskeyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Passkeys.
+     */
+    cursor?: PasskeyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Passkeys from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Passkeys.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Passkeys.
+     */
+    distinct?: PasskeyScalarFieldEnum | PasskeyScalarFieldEnum[]
+  }
+
+  /**
+   * Passkey findFirstOrThrow
+   */
+  export type PasskeyFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Passkey
+     */
+    select?: PasskeySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Passkey
+     */
+    omit?: PasskeyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PasskeyInclude<ExtArgs> | null
+    /**
+     * Filter, which Passkey to fetch.
+     */
+    where?: PasskeyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Passkeys to fetch.
+     */
+    orderBy?: PasskeyOrderByWithRelationInput | PasskeyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Passkeys.
+     */
+    cursor?: PasskeyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Passkeys from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Passkeys.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Passkeys.
+     */
+    distinct?: PasskeyScalarFieldEnum | PasskeyScalarFieldEnum[]
+  }
+
+  /**
+   * Passkey findMany
+   */
+  export type PasskeyFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Passkey
+     */
+    select?: PasskeySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Passkey
+     */
+    omit?: PasskeyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PasskeyInclude<ExtArgs> | null
+    /**
+     * Filter, which Passkeys to fetch.
+     */
+    where?: PasskeyWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Passkeys to fetch.
+     */
+    orderBy?: PasskeyOrderByWithRelationInput | PasskeyOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Passkeys.
+     */
+    cursor?: PasskeyWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Passkeys from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Passkeys.
+     */
+    skip?: number
+    distinct?: PasskeyScalarFieldEnum | PasskeyScalarFieldEnum[]
+  }
+
+  /**
+   * Passkey create
+   */
+  export type PasskeyCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Passkey
+     */
+    select?: PasskeySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Passkey
+     */
+    omit?: PasskeyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PasskeyInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Passkey.
+     */
+    data: XOR<PasskeyCreateInput, PasskeyUncheckedCreateInput>
+  }
+
+  /**
+   * Passkey createMany
+   */
+  export type PasskeyCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Passkeys.
+     */
+    data: PasskeyCreateManyInput | PasskeyCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Passkey createManyAndReturn
+   */
+  export type PasskeyCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Passkey
+     */
+    select?: PasskeySelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Passkey
+     */
+    omit?: PasskeyOmit<ExtArgs> | null
+    /**
+     * The data used to create many Passkeys.
+     */
+    data: PasskeyCreateManyInput | PasskeyCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PasskeyIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Passkey update
+   */
+  export type PasskeyUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Passkey
+     */
+    select?: PasskeySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Passkey
+     */
+    omit?: PasskeyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PasskeyInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Passkey.
+     */
+    data: XOR<PasskeyUpdateInput, PasskeyUncheckedUpdateInput>
+    /**
+     * Choose, which Passkey to update.
+     */
+    where: PasskeyWhereUniqueInput
+  }
+
+  /**
+   * Passkey updateMany
+   */
+  export type PasskeyUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Passkeys.
+     */
+    data: XOR<PasskeyUpdateManyMutationInput, PasskeyUncheckedUpdateManyInput>
+    /**
+     * Filter which Passkeys to update
+     */
+    where?: PasskeyWhereInput
+  }
+
+  /**
+   * Passkey upsert
+   */
+  export type PasskeyUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Passkey
+     */
+    select?: PasskeySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Passkey
+     */
+    omit?: PasskeyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PasskeyInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Passkey to update in case it exists.
+     */
+    where: PasskeyWhereUniqueInput
+    /**
+     * In case the Passkey found by the `where` argument doesn't exist, create a new Passkey with this data.
+     */
+    create: XOR<PasskeyCreateInput, PasskeyUncheckedCreateInput>
+    /**
+     * In case the Passkey was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<PasskeyUpdateInput, PasskeyUncheckedUpdateInput>
+  }
+
+  /**
+   * Passkey delete
+   */
+  export type PasskeyDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Passkey
+     */
+    select?: PasskeySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Passkey
+     */
+    omit?: PasskeyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PasskeyInclude<ExtArgs> | null
+    /**
+     * Filter which Passkey to delete.
+     */
+    where: PasskeyWhereUniqueInput
+  }
+
+  /**
+   * Passkey deleteMany
+   */
+  export type PasskeyDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Passkeys to delete
+     */
+    where?: PasskeyWhereInput
+  }
+
+  /**
+   * Passkey without action
+   */
+  export type PasskeyDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Passkey
+     */
+    select?: PasskeySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Passkey
+     */
+    omit?: PasskeyOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PasskeyInclude<ExtArgs> | null
   }
 
 
@@ -7959,6 +9781,7 @@ export namespace Prisma {
     user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["restriction"]>
 
+
   export type RestrictionSelectScalar = {
     id?: boolean
     reason?: boolean
@@ -7968,6 +9791,7 @@ export namespace Prisma {
     createdAt?: boolean
   }
 
+  export type RestrictionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "reason" | "until" | "status" | "userId" | "createdAt", ExtArgs["result"]["restriction"]>
   export type RestrictionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -7993,12 +9817,12 @@ export namespace Prisma {
 
   type RestrictionGetPayload<S extends boolean | null | undefined | RestrictionDefaultArgs> = $Result.GetResult<Prisma.$RestrictionPayload, S>
 
-  type RestrictionCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
-    Omit<RestrictionFindManyArgs, 'select' | 'include' | 'distinct'> & {
+  type RestrictionCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<RestrictionFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
       select?: RestrictionCountAggregateInputType | true
     }
 
-  export interface RestrictionDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+  export interface RestrictionDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
     [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Restriction'], meta: { name: 'Restriction' } }
     /**
      * Find zero or one Restriction that matches the filter.
@@ -8011,10 +9835,10 @@ export namespace Prisma {
      *   }
      * })
      */
-    findUnique<T extends RestrictionFindUniqueArgs>(args: SelectSubset<T, RestrictionFindUniqueArgs<ExtArgs>>): Prisma__RestrictionClient<$Result.GetResult<Prisma.$RestrictionPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+    findUnique<T extends RestrictionFindUniqueArgs>(args: SelectSubset<T, RestrictionFindUniqueArgs<ExtArgs>>): Prisma__RestrictionClient<$Result.GetResult<Prisma.$RestrictionPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Find one Restriction that matches the filter or throw an error with `error.code='P2025'` 
+     * Find one Restriction that matches the filter or throw an error with `error.code='P2025'`
      * if no matches were found.
      * @param {RestrictionFindUniqueOrThrowArgs} args - Arguments to find a Restriction
      * @example
@@ -8025,7 +9849,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findUniqueOrThrow<T extends RestrictionFindUniqueOrThrowArgs>(args: SelectSubset<T, RestrictionFindUniqueOrThrowArgs<ExtArgs>>): Prisma__RestrictionClient<$Result.GetResult<Prisma.$RestrictionPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+    findUniqueOrThrow<T extends RestrictionFindUniqueOrThrowArgs>(args: SelectSubset<T, RestrictionFindUniqueOrThrowArgs<ExtArgs>>): Prisma__RestrictionClient<$Result.GetResult<Prisma.$RestrictionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find the first Restriction that matches the filter.
@@ -8040,7 +9864,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findFirst<T extends RestrictionFindFirstArgs>(args?: SelectSubset<T, RestrictionFindFirstArgs<ExtArgs>>): Prisma__RestrictionClient<$Result.GetResult<Prisma.$RestrictionPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+    findFirst<T extends RestrictionFindFirstArgs>(args?: SelectSubset<T, RestrictionFindFirstArgs<ExtArgs>>): Prisma__RestrictionClient<$Result.GetResult<Prisma.$RestrictionPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find the first Restriction that matches the filter or
@@ -8056,7 +9880,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findFirstOrThrow<T extends RestrictionFindFirstOrThrowArgs>(args?: SelectSubset<T, RestrictionFindFirstOrThrowArgs<ExtArgs>>): Prisma__RestrictionClient<$Result.GetResult<Prisma.$RestrictionPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+    findFirstOrThrow<T extends RestrictionFindFirstOrThrowArgs>(args?: SelectSubset<T, RestrictionFindFirstOrThrowArgs<ExtArgs>>): Prisma__RestrictionClient<$Result.GetResult<Prisma.$RestrictionPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find zero or more Restrictions that matches the filter.
@@ -8074,7 +9898,7 @@ export namespace Prisma {
      * const restrictionWithIdOnly = await prisma.restriction.findMany({ select: { id: true } })
      * 
      */
-    findMany<T extends RestrictionFindManyArgs>(args?: SelectSubset<T, RestrictionFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RestrictionPayload<ExtArgs>, T, "findMany">>
+    findMany<T extends RestrictionFindManyArgs>(args?: SelectSubset<T, RestrictionFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RestrictionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
     /**
      * Create a Restriction.
@@ -8088,7 +9912,7 @@ export namespace Prisma {
      * })
      * 
      */
-    create<T extends RestrictionCreateArgs>(args: SelectSubset<T, RestrictionCreateArgs<ExtArgs>>): Prisma__RestrictionClient<$Result.GetResult<Prisma.$RestrictionPayload<ExtArgs>, T, "create">, never, ExtArgs>
+    create<T extends RestrictionCreateArgs>(args: SelectSubset<T, RestrictionCreateArgs<ExtArgs>>): Prisma__RestrictionClient<$Result.GetResult<Prisma.$RestrictionPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Create many Restrictions.
@@ -8116,7 +9940,7 @@ export namespace Prisma {
      * })
      * 
      * // Create many Restrictions and only return the `id`
-     * const restrictionWithIdOnly = await prisma.restriction.createManyAndReturn({ 
+     * const restrictionWithIdOnly = await prisma.restriction.createManyAndReturn({
      *   select: { id: true },
      *   data: [
      *     // ... provide data here
@@ -8126,7 +9950,7 @@ export namespace Prisma {
      * Read more here: https://pris.ly/d/null-undefined
      * 
      */
-    createManyAndReturn<T extends RestrictionCreateManyAndReturnArgs>(args?: SelectSubset<T, RestrictionCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RestrictionPayload<ExtArgs>, T, "createManyAndReturn">>
+    createManyAndReturn<T extends RestrictionCreateManyAndReturnArgs>(args?: SelectSubset<T, RestrictionCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RestrictionPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
     /**
      * Delete a Restriction.
@@ -8140,7 +9964,7 @@ export namespace Prisma {
      * })
      * 
      */
-    delete<T extends RestrictionDeleteArgs>(args: SelectSubset<T, RestrictionDeleteArgs<ExtArgs>>): Prisma__RestrictionClient<$Result.GetResult<Prisma.$RestrictionPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+    delete<T extends RestrictionDeleteArgs>(args: SelectSubset<T, RestrictionDeleteArgs<ExtArgs>>): Prisma__RestrictionClient<$Result.GetResult<Prisma.$RestrictionPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Update one Restriction.
@@ -8157,7 +9981,7 @@ export namespace Prisma {
      * })
      * 
      */
-    update<T extends RestrictionUpdateArgs>(args: SelectSubset<T, RestrictionUpdateArgs<ExtArgs>>): Prisma__RestrictionClient<$Result.GetResult<Prisma.$RestrictionPayload<ExtArgs>, T, "update">, never, ExtArgs>
+    update<T extends RestrictionUpdateArgs>(args: SelectSubset<T, RestrictionUpdateArgs<ExtArgs>>): Prisma__RestrictionClient<$Result.GetResult<Prisma.$RestrictionPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Delete zero or more Restrictions.
@@ -8209,7 +10033,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    upsert<T extends RestrictionUpsertArgs>(args: SelectSubset<T, RestrictionUpsertArgs<ExtArgs>>): Prisma__RestrictionClient<$Result.GetResult<Prisma.$RestrictionPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+    upsert<T extends RestrictionUpsertArgs>(args: SelectSubset<T, RestrictionUpsertArgs<ExtArgs>>): Prisma__RestrictionClient<$Result.GetResult<Prisma.$RestrictionPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
 
     /**
@@ -8349,9 +10173,9 @@ export namespace Prisma {
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export interface Prisma__RestrictionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+  export interface Prisma__RestrictionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -8379,7 +10203,7 @@ export namespace Prisma {
 
   /**
    * Fields of the Restriction model
-   */ 
+   */
   interface RestrictionFieldRefs {
     readonly id: FieldRef<"Restriction", 'String'>
     readonly reason: FieldRef<"Restriction", 'RestrictionReason'>
@@ -8400,6 +10224,10 @@ export namespace Prisma {
      */
     select?: RestrictionSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Restriction
+     */
+    omit?: RestrictionOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: RestrictionInclude<ExtArgs> | null
@@ -8418,6 +10246,10 @@ export namespace Prisma {
      */
     select?: RestrictionSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Restriction
+     */
+    omit?: RestrictionOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: RestrictionInclude<ExtArgs> | null
@@ -8435,6 +10267,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the Restriction
      */
     select?: RestrictionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Restriction
+     */
+    omit?: RestrictionOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -8484,6 +10320,10 @@ export namespace Prisma {
      */
     select?: RestrictionSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Restriction
+     */
+    omit?: RestrictionOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: RestrictionInclude<ExtArgs> | null
@@ -8532,6 +10372,10 @@ export namespace Prisma {
      */
     select?: RestrictionSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Restriction
+     */
+    omit?: RestrictionOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: RestrictionInclude<ExtArgs> | null
@@ -8575,6 +10419,10 @@ export namespace Prisma {
      */
     select?: RestrictionSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Restriction
+     */
+    omit?: RestrictionOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: RestrictionInclude<ExtArgs> | null
@@ -8604,6 +10452,10 @@ export namespace Prisma {
      */
     select?: RestrictionSelectCreateManyAndReturn<ExtArgs> | null
     /**
+     * Omit specific fields from the Restriction
+     */
+    omit?: RestrictionOmit<ExtArgs> | null
+    /**
      * The data used to create many Restrictions.
      */
     data: RestrictionCreateManyInput | RestrictionCreateManyInput[]
@@ -8622,6 +10474,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the Restriction
      */
     select?: RestrictionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Restriction
+     */
+    omit?: RestrictionOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -8659,6 +10515,10 @@ export namespace Prisma {
      */
     select?: RestrictionSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Restriction
+     */
+    omit?: RestrictionOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: RestrictionInclude<ExtArgs> | null
@@ -8684,6 +10544,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the Restriction
      */
     select?: RestrictionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Restriction
+     */
+    omit?: RestrictionOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -8712,6 +10576,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the Restriction
      */
     select?: RestrictionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Restriction
+     */
+    omit?: RestrictionOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -8743,7 +10611,8 @@ export namespace Prisma {
     id: string | null
     title: string | null
     slug: string | null
-    description: string | null
+    shortDescription: string | null
+    fullDescription: string | null
     thumbnail: string | null
     youtubeUrl: string | null
     attachment: string | null
@@ -8757,7 +10626,8 @@ export namespace Prisma {
     id: string | null
     title: string | null
     slug: string | null
-    description: string | null
+    shortDescription: string | null
+    fullDescription: string | null
     thumbnail: string | null
     youtubeUrl: string | null
     attachment: string | null
@@ -8771,7 +10641,8 @@ export namespace Prisma {
     id: number
     title: number
     slug: number
-    description: number
+    shortDescription: number
+    fullDescription: number
     thumbnail: number
     youtubeUrl: number
     attachment: number
@@ -8795,7 +10666,8 @@ export namespace Prisma {
     id?: true
     title?: true
     slug?: true
-    description?: true
+    shortDescription?: true
+    fullDescription?: true
     thumbnail?: true
     youtubeUrl?: true
     attachment?: true
@@ -8809,7 +10681,8 @@ export namespace Prisma {
     id?: true
     title?: true
     slug?: true
-    description?: true
+    shortDescription?: true
+    fullDescription?: true
     thumbnail?: true
     youtubeUrl?: true
     attachment?: true
@@ -8823,7 +10696,8 @@ export namespace Prisma {
     id?: true
     title?: true
     slug?: true
-    description?: true
+    shortDescription?: true
+    fullDescription?: true
     thumbnail?: true
     youtubeUrl?: true
     attachment?: true
@@ -8924,7 +10798,8 @@ export namespace Prisma {
     id: string
     title: string
     slug: string
-    description: string | null
+    shortDescription: string | null
+    fullDescription: string | null
     thumbnail: string | null
     youtubeUrl: string | null
     attachment: string | null
@@ -8957,7 +10832,8 @@ export namespace Prisma {
     id?: boolean
     title?: boolean
     slug?: boolean
-    description?: boolean
+    shortDescription?: boolean
+    fullDescription?: boolean
     thumbnail?: boolean
     youtubeUrl?: boolean
     attachment?: boolean
@@ -8973,7 +10849,8 @@ export namespace Prisma {
     id?: boolean
     title?: boolean
     slug?: boolean
-    description?: boolean
+    shortDescription?: boolean
+    fullDescription?: boolean
     thumbnail?: boolean
     youtubeUrl?: boolean
     attachment?: boolean
@@ -8983,11 +10860,13 @@ export namespace Prisma {
     updatedAt?: boolean
   }, ExtArgs["result"]["course"]>
 
+
   export type CourseSelectScalar = {
     id?: boolean
     title?: boolean
     slug?: boolean
-    description?: boolean
+    shortDescription?: boolean
+    fullDescription?: boolean
     thumbnail?: boolean
     youtubeUrl?: boolean
     attachment?: boolean
@@ -8997,6 +10876,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
+  export type CourseOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "slug" | "shortDescription" | "fullDescription" | "thumbnail" | "youtubeUrl" | "attachment" | "isPublished" | "views" | "createdAt" | "updatedAt", ExtArgs["result"]["course"]>
   export type CourseInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     lessons?: boolean | Course$lessonsArgs<ExtArgs>
     _count?: boolean | CourseCountOutputTypeDefaultArgs<ExtArgs>
@@ -9012,7 +10892,8 @@ export namespace Prisma {
       id: string
       title: string
       slug: string
-      description: string | null
+      shortDescription: string | null
+      fullDescription: string | null
       thumbnail: string | null
       youtubeUrl: string | null
       attachment: string | null
@@ -9026,12 +10907,12 @@ export namespace Prisma {
 
   type CourseGetPayload<S extends boolean | null | undefined | CourseDefaultArgs> = $Result.GetResult<Prisma.$CoursePayload, S>
 
-  type CourseCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
-    Omit<CourseFindManyArgs, 'select' | 'include' | 'distinct'> & {
+  type CourseCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<CourseFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
       select?: CourseCountAggregateInputType | true
     }
 
-  export interface CourseDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+  export interface CourseDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
     [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Course'], meta: { name: 'Course' } }
     /**
      * Find zero or one Course that matches the filter.
@@ -9044,10 +10925,10 @@ export namespace Prisma {
      *   }
      * })
      */
-    findUnique<T extends CourseFindUniqueArgs>(args: SelectSubset<T, CourseFindUniqueArgs<ExtArgs>>): Prisma__CourseClient<$Result.GetResult<Prisma.$CoursePayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+    findUnique<T extends CourseFindUniqueArgs>(args: SelectSubset<T, CourseFindUniqueArgs<ExtArgs>>): Prisma__CourseClient<$Result.GetResult<Prisma.$CoursePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Find one Course that matches the filter or throw an error with `error.code='P2025'` 
+     * Find one Course that matches the filter or throw an error with `error.code='P2025'`
      * if no matches were found.
      * @param {CourseFindUniqueOrThrowArgs} args - Arguments to find a Course
      * @example
@@ -9058,7 +10939,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findUniqueOrThrow<T extends CourseFindUniqueOrThrowArgs>(args: SelectSubset<T, CourseFindUniqueOrThrowArgs<ExtArgs>>): Prisma__CourseClient<$Result.GetResult<Prisma.$CoursePayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+    findUniqueOrThrow<T extends CourseFindUniqueOrThrowArgs>(args: SelectSubset<T, CourseFindUniqueOrThrowArgs<ExtArgs>>): Prisma__CourseClient<$Result.GetResult<Prisma.$CoursePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find the first Course that matches the filter.
@@ -9073,7 +10954,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findFirst<T extends CourseFindFirstArgs>(args?: SelectSubset<T, CourseFindFirstArgs<ExtArgs>>): Prisma__CourseClient<$Result.GetResult<Prisma.$CoursePayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+    findFirst<T extends CourseFindFirstArgs>(args?: SelectSubset<T, CourseFindFirstArgs<ExtArgs>>): Prisma__CourseClient<$Result.GetResult<Prisma.$CoursePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find the first Course that matches the filter or
@@ -9089,7 +10970,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findFirstOrThrow<T extends CourseFindFirstOrThrowArgs>(args?: SelectSubset<T, CourseFindFirstOrThrowArgs<ExtArgs>>): Prisma__CourseClient<$Result.GetResult<Prisma.$CoursePayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+    findFirstOrThrow<T extends CourseFindFirstOrThrowArgs>(args?: SelectSubset<T, CourseFindFirstOrThrowArgs<ExtArgs>>): Prisma__CourseClient<$Result.GetResult<Prisma.$CoursePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find zero or more Courses that matches the filter.
@@ -9107,7 +10988,7 @@ export namespace Prisma {
      * const courseWithIdOnly = await prisma.course.findMany({ select: { id: true } })
      * 
      */
-    findMany<T extends CourseFindManyArgs>(args?: SelectSubset<T, CourseFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CoursePayload<ExtArgs>, T, "findMany">>
+    findMany<T extends CourseFindManyArgs>(args?: SelectSubset<T, CourseFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CoursePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
     /**
      * Create a Course.
@@ -9121,7 +11002,7 @@ export namespace Prisma {
      * })
      * 
      */
-    create<T extends CourseCreateArgs>(args: SelectSubset<T, CourseCreateArgs<ExtArgs>>): Prisma__CourseClient<$Result.GetResult<Prisma.$CoursePayload<ExtArgs>, T, "create">, never, ExtArgs>
+    create<T extends CourseCreateArgs>(args: SelectSubset<T, CourseCreateArgs<ExtArgs>>): Prisma__CourseClient<$Result.GetResult<Prisma.$CoursePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Create many Courses.
@@ -9149,7 +11030,7 @@ export namespace Prisma {
      * })
      * 
      * // Create many Courses and only return the `id`
-     * const courseWithIdOnly = await prisma.course.createManyAndReturn({ 
+     * const courseWithIdOnly = await prisma.course.createManyAndReturn({
      *   select: { id: true },
      *   data: [
      *     // ... provide data here
@@ -9159,7 +11040,7 @@ export namespace Prisma {
      * Read more here: https://pris.ly/d/null-undefined
      * 
      */
-    createManyAndReturn<T extends CourseCreateManyAndReturnArgs>(args?: SelectSubset<T, CourseCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CoursePayload<ExtArgs>, T, "createManyAndReturn">>
+    createManyAndReturn<T extends CourseCreateManyAndReturnArgs>(args?: SelectSubset<T, CourseCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CoursePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
     /**
      * Delete a Course.
@@ -9173,7 +11054,7 @@ export namespace Prisma {
      * })
      * 
      */
-    delete<T extends CourseDeleteArgs>(args: SelectSubset<T, CourseDeleteArgs<ExtArgs>>): Prisma__CourseClient<$Result.GetResult<Prisma.$CoursePayload<ExtArgs>, T, "delete">, never, ExtArgs>
+    delete<T extends CourseDeleteArgs>(args: SelectSubset<T, CourseDeleteArgs<ExtArgs>>): Prisma__CourseClient<$Result.GetResult<Prisma.$CoursePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Update one Course.
@@ -9190,7 +11071,7 @@ export namespace Prisma {
      * })
      * 
      */
-    update<T extends CourseUpdateArgs>(args: SelectSubset<T, CourseUpdateArgs<ExtArgs>>): Prisma__CourseClient<$Result.GetResult<Prisma.$CoursePayload<ExtArgs>, T, "update">, never, ExtArgs>
+    update<T extends CourseUpdateArgs>(args: SelectSubset<T, CourseUpdateArgs<ExtArgs>>): Prisma__CourseClient<$Result.GetResult<Prisma.$CoursePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Delete zero or more Courses.
@@ -9242,7 +11123,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    upsert<T extends CourseUpsertArgs>(args: SelectSubset<T, CourseUpsertArgs<ExtArgs>>): Prisma__CourseClient<$Result.GetResult<Prisma.$CoursePayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+    upsert<T extends CourseUpsertArgs>(args: SelectSubset<T, CourseUpsertArgs<ExtArgs>>): Prisma__CourseClient<$Result.GetResult<Prisma.$CoursePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
 
     /**
@@ -9382,9 +11263,9 @@ export namespace Prisma {
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export interface Prisma__CourseClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+  export interface Prisma__CourseClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    lessons<T extends Course$lessonsArgs<ExtArgs> = {}>(args?: Subset<T, Course$lessonsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LessonPayload<ExtArgs>, T, "findMany"> | Null>
+    lessons<T extends Course$lessonsArgs<ExtArgs> = {}>(args?: Subset<T, Course$lessonsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LessonPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -9412,12 +11293,13 @@ export namespace Prisma {
 
   /**
    * Fields of the Course model
-   */ 
+   */
   interface CourseFieldRefs {
     readonly id: FieldRef<"Course", 'String'>
     readonly title: FieldRef<"Course", 'String'>
     readonly slug: FieldRef<"Course", 'String'>
-    readonly description: FieldRef<"Course", 'String'>
+    readonly shortDescription: FieldRef<"Course", 'String'>
+    readonly fullDescription: FieldRef<"Course", 'String'>
     readonly thumbnail: FieldRef<"Course", 'String'>
     readonly youtubeUrl: FieldRef<"Course", 'String'>
     readonly attachment: FieldRef<"Course", 'String'>
@@ -9438,6 +11320,10 @@ export namespace Prisma {
      */
     select?: CourseSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Course
+     */
+    omit?: CourseOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: CourseInclude<ExtArgs> | null
@@ -9456,6 +11342,10 @@ export namespace Prisma {
      */
     select?: CourseSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Course
+     */
+    omit?: CourseOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: CourseInclude<ExtArgs> | null
@@ -9473,6 +11363,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the Course
      */
     select?: CourseSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Course
+     */
+    omit?: CourseOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -9522,6 +11416,10 @@ export namespace Prisma {
      */
     select?: CourseSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Course
+     */
+    omit?: CourseOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: CourseInclude<ExtArgs> | null
@@ -9570,6 +11468,10 @@ export namespace Prisma {
      */
     select?: CourseSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Course
+     */
+    omit?: CourseOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: CourseInclude<ExtArgs> | null
@@ -9613,6 +11515,10 @@ export namespace Prisma {
      */
     select?: CourseSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Course
+     */
+    omit?: CourseOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: CourseInclude<ExtArgs> | null
@@ -9642,6 +11548,10 @@ export namespace Prisma {
      */
     select?: CourseSelectCreateManyAndReturn<ExtArgs> | null
     /**
+     * Omit specific fields from the Course
+     */
+    omit?: CourseOmit<ExtArgs> | null
+    /**
      * The data used to create many Courses.
      */
     data: CourseCreateManyInput | CourseCreateManyInput[]
@@ -9656,6 +11566,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the Course
      */
     select?: CourseSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Course
+     */
+    omit?: CourseOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -9693,6 +11607,10 @@ export namespace Prisma {
      */
     select?: CourseSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Course
+     */
+    omit?: CourseOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: CourseInclude<ExtArgs> | null
@@ -9718,6 +11636,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the Course
      */
     select?: CourseSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Course
+     */
+    omit?: CourseOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -9747,6 +11669,10 @@ export namespace Prisma {
      */
     select?: LessonSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Lesson
+     */
+    omit?: LessonOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: LessonInclude<ExtArgs> | null
@@ -9766,6 +11692,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the Course
      */
     select?: CourseSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Course
+     */
+    omit?: CourseOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -10030,6 +11960,7 @@ export namespace Prisma {
     course?: boolean | CourseDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["lesson"]>
 
+
   export type LessonSelectScalar = {
     id?: boolean
     title?: boolean
@@ -10043,6 +11974,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
+  export type LessonOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "slug" | "description" | "position" | "kinescopeId" | "isPublished" | "courseId" | "createdAt" | "updatedAt", ExtArgs["result"]["lesson"]>
   export type LessonInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     userProgress?: boolean | Lesson$userProgressArgs<ExtArgs>
     course?: boolean | CourseDefaultArgs<ExtArgs>
@@ -10075,12 +12007,12 @@ export namespace Prisma {
 
   type LessonGetPayload<S extends boolean | null | undefined | LessonDefaultArgs> = $Result.GetResult<Prisma.$LessonPayload, S>
 
-  type LessonCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
-    Omit<LessonFindManyArgs, 'select' | 'include' | 'distinct'> & {
+  type LessonCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<LessonFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
       select?: LessonCountAggregateInputType | true
     }
 
-  export interface LessonDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+  export interface LessonDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
     [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Lesson'], meta: { name: 'Lesson' } }
     /**
      * Find zero or one Lesson that matches the filter.
@@ -10093,10 +12025,10 @@ export namespace Prisma {
      *   }
      * })
      */
-    findUnique<T extends LessonFindUniqueArgs>(args: SelectSubset<T, LessonFindUniqueArgs<ExtArgs>>): Prisma__LessonClient<$Result.GetResult<Prisma.$LessonPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+    findUnique<T extends LessonFindUniqueArgs>(args: SelectSubset<T, LessonFindUniqueArgs<ExtArgs>>): Prisma__LessonClient<$Result.GetResult<Prisma.$LessonPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Find one Lesson that matches the filter or throw an error with `error.code='P2025'` 
+     * Find one Lesson that matches the filter or throw an error with `error.code='P2025'`
      * if no matches were found.
      * @param {LessonFindUniqueOrThrowArgs} args - Arguments to find a Lesson
      * @example
@@ -10107,7 +12039,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findUniqueOrThrow<T extends LessonFindUniqueOrThrowArgs>(args: SelectSubset<T, LessonFindUniqueOrThrowArgs<ExtArgs>>): Prisma__LessonClient<$Result.GetResult<Prisma.$LessonPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+    findUniqueOrThrow<T extends LessonFindUniqueOrThrowArgs>(args: SelectSubset<T, LessonFindUniqueOrThrowArgs<ExtArgs>>): Prisma__LessonClient<$Result.GetResult<Prisma.$LessonPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find the first Lesson that matches the filter.
@@ -10122,7 +12054,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findFirst<T extends LessonFindFirstArgs>(args?: SelectSubset<T, LessonFindFirstArgs<ExtArgs>>): Prisma__LessonClient<$Result.GetResult<Prisma.$LessonPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+    findFirst<T extends LessonFindFirstArgs>(args?: SelectSubset<T, LessonFindFirstArgs<ExtArgs>>): Prisma__LessonClient<$Result.GetResult<Prisma.$LessonPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find the first Lesson that matches the filter or
@@ -10138,7 +12070,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findFirstOrThrow<T extends LessonFindFirstOrThrowArgs>(args?: SelectSubset<T, LessonFindFirstOrThrowArgs<ExtArgs>>): Prisma__LessonClient<$Result.GetResult<Prisma.$LessonPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+    findFirstOrThrow<T extends LessonFindFirstOrThrowArgs>(args?: SelectSubset<T, LessonFindFirstOrThrowArgs<ExtArgs>>): Prisma__LessonClient<$Result.GetResult<Prisma.$LessonPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find zero or more Lessons that matches the filter.
@@ -10156,7 +12088,7 @@ export namespace Prisma {
      * const lessonWithIdOnly = await prisma.lesson.findMany({ select: { id: true } })
      * 
      */
-    findMany<T extends LessonFindManyArgs>(args?: SelectSubset<T, LessonFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LessonPayload<ExtArgs>, T, "findMany">>
+    findMany<T extends LessonFindManyArgs>(args?: SelectSubset<T, LessonFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LessonPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
     /**
      * Create a Lesson.
@@ -10170,7 +12102,7 @@ export namespace Prisma {
      * })
      * 
      */
-    create<T extends LessonCreateArgs>(args: SelectSubset<T, LessonCreateArgs<ExtArgs>>): Prisma__LessonClient<$Result.GetResult<Prisma.$LessonPayload<ExtArgs>, T, "create">, never, ExtArgs>
+    create<T extends LessonCreateArgs>(args: SelectSubset<T, LessonCreateArgs<ExtArgs>>): Prisma__LessonClient<$Result.GetResult<Prisma.$LessonPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Create many Lessons.
@@ -10198,7 +12130,7 @@ export namespace Prisma {
      * })
      * 
      * // Create many Lessons and only return the `id`
-     * const lessonWithIdOnly = await prisma.lesson.createManyAndReturn({ 
+     * const lessonWithIdOnly = await prisma.lesson.createManyAndReturn({
      *   select: { id: true },
      *   data: [
      *     // ... provide data here
@@ -10208,7 +12140,7 @@ export namespace Prisma {
      * Read more here: https://pris.ly/d/null-undefined
      * 
      */
-    createManyAndReturn<T extends LessonCreateManyAndReturnArgs>(args?: SelectSubset<T, LessonCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LessonPayload<ExtArgs>, T, "createManyAndReturn">>
+    createManyAndReturn<T extends LessonCreateManyAndReturnArgs>(args?: SelectSubset<T, LessonCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LessonPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
     /**
      * Delete a Lesson.
@@ -10222,7 +12154,7 @@ export namespace Prisma {
      * })
      * 
      */
-    delete<T extends LessonDeleteArgs>(args: SelectSubset<T, LessonDeleteArgs<ExtArgs>>): Prisma__LessonClient<$Result.GetResult<Prisma.$LessonPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+    delete<T extends LessonDeleteArgs>(args: SelectSubset<T, LessonDeleteArgs<ExtArgs>>): Prisma__LessonClient<$Result.GetResult<Prisma.$LessonPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Update one Lesson.
@@ -10239,7 +12171,7 @@ export namespace Prisma {
      * })
      * 
      */
-    update<T extends LessonUpdateArgs>(args: SelectSubset<T, LessonUpdateArgs<ExtArgs>>): Prisma__LessonClient<$Result.GetResult<Prisma.$LessonPayload<ExtArgs>, T, "update">, never, ExtArgs>
+    update<T extends LessonUpdateArgs>(args: SelectSubset<T, LessonUpdateArgs<ExtArgs>>): Prisma__LessonClient<$Result.GetResult<Prisma.$LessonPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Delete zero or more Lessons.
@@ -10291,7 +12223,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    upsert<T extends LessonUpsertArgs>(args: SelectSubset<T, LessonUpsertArgs<ExtArgs>>): Prisma__LessonClient<$Result.GetResult<Prisma.$LessonPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+    upsert<T extends LessonUpsertArgs>(args: SelectSubset<T, LessonUpsertArgs<ExtArgs>>): Prisma__LessonClient<$Result.GetResult<Prisma.$LessonPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
 
     /**
@@ -10431,10 +12363,10 @@ export namespace Prisma {
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export interface Prisma__LessonClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+  export interface Prisma__LessonClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    userProgress<T extends Lesson$userProgressArgs<ExtArgs> = {}>(args?: Subset<T, Lesson$userProgressArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserProgressPayload<ExtArgs>, T, "findMany"> | Null>
-    course<T extends CourseDefaultArgs<ExtArgs> = {}>(args?: Subset<T, CourseDefaultArgs<ExtArgs>>): Prisma__CourseClient<$Result.GetResult<Prisma.$CoursePayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    userProgress<T extends Lesson$userProgressArgs<ExtArgs> = {}>(args?: Subset<T, Lesson$userProgressArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserProgressPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    course<T extends CourseDefaultArgs<ExtArgs> = {}>(args?: Subset<T, CourseDefaultArgs<ExtArgs>>): Prisma__CourseClient<$Result.GetResult<Prisma.$CoursePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -10462,7 +12394,7 @@ export namespace Prisma {
 
   /**
    * Fields of the Lesson model
-   */ 
+   */
   interface LessonFieldRefs {
     readonly id: FieldRef<"Lesson", 'String'>
     readonly title: FieldRef<"Lesson", 'String'>
@@ -10487,6 +12419,10 @@ export namespace Prisma {
      */
     select?: LessonSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Lesson
+     */
+    omit?: LessonOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: LessonInclude<ExtArgs> | null
@@ -10505,6 +12441,10 @@ export namespace Prisma {
      */
     select?: LessonSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Lesson
+     */
+    omit?: LessonOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: LessonInclude<ExtArgs> | null
@@ -10522,6 +12462,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the Lesson
      */
     select?: LessonSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Lesson
+     */
+    omit?: LessonOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -10571,6 +12515,10 @@ export namespace Prisma {
      */
     select?: LessonSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Lesson
+     */
+    omit?: LessonOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: LessonInclude<ExtArgs> | null
@@ -10619,6 +12567,10 @@ export namespace Prisma {
      */
     select?: LessonSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Lesson
+     */
+    omit?: LessonOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: LessonInclude<ExtArgs> | null
@@ -10662,6 +12614,10 @@ export namespace Prisma {
      */
     select?: LessonSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Lesson
+     */
+    omit?: LessonOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: LessonInclude<ExtArgs> | null
@@ -10691,6 +12647,10 @@ export namespace Prisma {
      */
     select?: LessonSelectCreateManyAndReturn<ExtArgs> | null
     /**
+     * Omit specific fields from the Lesson
+     */
+    omit?: LessonOmit<ExtArgs> | null
+    /**
      * The data used to create many Lessons.
      */
     data: LessonCreateManyInput | LessonCreateManyInput[]
@@ -10709,6 +12669,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the Lesson
      */
     select?: LessonSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Lesson
+     */
+    omit?: LessonOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -10746,6 +12710,10 @@ export namespace Prisma {
      */
     select?: LessonSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the Lesson
+     */
+    omit?: LessonOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: LessonInclude<ExtArgs> | null
@@ -10771,6 +12739,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the Lesson
      */
     select?: LessonSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Lesson
+     */
+    omit?: LessonOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -10800,6 +12772,10 @@ export namespace Prisma {
      */
     select?: UserProgressSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the UserProgress
+     */
+    omit?: UserProgressOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: UserProgressInclude<ExtArgs> | null
@@ -10819,6 +12795,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the Lesson
      */
     select?: LessonSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Lesson
+     */
+    omit?: LessonOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -11013,6 +12993,7 @@ export namespace Prisma {
     lesson?: boolean | LessonDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["userProgress"]>
 
+
   export type UserProgressSelectScalar = {
     id?: boolean
     isCompleted?: boolean
@@ -11022,6 +13003,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
+  export type UserProgressOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "isCompleted" | "userId" | "lessonId" | "createdAt" | "updatedAt", ExtArgs["result"]["userProgress"]>
   export type UserProgressInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
     lesson?: boolean | LessonDefaultArgs<ExtArgs>
@@ -11050,12 +13032,12 @@ export namespace Prisma {
 
   type UserProgressGetPayload<S extends boolean | null | undefined | UserProgressDefaultArgs> = $Result.GetResult<Prisma.$UserProgressPayload, S>
 
-  type UserProgressCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
-    Omit<UserProgressFindManyArgs, 'select' | 'include' | 'distinct'> & {
+  type UserProgressCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<UserProgressFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
       select?: UserProgressCountAggregateInputType | true
     }
 
-  export interface UserProgressDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+  export interface UserProgressDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
     [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['UserProgress'], meta: { name: 'UserProgress' } }
     /**
      * Find zero or one UserProgress that matches the filter.
@@ -11068,10 +13050,10 @@ export namespace Prisma {
      *   }
      * })
      */
-    findUnique<T extends UserProgressFindUniqueArgs>(args: SelectSubset<T, UserProgressFindUniqueArgs<ExtArgs>>): Prisma__UserProgressClient<$Result.GetResult<Prisma.$UserProgressPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+    findUnique<T extends UserProgressFindUniqueArgs>(args: SelectSubset<T, UserProgressFindUniqueArgs<ExtArgs>>): Prisma__UserProgressClient<$Result.GetResult<Prisma.$UserProgressPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Find one UserProgress that matches the filter or throw an error with `error.code='P2025'` 
+     * Find one UserProgress that matches the filter or throw an error with `error.code='P2025'`
      * if no matches were found.
      * @param {UserProgressFindUniqueOrThrowArgs} args - Arguments to find a UserProgress
      * @example
@@ -11082,7 +13064,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findUniqueOrThrow<T extends UserProgressFindUniqueOrThrowArgs>(args: SelectSubset<T, UserProgressFindUniqueOrThrowArgs<ExtArgs>>): Prisma__UserProgressClient<$Result.GetResult<Prisma.$UserProgressPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+    findUniqueOrThrow<T extends UserProgressFindUniqueOrThrowArgs>(args: SelectSubset<T, UserProgressFindUniqueOrThrowArgs<ExtArgs>>): Prisma__UserProgressClient<$Result.GetResult<Prisma.$UserProgressPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find the first UserProgress that matches the filter.
@@ -11097,7 +13079,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findFirst<T extends UserProgressFindFirstArgs>(args?: SelectSubset<T, UserProgressFindFirstArgs<ExtArgs>>): Prisma__UserProgressClient<$Result.GetResult<Prisma.$UserProgressPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+    findFirst<T extends UserProgressFindFirstArgs>(args?: SelectSubset<T, UserProgressFindFirstArgs<ExtArgs>>): Prisma__UserProgressClient<$Result.GetResult<Prisma.$UserProgressPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find the first UserProgress that matches the filter or
@@ -11113,7 +13095,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    findFirstOrThrow<T extends UserProgressFindFirstOrThrowArgs>(args?: SelectSubset<T, UserProgressFindFirstOrThrowArgs<ExtArgs>>): Prisma__UserProgressClient<$Result.GetResult<Prisma.$UserProgressPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+    findFirstOrThrow<T extends UserProgressFindFirstOrThrowArgs>(args?: SelectSubset<T, UserProgressFindFirstOrThrowArgs<ExtArgs>>): Prisma__UserProgressClient<$Result.GetResult<Prisma.$UserProgressPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find zero or more UserProgresses that matches the filter.
@@ -11131,7 +13113,7 @@ export namespace Prisma {
      * const userProgressWithIdOnly = await prisma.userProgress.findMany({ select: { id: true } })
      * 
      */
-    findMany<T extends UserProgressFindManyArgs>(args?: SelectSubset<T, UserProgressFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserProgressPayload<ExtArgs>, T, "findMany">>
+    findMany<T extends UserProgressFindManyArgs>(args?: SelectSubset<T, UserProgressFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserProgressPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
     /**
      * Create a UserProgress.
@@ -11145,7 +13127,7 @@ export namespace Prisma {
      * })
      * 
      */
-    create<T extends UserProgressCreateArgs>(args: SelectSubset<T, UserProgressCreateArgs<ExtArgs>>): Prisma__UserProgressClient<$Result.GetResult<Prisma.$UserProgressPayload<ExtArgs>, T, "create">, never, ExtArgs>
+    create<T extends UserProgressCreateArgs>(args: SelectSubset<T, UserProgressCreateArgs<ExtArgs>>): Prisma__UserProgressClient<$Result.GetResult<Prisma.$UserProgressPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Create many UserProgresses.
@@ -11173,7 +13155,7 @@ export namespace Prisma {
      * })
      * 
      * // Create many UserProgresses and only return the `id`
-     * const userProgressWithIdOnly = await prisma.userProgress.createManyAndReturn({ 
+     * const userProgressWithIdOnly = await prisma.userProgress.createManyAndReturn({
      *   select: { id: true },
      *   data: [
      *     // ... provide data here
@@ -11183,7 +13165,7 @@ export namespace Prisma {
      * Read more here: https://pris.ly/d/null-undefined
      * 
      */
-    createManyAndReturn<T extends UserProgressCreateManyAndReturnArgs>(args?: SelectSubset<T, UserProgressCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserProgressPayload<ExtArgs>, T, "createManyAndReturn">>
+    createManyAndReturn<T extends UserProgressCreateManyAndReturnArgs>(args?: SelectSubset<T, UserProgressCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserProgressPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
     /**
      * Delete a UserProgress.
@@ -11197,7 +13179,7 @@ export namespace Prisma {
      * })
      * 
      */
-    delete<T extends UserProgressDeleteArgs>(args: SelectSubset<T, UserProgressDeleteArgs<ExtArgs>>): Prisma__UserProgressClient<$Result.GetResult<Prisma.$UserProgressPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+    delete<T extends UserProgressDeleteArgs>(args: SelectSubset<T, UserProgressDeleteArgs<ExtArgs>>): Prisma__UserProgressClient<$Result.GetResult<Prisma.$UserProgressPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Update one UserProgress.
@@ -11214,7 +13196,7 @@ export namespace Prisma {
      * })
      * 
      */
-    update<T extends UserProgressUpdateArgs>(args: SelectSubset<T, UserProgressUpdateArgs<ExtArgs>>): Prisma__UserProgressClient<$Result.GetResult<Prisma.$UserProgressPayload<ExtArgs>, T, "update">, never, ExtArgs>
+    update<T extends UserProgressUpdateArgs>(args: SelectSubset<T, UserProgressUpdateArgs<ExtArgs>>): Prisma__UserProgressClient<$Result.GetResult<Prisma.$UserProgressPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Delete zero or more UserProgresses.
@@ -11266,7 +13248,7 @@ export namespace Prisma {
      *   }
      * })
      */
-    upsert<T extends UserProgressUpsertArgs>(args: SelectSubset<T, UserProgressUpsertArgs<ExtArgs>>): Prisma__UserProgressClient<$Result.GetResult<Prisma.$UserProgressPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+    upsert<T extends UserProgressUpsertArgs>(args: SelectSubset<T, UserProgressUpsertArgs<ExtArgs>>): Prisma__UserProgressClient<$Result.GetResult<Prisma.$UserProgressPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
 
     /**
@@ -11406,10 +13388,10 @@ export namespace Prisma {
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export interface Prisma__UserProgressClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+  export interface Prisma__UserProgressClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
-    lesson<T extends LessonDefaultArgs<ExtArgs> = {}>(args?: Subset<T, LessonDefaultArgs<ExtArgs>>): Prisma__LessonClient<$Result.GetResult<Prisma.$LessonPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    lesson<T extends LessonDefaultArgs<ExtArgs> = {}>(args?: Subset<T, LessonDefaultArgs<ExtArgs>>): Prisma__LessonClient<$Result.GetResult<Prisma.$LessonPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -11437,7 +13419,7 @@ export namespace Prisma {
 
   /**
    * Fields of the UserProgress model
-   */ 
+   */
   interface UserProgressFieldRefs {
     readonly id: FieldRef<"UserProgress", 'String'>
     readonly isCompleted: FieldRef<"UserProgress", 'Boolean'>
@@ -11458,6 +13440,10 @@ export namespace Prisma {
      */
     select?: UserProgressSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the UserProgress
+     */
+    omit?: UserProgressOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: UserProgressInclude<ExtArgs> | null
@@ -11476,6 +13462,10 @@ export namespace Prisma {
      */
     select?: UserProgressSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the UserProgress
+     */
+    omit?: UserProgressOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: UserProgressInclude<ExtArgs> | null
@@ -11493,6 +13483,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the UserProgress
      */
     select?: UserProgressSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserProgress
+     */
+    omit?: UserProgressOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -11542,6 +13536,10 @@ export namespace Prisma {
      */
     select?: UserProgressSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the UserProgress
+     */
+    omit?: UserProgressOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: UserProgressInclude<ExtArgs> | null
@@ -11590,6 +13588,10 @@ export namespace Prisma {
      */
     select?: UserProgressSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the UserProgress
+     */
+    omit?: UserProgressOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: UserProgressInclude<ExtArgs> | null
@@ -11633,6 +13635,10 @@ export namespace Prisma {
      */
     select?: UserProgressSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the UserProgress
+     */
+    omit?: UserProgressOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: UserProgressInclude<ExtArgs> | null
@@ -11662,6 +13668,10 @@ export namespace Prisma {
      */
     select?: UserProgressSelectCreateManyAndReturn<ExtArgs> | null
     /**
+     * Omit specific fields from the UserProgress
+     */
+    omit?: UserProgressOmit<ExtArgs> | null
+    /**
      * The data used to create many UserProgresses.
      */
     data: UserProgressCreateManyInput | UserProgressCreateManyInput[]
@@ -11680,6 +13690,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the UserProgress
      */
     select?: UserProgressSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserProgress
+     */
+    omit?: UserProgressOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -11717,6 +13731,10 @@ export namespace Prisma {
      */
     select?: UserProgressSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the UserProgress
+     */
+    omit?: UserProgressOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: UserProgressInclude<ExtArgs> | null
@@ -11742,6 +13760,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the UserProgress
      */
     select?: UserProgressSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the UserProgress
+     */
+    omit?: UserProgressOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
@@ -11771,9 +13793,2068 @@ export namespace Prisma {
      */
     select?: UserProgressSelect<ExtArgs> | null
     /**
+     * Omit specific fields from the UserProgress
+     */
+    omit?: UserProgressOmit<ExtArgs> | null
+    /**
      * Choose, which related nodes to fetch as well
      */
     include?: UserProgressInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Article
+   */
+
+  export type AggregateArticle = {
+    _count: ArticleCountAggregateOutputType | null
+    _min: ArticleMinAggregateOutputType | null
+    _max: ArticleMaxAggregateOutputType | null
+  }
+
+  export type ArticleMinAggregateOutputType = {
+    id: string | null
+    title: string | null
+    slug: string | null
+    thumbnail: string | null
+    content: string | null
+    isPublished: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ArticleMaxAggregateOutputType = {
+    id: string | null
+    title: string | null
+    slug: string | null
+    thumbnail: string | null
+    content: string | null
+    isPublished: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ArticleCountAggregateOutputType = {
+    id: number
+    title: number
+    slug: number
+    thumbnail: number
+    content: number
+    isPublished: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type ArticleMinAggregateInputType = {
+    id?: true
+    title?: true
+    slug?: true
+    thumbnail?: true
+    content?: true
+    isPublished?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type ArticleMaxAggregateInputType = {
+    id?: true
+    title?: true
+    slug?: true
+    thumbnail?: true
+    content?: true
+    isPublished?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type ArticleCountAggregateInputType = {
+    id?: true
+    title?: true
+    slug?: true
+    thumbnail?: true
+    content?: true
+    isPublished?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type ArticleAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Article to aggregate.
+     */
+    where?: ArticleWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Articles to fetch.
+     */
+    orderBy?: ArticleOrderByWithRelationInput | ArticleOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ArticleWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Articles from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Articles.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Articles
+    **/
+    _count?: true | ArticleCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ArticleMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ArticleMaxAggregateInputType
+  }
+
+  export type GetArticleAggregateType<T extends ArticleAggregateArgs> = {
+        [P in keyof T & keyof AggregateArticle]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateArticle[P]>
+      : GetScalarType<T[P], AggregateArticle[P]>
+  }
+
+
+
+
+  export type ArticleGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ArticleWhereInput
+    orderBy?: ArticleOrderByWithAggregationInput | ArticleOrderByWithAggregationInput[]
+    by: ArticleScalarFieldEnum[] | ArticleScalarFieldEnum
+    having?: ArticleScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ArticleCountAggregateInputType | true
+    _min?: ArticleMinAggregateInputType
+    _max?: ArticleMaxAggregateInputType
+  }
+
+  export type ArticleGroupByOutputType = {
+    id: string
+    title: string
+    slug: string
+    thumbnail: string | null
+    content: string
+    isPublished: boolean
+    createdAt: Date
+    updatedAt: Date
+    _count: ArticleCountAggregateOutputType | null
+    _min: ArticleMinAggregateOutputType | null
+    _max: ArticleMaxAggregateOutputType | null
+  }
+
+  type GetArticleGroupByPayload<T extends ArticleGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ArticleGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ArticleGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ArticleGroupByOutputType[P]>
+            : GetScalarType<T[P], ArticleGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ArticleSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    title?: boolean
+    slug?: boolean
+    thumbnail?: boolean
+    content?: boolean
+    isPublished?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    comments?: boolean | Article$commentsArgs<ExtArgs>
+    _count?: boolean | ArticleCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["article"]>
+
+  export type ArticleSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    title?: boolean
+    slug?: boolean
+    thumbnail?: boolean
+    content?: boolean
+    isPublished?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["article"]>
+
+
+  export type ArticleSelectScalar = {
+    id?: boolean
+    title?: boolean
+    slug?: boolean
+    thumbnail?: boolean
+    content?: boolean
+    isPublished?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type ArticleOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "slug" | "thumbnail" | "content" | "isPublished" | "createdAt" | "updatedAt", ExtArgs["result"]["article"]>
+  export type ArticleInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    comments?: boolean | Article$commentsArgs<ExtArgs>
+    _count?: boolean | ArticleCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type ArticleIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+
+  export type $ArticlePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Article"
+    objects: {
+      comments: Prisma.$CommentPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      title: string
+      slug: string
+      thumbnail: string | null
+      content: string
+      isPublished: boolean
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["article"]>
+    composites: {}
+  }
+
+  type ArticleGetPayload<S extends boolean | null | undefined | ArticleDefaultArgs> = $Result.GetResult<Prisma.$ArticlePayload, S>
+
+  type ArticleCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ArticleFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ArticleCountAggregateInputType | true
+    }
+
+  export interface ArticleDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Article'], meta: { name: 'Article' } }
+    /**
+     * Find zero or one Article that matches the filter.
+     * @param {ArticleFindUniqueArgs} args - Arguments to find a Article
+     * @example
+     * // Get one Article
+     * const article = await prisma.article.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ArticleFindUniqueArgs>(args: SelectSubset<T, ArticleFindUniqueArgs<ExtArgs>>): Prisma__ArticleClient<$Result.GetResult<Prisma.$ArticlePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Article that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ArticleFindUniqueOrThrowArgs} args - Arguments to find a Article
+     * @example
+     * // Get one Article
+     * const article = await prisma.article.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ArticleFindUniqueOrThrowArgs>(args: SelectSubset<T, ArticleFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ArticleClient<$Result.GetResult<Prisma.$ArticlePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Article that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ArticleFindFirstArgs} args - Arguments to find a Article
+     * @example
+     * // Get one Article
+     * const article = await prisma.article.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ArticleFindFirstArgs>(args?: SelectSubset<T, ArticleFindFirstArgs<ExtArgs>>): Prisma__ArticleClient<$Result.GetResult<Prisma.$ArticlePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Article that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ArticleFindFirstOrThrowArgs} args - Arguments to find a Article
+     * @example
+     * // Get one Article
+     * const article = await prisma.article.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ArticleFindFirstOrThrowArgs>(args?: SelectSubset<T, ArticleFindFirstOrThrowArgs<ExtArgs>>): Prisma__ArticleClient<$Result.GetResult<Prisma.$ArticlePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Articles that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ArticleFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Articles
+     * const articles = await prisma.article.findMany()
+     * 
+     * // Get first 10 Articles
+     * const articles = await prisma.article.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const articleWithIdOnly = await prisma.article.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ArticleFindManyArgs>(args?: SelectSubset<T, ArticleFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ArticlePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Article.
+     * @param {ArticleCreateArgs} args - Arguments to create a Article.
+     * @example
+     * // Create one Article
+     * const Article = await prisma.article.create({
+     *   data: {
+     *     // ... data to create a Article
+     *   }
+     * })
+     * 
+     */
+    create<T extends ArticleCreateArgs>(args: SelectSubset<T, ArticleCreateArgs<ExtArgs>>): Prisma__ArticleClient<$Result.GetResult<Prisma.$ArticlePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Articles.
+     * @param {ArticleCreateManyArgs} args - Arguments to create many Articles.
+     * @example
+     * // Create many Articles
+     * const article = await prisma.article.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ArticleCreateManyArgs>(args?: SelectSubset<T, ArticleCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Articles and returns the data saved in the database.
+     * @param {ArticleCreateManyAndReturnArgs} args - Arguments to create many Articles.
+     * @example
+     * // Create many Articles
+     * const article = await prisma.article.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Articles and only return the `id`
+     * const articleWithIdOnly = await prisma.article.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ArticleCreateManyAndReturnArgs>(args?: SelectSubset<T, ArticleCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ArticlePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Article.
+     * @param {ArticleDeleteArgs} args - Arguments to delete one Article.
+     * @example
+     * // Delete one Article
+     * const Article = await prisma.article.delete({
+     *   where: {
+     *     // ... filter to delete one Article
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ArticleDeleteArgs>(args: SelectSubset<T, ArticleDeleteArgs<ExtArgs>>): Prisma__ArticleClient<$Result.GetResult<Prisma.$ArticlePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Article.
+     * @param {ArticleUpdateArgs} args - Arguments to update one Article.
+     * @example
+     * // Update one Article
+     * const article = await prisma.article.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ArticleUpdateArgs>(args: SelectSubset<T, ArticleUpdateArgs<ExtArgs>>): Prisma__ArticleClient<$Result.GetResult<Prisma.$ArticlePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Articles.
+     * @param {ArticleDeleteManyArgs} args - Arguments to filter Articles to delete.
+     * @example
+     * // Delete a few Articles
+     * const { count } = await prisma.article.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ArticleDeleteManyArgs>(args?: SelectSubset<T, ArticleDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Articles.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ArticleUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Articles
+     * const article = await prisma.article.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ArticleUpdateManyArgs>(args: SelectSubset<T, ArticleUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one Article.
+     * @param {ArticleUpsertArgs} args - Arguments to update or create a Article.
+     * @example
+     * // Update or create a Article
+     * const article = await prisma.article.upsert({
+     *   create: {
+     *     // ... data to create a Article
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Article we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ArticleUpsertArgs>(args: SelectSubset<T, ArticleUpsertArgs<ExtArgs>>): Prisma__ArticleClient<$Result.GetResult<Prisma.$ArticlePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Articles.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ArticleCountArgs} args - Arguments to filter Articles to count.
+     * @example
+     * // Count the number of Articles
+     * const count = await prisma.article.count({
+     *   where: {
+     *     // ... the filter for the Articles we want to count
+     *   }
+     * })
+    **/
+    count<T extends ArticleCountArgs>(
+      args?: Subset<T, ArticleCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ArticleCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Article.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ArticleAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ArticleAggregateArgs>(args: Subset<T, ArticleAggregateArgs>): Prisma.PrismaPromise<GetArticleAggregateType<T>>
+
+    /**
+     * Group by Article.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ArticleGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ArticleGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ArticleGroupByArgs['orderBy'] }
+        : { orderBy?: ArticleGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ArticleGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetArticleGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Article model
+   */
+  readonly fields: ArticleFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Article.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ArticleClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    comments<T extends Article$commentsArgs<ExtArgs> = {}>(args?: Subset<T, Article$commentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Article model
+   */
+  interface ArticleFieldRefs {
+    readonly id: FieldRef<"Article", 'String'>
+    readonly title: FieldRef<"Article", 'String'>
+    readonly slug: FieldRef<"Article", 'String'>
+    readonly thumbnail: FieldRef<"Article", 'String'>
+    readonly content: FieldRef<"Article", 'String'>
+    readonly isPublished: FieldRef<"Article", 'Boolean'>
+    readonly createdAt: FieldRef<"Article", 'DateTime'>
+    readonly updatedAt: FieldRef<"Article", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Article findUnique
+   */
+  export type ArticleFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Article
+     */
+    select?: ArticleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Article
+     */
+    omit?: ArticleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ArticleInclude<ExtArgs> | null
+    /**
+     * Filter, which Article to fetch.
+     */
+    where: ArticleWhereUniqueInput
+  }
+
+  /**
+   * Article findUniqueOrThrow
+   */
+  export type ArticleFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Article
+     */
+    select?: ArticleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Article
+     */
+    omit?: ArticleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ArticleInclude<ExtArgs> | null
+    /**
+     * Filter, which Article to fetch.
+     */
+    where: ArticleWhereUniqueInput
+  }
+
+  /**
+   * Article findFirst
+   */
+  export type ArticleFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Article
+     */
+    select?: ArticleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Article
+     */
+    omit?: ArticleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ArticleInclude<ExtArgs> | null
+    /**
+     * Filter, which Article to fetch.
+     */
+    where?: ArticleWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Articles to fetch.
+     */
+    orderBy?: ArticleOrderByWithRelationInput | ArticleOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Articles.
+     */
+    cursor?: ArticleWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Articles from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Articles.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Articles.
+     */
+    distinct?: ArticleScalarFieldEnum | ArticleScalarFieldEnum[]
+  }
+
+  /**
+   * Article findFirstOrThrow
+   */
+  export type ArticleFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Article
+     */
+    select?: ArticleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Article
+     */
+    omit?: ArticleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ArticleInclude<ExtArgs> | null
+    /**
+     * Filter, which Article to fetch.
+     */
+    where?: ArticleWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Articles to fetch.
+     */
+    orderBy?: ArticleOrderByWithRelationInput | ArticleOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Articles.
+     */
+    cursor?: ArticleWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Articles from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Articles.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Articles.
+     */
+    distinct?: ArticleScalarFieldEnum | ArticleScalarFieldEnum[]
+  }
+
+  /**
+   * Article findMany
+   */
+  export type ArticleFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Article
+     */
+    select?: ArticleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Article
+     */
+    omit?: ArticleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ArticleInclude<ExtArgs> | null
+    /**
+     * Filter, which Articles to fetch.
+     */
+    where?: ArticleWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Articles to fetch.
+     */
+    orderBy?: ArticleOrderByWithRelationInput | ArticleOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Articles.
+     */
+    cursor?: ArticleWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Articles from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Articles.
+     */
+    skip?: number
+    distinct?: ArticleScalarFieldEnum | ArticleScalarFieldEnum[]
+  }
+
+  /**
+   * Article create
+   */
+  export type ArticleCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Article
+     */
+    select?: ArticleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Article
+     */
+    omit?: ArticleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ArticleInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Article.
+     */
+    data: XOR<ArticleCreateInput, ArticleUncheckedCreateInput>
+  }
+
+  /**
+   * Article createMany
+   */
+  export type ArticleCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Articles.
+     */
+    data: ArticleCreateManyInput | ArticleCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Article createManyAndReturn
+   */
+  export type ArticleCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Article
+     */
+    select?: ArticleSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Article
+     */
+    omit?: ArticleOmit<ExtArgs> | null
+    /**
+     * The data used to create many Articles.
+     */
+    data: ArticleCreateManyInput | ArticleCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Article update
+   */
+  export type ArticleUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Article
+     */
+    select?: ArticleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Article
+     */
+    omit?: ArticleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ArticleInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Article.
+     */
+    data: XOR<ArticleUpdateInput, ArticleUncheckedUpdateInput>
+    /**
+     * Choose, which Article to update.
+     */
+    where: ArticleWhereUniqueInput
+  }
+
+  /**
+   * Article updateMany
+   */
+  export type ArticleUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Articles.
+     */
+    data: XOR<ArticleUpdateManyMutationInput, ArticleUncheckedUpdateManyInput>
+    /**
+     * Filter which Articles to update
+     */
+    where?: ArticleWhereInput
+  }
+
+  /**
+   * Article upsert
+   */
+  export type ArticleUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Article
+     */
+    select?: ArticleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Article
+     */
+    omit?: ArticleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ArticleInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Article to update in case it exists.
+     */
+    where: ArticleWhereUniqueInput
+    /**
+     * In case the Article found by the `where` argument doesn't exist, create a new Article with this data.
+     */
+    create: XOR<ArticleCreateInput, ArticleUncheckedCreateInput>
+    /**
+     * In case the Article was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ArticleUpdateInput, ArticleUncheckedUpdateInput>
+  }
+
+  /**
+   * Article delete
+   */
+  export type ArticleDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Article
+     */
+    select?: ArticleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Article
+     */
+    omit?: ArticleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ArticleInclude<ExtArgs> | null
+    /**
+     * Filter which Article to delete.
+     */
+    where: ArticleWhereUniqueInput
+  }
+
+  /**
+   * Article deleteMany
+   */
+  export type ArticleDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Articles to delete
+     */
+    where?: ArticleWhereInput
+  }
+
+  /**
+   * Article.comments
+   */
+  export type Article$commentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Comment
+     */
+    select?: CommentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Comment
+     */
+    omit?: CommentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommentInclude<ExtArgs> | null
+    where?: CommentWhereInput
+    orderBy?: CommentOrderByWithRelationInput | CommentOrderByWithRelationInput[]
+    cursor?: CommentWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: CommentScalarFieldEnum | CommentScalarFieldEnum[]
+  }
+
+  /**
+   * Article without action
+   */
+  export type ArticleDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Article
+     */
+    select?: ArticleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Article
+     */
+    omit?: ArticleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ArticleInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Comment
+   */
+
+  export type AggregateComment = {
+    _count: CommentCountAggregateOutputType | null
+    _min: CommentMinAggregateOutputType | null
+    _max: CommentMaxAggregateOutputType | null
+  }
+
+  export type CommentMinAggregateOutputType = {
+    id: string | null
+    content: string | null
+    edited: boolean | null
+    deleted: boolean | null
+    authorId: string | null
+    articleId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type CommentMaxAggregateOutputType = {
+    id: string | null
+    content: string | null
+    edited: boolean | null
+    deleted: boolean | null
+    authorId: string | null
+    articleId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type CommentCountAggregateOutputType = {
+    id: number
+    content: number
+    edited: number
+    deleted: number
+    authorId: number
+    articleId: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type CommentMinAggregateInputType = {
+    id?: true
+    content?: true
+    edited?: true
+    deleted?: true
+    authorId?: true
+    articleId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type CommentMaxAggregateInputType = {
+    id?: true
+    content?: true
+    edited?: true
+    deleted?: true
+    authorId?: true
+    articleId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type CommentCountAggregateInputType = {
+    id?: true
+    content?: true
+    edited?: true
+    deleted?: true
+    authorId?: true
+    articleId?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type CommentAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Comment to aggregate.
+     */
+    where?: CommentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Comments to fetch.
+     */
+    orderBy?: CommentOrderByWithRelationInput | CommentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: CommentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Comments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Comments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Comments
+    **/
+    _count?: true | CommentCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: CommentMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: CommentMaxAggregateInputType
+  }
+
+  export type GetCommentAggregateType<T extends CommentAggregateArgs> = {
+        [P in keyof T & keyof AggregateComment]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateComment[P]>
+      : GetScalarType<T[P], AggregateComment[P]>
+  }
+
+
+
+
+  export type CommentGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CommentWhereInput
+    orderBy?: CommentOrderByWithAggregationInput | CommentOrderByWithAggregationInput[]
+    by: CommentScalarFieldEnum[] | CommentScalarFieldEnum
+    having?: CommentScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: CommentCountAggregateInputType | true
+    _min?: CommentMinAggregateInputType
+    _max?: CommentMaxAggregateInputType
+  }
+
+  export type CommentGroupByOutputType = {
+    id: string
+    content: string
+    edited: boolean
+    deleted: boolean
+    authorId: string
+    articleId: string
+    createdAt: Date
+    updatedAt: Date
+    _count: CommentCountAggregateOutputType | null
+    _min: CommentMinAggregateOutputType | null
+    _max: CommentMaxAggregateOutputType | null
+  }
+
+  type GetCommentGroupByPayload<T extends CommentGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<CommentGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof CommentGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], CommentGroupByOutputType[P]>
+            : GetScalarType<T[P], CommentGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type CommentSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    content?: boolean
+    edited?: boolean
+    deleted?: boolean
+    authorId?: boolean
+    articleId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    author?: boolean | UserDefaultArgs<ExtArgs>
+    article?: boolean | ArticleDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["comment"]>
+
+  export type CommentSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    content?: boolean
+    edited?: boolean
+    deleted?: boolean
+    authorId?: boolean
+    articleId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    author?: boolean | UserDefaultArgs<ExtArgs>
+    article?: boolean | ArticleDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["comment"]>
+
+
+  export type CommentSelectScalar = {
+    id?: boolean
+    content?: boolean
+    edited?: boolean
+    deleted?: boolean
+    authorId?: boolean
+    articleId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type CommentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "content" | "edited" | "deleted" | "authorId" | "articleId" | "createdAt" | "updatedAt", ExtArgs["result"]["comment"]>
+  export type CommentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    author?: boolean | UserDefaultArgs<ExtArgs>
+    article?: boolean | ArticleDefaultArgs<ExtArgs>
+  }
+  export type CommentIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    author?: boolean | UserDefaultArgs<ExtArgs>
+    article?: boolean | ArticleDefaultArgs<ExtArgs>
+  }
+
+  export type $CommentPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Comment"
+    objects: {
+      author: Prisma.$UserPayload<ExtArgs>
+      article: Prisma.$ArticlePayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      content: string
+      edited: boolean
+      deleted: boolean
+      authorId: string
+      articleId: string
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["comment"]>
+    composites: {}
+  }
+
+  type CommentGetPayload<S extends boolean | null | undefined | CommentDefaultArgs> = $Result.GetResult<Prisma.$CommentPayload, S>
+
+  type CommentCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<CommentFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: CommentCountAggregateInputType | true
+    }
+
+  export interface CommentDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Comment'], meta: { name: 'Comment' } }
+    /**
+     * Find zero or one Comment that matches the filter.
+     * @param {CommentFindUniqueArgs} args - Arguments to find a Comment
+     * @example
+     * // Get one Comment
+     * const comment = await prisma.comment.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends CommentFindUniqueArgs>(args: SelectSubset<T, CommentFindUniqueArgs<ExtArgs>>): Prisma__CommentClient<$Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Comment that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {CommentFindUniqueOrThrowArgs} args - Arguments to find a Comment
+     * @example
+     * // Get one Comment
+     * const comment = await prisma.comment.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends CommentFindUniqueOrThrowArgs>(args: SelectSubset<T, CommentFindUniqueOrThrowArgs<ExtArgs>>): Prisma__CommentClient<$Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Comment that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CommentFindFirstArgs} args - Arguments to find a Comment
+     * @example
+     * // Get one Comment
+     * const comment = await prisma.comment.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends CommentFindFirstArgs>(args?: SelectSubset<T, CommentFindFirstArgs<ExtArgs>>): Prisma__CommentClient<$Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Comment that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CommentFindFirstOrThrowArgs} args - Arguments to find a Comment
+     * @example
+     * // Get one Comment
+     * const comment = await prisma.comment.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends CommentFindFirstOrThrowArgs>(args?: SelectSubset<T, CommentFindFirstOrThrowArgs<ExtArgs>>): Prisma__CommentClient<$Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Comments that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CommentFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Comments
+     * const comments = await prisma.comment.findMany()
+     * 
+     * // Get first 10 Comments
+     * const comments = await prisma.comment.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const commentWithIdOnly = await prisma.comment.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends CommentFindManyArgs>(args?: SelectSubset<T, CommentFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Comment.
+     * @param {CommentCreateArgs} args - Arguments to create a Comment.
+     * @example
+     * // Create one Comment
+     * const Comment = await prisma.comment.create({
+     *   data: {
+     *     // ... data to create a Comment
+     *   }
+     * })
+     * 
+     */
+    create<T extends CommentCreateArgs>(args: SelectSubset<T, CommentCreateArgs<ExtArgs>>): Prisma__CommentClient<$Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Comments.
+     * @param {CommentCreateManyArgs} args - Arguments to create many Comments.
+     * @example
+     * // Create many Comments
+     * const comment = await prisma.comment.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends CommentCreateManyArgs>(args?: SelectSubset<T, CommentCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Comments and returns the data saved in the database.
+     * @param {CommentCreateManyAndReturnArgs} args - Arguments to create many Comments.
+     * @example
+     * // Create many Comments
+     * const comment = await prisma.comment.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Comments and only return the `id`
+     * const commentWithIdOnly = await prisma.comment.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends CommentCreateManyAndReturnArgs>(args?: SelectSubset<T, CommentCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Comment.
+     * @param {CommentDeleteArgs} args - Arguments to delete one Comment.
+     * @example
+     * // Delete one Comment
+     * const Comment = await prisma.comment.delete({
+     *   where: {
+     *     // ... filter to delete one Comment
+     *   }
+     * })
+     * 
+     */
+    delete<T extends CommentDeleteArgs>(args: SelectSubset<T, CommentDeleteArgs<ExtArgs>>): Prisma__CommentClient<$Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Comment.
+     * @param {CommentUpdateArgs} args - Arguments to update one Comment.
+     * @example
+     * // Update one Comment
+     * const comment = await prisma.comment.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends CommentUpdateArgs>(args: SelectSubset<T, CommentUpdateArgs<ExtArgs>>): Prisma__CommentClient<$Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Comments.
+     * @param {CommentDeleteManyArgs} args - Arguments to filter Comments to delete.
+     * @example
+     * // Delete a few Comments
+     * const { count } = await prisma.comment.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends CommentDeleteManyArgs>(args?: SelectSubset<T, CommentDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Comments.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CommentUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Comments
+     * const comment = await prisma.comment.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends CommentUpdateManyArgs>(args: SelectSubset<T, CommentUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one Comment.
+     * @param {CommentUpsertArgs} args - Arguments to update or create a Comment.
+     * @example
+     * // Update or create a Comment
+     * const comment = await prisma.comment.upsert({
+     *   create: {
+     *     // ... data to create a Comment
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Comment we want to update
+     *   }
+     * })
+     */
+    upsert<T extends CommentUpsertArgs>(args: SelectSubset<T, CommentUpsertArgs<ExtArgs>>): Prisma__CommentClient<$Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Comments.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CommentCountArgs} args - Arguments to filter Comments to count.
+     * @example
+     * // Count the number of Comments
+     * const count = await prisma.comment.count({
+     *   where: {
+     *     // ... the filter for the Comments we want to count
+     *   }
+     * })
+    **/
+    count<T extends CommentCountArgs>(
+      args?: Subset<T, CommentCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], CommentCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Comment.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CommentAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends CommentAggregateArgs>(args: Subset<T, CommentAggregateArgs>): Prisma.PrismaPromise<GetCommentAggregateType<T>>
+
+    /**
+     * Group by Comment.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CommentGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends CommentGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: CommentGroupByArgs['orderBy'] }
+        : { orderBy?: CommentGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, CommentGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetCommentGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Comment model
+   */
+  readonly fields: CommentFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Comment.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__CommentClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    author<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    article<T extends ArticleDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ArticleDefaultArgs<ExtArgs>>): Prisma__ArticleClient<$Result.GetResult<Prisma.$ArticlePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Comment model
+   */
+  interface CommentFieldRefs {
+    readonly id: FieldRef<"Comment", 'String'>
+    readonly content: FieldRef<"Comment", 'String'>
+    readonly edited: FieldRef<"Comment", 'Boolean'>
+    readonly deleted: FieldRef<"Comment", 'Boolean'>
+    readonly authorId: FieldRef<"Comment", 'String'>
+    readonly articleId: FieldRef<"Comment", 'String'>
+    readonly createdAt: FieldRef<"Comment", 'DateTime'>
+    readonly updatedAt: FieldRef<"Comment", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Comment findUnique
+   */
+  export type CommentFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Comment
+     */
+    select?: CommentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Comment
+     */
+    omit?: CommentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommentInclude<ExtArgs> | null
+    /**
+     * Filter, which Comment to fetch.
+     */
+    where: CommentWhereUniqueInput
+  }
+
+  /**
+   * Comment findUniqueOrThrow
+   */
+  export type CommentFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Comment
+     */
+    select?: CommentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Comment
+     */
+    omit?: CommentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommentInclude<ExtArgs> | null
+    /**
+     * Filter, which Comment to fetch.
+     */
+    where: CommentWhereUniqueInput
+  }
+
+  /**
+   * Comment findFirst
+   */
+  export type CommentFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Comment
+     */
+    select?: CommentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Comment
+     */
+    omit?: CommentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommentInclude<ExtArgs> | null
+    /**
+     * Filter, which Comment to fetch.
+     */
+    where?: CommentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Comments to fetch.
+     */
+    orderBy?: CommentOrderByWithRelationInput | CommentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Comments.
+     */
+    cursor?: CommentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Comments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Comments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Comments.
+     */
+    distinct?: CommentScalarFieldEnum | CommentScalarFieldEnum[]
+  }
+
+  /**
+   * Comment findFirstOrThrow
+   */
+  export type CommentFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Comment
+     */
+    select?: CommentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Comment
+     */
+    omit?: CommentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommentInclude<ExtArgs> | null
+    /**
+     * Filter, which Comment to fetch.
+     */
+    where?: CommentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Comments to fetch.
+     */
+    orderBy?: CommentOrderByWithRelationInput | CommentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Comments.
+     */
+    cursor?: CommentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Comments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Comments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Comments.
+     */
+    distinct?: CommentScalarFieldEnum | CommentScalarFieldEnum[]
+  }
+
+  /**
+   * Comment findMany
+   */
+  export type CommentFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Comment
+     */
+    select?: CommentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Comment
+     */
+    omit?: CommentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommentInclude<ExtArgs> | null
+    /**
+     * Filter, which Comments to fetch.
+     */
+    where?: CommentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Comments to fetch.
+     */
+    orderBy?: CommentOrderByWithRelationInput | CommentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Comments.
+     */
+    cursor?: CommentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Comments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Comments.
+     */
+    skip?: number
+    distinct?: CommentScalarFieldEnum | CommentScalarFieldEnum[]
+  }
+
+  /**
+   * Comment create
+   */
+  export type CommentCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Comment
+     */
+    select?: CommentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Comment
+     */
+    omit?: CommentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommentInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Comment.
+     */
+    data: XOR<CommentCreateInput, CommentUncheckedCreateInput>
+  }
+
+  /**
+   * Comment createMany
+   */
+  export type CommentCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Comments.
+     */
+    data: CommentCreateManyInput | CommentCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Comment createManyAndReturn
+   */
+  export type CommentCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Comment
+     */
+    select?: CommentSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Comment
+     */
+    omit?: CommentOmit<ExtArgs> | null
+    /**
+     * The data used to create many Comments.
+     */
+    data: CommentCreateManyInput | CommentCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommentIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Comment update
+   */
+  export type CommentUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Comment
+     */
+    select?: CommentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Comment
+     */
+    omit?: CommentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommentInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Comment.
+     */
+    data: XOR<CommentUpdateInput, CommentUncheckedUpdateInput>
+    /**
+     * Choose, which Comment to update.
+     */
+    where: CommentWhereUniqueInput
+  }
+
+  /**
+   * Comment updateMany
+   */
+  export type CommentUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Comments.
+     */
+    data: XOR<CommentUpdateManyMutationInput, CommentUncheckedUpdateManyInput>
+    /**
+     * Filter which Comments to update
+     */
+    where?: CommentWhereInput
+  }
+
+  /**
+   * Comment upsert
+   */
+  export type CommentUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Comment
+     */
+    select?: CommentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Comment
+     */
+    omit?: CommentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommentInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Comment to update in case it exists.
+     */
+    where: CommentWhereUniqueInput
+    /**
+     * In case the Comment found by the `where` argument doesn't exist, create a new Comment with this data.
+     */
+    create: XOR<CommentCreateInput, CommentUncheckedCreateInput>
+    /**
+     * In case the Comment was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<CommentUpdateInput, CommentUncheckedUpdateInput>
+  }
+
+  /**
+   * Comment delete
+   */
+  export type CommentDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Comment
+     */
+    select?: CommentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Comment
+     */
+    omit?: CommentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommentInclude<ExtArgs> | null
+    /**
+     * Filter which Comment to delete.
+     */
+    where: CommentWhereUniqueInput
+  }
+
+  /**
+   * Comment deleteMany
+   */
+  export type CommentDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Comments to delete
+     */
+    where?: CommentWhereInput
+  }
+
+  /**
+   * Comment without action
+   */
+  export type CommentDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Comment
+     */
+    select?: CommentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Comment
+     */
+    omit?: CommentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommentInclude<ExtArgs> | null
   }
 
 
@@ -11870,6 +15951,24 @@ export namespace Prisma {
   export type TotpScalarFieldEnum = (typeof TotpScalarFieldEnum)[keyof typeof TotpScalarFieldEnum]
 
 
+  export const PasskeyScalarFieldEnum: {
+    id: 'id',
+    deviceName: 'deviceName',
+    credentialId: 'credentialId',
+    publicKey: 'publicKey',
+    counter: 'counter',
+    transports: 'transports',
+    lastUsedAt: 'lastUsedAt',
+    ip: 'ip',
+    userAgent: 'userAgent',
+    mfaId: 'mfaId',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type PasskeyScalarFieldEnum = (typeof PasskeyScalarFieldEnum)[keyof typeof PasskeyScalarFieldEnum]
+
+
   export const RestrictionScalarFieldEnum: {
     id: 'id',
     reason: 'reason',
@@ -11886,7 +15985,8 @@ export namespace Prisma {
     id: 'id',
     title: 'title',
     slug: 'slug',
-    description: 'description',
+    shortDescription: 'shortDescription',
+    fullDescription: 'fullDescription',
     thumbnail: 'thumbnail',
     youtubeUrl: 'youtubeUrl',
     attachment: 'attachment',
@@ -11927,6 +16027,34 @@ export namespace Prisma {
   export type UserProgressScalarFieldEnum = (typeof UserProgressScalarFieldEnum)[keyof typeof UserProgressScalarFieldEnum]
 
 
+  export const ArticleScalarFieldEnum: {
+    id: 'id',
+    title: 'title',
+    slug: 'slug',
+    thumbnail: 'thumbnail',
+    content: 'content',
+    isPublished: 'isPublished',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type ArticleScalarFieldEnum = (typeof ArticleScalarFieldEnum)[keyof typeof ArticleScalarFieldEnum]
+
+
+  export const CommentScalarFieldEnum: {
+    id: 'id',
+    content: 'content',
+    edited: 'edited',
+    deleted: 'deleted',
+    authorId: 'authorId',
+    articleId: 'articleId',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type CommentScalarFieldEnum = (typeof CommentScalarFieldEnum)[keyof typeof CommentScalarFieldEnum]
+
+
   export const SortOrder: {
     asc: 'asc',
     desc: 'desc'
@@ -11952,7 +16080,7 @@ export namespace Prisma {
 
 
   /**
-   * Field references 
+   * Field references
    */
 
 
@@ -12124,6 +16252,7 @@ export namespace Prisma {
     passwordReset?: XOR<PasswordResetNullableRelationFilter, PasswordResetWhereInput> | null
     externalAccounts?: ExternalAccountListRelationFilter
     userProgress?: UserProgressListRelationFilter
+    comments?: CommentListRelationFilter
     mfa?: XOR<MultiFactorAuthenticationNullableRelationFilter, MultiFactorAuthenticationWhereInput> | null
     restrictions?: RestrictionListRelationFilter
   }
@@ -12143,6 +16272,7 @@ export namespace Prisma {
     passwordReset?: PasswordResetOrderByWithRelationInput
     externalAccounts?: ExternalAccountOrderByRelationAggregateInput
     userProgress?: UserProgressOrderByRelationAggregateInput
+    comments?: CommentOrderByRelationAggregateInput
     mfa?: MultiFactorAuthenticationOrderByWithRelationInput
     restrictions?: RestrictionOrderByRelationAggregateInput
   }
@@ -12165,6 +16295,7 @@ export namespace Prisma {
     passwordReset?: XOR<PasswordResetNullableRelationFilter, PasswordResetWhereInput> | null
     externalAccounts?: ExternalAccountListRelationFilter
     userProgress?: UserProgressListRelationFilter
+    comments?: CommentListRelationFilter
     mfa?: XOR<MultiFactorAuthenticationNullableRelationFilter, MultiFactorAuthenticationWhereInput> | null
     restrictions?: RestrictionListRelationFilter
   }, "id" | "email" | "username">
@@ -12416,6 +16547,7 @@ export namespace Prisma {
     userId?: StringFilter<"MultiFactorAuthentication"> | string
     createdAt?: DateTimeFilter<"MultiFactorAuthentication"> | Date | string
     updatedAt?: DateTimeFilter<"MultiFactorAuthentication"> | Date | string
+    passkeys?: PasskeyListRelationFilter
     totp?: XOR<TotpNullableRelationFilter, TotpWhereInput> | null
     user?: XOR<UserRelationFilter, UserWhereInput>
   }
@@ -12427,6 +16559,7 @@ export namespace Prisma {
     userId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    passkeys?: PasskeyOrderByRelationAggregateInput
     totp?: TotpOrderByWithRelationInput
     user?: UserOrderByWithRelationInput
   }
@@ -12441,6 +16574,7 @@ export namespace Prisma {
     recoveryCodes?: StringNullableListFilter<"MultiFactorAuthentication">
     createdAt?: DateTimeFilter<"MultiFactorAuthentication"> | Date | string
     updatedAt?: DateTimeFilter<"MultiFactorAuthentication"> | Date | string
+    passkeys?: PasskeyListRelationFilter
     totp?: XOR<TotpNullableRelationFilter, TotpWhereInput> | null
     user?: XOR<UserRelationFilter, UserWhereInput>
   }, "id" | "totpId" | "userId">
@@ -12524,6 +16658,98 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"Totp"> | Date | string
   }
 
+  export type PasskeyWhereInput = {
+    AND?: PasskeyWhereInput | PasskeyWhereInput[]
+    OR?: PasskeyWhereInput[]
+    NOT?: PasskeyWhereInput | PasskeyWhereInput[]
+    id?: StringFilter<"Passkey"> | string
+    deviceName?: StringFilter<"Passkey"> | string
+    credentialId?: StringFilter<"Passkey"> | string
+    publicKey?: StringFilter<"Passkey"> | string
+    counter?: IntFilter<"Passkey"> | number
+    transports?: StringNullableListFilter<"Passkey">
+    lastUsedAt?: DateTimeNullableFilter<"Passkey"> | Date | string | null
+    ip?: StringFilter<"Passkey"> | string
+    userAgent?: StringFilter<"Passkey"> | string
+    mfaId?: StringFilter<"Passkey"> | string
+    createdAt?: DateTimeFilter<"Passkey"> | Date | string
+    updatedAt?: DateTimeFilter<"Passkey"> | Date | string
+    mfa?: XOR<MultiFactorAuthenticationRelationFilter, MultiFactorAuthenticationWhereInput>
+  }
+
+  export type PasskeyOrderByWithRelationInput = {
+    id?: SortOrder
+    deviceName?: SortOrder
+    credentialId?: SortOrder
+    publicKey?: SortOrder
+    counter?: SortOrder
+    transports?: SortOrder
+    lastUsedAt?: SortOrderInput | SortOrder
+    ip?: SortOrder
+    userAgent?: SortOrder
+    mfaId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    mfa?: MultiFactorAuthenticationOrderByWithRelationInput
+  }
+
+  export type PasskeyWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    credentialId?: string
+    AND?: PasskeyWhereInput | PasskeyWhereInput[]
+    OR?: PasskeyWhereInput[]
+    NOT?: PasskeyWhereInput | PasskeyWhereInput[]
+    deviceName?: StringFilter<"Passkey"> | string
+    publicKey?: StringFilter<"Passkey"> | string
+    counter?: IntFilter<"Passkey"> | number
+    transports?: StringNullableListFilter<"Passkey">
+    lastUsedAt?: DateTimeNullableFilter<"Passkey"> | Date | string | null
+    ip?: StringFilter<"Passkey"> | string
+    userAgent?: StringFilter<"Passkey"> | string
+    mfaId?: StringFilter<"Passkey"> | string
+    createdAt?: DateTimeFilter<"Passkey"> | Date | string
+    updatedAt?: DateTimeFilter<"Passkey"> | Date | string
+    mfa?: XOR<MultiFactorAuthenticationRelationFilter, MultiFactorAuthenticationWhereInput>
+  }, "id" | "credentialId">
+
+  export type PasskeyOrderByWithAggregationInput = {
+    id?: SortOrder
+    deviceName?: SortOrder
+    credentialId?: SortOrder
+    publicKey?: SortOrder
+    counter?: SortOrder
+    transports?: SortOrder
+    lastUsedAt?: SortOrderInput | SortOrder
+    ip?: SortOrder
+    userAgent?: SortOrder
+    mfaId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: PasskeyCountOrderByAggregateInput
+    _avg?: PasskeyAvgOrderByAggregateInput
+    _max?: PasskeyMaxOrderByAggregateInput
+    _min?: PasskeyMinOrderByAggregateInput
+    _sum?: PasskeySumOrderByAggregateInput
+  }
+
+  export type PasskeyScalarWhereWithAggregatesInput = {
+    AND?: PasskeyScalarWhereWithAggregatesInput | PasskeyScalarWhereWithAggregatesInput[]
+    OR?: PasskeyScalarWhereWithAggregatesInput[]
+    NOT?: PasskeyScalarWhereWithAggregatesInput | PasskeyScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Passkey"> | string
+    deviceName?: StringWithAggregatesFilter<"Passkey"> | string
+    credentialId?: StringWithAggregatesFilter<"Passkey"> | string
+    publicKey?: StringWithAggregatesFilter<"Passkey"> | string
+    counter?: IntWithAggregatesFilter<"Passkey"> | number
+    transports?: StringNullableListFilter<"Passkey">
+    lastUsedAt?: DateTimeNullableWithAggregatesFilter<"Passkey"> | Date | string | null
+    ip?: StringWithAggregatesFilter<"Passkey"> | string
+    userAgent?: StringWithAggregatesFilter<"Passkey"> | string
+    mfaId?: StringWithAggregatesFilter<"Passkey"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"Passkey"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Passkey"> | Date | string
+  }
+
   export type RestrictionWhereInput = {
     AND?: RestrictionWhereInput | RestrictionWhereInput[]
     OR?: RestrictionWhereInput[]
@@ -12591,7 +16817,8 @@ export namespace Prisma {
     id?: StringFilter<"Course"> | string
     title?: StringFilter<"Course"> | string
     slug?: StringFilter<"Course"> | string
-    description?: StringNullableFilter<"Course"> | string | null
+    shortDescription?: StringNullableFilter<"Course"> | string | null
+    fullDescription?: StringNullableFilter<"Course"> | string | null
     thumbnail?: StringNullableFilter<"Course"> | string | null
     youtubeUrl?: StringNullableFilter<"Course"> | string | null
     attachment?: StringNullableFilter<"Course"> | string | null
@@ -12606,7 +16833,8 @@ export namespace Prisma {
     id?: SortOrder
     title?: SortOrder
     slug?: SortOrder
-    description?: SortOrderInput | SortOrder
+    shortDescription?: SortOrderInput | SortOrder
+    fullDescription?: SortOrderInput | SortOrder
     thumbnail?: SortOrderInput | SortOrder
     youtubeUrl?: SortOrderInput | SortOrder
     attachment?: SortOrderInput | SortOrder
@@ -12624,7 +16852,8 @@ export namespace Prisma {
     OR?: CourseWhereInput[]
     NOT?: CourseWhereInput | CourseWhereInput[]
     title?: StringFilter<"Course"> | string
-    description?: StringNullableFilter<"Course"> | string | null
+    shortDescription?: StringNullableFilter<"Course"> | string | null
+    fullDescription?: StringNullableFilter<"Course"> | string | null
     thumbnail?: StringNullableFilter<"Course"> | string | null
     youtubeUrl?: StringNullableFilter<"Course"> | string | null
     attachment?: StringNullableFilter<"Course"> | string | null
@@ -12639,7 +16868,8 @@ export namespace Prisma {
     id?: SortOrder
     title?: SortOrder
     slug?: SortOrder
-    description?: SortOrderInput | SortOrder
+    shortDescription?: SortOrderInput | SortOrder
+    fullDescription?: SortOrderInput | SortOrder
     thumbnail?: SortOrderInput | SortOrder
     youtubeUrl?: SortOrderInput | SortOrder
     attachment?: SortOrderInput | SortOrder
@@ -12661,7 +16891,8 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"Course"> | string
     title?: StringWithAggregatesFilter<"Course"> | string
     slug?: StringWithAggregatesFilter<"Course"> | string
-    description?: StringNullableWithAggregatesFilter<"Course"> | string | null
+    shortDescription?: StringNullableWithAggregatesFilter<"Course"> | string | null
+    fullDescription?: StringNullableWithAggregatesFilter<"Course"> | string | null
     thumbnail?: StringNullableWithAggregatesFilter<"Course"> | string | null
     youtubeUrl?: StringNullableWithAggregatesFilter<"Course"> | string | null
     attachment?: StringNullableWithAggregatesFilter<"Course"> | string | null
@@ -12820,6 +17051,149 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"UserProgress"> | Date | string
   }
 
+  export type ArticleWhereInput = {
+    AND?: ArticleWhereInput | ArticleWhereInput[]
+    OR?: ArticleWhereInput[]
+    NOT?: ArticleWhereInput | ArticleWhereInput[]
+    id?: StringFilter<"Article"> | string
+    title?: StringFilter<"Article"> | string
+    slug?: StringFilter<"Article"> | string
+    thumbnail?: StringNullableFilter<"Article"> | string | null
+    content?: StringFilter<"Article"> | string
+    isPublished?: BoolFilter<"Article"> | boolean
+    createdAt?: DateTimeFilter<"Article"> | Date | string
+    updatedAt?: DateTimeFilter<"Article"> | Date | string
+    comments?: CommentListRelationFilter
+  }
+
+  export type ArticleOrderByWithRelationInput = {
+    id?: SortOrder
+    title?: SortOrder
+    slug?: SortOrder
+    thumbnail?: SortOrderInput | SortOrder
+    content?: SortOrder
+    isPublished?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    comments?: CommentOrderByRelationAggregateInput
+  }
+
+  export type ArticleWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    slug?: string
+    AND?: ArticleWhereInput | ArticleWhereInput[]
+    OR?: ArticleWhereInput[]
+    NOT?: ArticleWhereInput | ArticleWhereInput[]
+    title?: StringFilter<"Article"> | string
+    thumbnail?: StringNullableFilter<"Article"> | string | null
+    content?: StringFilter<"Article"> | string
+    isPublished?: BoolFilter<"Article"> | boolean
+    createdAt?: DateTimeFilter<"Article"> | Date | string
+    updatedAt?: DateTimeFilter<"Article"> | Date | string
+    comments?: CommentListRelationFilter
+  }, "id" | "slug">
+
+  export type ArticleOrderByWithAggregationInput = {
+    id?: SortOrder
+    title?: SortOrder
+    slug?: SortOrder
+    thumbnail?: SortOrderInput | SortOrder
+    content?: SortOrder
+    isPublished?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: ArticleCountOrderByAggregateInput
+    _max?: ArticleMaxOrderByAggregateInput
+    _min?: ArticleMinOrderByAggregateInput
+  }
+
+  export type ArticleScalarWhereWithAggregatesInput = {
+    AND?: ArticleScalarWhereWithAggregatesInput | ArticleScalarWhereWithAggregatesInput[]
+    OR?: ArticleScalarWhereWithAggregatesInput[]
+    NOT?: ArticleScalarWhereWithAggregatesInput | ArticleScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Article"> | string
+    title?: StringWithAggregatesFilter<"Article"> | string
+    slug?: StringWithAggregatesFilter<"Article"> | string
+    thumbnail?: StringNullableWithAggregatesFilter<"Article"> | string | null
+    content?: StringWithAggregatesFilter<"Article"> | string
+    isPublished?: BoolWithAggregatesFilter<"Article"> | boolean
+    createdAt?: DateTimeWithAggregatesFilter<"Article"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Article"> | Date | string
+  }
+
+  export type CommentWhereInput = {
+    AND?: CommentWhereInput | CommentWhereInput[]
+    OR?: CommentWhereInput[]
+    NOT?: CommentWhereInput | CommentWhereInput[]
+    id?: StringFilter<"Comment"> | string
+    content?: StringFilter<"Comment"> | string
+    edited?: BoolFilter<"Comment"> | boolean
+    deleted?: BoolFilter<"Comment"> | boolean
+    authorId?: StringFilter<"Comment"> | string
+    articleId?: StringFilter<"Comment"> | string
+    createdAt?: DateTimeFilter<"Comment"> | Date | string
+    updatedAt?: DateTimeFilter<"Comment"> | Date | string
+    author?: XOR<UserRelationFilter, UserWhereInput>
+    article?: XOR<ArticleRelationFilter, ArticleWhereInput>
+  }
+
+  export type CommentOrderByWithRelationInput = {
+    id?: SortOrder
+    content?: SortOrder
+    edited?: SortOrder
+    deleted?: SortOrder
+    authorId?: SortOrder
+    articleId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    author?: UserOrderByWithRelationInput
+    article?: ArticleOrderByWithRelationInput
+  }
+
+  export type CommentWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: CommentWhereInput | CommentWhereInput[]
+    OR?: CommentWhereInput[]
+    NOT?: CommentWhereInput | CommentWhereInput[]
+    content?: StringFilter<"Comment"> | string
+    edited?: BoolFilter<"Comment"> | boolean
+    deleted?: BoolFilter<"Comment"> | boolean
+    authorId?: StringFilter<"Comment"> | string
+    articleId?: StringFilter<"Comment"> | string
+    createdAt?: DateTimeFilter<"Comment"> | Date | string
+    updatedAt?: DateTimeFilter<"Comment"> | Date | string
+    author?: XOR<UserRelationFilter, UserWhereInput>
+    article?: XOR<ArticleRelationFilter, ArticleWhereInput>
+  }, "id">
+
+  export type CommentOrderByWithAggregationInput = {
+    id?: SortOrder
+    content?: SortOrder
+    edited?: SortOrder
+    deleted?: SortOrder
+    authorId?: SortOrder
+    articleId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: CommentCountOrderByAggregateInput
+    _max?: CommentMaxOrderByAggregateInput
+    _min?: CommentMinOrderByAggregateInput
+  }
+
+  export type CommentScalarWhereWithAggregatesInput = {
+    AND?: CommentScalarWhereWithAggregatesInput | CommentScalarWhereWithAggregatesInput[]
+    OR?: CommentScalarWhereWithAggregatesInput[]
+    NOT?: CommentScalarWhereWithAggregatesInput | CommentScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Comment"> | string
+    content?: StringWithAggregatesFilter<"Comment"> | string
+    edited?: BoolWithAggregatesFilter<"Comment"> | boolean
+    deleted?: BoolWithAggregatesFilter<"Comment"> | boolean
+    authorId?: StringWithAggregatesFilter<"Comment"> | string
+    articleId?: StringWithAggregatesFilter<"Comment"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"Comment"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Comment"> | Date | string
+  }
+
   export type UserCreateInput = {
     id?: string
     email: string
@@ -12835,6 +17209,7 @@ export namespace Prisma {
     passwordReset?: PasswordResetCreateNestedOneWithoutUserInput
     externalAccounts?: ExternalAccountCreateNestedManyWithoutUserInput
     userProgress?: UserProgressCreateNestedManyWithoutUserInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
     mfa?: MultiFactorAuthenticationCreateNestedOneWithoutUserInput
     restrictions?: RestrictionCreateNestedManyWithoutUserInput
   }
@@ -12854,6 +17229,7 @@ export namespace Prisma {
     passwordReset?: PasswordResetUncheckedCreateNestedOneWithoutUserInput
     externalAccounts?: ExternalAccountUncheckedCreateNestedManyWithoutUserInput
     userProgress?: UserProgressUncheckedCreateNestedManyWithoutUserInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
     mfa?: MultiFactorAuthenticationUncheckedCreateNestedOneWithoutUserInput
     restrictions?: RestrictionUncheckedCreateNestedManyWithoutUserInput
   }
@@ -12873,6 +17249,7 @@ export namespace Prisma {
     passwordReset?: PasswordResetUpdateOneWithoutUserNestedInput
     externalAccounts?: ExternalAccountUpdateManyWithoutUserNestedInput
     userProgress?: UserProgressUpdateManyWithoutUserNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
     mfa?: MultiFactorAuthenticationUpdateOneWithoutUserNestedInput
     restrictions?: RestrictionUpdateManyWithoutUserNestedInput
   }
@@ -12892,6 +17269,7 @@ export namespace Prisma {
     passwordReset?: PasswordResetUncheckedUpdateOneWithoutUserNestedInput
     externalAccounts?: ExternalAccountUncheckedUpdateManyWithoutUserNestedInput
     userProgress?: UserProgressUncheckedUpdateManyWithoutUserNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
     mfa?: MultiFactorAuthenticationUncheckedUpdateOneWithoutUserNestedInput
     restrictions?: RestrictionUncheckedUpdateManyWithoutUserNestedInput
   }
@@ -13154,6 +17532,7 @@ export namespace Prisma {
     recoveryCodes?: MultiFactorAuthenticationCreaterecoveryCodesInput | string[]
     createdAt?: Date | string
     updatedAt?: Date | string
+    passkeys?: PasskeyCreateNestedManyWithoutMfaInput
     totp?: TotpCreateNestedOneWithoutMfaInput
     user: UserCreateNestedOneWithoutMfaInput
   }
@@ -13165,6 +17544,7 @@ export namespace Prisma {
     userId: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    passkeys?: PasskeyUncheckedCreateNestedManyWithoutMfaInput
   }
 
   export type MultiFactorAuthenticationUpdateInput = {
@@ -13172,6 +17552,7 @@ export namespace Prisma {
     recoveryCodes?: MultiFactorAuthenticationUpdaterecoveryCodesInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    passkeys?: PasskeyUpdateManyWithoutMfaNestedInput
     totp?: TotpUpdateOneWithoutMfaNestedInput
     user?: UserUpdateOneRequiredWithoutMfaNestedInput
   }
@@ -13183,6 +17564,7 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    passkeys?: PasskeyUncheckedUpdateManyWithoutMfaNestedInput
   }
 
   export type MultiFactorAuthenticationCreateManyInput = {
@@ -13270,6 +17652,110 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type PasskeyCreateInput = {
+    id?: string
+    deviceName: string
+    credentialId: string
+    publicKey: string
+    counter?: number
+    transports?: PasskeyCreatetransportsInput | string[]
+    lastUsedAt?: Date | string | null
+    ip: string
+    userAgent: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    mfa: MultiFactorAuthenticationCreateNestedOneWithoutPasskeysInput
+  }
+
+  export type PasskeyUncheckedCreateInput = {
+    id?: string
+    deviceName: string
+    credentialId: string
+    publicKey: string
+    counter?: number
+    transports?: PasskeyCreatetransportsInput | string[]
+    lastUsedAt?: Date | string | null
+    ip: string
+    userAgent: string
+    mfaId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PasskeyUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    deviceName?: StringFieldUpdateOperationsInput | string
+    credentialId?: StringFieldUpdateOperationsInput | string
+    publicKey?: StringFieldUpdateOperationsInput | string
+    counter?: IntFieldUpdateOperationsInput | number
+    transports?: PasskeyUpdatetransportsInput | string[]
+    lastUsedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ip?: StringFieldUpdateOperationsInput | string
+    userAgent?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    mfa?: MultiFactorAuthenticationUpdateOneRequiredWithoutPasskeysNestedInput
+  }
+
+  export type PasskeyUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    deviceName?: StringFieldUpdateOperationsInput | string
+    credentialId?: StringFieldUpdateOperationsInput | string
+    publicKey?: StringFieldUpdateOperationsInput | string
+    counter?: IntFieldUpdateOperationsInput | number
+    transports?: PasskeyUpdatetransportsInput | string[]
+    lastUsedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ip?: StringFieldUpdateOperationsInput | string
+    userAgent?: StringFieldUpdateOperationsInput | string
+    mfaId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PasskeyCreateManyInput = {
+    id?: string
+    deviceName: string
+    credentialId: string
+    publicKey: string
+    counter?: number
+    transports?: PasskeyCreatetransportsInput | string[]
+    lastUsedAt?: Date | string | null
+    ip: string
+    userAgent: string
+    mfaId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PasskeyUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    deviceName?: StringFieldUpdateOperationsInput | string
+    credentialId?: StringFieldUpdateOperationsInput | string
+    publicKey?: StringFieldUpdateOperationsInput | string
+    counter?: IntFieldUpdateOperationsInput | number
+    transports?: PasskeyUpdatetransportsInput | string[]
+    lastUsedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ip?: StringFieldUpdateOperationsInput | string
+    userAgent?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PasskeyUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    deviceName?: StringFieldUpdateOperationsInput | string
+    credentialId?: StringFieldUpdateOperationsInput | string
+    publicKey?: StringFieldUpdateOperationsInput | string
+    counter?: IntFieldUpdateOperationsInput | number
+    transports?: PasskeyUpdatetransportsInput | string[]
+    lastUsedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ip?: StringFieldUpdateOperationsInput | string
+    userAgent?: StringFieldUpdateOperationsInput | string
+    mfaId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type RestrictionCreateInput = {
     id?: string
     reason: $Enums.RestrictionReason
@@ -13336,7 +17822,8 @@ export namespace Prisma {
     id?: string
     title: string
     slug: string
-    description?: string | null
+    shortDescription?: string | null
+    fullDescription?: string | null
     thumbnail?: string | null
     youtubeUrl?: string | null
     attachment?: string | null
@@ -13351,7 +17838,8 @@ export namespace Prisma {
     id?: string
     title: string
     slug: string
-    description?: string | null
+    shortDescription?: string | null
+    fullDescription?: string | null
     thumbnail?: string | null
     youtubeUrl?: string | null
     attachment?: string | null
@@ -13366,7 +17854,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
+    shortDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    fullDescription?: NullableStringFieldUpdateOperationsInput | string | null
     thumbnail?: NullableStringFieldUpdateOperationsInput | string | null
     youtubeUrl?: NullableStringFieldUpdateOperationsInput | string | null
     attachment?: NullableStringFieldUpdateOperationsInput | string | null
@@ -13381,7 +17870,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
+    shortDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    fullDescription?: NullableStringFieldUpdateOperationsInput | string | null
     thumbnail?: NullableStringFieldUpdateOperationsInput | string | null
     youtubeUrl?: NullableStringFieldUpdateOperationsInput | string | null
     attachment?: NullableStringFieldUpdateOperationsInput | string | null
@@ -13396,7 +17886,8 @@ export namespace Prisma {
     id?: string
     title: string
     slug: string
-    description?: string | null
+    shortDescription?: string | null
+    fullDescription?: string | null
     thumbnail?: string | null
     youtubeUrl?: string | null
     attachment?: string | null
@@ -13410,7 +17901,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
+    shortDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    fullDescription?: NullableStringFieldUpdateOperationsInput | string | null
     thumbnail?: NullableStringFieldUpdateOperationsInput | string | null
     youtubeUrl?: NullableStringFieldUpdateOperationsInput | string | null
     attachment?: NullableStringFieldUpdateOperationsInput | string | null
@@ -13424,7 +17916,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
+    shortDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    fullDescription?: NullableStringFieldUpdateOperationsInput | string | null
     thumbnail?: NullableStringFieldUpdateOperationsInput | string | null
     youtubeUrl?: NullableStringFieldUpdateOperationsInput | string | null
     attachment?: NullableStringFieldUpdateOperationsInput | string | null
@@ -13589,6 +18082,162 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type ArticleCreateInput = {
+    id?: string
+    title: string
+    slug: string
+    thumbnail?: string | null
+    content: string
+    isPublished?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    comments?: CommentCreateNestedManyWithoutArticleInput
+  }
+
+  export type ArticleUncheckedCreateInput = {
+    id?: string
+    title: string
+    slug: string
+    thumbnail?: string | null
+    content: string
+    isPublished?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    comments?: CommentUncheckedCreateNestedManyWithoutArticleInput
+  }
+
+  export type ArticleUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    thumbnail?: NullableStringFieldUpdateOperationsInput | string | null
+    content?: StringFieldUpdateOperationsInput | string
+    isPublished?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    comments?: CommentUpdateManyWithoutArticleNestedInput
+  }
+
+  export type ArticleUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    thumbnail?: NullableStringFieldUpdateOperationsInput | string | null
+    content?: StringFieldUpdateOperationsInput | string
+    isPublished?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    comments?: CommentUncheckedUpdateManyWithoutArticleNestedInput
+  }
+
+  export type ArticleCreateManyInput = {
+    id?: string
+    title: string
+    slug: string
+    thumbnail?: string | null
+    content: string
+    isPublished?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ArticleUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    thumbnail?: NullableStringFieldUpdateOperationsInput | string | null
+    content?: StringFieldUpdateOperationsInput | string
+    isPublished?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ArticleUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    thumbnail?: NullableStringFieldUpdateOperationsInput | string | null
+    content?: StringFieldUpdateOperationsInput | string
+    isPublished?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CommentCreateInput = {
+    id?: string
+    content: string
+    edited?: boolean
+    deleted?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    author: UserCreateNestedOneWithoutCommentsInput
+    article: ArticleCreateNestedOneWithoutCommentsInput
+  }
+
+  export type CommentUncheckedCreateInput = {
+    id?: string
+    content: string
+    edited?: boolean
+    deleted?: boolean
+    authorId: string
+    articleId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CommentUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    edited?: BoolFieldUpdateOperationsInput | boolean
+    deleted?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    author?: UserUpdateOneRequiredWithoutCommentsNestedInput
+    article?: ArticleUpdateOneRequiredWithoutCommentsNestedInput
+  }
+
+  export type CommentUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    edited?: BoolFieldUpdateOperationsInput | boolean
+    deleted?: BoolFieldUpdateOperationsInput | boolean
+    authorId?: StringFieldUpdateOperationsInput | string
+    articleId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CommentCreateManyInput = {
+    id?: string
+    content: string
+    edited?: boolean
+    deleted?: boolean
+    authorId: string
+    articleId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CommentUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    edited?: BoolFieldUpdateOperationsInput | boolean
+    deleted?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CommentUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    edited?: BoolFieldUpdateOperationsInput | boolean
+    deleted?: BoolFieldUpdateOperationsInput | boolean
+    authorId?: StringFieldUpdateOperationsInput | string
+    articleId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -13670,6 +18319,12 @@ export namespace Prisma {
     none?: UserProgressWhereInput
   }
 
+  export type CommentListRelationFilter = {
+    every?: CommentWhereInput
+    some?: CommentWhereInput
+    none?: CommentWhereInput
+  }
+
   export type MultiFactorAuthenticationNullableRelationFilter = {
     is?: MultiFactorAuthenticationWhereInput | null
     isNot?: MultiFactorAuthenticationWhereInput | null
@@ -13691,6 +18346,10 @@ export namespace Prisma {
   }
 
   export type UserProgressOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type CommentOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -14026,9 +18685,19 @@ export namespace Prisma {
     isEmpty?: boolean
   }
 
+  export type PasskeyListRelationFilter = {
+    every?: PasskeyWhereInput
+    some?: PasskeyWhereInput
+    none?: PasskeyWhereInput
+  }
+
   export type TotpNullableRelationFilter = {
     is?: TotpWhereInput | null
     isNot?: TotpWhereInput | null
+  }
+
+  export type PasskeyOrderByRelationAggregateInput = {
+    _count?: SortOrder
   }
 
   export type MultiFactorAuthenticationCountOrderByAggregateInput = {
@@ -14095,6 +18764,62 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumTotpStatusFilter<$PrismaModel>
     _max?: NestedEnumTotpStatusFilter<$PrismaModel>
+  }
+
+  export type MultiFactorAuthenticationRelationFilter = {
+    is?: MultiFactorAuthenticationWhereInput
+    isNot?: MultiFactorAuthenticationWhereInput
+  }
+
+  export type PasskeyCountOrderByAggregateInput = {
+    id?: SortOrder
+    deviceName?: SortOrder
+    credentialId?: SortOrder
+    publicKey?: SortOrder
+    counter?: SortOrder
+    transports?: SortOrder
+    lastUsedAt?: SortOrder
+    ip?: SortOrder
+    userAgent?: SortOrder
+    mfaId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type PasskeyAvgOrderByAggregateInput = {
+    counter?: SortOrder
+  }
+
+  export type PasskeyMaxOrderByAggregateInput = {
+    id?: SortOrder
+    deviceName?: SortOrder
+    credentialId?: SortOrder
+    publicKey?: SortOrder
+    counter?: SortOrder
+    lastUsedAt?: SortOrder
+    ip?: SortOrder
+    userAgent?: SortOrder
+    mfaId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type PasskeyMinOrderByAggregateInput = {
+    id?: SortOrder
+    deviceName?: SortOrder
+    credentialId?: SortOrder
+    publicKey?: SortOrder
+    counter?: SortOrder
+    lastUsedAt?: SortOrder
+    ip?: SortOrder
+    userAgent?: SortOrder
+    mfaId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type PasskeySumOrderByAggregateInput = {
+    counter?: SortOrder
   }
 
   export type EnumRestrictionReasonFilter<$PrismaModel = never> = {
@@ -14177,7 +18902,8 @@ export namespace Prisma {
     id?: SortOrder
     title?: SortOrder
     slug?: SortOrder
-    description?: SortOrder
+    shortDescription?: SortOrder
+    fullDescription?: SortOrder
     thumbnail?: SortOrder
     youtubeUrl?: SortOrder
     attachment?: SortOrder
@@ -14195,7 +18921,8 @@ export namespace Prisma {
     id?: SortOrder
     title?: SortOrder
     slug?: SortOrder
-    description?: SortOrder
+    shortDescription?: SortOrder
+    fullDescription?: SortOrder
     thumbnail?: SortOrder
     youtubeUrl?: SortOrder
     attachment?: SortOrder
@@ -14209,7 +18936,8 @@ export namespace Prisma {
     id?: SortOrder
     title?: SortOrder
     slug?: SortOrder
-    description?: SortOrder
+    shortDescription?: SortOrder
+    fullDescription?: SortOrder
     thumbnail?: SortOrder
     youtubeUrl?: SortOrder
     attachment?: SortOrder
@@ -14320,6 +19048,77 @@ export namespace Prisma {
     updatedAt?: SortOrder
   }
 
+  export type ArticleCountOrderByAggregateInput = {
+    id?: SortOrder
+    title?: SortOrder
+    slug?: SortOrder
+    thumbnail?: SortOrder
+    content?: SortOrder
+    isPublished?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ArticleMaxOrderByAggregateInput = {
+    id?: SortOrder
+    title?: SortOrder
+    slug?: SortOrder
+    thumbnail?: SortOrder
+    content?: SortOrder
+    isPublished?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ArticleMinOrderByAggregateInput = {
+    id?: SortOrder
+    title?: SortOrder
+    slug?: SortOrder
+    thumbnail?: SortOrder
+    content?: SortOrder
+    isPublished?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ArticleRelationFilter = {
+    is?: ArticleWhereInput
+    isNot?: ArticleWhereInput
+  }
+
+  export type CommentCountOrderByAggregateInput = {
+    id?: SortOrder
+    content?: SortOrder
+    edited?: SortOrder
+    deleted?: SortOrder
+    authorId?: SortOrder
+    articleId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CommentMaxOrderByAggregateInput = {
+    id?: SortOrder
+    content?: SortOrder
+    edited?: SortOrder
+    deleted?: SortOrder
+    authorId?: SortOrder
+    articleId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CommentMinOrderByAggregateInput = {
+    id?: SortOrder
+    content?: SortOrder
+    edited?: SortOrder
+    deleted?: SortOrder
+    authorId?: SortOrder
+    articleId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
   export type EmailVerificationCreateNestedOneWithoutUserInput = {
     create?: XOR<EmailVerificationCreateWithoutUserInput, EmailVerificationUncheckedCreateWithoutUserInput>
     connectOrCreate?: EmailVerificationCreateOrConnectWithoutUserInput
@@ -14344,6 +19143,13 @@ export namespace Prisma {
     connectOrCreate?: UserProgressCreateOrConnectWithoutUserInput | UserProgressCreateOrConnectWithoutUserInput[]
     createMany?: UserProgressCreateManyUserInputEnvelope
     connect?: UserProgressWhereUniqueInput | UserProgressWhereUniqueInput[]
+  }
+
+  export type CommentCreateNestedManyWithoutAuthorInput = {
+    create?: XOR<CommentCreateWithoutAuthorInput, CommentUncheckedCreateWithoutAuthorInput> | CommentCreateWithoutAuthorInput[] | CommentUncheckedCreateWithoutAuthorInput[]
+    connectOrCreate?: CommentCreateOrConnectWithoutAuthorInput | CommentCreateOrConnectWithoutAuthorInput[]
+    createMany?: CommentCreateManyAuthorInputEnvelope
+    connect?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
   }
 
   export type MultiFactorAuthenticationCreateNestedOneWithoutUserInput = {
@@ -14383,6 +19189,13 @@ export namespace Prisma {
     connectOrCreate?: UserProgressCreateOrConnectWithoutUserInput | UserProgressCreateOrConnectWithoutUserInput[]
     createMany?: UserProgressCreateManyUserInputEnvelope
     connect?: UserProgressWhereUniqueInput | UserProgressWhereUniqueInput[]
+  }
+
+  export type CommentUncheckedCreateNestedManyWithoutAuthorInput = {
+    create?: XOR<CommentCreateWithoutAuthorInput, CommentUncheckedCreateWithoutAuthorInput> | CommentCreateWithoutAuthorInput[] | CommentUncheckedCreateWithoutAuthorInput[]
+    connectOrCreate?: CommentCreateOrConnectWithoutAuthorInput | CommentCreateOrConnectWithoutAuthorInput[]
+    createMany?: CommentCreateManyAuthorInputEnvelope
+    connect?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
   }
 
   export type MultiFactorAuthenticationUncheckedCreateNestedOneWithoutUserInput = {
@@ -14470,6 +19283,20 @@ export namespace Prisma {
     deleteMany?: UserProgressScalarWhereInput | UserProgressScalarWhereInput[]
   }
 
+  export type CommentUpdateManyWithoutAuthorNestedInput = {
+    create?: XOR<CommentCreateWithoutAuthorInput, CommentUncheckedCreateWithoutAuthorInput> | CommentCreateWithoutAuthorInput[] | CommentUncheckedCreateWithoutAuthorInput[]
+    connectOrCreate?: CommentCreateOrConnectWithoutAuthorInput | CommentCreateOrConnectWithoutAuthorInput[]
+    upsert?: CommentUpsertWithWhereUniqueWithoutAuthorInput | CommentUpsertWithWhereUniqueWithoutAuthorInput[]
+    createMany?: CommentCreateManyAuthorInputEnvelope
+    set?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+    disconnect?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+    delete?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+    connect?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+    update?: CommentUpdateWithWhereUniqueWithoutAuthorInput | CommentUpdateWithWhereUniqueWithoutAuthorInput[]
+    updateMany?: CommentUpdateManyWithWhereWithoutAuthorInput | CommentUpdateManyWithWhereWithoutAuthorInput[]
+    deleteMany?: CommentScalarWhereInput | CommentScalarWhereInput[]
+  }
+
   export type MultiFactorAuthenticationUpdateOneWithoutUserNestedInput = {
     create?: XOR<MultiFactorAuthenticationCreateWithoutUserInput, MultiFactorAuthenticationUncheckedCreateWithoutUserInput>
     connectOrCreate?: MultiFactorAuthenticationCreateOrConnectWithoutUserInput
@@ -14540,6 +19367,20 @@ export namespace Prisma {
     update?: UserProgressUpdateWithWhereUniqueWithoutUserInput | UserProgressUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: UserProgressUpdateManyWithWhereWithoutUserInput | UserProgressUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: UserProgressScalarWhereInput | UserProgressScalarWhereInput[]
+  }
+
+  export type CommentUncheckedUpdateManyWithoutAuthorNestedInput = {
+    create?: XOR<CommentCreateWithoutAuthorInput, CommentUncheckedCreateWithoutAuthorInput> | CommentCreateWithoutAuthorInput[] | CommentUncheckedCreateWithoutAuthorInput[]
+    connectOrCreate?: CommentCreateOrConnectWithoutAuthorInput | CommentCreateOrConnectWithoutAuthorInput[]
+    upsert?: CommentUpsertWithWhereUniqueWithoutAuthorInput | CommentUpsertWithWhereUniqueWithoutAuthorInput[]
+    createMany?: CommentCreateManyAuthorInputEnvelope
+    set?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+    disconnect?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+    delete?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+    connect?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+    update?: CommentUpdateWithWhereUniqueWithoutAuthorInput | CommentUpdateWithWhereUniqueWithoutAuthorInput[]
+    updateMany?: CommentUpdateManyWithWhereWithoutAuthorInput | CommentUpdateManyWithWhereWithoutAuthorInput[]
+    deleteMany?: CommentScalarWhereInput | CommentScalarWhereInput[]
   }
 
   export type MultiFactorAuthenticationUncheckedUpdateOneWithoutUserNestedInput = {
@@ -14632,6 +19473,13 @@ export namespace Prisma {
     set: string[]
   }
 
+  export type PasskeyCreateNestedManyWithoutMfaInput = {
+    create?: XOR<PasskeyCreateWithoutMfaInput, PasskeyUncheckedCreateWithoutMfaInput> | PasskeyCreateWithoutMfaInput[] | PasskeyUncheckedCreateWithoutMfaInput[]
+    connectOrCreate?: PasskeyCreateOrConnectWithoutMfaInput | PasskeyCreateOrConnectWithoutMfaInput[]
+    createMany?: PasskeyCreateManyMfaInputEnvelope
+    connect?: PasskeyWhereUniqueInput | PasskeyWhereUniqueInput[]
+  }
+
   export type TotpCreateNestedOneWithoutMfaInput = {
     create?: XOR<TotpCreateWithoutMfaInput, TotpUncheckedCreateWithoutMfaInput>
     connectOrCreate?: TotpCreateOrConnectWithoutMfaInput
@@ -14644,9 +19492,30 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
+  export type PasskeyUncheckedCreateNestedManyWithoutMfaInput = {
+    create?: XOR<PasskeyCreateWithoutMfaInput, PasskeyUncheckedCreateWithoutMfaInput> | PasskeyCreateWithoutMfaInput[] | PasskeyUncheckedCreateWithoutMfaInput[]
+    connectOrCreate?: PasskeyCreateOrConnectWithoutMfaInput | PasskeyCreateOrConnectWithoutMfaInput[]
+    createMany?: PasskeyCreateManyMfaInputEnvelope
+    connect?: PasskeyWhereUniqueInput | PasskeyWhereUniqueInput[]
+  }
+
   export type MultiFactorAuthenticationUpdaterecoveryCodesInput = {
     set?: string[]
     push?: string | string[]
+  }
+
+  export type PasskeyUpdateManyWithoutMfaNestedInput = {
+    create?: XOR<PasskeyCreateWithoutMfaInput, PasskeyUncheckedCreateWithoutMfaInput> | PasskeyCreateWithoutMfaInput[] | PasskeyUncheckedCreateWithoutMfaInput[]
+    connectOrCreate?: PasskeyCreateOrConnectWithoutMfaInput | PasskeyCreateOrConnectWithoutMfaInput[]
+    upsert?: PasskeyUpsertWithWhereUniqueWithoutMfaInput | PasskeyUpsertWithWhereUniqueWithoutMfaInput[]
+    createMany?: PasskeyCreateManyMfaInputEnvelope
+    set?: PasskeyWhereUniqueInput | PasskeyWhereUniqueInput[]
+    disconnect?: PasskeyWhereUniqueInput | PasskeyWhereUniqueInput[]
+    delete?: PasskeyWhereUniqueInput | PasskeyWhereUniqueInput[]
+    connect?: PasskeyWhereUniqueInput | PasskeyWhereUniqueInput[]
+    update?: PasskeyUpdateWithWhereUniqueWithoutMfaInput | PasskeyUpdateWithWhereUniqueWithoutMfaInput[]
+    updateMany?: PasskeyUpdateManyWithWhereWithoutMfaInput | PasskeyUpdateManyWithWhereWithoutMfaInput[]
+    deleteMany?: PasskeyScalarWhereInput | PasskeyScalarWhereInput[]
   }
 
   export type TotpUpdateOneWithoutMfaNestedInput = {
@@ -14665,6 +19534,20 @@ export namespace Prisma {
     upsert?: UserUpsertWithoutMfaInput
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutMfaInput, UserUpdateWithoutMfaInput>, UserUncheckedUpdateWithoutMfaInput>
+  }
+
+  export type PasskeyUncheckedUpdateManyWithoutMfaNestedInput = {
+    create?: XOR<PasskeyCreateWithoutMfaInput, PasskeyUncheckedCreateWithoutMfaInput> | PasskeyCreateWithoutMfaInput[] | PasskeyUncheckedCreateWithoutMfaInput[]
+    connectOrCreate?: PasskeyCreateOrConnectWithoutMfaInput | PasskeyCreateOrConnectWithoutMfaInput[]
+    upsert?: PasskeyUpsertWithWhereUniqueWithoutMfaInput | PasskeyUpsertWithWhereUniqueWithoutMfaInput[]
+    createMany?: PasskeyCreateManyMfaInputEnvelope
+    set?: PasskeyWhereUniqueInput | PasskeyWhereUniqueInput[]
+    disconnect?: PasskeyWhereUniqueInput | PasskeyWhereUniqueInput[]
+    delete?: PasskeyWhereUniqueInput | PasskeyWhereUniqueInput[]
+    connect?: PasskeyWhereUniqueInput | PasskeyWhereUniqueInput[]
+    update?: PasskeyUpdateWithWhereUniqueWithoutMfaInput | PasskeyUpdateWithWhereUniqueWithoutMfaInput[]
+    updateMany?: PasskeyUpdateManyWithWhereWithoutMfaInput | PasskeyUpdateManyWithWhereWithoutMfaInput[]
+    deleteMany?: PasskeyScalarWhereInput | PasskeyScalarWhereInput[]
   }
 
   export type MultiFactorAuthenticationCreateNestedOneWithoutTotpInput = {
@@ -14701,6 +19584,29 @@ export namespace Prisma {
     delete?: MultiFactorAuthenticationWhereInput | boolean
     connect?: MultiFactorAuthenticationWhereUniqueInput
     update?: XOR<XOR<MultiFactorAuthenticationUpdateToOneWithWhereWithoutTotpInput, MultiFactorAuthenticationUpdateWithoutTotpInput>, MultiFactorAuthenticationUncheckedUpdateWithoutTotpInput>
+  }
+
+  export type PasskeyCreatetransportsInput = {
+    set: string[]
+  }
+
+  export type MultiFactorAuthenticationCreateNestedOneWithoutPasskeysInput = {
+    create?: XOR<MultiFactorAuthenticationCreateWithoutPasskeysInput, MultiFactorAuthenticationUncheckedCreateWithoutPasskeysInput>
+    connectOrCreate?: MultiFactorAuthenticationCreateOrConnectWithoutPasskeysInput
+    connect?: MultiFactorAuthenticationWhereUniqueInput
+  }
+
+  export type PasskeyUpdatetransportsInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type MultiFactorAuthenticationUpdateOneRequiredWithoutPasskeysNestedInput = {
+    create?: XOR<MultiFactorAuthenticationCreateWithoutPasskeysInput, MultiFactorAuthenticationUncheckedCreateWithoutPasskeysInput>
+    connectOrCreate?: MultiFactorAuthenticationCreateOrConnectWithoutPasskeysInput
+    upsert?: MultiFactorAuthenticationUpsertWithoutPasskeysInput
+    connect?: MultiFactorAuthenticationWhereUniqueInput
+    update?: XOR<XOR<MultiFactorAuthenticationUpdateToOneWithWhereWithoutPasskeysInput, MultiFactorAuthenticationUpdateWithoutPasskeysInput>, MultiFactorAuthenticationUncheckedUpdateWithoutPasskeysInput>
   }
 
   export type UserCreateNestedOneWithoutRestrictionsInput = {
@@ -14853,6 +19759,76 @@ export namespace Prisma {
     upsert?: LessonUpsertWithoutUserProgressInput
     connect?: LessonWhereUniqueInput
     update?: XOR<XOR<LessonUpdateToOneWithWhereWithoutUserProgressInput, LessonUpdateWithoutUserProgressInput>, LessonUncheckedUpdateWithoutUserProgressInput>
+  }
+
+  export type CommentCreateNestedManyWithoutArticleInput = {
+    create?: XOR<CommentCreateWithoutArticleInput, CommentUncheckedCreateWithoutArticleInput> | CommentCreateWithoutArticleInput[] | CommentUncheckedCreateWithoutArticleInput[]
+    connectOrCreate?: CommentCreateOrConnectWithoutArticleInput | CommentCreateOrConnectWithoutArticleInput[]
+    createMany?: CommentCreateManyArticleInputEnvelope
+    connect?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+  }
+
+  export type CommentUncheckedCreateNestedManyWithoutArticleInput = {
+    create?: XOR<CommentCreateWithoutArticleInput, CommentUncheckedCreateWithoutArticleInput> | CommentCreateWithoutArticleInput[] | CommentUncheckedCreateWithoutArticleInput[]
+    connectOrCreate?: CommentCreateOrConnectWithoutArticleInput | CommentCreateOrConnectWithoutArticleInput[]
+    createMany?: CommentCreateManyArticleInputEnvelope
+    connect?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+  }
+
+  export type CommentUpdateManyWithoutArticleNestedInput = {
+    create?: XOR<CommentCreateWithoutArticleInput, CommentUncheckedCreateWithoutArticleInput> | CommentCreateWithoutArticleInput[] | CommentUncheckedCreateWithoutArticleInput[]
+    connectOrCreate?: CommentCreateOrConnectWithoutArticleInput | CommentCreateOrConnectWithoutArticleInput[]
+    upsert?: CommentUpsertWithWhereUniqueWithoutArticleInput | CommentUpsertWithWhereUniqueWithoutArticleInput[]
+    createMany?: CommentCreateManyArticleInputEnvelope
+    set?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+    disconnect?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+    delete?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+    connect?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+    update?: CommentUpdateWithWhereUniqueWithoutArticleInput | CommentUpdateWithWhereUniqueWithoutArticleInput[]
+    updateMany?: CommentUpdateManyWithWhereWithoutArticleInput | CommentUpdateManyWithWhereWithoutArticleInput[]
+    deleteMany?: CommentScalarWhereInput | CommentScalarWhereInput[]
+  }
+
+  export type CommentUncheckedUpdateManyWithoutArticleNestedInput = {
+    create?: XOR<CommentCreateWithoutArticleInput, CommentUncheckedCreateWithoutArticleInput> | CommentCreateWithoutArticleInput[] | CommentUncheckedCreateWithoutArticleInput[]
+    connectOrCreate?: CommentCreateOrConnectWithoutArticleInput | CommentCreateOrConnectWithoutArticleInput[]
+    upsert?: CommentUpsertWithWhereUniqueWithoutArticleInput | CommentUpsertWithWhereUniqueWithoutArticleInput[]
+    createMany?: CommentCreateManyArticleInputEnvelope
+    set?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+    disconnect?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+    delete?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+    connect?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+    update?: CommentUpdateWithWhereUniqueWithoutArticleInput | CommentUpdateWithWhereUniqueWithoutArticleInput[]
+    updateMany?: CommentUpdateManyWithWhereWithoutArticleInput | CommentUpdateManyWithWhereWithoutArticleInput[]
+    deleteMany?: CommentScalarWhereInput | CommentScalarWhereInput[]
+  }
+
+  export type UserCreateNestedOneWithoutCommentsInput = {
+    create?: XOR<UserCreateWithoutCommentsInput, UserUncheckedCreateWithoutCommentsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutCommentsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type ArticleCreateNestedOneWithoutCommentsInput = {
+    create?: XOR<ArticleCreateWithoutCommentsInput, ArticleUncheckedCreateWithoutCommentsInput>
+    connectOrCreate?: ArticleCreateOrConnectWithoutCommentsInput
+    connect?: ArticleWhereUniqueInput
+  }
+
+  export type UserUpdateOneRequiredWithoutCommentsNestedInput = {
+    create?: XOR<UserCreateWithoutCommentsInput, UserUncheckedCreateWithoutCommentsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutCommentsInput
+    upsert?: UserUpsertWithoutCommentsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutCommentsInput, UserUpdateWithoutCommentsInput>, UserUncheckedUpdateWithoutCommentsInput>
+  }
+
+  export type ArticleUpdateOneRequiredWithoutCommentsNestedInput = {
+    create?: XOR<ArticleCreateWithoutCommentsInput, ArticleUncheckedCreateWithoutCommentsInput>
+    connectOrCreate?: ArticleCreateOrConnectWithoutCommentsInput
+    upsert?: ArticleUpsertWithoutCommentsInput
+    connect?: ArticleWhereUniqueInput
+    update?: XOR<XOR<ArticleUpdateToOneWithWhereWithoutCommentsInput, ArticleUpdateWithoutCommentsInput>, ArticleUncheckedUpdateWithoutCommentsInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -15260,11 +20236,42 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type CommentCreateWithoutAuthorInput = {
+    id?: string
+    content: string
+    edited?: boolean
+    deleted?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    article: ArticleCreateNestedOneWithoutCommentsInput
+  }
+
+  export type CommentUncheckedCreateWithoutAuthorInput = {
+    id?: string
+    content: string
+    edited?: boolean
+    deleted?: boolean
+    articleId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CommentCreateOrConnectWithoutAuthorInput = {
+    where: CommentWhereUniqueInput
+    create: XOR<CommentCreateWithoutAuthorInput, CommentUncheckedCreateWithoutAuthorInput>
+  }
+
+  export type CommentCreateManyAuthorInputEnvelope = {
+    data: CommentCreateManyAuthorInput | CommentCreateManyAuthorInput[]
+    skipDuplicates?: boolean
+  }
+
   export type MultiFactorAuthenticationCreateWithoutUserInput = {
     id?: string
     recoveryCodes?: MultiFactorAuthenticationCreaterecoveryCodesInput | string[]
     createdAt?: Date | string
     updatedAt?: Date | string
+    passkeys?: PasskeyCreateNestedManyWithoutMfaInput
     totp?: TotpCreateNestedOneWithoutMfaInput
   }
 
@@ -15274,6 +20281,7 @@ export namespace Prisma {
     totpId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    passkeys?: PasskeyUncheckedCreateNestedManyWithoutMfaInput
   }
 
   export type MultiFactorAuthenticationCreateOrConnectWithoutUserInput = {
@@ -15422,6 +20430,36 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"UserProgress"> | Date | string
   }
 
+  export type CommentUpsertWithWhereUniqueWithoutAuthorInput = {
+    where: CommentWhereUniqueInput
+    update: XOR<CommentUpdateWithoutAuthorInput, CommentUncheckedUpdateWithoutAuthorInput>
+    create: XOR<CommentCreateWithoutAuthorInput, CommentUncheckedCreateWithoutAuthorInput>
+  }
+
+  export type CommentUpdateWithWhereUniqueWithoutAuthorInput = {
+    where: CommentWhereUniqueInput
+    data: XOR<CommentUpdateWithoutAuthorInput, CommentUncheckedUpdateWithoutAuthorInput>
+  }
+
+  export type CommentUpdateManyWithWhereWithoutAuthorInput = {
+    where: CommentScalarWhereInput
+    data: XOR<CommentUpdateManyMutationInput, CommentUncheckedUpdateManyWithoutAuthorInput>
+  }
+
+  export type CommentScalarWhereInput = {
+    AND?: CommentScalarWhereInput | CommentScalarWhereInput[]
+    OR?: CommentScalarWhereInput[]
+    NOT?: CommentScalarWhereInput | CommentScalarWhereInput[]
+    id?: StringFilter<"Comment"> | string
+    content?: StringFilter<"Comment"> | string
+    edited?: BoolFilter<"Comment"> | boolean
+    deleted?: BoolFilter<"Comment"> | boolean
+    authorId?: StringFilter<"Comment"> | string
+    articleId?: StringFilter<"Comment"> | string
+    createdAt?: DateTimeFilter<"Comment"> | Date | string
+    updatedAt?: DateTimeFilter<"Comment"> | Date | string
+  }
+
   export type MultiFactorAuthenticationUpsertWithoutUserInput = {
     update: XOR<MultiFactorAuthenticationUpdateWithoutUserInput, MultiFactorAuthenticationUncheckedUpdateWithoutUserInput>
     create: XOR<MultiFactorAuthenticationCreateWithoutUserInput, MultiFactorAuthenticationUncheckedCreateWithoutUserInput>
@@ -15438,6 +20476,7 @@ export namespace Prisma {
     recoveryCodes?: MultiFactorAuthenticationUpdaterecoveryCodesInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    passkeys?: PasskeyUpdateManyWithoutMfaNestedInput
     totp?: TotpUpdateOneWithoutMfaNestedInput
   }
 
@@ -15447,6 +20486,7 @@ export namespace Prisma {
     totpId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    passkeys?: PasskeyUncheckedUpdateManyWithoutMfaNestedInput
   }
 
   export type RestrictionUpsertWithWhereUniqueWithoutUserInput = {
@@ -15491,6 +20531,7 @@ export namespace Prisma {
     emailVerification?: EmailVerificationCreateNestedOneWithoutUserInput
     passwordReset?: PasswordResetCreateNestedOneWithoutUserInput
     userProgress?: UserProgressCreateNestedManyWithoutUserInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
     mfa?: MultiFactorAuthenticationCreateNestedOneWithoutUserInput
     restrictions?: RestrictionCreateNestedManyWithoutUserInput
   }
@@ -15509,6 +20550,7 @@ export namespace Prisma {
     emailVerification?: EmailVerificationUncheckedCreateNestedOneWithoutUserInput
     passwordReset?: PasswordResetUncheckedCreateNestedOneWithoutUserInput
     userProgress?: UserProgressUncheckedCreateNestedManyWithoutUserInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
     mfa?: MultiFactorAuthenticationUncheckedCreateNestedOneWithoutUserInput
     restrictions?: RestrictionUncheckedCreateNestedManyWithoutUserInput
   }
@@ -15543,6 +20585,7 @@ export namespace Prisma {
     emailVerification?: EmailVerificationUpdateOneWithoutUserNestedInput
     passwordReset?: PasswordResetUpdateOneWithoutUserNestedInput
     userProgress?: UserProgressUpdateManyWithoutUserNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
     mfa?: MultiFactorAuthenticationUpdateOneWithoutUserNestedInput
     restrictions?: RestrictionUpdateManyWithoutUserNestedInput
   }
@@ -15561,6 +20604,7 @@ export namespace Prisma {
     emailVerification?: EmailVerificationUncheckedUpdateOneWithoutUserNestedInput
     passwordReset?: PasswordResetUncheckedUpdateOneWithoutUserNestedInput
     userProgress?: UserProgressUncheckedUpdateManyWithoutUserNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
     mfa?: MultiFactorAuthenticationUncheckedUpdateOneWithoutUserNestedInput
     restrictions?: RestrictionUncheckedUpdateManyWithoutUserNestedInput
   }
@@ -15579,6 +20623,7 @@ export namespace Prisma {
     passwordReset?: PasswordResetCreateNestedOneWithoutUserInput
     externalAccounts?: ExternalAccountCreateNestedManyWithoutUserInput
     userProgress?: UserProgressCreateNestedManyWithoutUserInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
     mfa?: MultiFactorAuthenticationCreateNestedOneWithoutUserInput
     restrictions?: RestrictionCreateNestedManyWithoutUserInput
   }
@@ -15597,6 +20642,7 @@ export namespace Prisma {
     passwordReset?: PasswordResetUncheckedCreateNestedOneWithoutUserInput
     externalAccounts?: ExternalAccountUncheckedCreateNestedManyWithoutUserInput
     userProgress?: UserProgressUncheckedCreateNestedManyWithoutUserInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
     mfa?: MultiFactorAuthenticationUncheckedCreateNestedOneWithoutUserInput
     restrictions?: RestrictionUncheckedCreateNestedManyWithoutUserInput
   }
@@ -15631,6 +20677,7 @@ export namespace Prisma {
     passwordReset?: PasswordResetUpdateOneWithoutUserNestedInput
     externalAccounts?: ExternalAccountUpdateManyWithoutUserNestedInput
     userProgress?: UserProgressUpdateManyWithoutUserNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
     mfa?: MultiFactorAuthenticationUpdateOneWithoutUserNestedInput
     restrictions?: RestrictionUpdateManyWithoutUserNestedInput
   }
@@ -15649,6 +20696,7 @@ export namespace Prisma {
     passwordReset?: PasswordResetUncheckedUpdateOneWithoutUserNestedInput
     externalAccounts?: ExternalAccountUncheckedUpdateManyWithoutUserNestedInput
     userProgress?: UserProgressUncheckedUpdateManyWithoutUserNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
     mfa?: MultiFactorAuthenticationUncheckedUpdateOneWithoutUserNestedInput
     restrictions?: RestrictionUncheckedUpdateManyWithoutUserNestedInput
   }
@@ -15667,6 +20715,7 @@ export namespace Prisma {
     emailVerification?: EmailVerificationCreateNestedOneWithoutUserInput
     externalAccounts?: ExternalAccountCreateNestedManyWithoutUserInput
     userProgress?: UserProgressCreateNestedManyWithoutUserInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
     mfa?: MultiFactorAuthenticationCreateNestedOneWithoutUserInput
     restrictions?: RestrictionCreateNestedManyWithoutUserInput
   }
@@ -15685,6 +20734,7 @@ export namespace Prisma {
     emailVerification?: EmailVerificationUncheckedCreateNestedOneWithoutUserInput
     externalAccounts?: ExternalAccountUncheckedCreateNestedManyWithoutUserInput
     userProgress?: UserProgressUncheckedCreateNestedManyWithoutUserInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
     mfa?: MultiFactorAuthenticationUncheckedCreateNestedOneWithoutUserInput
     restrictions?: RestrictionUncheckedCreateNestedManyWithoutUserInput
   }
@@ -15719,6 +20769,7 @@ export namespace Prisma {
     emailVerification?: EmailVerificationUpdateOneWithoutUserNestedInput
     externalAccounts?: ExternalAccountUpdateManyWithoutUserNestedInput
     userProgress?: UserProgressUpdateManyWithoutUserNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
     mfa?: MultiFactorAuthenticationUpdateOneWithoutUserNestedInput
     restrictions?: RestrictionUpdateManyWithoutUserNestedInput
   }
@@ -15737,8 +20788,47 @@ export namespace Prisma {
     emailVerification?: EmailVerificationUncheckedUpdateOneWithoutUserNestedInput
     externalAccounts?: ExternalAccountUncheckedUpdateManyWithoutUserNestedInput
     userProgress?: UserProgressUncheckedUpdateManyWithoutUserNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
     mfa?: MultiFactorAuthenticationUncheckedUpdateOneWithoutUserNestedInput
     restrictions?: RestrictionUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type PasskeyCreateWithoutMfaInput = {
+    id?: string
+    deviceName: string
+    credentialId: string
+    publicKey: string
+    counter?: number
+    transports?: PasskeyCreatetransportsInput | string[]
+    lastUsedAt?: Date | string | null
+    ip: string
+    userAgent: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PasskeyUncheckedCreateWithoutMfaInput = {
+    id?: string
+    deviceName: string
+    credentialId: string
+    publicKey: string
+    counter?: number
+    transports?: PasskeyCreatetransportsInput | string[]
+    lastUsedAt?: Date | string | null
+    ip: string
+    userAgent: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PasskeyCreateOrConnectWithoutMfaInput = {
+    where: PasskeyWhereUniqueInput
+    create: XOR<PasskeyCreateWithoutMfaInput, PasskeyUncheckedCreateWithoutMfaInput>
+  }
+
+  export type PasskeyCreateManyMfaInputEnvelope = {
+    data: PasskeyCreateManyMfaInput | PasskeyCreateManyMfaInput[]
+    skipDuplicates?: boolean
   }
 
   export type TotpCreateWithoutMfaInput = {
@@ -15777,6 +20867,7 @@ export namespace Prisma {
     passwordReset?: PasswordResetCreateNestedOneWithoutUserInput
     externalAccounts?: ExternalAccountCreateNestedManyWithoutUserInput
     userProgress?: UserProgressCreateNestedManyWithoutUserInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
     restrictions?: RestrictionCreateNestedManyWithoutUserInput
   }
 
@@ -15795,12 +20886,47 @@ export namespace Prisma {
     passwordReset?: PasswordResetUncheckedCreateNestedOneWithoutUserInput
     externalAccounts?: ExternalAccountUncheckedCreateNestedManyWithoutUserInput
     userProgress?: UserProgressUncheckedCreateNestedManyWithoutUserInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
     restrictions?: RestrictionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutMfaInput = {
     where: UserWhereUniqueInput
     create: XOR<UserCreateWithoutMfaInput, UserUncheckedCreateWithoutMfaInput>
+  }
+
+  export type PasskeyUpsertWithWhereUniqueWithoutMfaInput = {
+    where: PasskeyWhereUniqueInput
+    update: XOR<PasskeyUpdateWithoutMfaInput, PasskeyUncheckedUpdateWithoutMfaInput>
+    create: XOR<PasskeyCreateWithoutMfaInput, PasskeyUncheckedCreateWithoutMfaInput>
+  }
+
+  export type PasskeyUpdateWithWhereUniqueWithoutMfaInput = {
+    where: PasskeyWhereUniqueInput
+    data: XOR<PasskeyUpdateWithoutMfaInput, PasskeyUncheckedUpdateWithoutMfaInput>
+  }
+
+  export type PasskeyUpdateManyWithWhereWithoutMfaInput = {
+    where: PasskeyScalarWhereInput
+    data: XOR<PasskeyUpdateManyMutationInput, PasskeyUncheckedUpdateManyWithoutMfaInput>
+  }
+
+  export type PasskeyScalarWhereInput = {
+    AND?: PasskeyScalarWhereInput | PasskeyScalarWhereInput[]
+    OR?: PasskeyScalarWhereInput[]
+    NOT?: PasskeyScalarWhereInput | PasskeyScalarWhereInput[]
+    id?: StringFilter<"Passkey"> | string
+    deviceName?: StringFilter<"Passkey"> | string
+    credentialId?: StringFilter<"Passkey"> | string
+    publicKey?: StringFilter<"Passkey"> | string
+    counter?: IntFilter<"Passkey"> | number
+    transports?: StringNullableListFilter<"Passkey">
+    lastUsedAt?: DateTimeNullableFilter<"Passkey"> | Date | string | null
+    ip?: StringFilter<"Passkey"> | string
+    userAgent?: StringFilter<"Passkey"> | string
+    mfaId?: StringFilter<"Passkey"> | string
+    createdAt?: DateTimeFilter<"Passkey"> | Date | string
+    updatedAt?: DateTimeFilter<"Passkey"> | Date | string
   }
 
   export type TotpUpsertWithoutMfaInput = {
@@ -15856,6 +20982,7 @@ export namespace Prisma {
     passwordReset?: PasswordResetUpdateOneWithoutUserNestedInput
     externalAccounts?: ExternalAccountUpdateManyWithoutUserNestedInput
     userProgress?: UserProgressUpdateManyWithoutUserNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
     restrictions?: RestrictionUpdateManyWithoutUserNestedInput
   }
 
@@ -15874,6 +21001,7 @@ export namespace Prisma {
     passwordReset?: PasswordResetUncheckedUpdateOneWithoutUserNestedInput
     externalAccounts?: ExternalAccountUncheckedUpdateManyWithoutUserNestedInput
     userProgress?: UserProgressUncheckedUpdateManyWithoutUserNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
     restrictions?: RestrictionUncheckedUpdateManyWithoutUserNestedInput
   }
 
@@ -15882,6 +21010,7 @@ export namespace Prisma {
     recoveryCodes?: MultiFactorAuthenticationCreaterecoveryCodesInput | string[]
     createdAt?: Date | string
     updatedAt?: Date | string
+    passkeys?: PasskeyCreateNestedManyWithoutMfaInput
     user: UserCreateNestedOneWithoutMfaInput
   }
 
@@ -15891,6 +21020,7 @@ export namespace Prisma {
     userId: string
     createdAt?: Date | string
     updatedAt?: Date | string
+    passkeys?: PasskeyUncheckedCreateNestedManyWithoutMfaInput
   }
 
   export type MultiFactorAuthenticationCreateOrConnectWithoutTotpInput = {
@@ -15914,12 +21044,66 @@ export namespace Prisma {
     recoveryCodes?: MultiFactorAuthenticationUpdaterecoveryCodesInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    passkeys?: PasskeyUpdateManyWithoutMfaNestedInput
     user?: UserUpdateOneRequiredWithoutMfaNestedInput
   }
 
   export type MultiFactorAuthenticationUncheckedUpdateWithoutTotpInput = {
     id?: StringFieldUpdateOperationsInput | string
     recoveryCodes?: MultiFactorAuthenticationUpdaterecoveryCodesInput | string[]
+    userId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    passkeys?: PasskeyUncheckedUpdateManyWithoutMfaNestedInput
+  }
+
+  export type MultiFactorAuthenticationCreateWithoutPasskeysInput = {
+    id?: string
+    recoveryCodes?: MultiFactorAuthenticationCreaterecoveryCodesInput | string[]
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    totp?: TotpCreateNestedOneWithoutMfaInput
+    user: UserCreateNestedOneWithoutMfaInput
+  }
+
+  export type MultiFactorAuthenticationUncheckedCreateWithoutPasskeysInput = {
+    id?: string
+    recoveryCodes?: MultiFactorAuthenticationCreaterecoveryCodesInput | string[]
+    totpId?: string | null
+    userId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type MultiFactorAuthenticationCreateOrConnectWithoutPasskeysInput = {
+    where: MultiFactorAuthenticationWhereUniqueInput
+    create: XOR<MultiFactorAuthenticationCreateWithoutPasskeysInput, MultiFactorAuthenticationUncheckedCreateWithoutPasskeysInput>
+  }
+
+  export type MultiFactorAuthenticationUpsertWithoutPasskeysInput = {
+    update: XOR<MultiFactorAuthenticationUpdateWithoutPasskeysInput, MultiFactorAuthenticationUncheckedUpdateWithoutPasskeysInput>
+    create: XOR<MultiFactorAuthenticationCreateWithoutPasskeysInput, MultiFactorAuthenticationUncheckedCreateWithoutPasskeysInput>
+    where?: MultiFactorAuthenticationWhereInput
+  }
+
+  export type MultiFactorAuthenticationUpdateToOneWithWhereWithoutPasskeysInput = {
+    where?: MultiFactorAuthenticationWhereInput
+    data: XOR<MultiFactorAuthenticationUpdateWithoutPasskeysInput, MultiFactorAuthenticationUncheckedUpdateWithoutPasskeysInput>
+  }
+
+  export type MultiFactorAuthenticationUpdateWithoutPasskeysInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    recoveryCodes?: MultiFactorAuthenticationUpdaterecoveryCodesInput | string[]
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    totp?: TotpUpdateOneWithoutMfaNestedInput
+    user?: UserUpdateOneRequiredWithoutMfaNestedInput
+  }
+
+  export type MultiFactorAuthenticationUncheckedUpdateWithoutPasskeysInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    recoveryCodes?: MultiFactorAuthenticationUpdaterecoveryCodesInput | string[]
+    totpId?: NullableStringFieldUpdateOperationsInput | string | null
     userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -15940,6 +21124,7 @@ export namespace Prisma {
     passwordReset?: PasswordResetCreateNestedOneWithoutUserInput
     externalAccounts?: ExternalAccountCreateNestedManyWithoutUserInput
     userProgress?: UserProgressCreateNestedManyWithoutUserInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
     mfa?: MultiFactorAuthenticationCreateNestedOneWithoutUserInput
   }
 
@@ -15958,6 +21143,7 @@ export namespace Prisma {
     passwordReset?: PasswordResetUncheckedCreateNestedOneWithoutUserInput
     externalAccounts?: ExternalAccountUncheckedCreateNestedManyWithoutUserInput
     userProgress?: UserProgressUncheckedCreateNestedManyWithoutUserInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
     mfa?: MultiFactorAuthenticationUncheckedCreateNestedOneWithoutUserInput
   }
 
@@ -15992,6 +21178,7 @@ export namespace Prisma {
     passwordReset?: PasswordResetUpdateOneWithoutUserNestedInput
     externalAccounts?: ExternalAccountUpdateManyWithoutUserNestedInput
     userProgress?: UserProgressUpdateManyWithoutUserNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
     mfa?: MultiFactorAuthenticationUpdateOneWithoutUserNestedInput
   }
 
@@ -16010,6 +21197,7 @@ export namespace Prisma {
     passwordReset?: PasswordResetUncheckedUpdateOneWithoutUserNestedInput
     externalAccounts?: ExternalAccountUncheckedUpdateManyWithoutUserNestedInput
     userProgress?: UserProgressUncheckedUpdateManyWithoutUserNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
     mfa?: MultiFactorAuthenticationUncheckedUpdateOneWithoutUserNestedInput
   }
 
@@ -16111,7 +21299,8 @@ export namespace Prisma {
     id?: string
     title: string
     slug: string
-    description?: string | null
+    shortDescription?: string | null
+    fullDescription?: string | null
     thumbnail?: string | null
     youtubeUrl?: string | null
     attachment?: string | null
@@ -16125,7 +21314,8 @@ export namespace Prisma {
     id?: string
     title: string
     slug: string
-    description?: string | null
+    shortDescription?: string | null
+    fullDescription?: string | null
     thumbnail?: string | null
     youtubeUrl?: string | null
     attachment?: string | null
@@ -16171,7 +21361,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
+    shortDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    fullDescription?: NullableStringFieldUpdateOperationsInput | string | null
     thumbnail?: NullableStringFieldUpdateOperationsInput | string | null
     youtubeUrl?: NullableStringFieldUpdateOperationsInput | string | null
     attachment?: NullableStringFieldUpdateOperationsInput | string | null
@@ -16185,7 +21376,8 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
+    shortDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    fullDescription?: NullableStringFieldUpdateOperationsInput | string | null
     thumbnail?: NullableStringFieldUpdateOperationsInput | string | null
     youtubeUrl?: NullableStringFieldUpdateOperationsInput | string | null
     attachment?: NullableStringFieldUpdateOperationsInput | string | null
@@ -16209,6 +21401,7 @@ export namespace Prisma {
     emailVerification?: EmailVerificationCreateNestedOneWithoutUserInput
     passwordReset?: PasswordResetCreateNestedOneWithoutUserInput
     externalAccounts?: ExternalAccountCreateNestedManyWithoutUserInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
     mfa?: MultiFactorAuthenticationCreateNestedOneWithoutUserInput
     restrictions?: RestrictionCreateNestedManyWithoutUserInput
   }
@@ -16227,6 +21420,7 @@ export namespace Prisma {
     emailVerification?: EmailVerificationUncheckedCreateNestedOneWithoutUserInput
     passwordReset?: PasswordResetUncheckedCreateNestedOneWithoutUserInput
     externalAccounts?: ExternalAccountUncheckedCreateNestedManyWithoutUserInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
     mfa?: MultiFactorAuthenticationUncheckedCreateNestedOneWithoutUserInput
     restrictions?: RestrictionUncheckedCreateNestedManyWithoutUserInput
   }
@@ -16292,6 +21486,7 @@ export namespace Prisma {
     emailVerification?: EmailVerificationUpdateOneWithoutUserNestedInput
     passwordReset?: PasswordResetUpdateOneWithoutUserNestedInput
     externalAccounts?: ExternalAccountUpdateManyWithoutUserNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
     mfa?: MultiFactorAuthenticationUpdateOneWithoutUserNestedInput
     restrictions?: RestrictionUpdateManyWithoutUserNestedInput
   }
@@ -16310,6 +21505,7 @@ export namespace Prisma {
     emailVerification?: EmailVerificationUncheckedUpdateOneWithoutUserNestedInput
     passwordReset?: PasswordResetUncheckedUpdateOneWithoutUserNestedInput
     externalAccounts?: ExternalAccountUncheckedUpdateManyWithoutUserNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
     mfa?: MultiFactorAuthenticationUncheckedUpdateOneWithoutUserNestedInput
     restrictions?: RestrictionUncheckedUpdateManyWithoutUserNestedInput
   }
@@ -16351,6 +21547,204 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type CommentCreateWithoutArticleInput = {
+    id?: string
+    content: string
+    edited?: boolean
+    deleted?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    author: UserCreateNestedOneWithoutCommentsInput
+  }
+
+  export type CommentUncheckedCreateWithoutArticleInput = {
+    id?: string
+    content: string
+    edited?: boolean
+    deleted?: boolean
+    authorId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CommentCreateOrConnectWithoutArticleInput = {
+    where: CommentWhereUniqueInput
+    create: XOR<CommentCreateWithoutArticleInput, CommentUncheckedCreateWithoutArticleInput>
+  }
+
+  export type CommentCreateManyArticleInputEnvelope = {
+    data: CommentCreateManyArticleInput | CommentCreateManyArticleInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type CommentUpsertWithWhereUniqueWithoutArticleInput = {
+    where: CommentWhereUniqueInput
+    update: XOR<CommentUpdateWithoutArticleInput, CommentUncheckedUpdateWithoutArticleInput>
+    create: XOR<CommentCreateWithoutArticleInput, CommentUncheckedCreateWithoutArticleInput>
+  }
+
+  export type CommentUpdateWithWhereUniqueWithoutArticleInput = {
+    where: CommentWhereUniqueInput
+    data: XOR<CommentUpdateWithoutArticleInput, CommentUncheckedUpdateWithoutArticleInput>
+  }
+
+  export type CommentUpdateManyWithWhereWithoutArticleInput = {
+    where: CommentScalarWhereInput
+    data: XOR<CommentUpdateManyMutationInput, CommentUncheckedUpdateManyWithoutArticleInput>
+  }
+
+  export type UserCreateWithoutCommentsInput = {
+    id?: string
+    email: string
+    password?: string | null
+    username: string
+    displayName: string
+    avatar?: string | null
+    points?: number
+    role?: $Enums.UserRole
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    emailVerification?: EmailVerificationCreateNestedOneWithoutUserInput
+    passwordReset?: PasswordResetCreateNestedOneWithoutUserInput
+    externalAccounts?: ExternalAccountCreateNestedManyWithoutUserInput
+    userProgress?: UserProgressCreateNestedManyWithoutUserInput
+    mfa?: MultiFactorAuthenticationCreateNestedOneWithoutUserInput
+    restrictions?: RestrictionCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutCommentsInput = {
+    id?: string
+    email: string
+    password?: string | null
+    username: string
+    displayName: string
+    avatar?: string | null
+    points?: number
+    role?: $Enums.UserRole
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    emailVerification?: EmailVerificationUncheckedCreateNestedOneWithoutUserInput
+    passwordReset?: PasswordResetUncheckedCreateNestedOneWithoutUserInput
+    externalAccounts?: ExternalAccountUncheckedCreateNestedManyWithoutUserInput
+    userProgress?: UserProgressUncheckedCreateNestedManyWithoutUserInput
+    mfa?: MultiFactorAuthenticationUncheckedCreateNestedOneWithoutUserInput
+    restrictions?: RestrictionUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutCommentsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutCommentsInput, UserUncheckedCreateWithoutCommentsInput>
+  }
+
+  export type ArticleCreateWithoutCommentsInput = {
+    id?: string
+    title: string
+    slug: string
+    thumbnail?: string | null
+    content: string
+    isPublished?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ArticleUncheckedCreateWithoutCommentsInput = {
+    id?: string
+    title: string
+    slug: string
+    thumbnail?: string | null
+    content: string
+    isPublished?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ArticleCreateOrConnectWithoutCommentsInput = {
+    where: ArticleWhereUniqueInput
+    create: XOR<ArticleCreateWithoutCommentsInput, ArticleUncheckedCreateWithoutCommentsInput>
+  }
+
+  export type UserUpsertWithoutCommentsInput = {
+    update: XOR<UserUpdateWithoutCommentsInput, UserUncheckedUpdateWithoutCommentsInput>
+    create: XOR<UserCreateWithoutCommentsInput, UserUncheckedCreateWithoutCommentsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutCommentsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutCommentsInput, UserUncheckedUpdateWithoutCommentsInput>
+  }
+
+  export type UserUpdateWithoutCommentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    username?: StringFieldUpdateOperationsInput | string
+    displayName?: StringFieldUpdateOperationsInput | string
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    points?: IntFieldUpdateOperationsInput | number
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    emailVerification?: EmailVerificationUpdateOneWithoutUserNestedInput
+    passwordReset?: PasswordResetUpdateOneWithoutUserNestedInput
+    externalAccounts?: ExternalAccountUpdateManyWithoutUserNestedInput
+    userProgress?: UserProgressUpdateManyWithoutUserNestedInput
+    mfa?: MultiFactorAuthenticationUpdateOneWithoutUserNestedInput
+    restrictions?: RestrictionUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutCommentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    username?: StringFieldUpdateOperationsInput | string
+    displayName?: StringFieldUpdateOperationsInput | string
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    points?: IntFieldUpdateOperationsInput | number
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    emailVerification?: EmailVerificationUncheckedUpdateOneWithoutUserNestedInput
+    passwordReset?: PasswordResetUncheckedUpdateOneWithoutUserNestedInput
+    externalAccounts?: ExternalAccountUncheckedUpdateManyWithoutUserNestedInput
+    userProgress?: UserProgressUncheckedUpdateManyWithoutUserNestedInput
+    mfa?: MultiFactorAuthenticationUncheckedUpdateOneWithoutUserNestedInput
+    restrictions?: RestrictionUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type ArticleUpsertWithoutCommentsInput = {
+    update: XOR<ArticleUpdateWithoutCommentsInput, ArticleUncheckedUpdateWithoutCommentsInput>
+    create: XOR<ArticleCreateWithoutCommentsInput, ArticleUncheckedCreateWithoutCommentsInput>
+    where?: ArticleWhereInput
+  }
+
+  export type ArticleUpdateToOneWithWhereWithoutCommentsInput = {
+    where?: ArticleWhereInput
+    data: XOR<ArticleUpdateWithoutCommentsInput, ArticleUncheckedUpdateWithoutCommentsInput>
+  }
+
+  export type ArticleUpdateWithoutCommentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    thumbnail?: NullableStringFieldUpdateOperationsInput | string | null
+    content?: StringFieldUpdateOperationsInput | string
+    isPublished?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ArticleUncheckedUpdateWithoutCommentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    thumbnail?: NullableStringFieldUpdateOperationsInput | string | null
+    content?: StringFieldUpdateOperationsInput | string
+    isPublished?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type ExternalAccountCreateManyUserInput = {
     id?: string
     provider: $Enums.AccountProvider
@@ -16366,6 +21760,16 @@ export namespace Prisma {
     id?: string
     isCompleted?: boolean
     lessonId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CommentCreateManyAuthorInput = {
+    id?: string
+    content: string
+    edited?: boolean
+    deleted?: boolean
+    articleId: string
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -16435,6 +21839,36 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type CommentUpdateWithoutAuthorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    edited?: BoolFieldUpdateOperationsInput | boolean
+    deleted?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    article?: ArticleUpdateOneRequiredWithoutCommentsNestedInput
+  }
+
+  export type CommentUncheckedUpdateWithoutAuthorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    edited?: BoolFieldUpdateOperationsInput | boolean
+    deleted?: BoolFieldUpdateOperationsInput | boolean
+    articleId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CommentUncheckedUpdateManyWithoutAuthorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    edited?: BoolFieldUpdateOperationsInput | boolean
+    deleted?: BoolFieldUpdateOperationsInput | boolean
+    articleId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type RestrictionUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     reason?: EnumRestrictionReasonFieldUpdateOperationsInput | $Enums.RestrictionReason
@@ -16457,6 +21891,62 @@ export namespace Prisma {
     until?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumRestrictionStatusFieldUpdateOperationsInput | $Enums.RestrictionStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PasskeyCreateManyMfaInput = {
+    id?: string
+    deviceName: string
+    credentialId: string
+    publicKey: string
+    counter?: number
+    transports?: PasskeyCreatetransportsInput | string[]
+    lastUsedAt?: Date | string | null
+    ip: string
+    userAgent: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PasskeyUpdateWithoutMfaInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    deviceName?: StringFieldUpdateOperationsInput | string
+    credentialId?: StringFieldUpdateOperationsInput | string
+    publicKey?: StringFieldUpdateOperationsInput | string
+    counter?: IntFieldUpdateOperationsInput | number
+    transports?: PasskeyUpdatetransportsInput | string[]
+    lastUsedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ip?: StringFieldUpdateOperationsInput | string
+    userAgent?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PasskeyUncheckedUpdateWithoutMfaInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    deviceName?: StringFieldUpdateOperationsInput | string
+    credentialId?: StringFieldUpdateOperationsInput | string
+    publicKey?: StringFieldUpdateOperationsInput | string
+    counter?: IntFieldUpdateOperationsInput | number
+    transports?: PasskeyUpdatetransportsInput | string[]
+    lastUsedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ip?: StringFieldUpdateOperationsInput | string
+    userAgent?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PasskeyUncheckedUpdateManyWithoutMfaInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    deviceName?: StringFieldUpdateOperationsInput | string
+    credentialId?: StringFieldUpdateOperationsInput | string
+    publicKey?: StringFieldUpdateOperationsInput | string
+    counter?: IntFieldUpdateOperationsInput | number
+    transports?: PasskeyUpdatetransportsInput | string[]
+    lastUsedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    ip?: StringFieldUpdateOperationsInput | string
+    userAgent?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type LessonCreateManyCourseInput = {
@@ -16541,63 +22031,47 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type CommentCreateManyArticleInput = {
+    id?: string
+    content: string
+    edited?: boolean
+    deleted?: boolean
+    authorId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CommentUpdateWithoutArticleInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    edited?: BoolFieldUpdateOperationsInput | boolean
+    deleted?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    author?: UserUpdateOneRequiredWithoutCommentsNestedInput
+  }
+
+  export type CommentUncheckedUpdateWithoutArticleInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    edited?: BoolFieldUpdateOperationsInput | boolean
+    deleted?: BoolFieldUpdateOperationsInput | boolean
+    authorId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CommentUncheckedUpdateManyWithoutArticleInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    edited?: BoolFieldUpdateOperationsInput | boolean
+    deleted?: BoolFieldUpdateOperationsInput | boolean
+    authorId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
 
 
-  /**
-   * Aliases for legacy arg types
-   */
-    /**
-     * @deprecated Use UserCountOutputTypeDefaultArgs instead
-     */
-    export type UserCountOutputTypeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = UserCountOutputTypeDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use CourseCountOutputTypeDefaultArgs instead
-     */
-    export type CourseCountOutputTypeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = CourseCountOutputTypeDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use LessonCountOutputTypeDefaultArgs instead
-     */
-    export type LessonCountOutputTypeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = LessonCountOutputTypeDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use UserDefaultArgs instead
-     */
-    export type UserArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = UserDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use ExternalAccountDefaultArgs instead
-     */
-    export type ExternalAccountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = ExternalAccountDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use EmailVerificationDefaultArgs instead
-     */
-    export type EmailVerificationArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = EmailVerificationDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use PasswordResetDefaultArgs instead
-     */
-    export type PasswordResetArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = PasswordResetDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use MultiFactorAuthenticationDefaultArgs instead
-     */
-    export type MultiFactorAuthenticationArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = MultiFactorAuthenticationDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use TotpDefaultArgs instead
-     */
-    export type TotpArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = TotpDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use RestrictionDefaultArgs instead
-     */
-    export type RestrictionArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = RestrictionDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use CourseDefaultArgs instead
-     */
-    export type CourseArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = CourseDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use LessonDefaultArgs instead
-     */
-    export type LessonArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = LessonDefaultArgs<ExtArgs>
-    /**
-     * @deprecated Use UserProgressDefaultArgs instead
-     */
-    export type UserProgressArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = UserProgressDefaultArgs<ExtArgs>
 
   /**
    * Batch Payload for updateMany & deleteMany & createMany

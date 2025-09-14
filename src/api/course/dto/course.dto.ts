@@ -21,11 +21,19 @@ export class CourseResponse implements Course {
 	public slug: string
 
 	@ApiProperty({
-		description: 'Description of the course',
-		example: 'A complete guide to getting started with NestJS.',
+		description: 'Short description of the course',
+		example: 'Brief overview of NestJS fundamentals.',
 		nullable: true
 	})
-	public description: string
+	public shortDescription: string
+
+	@ApiProperty({
+		description: 'Full description of the course',
+		example:
+			'In this 11-hour course we will cover integration of payment systems, JWT auth, recurring payments, webhooks, and more.',
+		nullable: true
+	})
+	public fullDescription: string
 
 	@ApiProperty({
 		description: 'Identifier of the course thumbnail',

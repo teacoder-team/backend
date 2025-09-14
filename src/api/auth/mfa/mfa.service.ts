@@ -35,12 +35,22 @@ export class MfaService {
 					userId: user.id
 				},
 				include: {
-					totp: true
+					totp: true,
+					passkeys: true
 				}
 			})
 
+		if (!mfa) {
+			return {
+				totpMfa: false,
+				passkeyMfa: false,
+				recoveryActive: false
+			}
+		}
+
 		return {
 			totpMfa: mfa?.totp?.status === TotpStatus.ENABLED,
+			passkeyMfa: mfa.passkeys.length > 0,
 			recoveryActive: mfa?.recoveryCodes.length > 0
 		}
 	}
