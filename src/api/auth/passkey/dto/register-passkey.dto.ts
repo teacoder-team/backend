@@ -1,11 +1,120 @@
 import { ApiProperty } from '@nestjs/swagger'
+import { Type } from 'class-transformer'
 import {
 	ArrayNotEmpty,
 	IsArray,
+	IsEnum,
 	IsNotEmpty,
+	IsObject,
+	IsOptional,
 	IsString,
-	MaxLength
+	MaxLength,
+	ValidateNested
 } from 'class-validator'
+
+export class AuthenticationExtensionsClientOutputsDto {
+	@ApiProperty({ description: 'App ID extension', required: false })
+	@IsOptional()
+	public appid?: boolean
+
+	@ApiProperty({
+		description: 'Credential properties output',
+		required: false
+	})
+	@IsOptional()
+	@IsObject()
+	public credProps?: Record<string, any>
+
+	@ApiProperty({
+		description: 'HMAC create secret extension',
+		required: false
+	})
+	@IsOptional()
+	public hmacCreateSecret?: boolean
+}
+
+export enum AuthenticatorAttachmentEnum {
+	CROSS_PLATFORM = 'cross-platform',
+	PLATFORM = 'platform'
+}
+
+export class AuthenticatorAttestationResponseJSONDto {
+	@ApiProperty({ description: 'Base64URL client data JSON' })
+	@IsString()
+	public clientDataJSON: string
+
+	@ApiProperty({ description: 'Base64URL attestation object' })
+	@IsString()
+	public attestationObject: string
+
+	@ApiProperty({
+		description: 'Base64URL authenticator data',
+		required: false
+	})
+	@IsOptional()
+	@IsString()
+	public authenticatorData?: string
+
+	@ApiProperty({
+		description: 'Transports supported by authenticator',
+		required: false,
+		type: [String]
+	})
+	@IsOptional()
+	public transports?: string[]
+
+	@ApiProperty({
+		description: 'Public key algorithm identifier',
+		required: false
+	})
+	@IsOptional()
+	public publicKeyAlgorithm?: number
+
+	@ApiProperty({ description: 'Base64URL public key', required: false })
+	@IsOptional()
+	@IsString()
+	public publicKey?: string
+}
+
+export enum PublicKeyCredentialTypeEnum {
+	PUBLIC_KEY = 'public-key'
+}
+
+export class RegistrationResponseJSONDto {
+	@ApiProperty({ description: 'Credential ID in Base64URL' })
+	@IsString()
+	public id: string
+
+	@ApiProperty({ description: 'Raw credential ID in Base64URL' })
+	@IsString()
+	public rawId: string
+
+	@ApiProperty({ description: 'Authenticator attestation response' })
+	@ValidateNested()
+	@Type(() => AuthenticatorAttestationResponseJSONDto)
+	public response: AuthenticatorAttestationResponseJSONDto
+
+	@ApiProperty({
+		description: 'Authenticator attachment type',
+		required: false,
+		enum: AuthenticatorAttachmentEnum
+	})
+	@IsOptional()
+	@IsEnum(AuthenticatorAttachmentEnum)
+	public authenticatorAttachment?: AuthenticatorAttachmentEnum
+
+	@ApiProperty({ description: 'Client extension results' })
+	@ValidateNested()
+	@Type(() => AuthenticationExtensionsClientOutputsDto)
+	public clientExtensionResults: AuthenticationExtensionsClientOutputsDto
+
+	@ApiProperty({
+		description: 'Public key credential type',
+		enum: PublicKeyCredentialTypeEnum
+	})
+	@IsEnum(PublicKeyCredentialTypeEnum)
+	public type: PublicKeyCredentialTypeEnum
+}
 
 export class RegisterPasskeyRequest {
 	@ApiProperty({
@@ -21,26 +130,13 @@ export class RegisterPasskeyRequest {
 	public deviceName: string
 
 	@ApiProperty({
-		description: 'Unique credential ID for the passkey',
-		example: 'abcd1234efgh5678ijkl',
-		maxLength: 255
+		description: 'Credential object returned by client for registration',
+		type: 'object',
+		additionalProperties: true
 	})
-	@IsString({ message: 'Credential ID должен быть строкой' })
-	@IsNotEmpty({ message: 'Credential ID обязателен для заполнения' })
-	public credentialId: string
-
-	@ApiProperty({
-		description: 'Public key for the passkey',
-		example:
-			'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1wA4P56FZP4Q2+Ld5uU5CqzTtW2n1SbxdTeQUjzkVgJtD0jvBZiFAxN1LRJ9fj2wzApoRqsEnnFF5z1gO5BrfEvztBlXijj7XSTK0CZGvNm5FCqIHxB5OeoDyz3BdoMvYFzkEF74ly7sEmZaEEDuWxrl7QhTkIVD+2aXYAZu/9RlfV6n0bNKylA==',
-		maxLength: 2048
-	})
-	@IsString({ message: 'Публичный ключ должен быть строкой' })
-	@IsNotEmpty({ message: 'Публичный ключ обязателен для заполнения' })
-	@MaxLength(2048, {
-		message: 'Публичный ключ не должен превышать 2048 символов'
-	})
-	public publicKey: string
+	@IsObject()
+	@IsNotEmpty()
+	public credential: RegistrationResponseJSONDto
 
 	@ApiProperty({
 		description: 'List of supported transport methods for the passkey',
