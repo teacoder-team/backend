@@ -22,16 +22,22 @@ model User {
 
   role UserRole @default(STUDENT)
 
+  isAutoRenewal Boolean @default(false) @map("is_auto_renewal")
+
   emailVerification EmailVerification?
   passwordReset     PasswordReset?
 
   externalAccounts ExternalAccount[]
   userProgress     UserProgress[]
+  downloadLogs     DownloadLog[]
 
   comments Comment[]
 
   mfa          MultiFactorAuthentication?
   restrictions Restriction[]
+
+  subscription Subscription?
+  payments     Payment[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -182,7 +188,8 @@ model Course {
 
   views Int @default(0)
 
-  lessons Lesson[]
+  lessons      Lesson[]
+  downloadLogs DownloadLog[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -233,6 +240,28 @@ model UserProgress {
   @@map("user_progress")
 }
 
+model DownloadLog {
+  id String @id @default(uuid())
+
+  token String
+
+  ip        String?
+  userAgent String? @map("user_agent")
+
+  downloadedAt DateTime @default(now()) @map("downloaded_at")
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @map("course_id")
+
+  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId String @map("course_ud")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("download_logs")
+}
+
 model Article {
   id String @id @default(uuid())
 
@@ -270,6 +299,51 @@ model Comment {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("comments")
+}
+
+model Subscription {
+  id String @id @default(uuid())
+
+  plan String
+
+  startedAt DateTime  @default(now()) @map("started_at")
+  expiresAt DateTime? @map("expires_at")
+
+  isActive Boolean @default(true) @map("is_active")
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @unique @map("user_id")
+
+  payments Payment[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("subscriptions")
+}
+
+model Payment {
+  id String @id @default(uuid())
+
+  amount   Float
+  currency String
+
+  status PaymentStatus @default(PENDING)
+  method PaymentMethod
+
+  providerPaymentId String? @map("provider_payment_id")
+  metadata          Json?
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @map("user_id")
+
+  subscription   Subscription? @relation(fields: [subscriptionId], references: [id])
+  subscriptionId String?       @map("subscription_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("payments")
 }
 
 enum UserRole {
@@ -315,4 +389,20 @@ enum RestrictionStatus {
   CANCELED
 
   @@map("restriction_statuses")
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+
+  @@map("payment_statuses")
+}
+
+enum PaymentMethod {
+  BANK_CARD
+  SBP
+  CRYPTO
+
+  @@map("payment_methods")
 }

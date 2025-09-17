@@ -17,6 +17,7 @@ import { SessionModule } from './auth/session/session.module'
 import { CommentModule } from './comment/comment.module'
 import { CourseModule } from './course/course.module'
 import { LessonModule } from './lesson/lesson.module'
+import { PaymentModule } from './payment/payment.module'
 import { ProgressModule } from './progress/progress.module'
 import { RestrictionModule } from './restriction/restriction.module'
 import { StatisticsModule } from './statistics/statistics.module'
@@ -47,7 +48,8 @@ import { UsersModule } from './users/users.module'
 		ProgressModule,
 		ArticleModule,
 		CommentModule,
-		StatisticsModule
+		StatisticsModule,
+		PaymentModule
 	],
 	providers: [
 		{

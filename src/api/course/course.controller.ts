@@ -6,7 +6,8 @@ import {
 	HttpStatus,
 	Param,
 	Patch,
-	Post
+	Post,
+	Res
 } from '@nestjs/common'
 import {
 	ApiHeader,
@@ -15,8 +16,10 @@ import {
 	ApiResponse,
 	ApiTags
 } from '@nestjs/swagger'
-import { UserRole } from '@prisma/generated'
+import { User, UserRole } from '@prisma/generated'
+import { Response } from 'express'
 
+import { Authorized, ClientIp, UserAgent } from '@/common/decorators'
 import { Authorization } from '@/common/decorators/auth.decorator'
 
 import { LessonResponse } from '../lesson/dto'
@@ -24,6 +27,7 @@ import { LessonResponse } from '../lesson/dto'
 import { CourseService } from './course.service'
 import {
 	CourseResponse,
+	CoursesResponse,
 	CreateCourseRequest,
 	CreateCourseResponse
 } from './dto'
@@ -37,9 +41,8 @@ export class CourseController {
 		summary: 'Fetch All Courses',
 		description: 'Retrieve a list of all available courses.'
 	})
-	@ApiResponse({
-		status: HttpStatus.OK,
-		type: [CourseResponse]
+	@ApiOkResponse({
+		type: [CoursesResponse]
 	})
 	@Get()
 	@HttpCode(HttpStatus.OK)
@@ -52,9 +55,8 @@ export class CourseController {
 		description:
 			'Retrieve a list of the most popular courses based on views.'
 	})
-	@ApiResponse({
-		status: HttpStatus.OK,
-		type: [CourseResponse]
+	@ApiOkResponse({
+		type: [CoursesResponse]
 	})
 	@Get('popular')
 	@HttpCode(HttpStatus.OK)
@@ -66,8 +68,7 @@ export class CourseController {
 		summary: 'Get Course By Slug',
 		description: 'Retrieve a course using its unique slug identifier.'
 	})
-	@ApiResponse({
-		status: HttpStatus.OK,
+	@ApiOkResponse({
 		type: CourseResponse
 	})
 	@Get(':slug')
@@ -100,6 +101,64 @@ export class CourseController {
 	@HttpCode(HttpStatus.NO_CONTENT)
 	public async incrementViews(@Param('id') id: string) {
 		await this.courseService.incrementViews(id)
+	}
+
+	@ApiHeader({
+		name: 'X-Session-Token'
+	})
+	@Authorization()
+	@Post(':id/download-link')
+	@HttpCode(HttpStatus.OK)
+	public async generateDownloadLink(@Param('id') id: string) {
+		return await this.courseService.generateDownloadLink(id)
+	}
+
+	@ApiHeader({
+		name: 'X-Session-Token'
+	})
+	@Authorization()
+	@Get('download/:token')
+	@HttpCode(HttpStatus.OK)
+	public async resolveDownloadToken(
+		@Param('token') token: string,
+		@ClientIp() ip: string,
+		@UserAgent() userAgent: string,
+		@Authorized() user: User,
+		@Res() res: Response
+	) {
+		const course = await this.courseService.resolveDownloadToken(
+			token,
+			user,
+			ip,
+			userAgent
+		)
+
+		try {
+			const { stream, contentType } =
+				await this.courseService.fetchAttachmentStream(
+					course.attachment
+				)
+
+			res.setHeader(
+				'Content-Disposition',
+				`attachment; filename="${encodeURIComponent(course.title)}.zip"`
+			)
+			res.setHeader('Content-Type', contentType as string)
+
+			stream.pipe(res)
+
+			stream.on('end', () => {
+				res.end()
+			})
+
+			stream.on('error', err => {
+				console.error('Stream error:', err)
+				res.status(500).end()
+			})
+		} catch (err) {
+			console.error(err)
+			res.status(500).end()
+		}
 	}
 
 	@ApiOperation({

@@ -57,6 +57,7 @@
 		"hi-base32": "^0.5.1",
 		"ioredis": "^5.4.1",
 		"nestjs-cloudflare-captcha": "^0.0.10",
+		"nestjs-yookassa": "^1.1.28",
 		"otpauth": "^9.3.6",
 		"prisma": "^5.22.0",
 		"qrcode": "^1.5.4",
