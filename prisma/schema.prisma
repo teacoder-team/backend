@@ -29,6 +29,7 @@ model User {
 
   externalAccounts ExternalAccount[]
   userProgress     UserProgress[]
+  downloadLogs     DownloadLog[]
 
   comments Comment[]
 
@@ -187,7 +188,8 @@ model Course {
 
   views Int @default(0)
 
-  lessons Lesson[]
+  lessons      Lesson[]
+  downloadLogs DownloadLog[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -236,6 +238,28 @@ model UserProgress {
   @@unique([userId, lessonId])
   @@index([lessonId])
   @@map("user_progress")
+}
+
+model DownloadLog {
+  id String @id @default(uuid())
+
+  token String
+
+  ip        String?
+  userAgent String? @map("user_agent")
+
+  downloadedAt DateTime @default(now()) @map("downloaded_at")
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @map("course_id")
+
+  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId String @map("course_ud")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("download_logs")
 }
 
 model Article {

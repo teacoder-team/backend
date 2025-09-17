@@ -243,6 +243,18 @@ exports.Prisma.UserProgressScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.DownloadLogScalarFieldEnum = {
+  id: 'id',
+  token: 'token',
+  ip: 'ip',
+  userAgent: 'userAgent',
+  downloadedAt: 'downloadedAt',
+  userId: 'userId',
+  courseId: 'courseId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.ArticleScalarFieldEnum = {
   id: 'id',
   title: 'title',
@@ -372,6 +384,7 @@ exports.Prisma.ModelName = {
   Course: 'Course',
   Lesson: 'Lesson',
   UserProgress: 'UserProgress',
+  DownloadLog: 'DownloadLog',
   Article: 'Article',
   Comment: 'Comment',
   Subscription: 'Subscription',

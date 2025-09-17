@@ -69,6 +69,11 @@ export type Lesson = $Result.DefaultSelection<Prisma.$LessonPayload>
  */
 export type UserProgress = $Result.DefaultSelection<Prisma.$UserProgressPayload>
 /**
+ * Model DownloadLog
+ * 
+ */
+export type DownloadLog = $Result.DefaultSelection<Prisma.$DownloadLogPayload>
+/**
  * Model Article
  * 
  */
@@ -429,6 +434,16 @@ export class PrismaClient<
     * ```
     */
   get userProgress(): Prisma.UserProgressDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.downloadLog`: Exposes CRUD operations for the **DownloadLog** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more DownloadLogs
+    * const downloadLogs = await prisma.downloadLog.findMany()
+    * ```
+    */
+  get downloadLog(): Prisma.DownloadLogDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.article`: Exposes CRUD operations for the **Article** model.
@@ -920,6 +935,7 @@ export namespace Prisma {
     Course: 'Course',
     Lesson: 'Lesson',
     UserProgress: 'UserProgress',
+    DownloadLog: 'DownloadLog',
     Article: 'Article',
     Comment: 'Comment',
     Subscription: 'Subscription',
@@ -942,7 +958,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "externalAccount" | "emailVerification" | "passwordReset" | "multiFactorAuthentication" | "totp" | "passkey" | "restriction" | "course" | "lesson" | "userProgress" | "article" | "comment" | "subscription" | "payment"
+      modelProps: "user" | "externalAccount" | "emailVerification" | "passwordReset" | "multiFactorAuthentication" | "totp" | "passkey" | "restriction" | "course" | "lesson" | "userProgress" | "downloadLog" | "article" | "comment" | "subscription" | "payment"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1716,6 +1732,76 @@ export namespace Prisma {
           }
         }
       }
+      DownloadLog: {
+        payload: Prisma.$DownloadLogPayload<ExtArgs>
+        fields: Prisma.DownloadLogFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.DownloadLogFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DownloadLogPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.DownloadLogFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DownloadLogPayload>
+          }
+          findFirst: {
+            args: Prisma.DownloadLogFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DownloadLogPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.DownloadLogFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DownloadLogPayload>
+          }
+          findMany: {
+            args: Prisma.DownloadLogFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DownloadLogPayload>[]
+          }
+          create: {
+            args: Prisma.DownloadLogCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DownloadLogPayload>
+          }
+          createMany: {
+            args: Prisma.DownloadLogCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.DownloadLogCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DownloadLogPayload>[]
+          }
+          delete: {
+            args: Prisma.DownloadLogDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DownloadLogPayload>
+          }
+          update: {
+            args: Prisma.DownloadLogUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DownloadLogPayload>
+          }
+          deleteMany: {
+            args: Prisma.DownloadLogDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.DownloadLogUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.DownloadLogUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$DownloadLogPayload>
+          }
+          aggregate: {
+            args: Prisma.DownloadLogAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateDownloadLog>
+          }
+          groupBy: {
+            args: Prisma.DownloadLogGroupByArgs<ExtArgs>
+            result: $Utils.Optional<DownloadLogGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.DownloadLogCountArgs<ExtArgs>
+            result: $Utils.Optional<DownloadLogCountAggregateOutputType> | number
+          }
+        }
+      }
       Article: {
         payload: Prisma.$ArticlePayload<ExtArgs>
         fields: Prisma.ArticleFieldRefs
@@ -2091,6 +2177,7 @@ export namespace Prisma {
     course?: CourseOmit
     lesson?: LessonOmit
     userProgress?: UserProgressOmit
+    downloadLog?: DownloadLogOmit
     article?: ArticleOmit
     comment?: CommentOmit
     subscription?: SubscriptionOmit
@@ -2191,6 +2278,7 @@ export namespace Prisma {
   export type UserCountOutputType = {
     externalAccounts: number
     userProgress: number
+    downloadLogs: number
     comments: number
     restrictions: number
     payments: number
@@ -2199,6 +2287,7 @@ export namespace Prisma {
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     externalAccounts?: boolean | UserCountOutputTypeCountExternalAccountsArgs
     userProgress?: boolean | UserCountOutputTypeCountUserProgressArgs
+    downloadLogs?: boolean | UserCountOutputTypeCountDownloadLogsArgs
     comments?: boolean | UserCountOutputTypeCountCommentsArgs
     restrictions?: boolean | UserCountOutputTypeCountRestrictionsArgs
     payments?: boolean | UserCountOutputTypeCountPaymentsArgs
@@ -2227,6 +2316,13 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountUserProgressArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: UserProgressWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountDownloadLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DownloadLogWhereInput
   }
 
   /**
@@ -2288,10 +2384,12 @@ export namespace Prisma {
 
   export type CourseCountOutputType = {
     lessons: number
+    downloadLogs: number
   }
 
   export type CourseCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     lessons?: boolean | CourseCountOutputTypeCountLessonsArgs
+    downloadLogs?: boolean | CourseCountOutputTypeCountDownloadLogsArgs
   }
 
   // Custom InputTypes
@@ -2310,6 +2408,13 @@ export namespace Prisma {
    */
   export type CourseCountOutputTypeCountLessonsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: LessonWhereInput
+  }
+
+  /**
+   * CourseCountOutputType without action
+   */
+  export type CourseCountOutputTypeCountDownloadLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DownloadLogWhereInput
   }
 
 
@@ -2660,6 +2765,7 @@ export namespace Prisma {
     passwordReset?: boolean | User$passwordResetArgs<ExtArgs>
     externalAccounts?: boolean | User$externalAccountsArgs<ExtArgs>
     userProgress?: boolean | User$userProgressArgs<ExtArgs>
+    downloadLogs?: boolean | User$downloadLogsArgs<ExtArgs>
     comments?: boolean | User$commentsArgs<ExtArgs>
     mfa?: boolean | User$mfaArgs<ExtArgs>
     restrictions?: boolean | User$restrictionsArgs<ExtArgs>
@@ -2703,6 +2809,7 @@ export namespace Prisma {
     passwordReset?: boolean | User$passwordResetArgs<ExtArgs>
     externalAccounts?: boolean | User$externalAccountsArgs<ExtArgs>
     userProgress?: boolean | User$userProgressArgs<ExtArgs>
+    downloadLogs?: boolean | User$downloadLogsArgs<ExtArgs>
     comments?: boolean | User$commentsArgs<ExtArgs>
     mfa?: boolean | User$mfaArgs<ExtArgs>
     restrictions?: boolean | User$restrictionsArgs<ExtArgs>
@@ -2719,6 +2826,7 @@ export namespace Prisma {
       passwordReset: Prisma.$PasswordResetPayload<ExtArgs> | null
       externalAccounts: Prisma.$ExternalAccountPayload<ExtArgs>[]
       userProgress: Prisma.$UserProgressPayload<ExtArgs>[]
+      downloadLogs: Prisma.$DownloadLogPayload<ExtArgs>[]
       comments: Prisma.$CommentPayload<ExtArgs>[]
       mfa: Prisma.$MultiFactorAuthenticationPayload<ExtArgs> | null
       restrictions: Prisma.$RestrictionPayload<ExtArgs>[]
@@ -3105,6 +3213,7 @@ export namespace Prisma {
     passwordReset<T extends User$passwordResetArgs<ExtArgs> = {}>(args?: Subset<T, User$passwordResetArgs<ExtArgs>>): Prisma__PasswordResetClient<$Result.GetResult<Prisma.$PasswordResetPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     externalAccounts<T extends User$externalAccountsArgs<ExtArgs> = {}>(args?: Subset<T, User$externalAccountsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ExternalAccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     userProgress<T extends User$userProgressArgs<ExtArgs> = {}>(args?: Subset<T, User$userProgressArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$UserProgressPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    downloadLogs<T extends User$downloadLogsArgs<ExtArgs> = {}>(args?: Subset<T, User$downloadLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DownloadLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     comments<T extends User$commentsArgs<ExtArgs> = {}>(args?: Subset<T, User$commentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     mfa<T extends User$mfaArgs<ExtArgs> = {}>(args?: Subset<T, User$mfaArgs<ExtArgs>>): Prisma__MultiFactorAuthenticationClient<$Result.GetResult<Prisma.$MultiFactorAuthenticationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     restrictions<T extends User$restrictionsArgs<ExtArgs> = {}>(args?: Subset<T, User$restrictionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RestrictionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -3587,6 +3696,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: UserProgressScalarFieldEnum | UserProgressScalarFieldEnum[]
+  }
+
+  /**
+   * User.downloadLogs
+   */
+  export type User$downloadLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DownloadLog
+     */
+    select?: DownloadLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DownloadLog
+     */
+    omit?: DownloadLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DownloadLogInclude<ExtArgs> | null
+    where?: DownloadLogWhereInput
+    orderBy?: DownloadLogOrderByWithRelationInput | DownloadLogOrderByWithRelationInput[]
+    cursor?: DownloadLogWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: DownloadLogScalarFieldEnum | DownloadLogScalarFieldEnum[]
   }
 
   /**
@@ -11145,6 +11278,7 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     lessons?: boolean | Course$lessonsArgs<ExtArgs>
+    downloadLogs?: boolean | Course$downloadLogsArgs<ExtArgs>
     _count?: boolean | CourseCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["course"]>
 
@@ -11182,6 +11316,7 @@ export namespace Prisma {
   export type CourseOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "slug" | "shortDescription" | "fullDescription" | "thumbnail" | "youtubeUrl" | "attachment" | "isPublished" | "views" | "createdAt" | "updatedAt", ExtArgs["result"]["course"]>
   export type CourseInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     lessons?: boolean | Course$lessonsArgs<ExtArgs>
+    downloadLogs?: boolean | Course$downloadLogsArgs<ExtArgs>
     _count?: boolean | CourseCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type CourseIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -11190,6 +11325,7 @@ export namespace Prisma {
     name: "Course"
     objects: {
       lessons: Prisma.$LessonPayload<ExtArgs>[]
+      downloadLogs: Prisma.$DownloadLogPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -11569,6 +11705,7 @@ export namespace Prisma {
   export interface Prisma__CourseClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     lessons<T extends Course$lessonsArgs<ExtArgs> = {}>(args?: Subset<T, Course$lessonsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$LessonPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    downloadLogs<T extends Course$downloadLogsArgs<ExtArgs> = {}>(args?: Subset<T, Course$downloadLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DownloadLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -11985,6 +12122,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: LessonScalarFieldEnum | LessonScalarFieldEnum[]
+  }
+
+  /**
+   * Course.downloadLogs
+   */
+  export type Course$downloadLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DownloadLog
+     */
+    select?: DownloadLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DownloadLog
+     */
+    omit?: DownloadLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DownloadLogInclude<ExtArgs> | null
+    where?: DownloadLogWhereInput
+    orderBy?: DownloadLogOrderByWithRelationInput | DownloadLogOrderByWithRelationInput[]
+    cursor?: DownloadLogWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: DownloadLogScalarFieldEnum | DownloadLogScalarFieldEnum[]
   }
 
   /**
@@ -14103,6 +14264,1039 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: UserProgressInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model DownloadLog
+   */
+
+  export type AggregateDownloadLog = {
+    _count: DownloadLogCountAggregateOutputType | null
+    _min: DownloadLogMinAggregateOutputType | null
+    _max: DownloadLogMaxAggregateOutputType | null
+  }
+
+  export type DownloadLogMinAggregateOutputType = {
+    id: string | null
+    token: string | null
+    ip: string | null
+    userAgent: string | null
+    downloadedAt: Date | null
+    userId: string | null
+    courseId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type DownloadLogMaxAggregateOutputType = {
+    id: string | null
+    token: string | null
+    ip: string | null
+    userAgent: string | null
+    downloadedAt: Date | null
+    userId: string | null
+    courseId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type DownloadLogCountAggregateOutputType = {
+    id: number
+    token: number
+    ip: number
+    userAgent: number
+    downloadedAt: number
+    userId: number
+    courseId: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type DownloadLogMinAggregateInputType = {
+    id?: true
+    token?: true
+    ip?: true
+    userAgent?: true
+    downloadedAt?: true
+    userId?: true
+    courseId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type DownloadLogMaxAggregateInputType = {
+    id?: true
+    token?: true
+    ip?: true
+    userAgent?: true
+    downloadedAt?: true
+    userId?: true
+    courseId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type DownloadLogCountAggregateInputType = {
+    id?: true
+    token?: true
+    ip?: true
+    userAgent?: true
+    downloadedAt?: true
+    userId?: true
+    courseId?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type DownloadLogAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which DownloadLog to aggregate.
+     */
+    where?: DownloadLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DownloadLogs to fetch.
+     */
+    orderBy?: DownloadLogOrderByWithRelationInput | DownloadLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: DownloadLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DownloadLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DownloadLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned DownloadLogs
+    **/
+    _count?: true | DownloadLogCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: DownloadLogMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: DownloadLogMaxAggregateInputType
+  }
+
+  export type GetDownloadLogAggregateType<T extends DownloadLogAggregateArgs> = {
+        [P in keyof T & keyof AggregateDownloadLog]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateDownloadLog[P]>
+      : GetScalarType<T[P], AggregateDownloadLog[P]>
+  }
+
+
+
+
+  export type DownloadLogGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DownloadLogWhereInput
+    orderBy?: DownloadLogOrderByWithAggregationInput | DownloadLogOrderByWithAggregationInput[]
+    by: DownloadLogScalarFieldEnum[] | DownloadLogScalarFieldEnum
+    having?: DownloadLogScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: DownloadLogCountAggregateInputType | true
+    _min?: DownloadLogMinAggregateInputType
+    _max?: DownloadLogMaxAggregateInputType
+  }
+
+  export type DownloadLogGroupByOutputType = {
+    id: string
+    token: string
+    ip: string | null
+    userAgent: string | null
+    downloadedAt: Date
+    userId: string
+    courseId: string
+    createdAt: Date
+    updatedAt: Date
+    _count: DownloadLogCountAggregateOutputType | null
+    _min: DownloadLogMinAggregateOutputType | null
+    _max: DownloadLogMaxAggregateOutputType | null
+  }
+
+  type GetDownloadLogGroupByPayload<T extends DownloadLogGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<DownloadLogGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof DownloadLogGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], DownloadLogGroupByOutputType[P]>
+            : GetScalarType<T[P], DownloadLogGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type DownloadLogSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    token?: boolean
+    ip?: boolean
+    userAgent?: boolean
+    downloadedAt?: boolean
+    userId?: boolean
+    courseId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    course?: boolean | CourseDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["downloadLog"]>
+
+  export type DownloadLogSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    token?: boolean
+    ip?: boolean
+    userAgent?: boolean
+    downloadedAt?: boolean
+    userId?: boolean
+    courseId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    course?: boolean | CourseDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["downloadLog"]>
+
+
+  export type DownloadLogSelectScalar = {
+    id?: boolean
+    token?: boolean
+    ip?: boolean
+    userAgent?: boolean
+    downloadedAt?: boolean
+    userId?: boolean
+    courseId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type DownloadLogOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "token" | "ip" | "userAgent" | "downloadedAt" | "userId" | "courseId" | "createdAt" | "updatedAt", ExtArgs["result"]["downloadLog"]>
+  export type DownloadLogInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    course?: boolean | CourseDefaultArgs<ExtArgs>
+  }
+  export type DownloadLogIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    course?: boolean | CourseDefaultArgs<ExtArgs>
+  }
+
+  export type $DownloadLogPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "DownloadLog"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+      course: Prisma.$CoursePayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      token: string
+      ip: string | null
+      userAgent: string | null
+      downloadedAt: Date
+      userId: string
+      courseId: string
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["downloadLog"]>
+    composites: {}
+  }
+
+  type DownloadLogGetPayload<S extends boolean | null | undefined | DownloadLogDefaultArgs> = $Result.GetResult<Prisma.$DownloadLogPayload, S>
+
+  type DownloadLogCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<DownloadLogFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: DownloadLogCountAggregateInputType | true
+    }
+
+  export interface DownloadLogDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['DownloadLog'], meta: { name: 'DownloadLog' } }
+    /**
+     * Find zero or one DownloadLog that matches the filter.
+     * @param {DownloadLogFindUniqueArgs} args - Arguments to find a DownloadLog
+     * @example
+     * // Get one DownloadLog
+     * const downloadLog = await prisma.downloadLog.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends DownloadLogFindUniqueArgs>(args: SelectSubset<T, DownloadLogFindUniqueArgs<ExtArgs>>): Prisma__DownloadLogClient<$Result.GetResult<Prisma.$DownloadLogPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one DownloadLog that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {DownloadLogFindUniqueOrThrowArgs} args - Arguments to find a DownloadLog
+     * @example
+     * // Get one DownloadLog
+     * const downloadLog = await prisma.downloadLog.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends DownloadLogFindUniqueOrThrowArgs>(args: SelectSubset<T, DownloadLogFindUniqueOrThrowArgs<ExtArgs>>): Prisma__DownloadLogClient<$Result.GetResult<Prisma.$DownloadLogPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first DownloadLog that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DownloadLogFindFirstArgs} args - Arguments to find a DownloadLog
+     * @example
+     * // Get one DownloadLog
+     * const downloadLog = await prisma.downloadLog.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends DownloadLogFindFirstArgs>(args?: SelectSubset<T, DownloadLogFindFirstArgs<ExtArgs>>): Prisma__DownloadLogClient<$Result.GetResult<Prisma.$DownloadLogPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first DownloadLog that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DownloadLogFindFirstOrThrowArgs} args - Arguments to find a DownloadLog
+     * @example
+     * // Get one DownloadLog
+     * const downloadLog = await prisma.downloadLog.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends DownloadLogFindFirstOrThrowArgs>(args?: SelectSubset<T, DownloadLogFindFirstOrThrowArgs<ExtArgs>>): Prisma__DownloadLogClient<$Result.GetResult<Prisma.$DownloadLogPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more DownloadLogs that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DownloadLogFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all DownloadLogs
+     * const downloadLogs = await prisma.downloadLog.findMany()
+     * 
+     * // Get first 10 DownloadLogs
+     * const downloadLogs = await prisma.downloadLog.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const downloadLogWithIdOnly = await prisma.downloadLog.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends DownloadLogFindManyArgs>(args?: SelectSubset<T, DownloadLogFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DownloadLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a DownloadLog.
+     * @param {DownloadLogCreateArgs} args - Arguments to create a DownloadLog.
+     * @example
+     * // Create one DownloadLog
+     * const DownloadLog = await prisma.downloadLog.create({
+     *   data: {
+     *     // ... data to create a DownloadLog
+     *   }
+     * })
+     * 
+     */
+    create<T extends DownloadLogCreateArgs>(args: SelectSubset<T, DownloadLogCreateArgs<ExtArgs>>): Prisma__DownloadLogClient<$Result.GetResult<Prisma.$DownloadLogPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many DownloadLogs.
+     * @param {DownloadLogCreateManyArgs} args - Arguments to create many DownloadLogs.
+     * @example
+     * // Create many DownloadLogs
+     * const downloadLog = await prisma.downloadLog.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends DownloadLogCreateManyArgs>(args?: SelectSubset<T, DownloadLogCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many DownloadLogs and returns the data saved in the database.
+     * @param {DownloadLogCreateManyAndReturnArgs} args - Arguments to create many DownloadLogs.
+     * @example
+     * // Create many DownloadLogs
+     * const downloadLog = await prisma.downloadLog.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many DownloadLogs and only return the `id`
+     * const downloadLogWithIdOnly = await prisma.downloadLog.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends DownloadLogCreateManyAndReturnArgs>(args?: SelectSubset<T, DownloadLogCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DownloadLogPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a DownloadLog.
+     * @param {DownloadLogDeleteArgs} args - Arguments to delete one DownloadLog.
+     * @example
+     * // Delete one DownloadLog
+     * const DownloadLog = await prisma.downloadLog.delete({
+     *   where: {
+     *     // ... filter to delete one DownloadLog
+     *   }
+     * })
+     * 
+     */
+    delete<T extends DownloadLogDeleteArgs>(args: SelectSubset<T, DownloadLogDeleteArgs<ExtArgs>>): Prisma__DownloadLogClient<$Result.GetResult<Prisma.$DownloadLogPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one DownloadLog.
+     * @param {DownloadLogUpdateArgs} args - Arguments to update one DownloadLog.
+     * @example
+     * // Update one DownloadLog
+     * const downloadLog = await prisma.downloadLog.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends DownloadLogUpdateArgs>(args: SelectSubset<T, DownloadLogUpdateArgs<ExtArgs>>): Prisma__DownloadLogClient<$Result.GetResult<Prisma.$DownloadLogPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more DownloadLogs.
+     * @param {DownloadLogDeleteManyArgs} args - Arguments to filter DownloadLogs to delete.
+     * @example
+     * // Delete a few DownloadLogs
+     * const { count } = await prisma.downloadLog.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends DownloadLogDeleteManyArgs>(args?: SelectSubset<T, DownloadLogDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more DownloadLogs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DownloadLogUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many DownloadLogs
+     * const downloadLog = await prisma.downloadLog.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends DownloadLogUpdateManyArgs>(args: SelectSubset<T, DownloadLogUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one DownloadLog.
+     * @param {DownloadLogUpsertArgs} args - Arguments to update or create a DownloadLog.
+     * @example
+     * // Update or create a DownloadLog
+     * const downloadLog = await prisma.downloadLog.upsert({
+     *   create: {
+     *     // ... data to create a DownloadLog
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the DownloadLog we want to update
+     *   }
+     * })
+     */
+    upsert<T extends DownloadLogUpsertArgs>(args: SelectSubset<T, DownloadLogUpsertArgs<ExtArgs>>): Prisma__DownloadLogClient<$Result.GetResult<Prisma.$DownloadLogPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of DownloadLogs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DownloadLogCountArgs} args - Arguments to filter DownloadLogs to count.
+     * @example
+     * // Count the number of DownloadLogs
+     * const count = await prisma.downloadLog.count({
+     *   where: {
+     *     // ... the filter for the DownloadLogs we want to count
+     *   }
+     * })
+    **/
+    count<T extends DownloadLogCountArgs>(
+      args?: Subset<T, DownloadLogCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], DownloadLogCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a DownloadLog.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DownloadLogAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends DownloadLogAggregateArgs>(args: Subset<T, DownloadLogAggregateArgs>): Prisma.PrismaPromise<GetDownloadLogAggregateType<T>>
+
+    /**
+     * Group by DownloadLog.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {DownloadLogGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends DownloadLogGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: DownloadLogGroupByArgs['orderBy'] }
+        : { orderBy?: DownloadLogGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, DownloadLogGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetDownloadLogGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the DownloadLog model
+   */
+  readonly fields: DownloadLogFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for DownloadLog.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__DownloadLogClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    course<T extends CourseDefaultArgs<ExtArgs> = {}>(args?: Subset<T, CourseDefaultArgs<ExtArgs>>): Prisma__CourseClient<$Result.GetResult<Prisma.$CoursePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the DownloadLog model
+   */
+  interface DownloadLogFieldRefs {
+    readonly id: FieldRef<"DownloadLog", 'String'>
+    readonly token: FieldRef<"DownloadLog", 'String'>
+    readonly ip: FieldRef<"DownloadLog", 'String'>
+    readonly userAgent: FieldRef<"DownloadLog", 'String'>
+    readonly downloadedAt: FieldRef<"DownloadLog", 'DateTime'>
+    readonly userId: FieldRef<"DownloadLog", 'String'>
+    readonly courseId: FieldRef<"DownloadLog", 'String'>
+    readonly createdAt: FieldRef<"DownloadLog", 'DateTime'>
+    readonly updatedAt: FieldRef<"DownloadLog", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * DownloadLog findUnique
+   */
+  export type DownloadLogFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DownloadLog
+     */
+    select?: DownloadLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DownloadLog
+     */
+    omit?: DownloadLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DownloadLogInclude<ExtArgs> | null
+    /**
+     * Filter, which DownloadLog to fetch.
+     */
+    where: DownloadLogWhereUniqueInput
+  }
+
+  /**
+   * DownloadLog findUniqueOrThrow
+   */
+  export type DownloadLogFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DownloadLog
+     */
+    select?: DownloadLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DownloadLog
+     */
+    omit?: DownloadLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DownloadLogInclude<ExtArgs> | null
+    /**
+     * Filter, which DownloadLog to fetch.
+     */
+    where: DownloadLogWhereUniqueInput
+  }
+
+  /**
+   * DownloadLog findFirst
+   */
+  export type DownloadLogFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DownloadLog
+     */
+    select?: DownloadLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DownloadLog
+     */
+    omit?: DownloadLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DownloadLogInclude<ExtArgs> | null
+    /**
+     * Filter, which DownloadLog to fetch.
+     */
+    where?: DownloadLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DownloadLogs to fetch.
+     */
+    orderBy?: DownloadLogOrderByWithRelationInput | DownloadLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for DownloadLogs.
+     */
+    cursor?: DownloadLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DownloadLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DownloadLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of DownloadLogs.
+     */
+    distinct?: DownloadLogScalarFieldEnum | DownloadLogScalarFieldEnum[]
+  }
+
+  /**
+   * DownloadLog findFirstOrThrow
+   */
+  export type DownloadLogFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DownloadLog
+     */
+    select?: DownloadLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DownloadLog
+     */
+    omit?: DownloadLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DownloadLogInclude<ExtArgs> | null
+    /**
+     * Filter, which DownloadLog to fetch.
+     */
+    where?: DownloadLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DownloadLogs to fetch.
+     */
+    orderBy?: DownloadLogOrderByWithRelationInput | DownloadLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for DownloadLogs.
+     */
+    cursor?: DownloadLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DownloadLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DownloadLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of DownloadLogs.
+     */
+    distinct?: DownloadLogScalarFieldEnum | DownloadLogScalarFieldEnum[]
+  }
+
+  /**
+   * DownloadLog findMany
+   */
+  export type DownloadLogFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DownloadLog
+     */
+    select?: DownloadLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DownloadLog
+     */
+    omit?: DownloadLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DownloadLogInclude<ExtArgs> | null
+    /**
+     * Filter, which DownloadLogs to fetch.
+     */
+    where?: DownloadLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of DownloadLogs to fetch.
+     */
+    orderBy?: DownloadLogOrderByWithRelationInput | DownloadLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing DownloadLogs.
+     */
+    cursor?: DownloadLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` DownloadLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` DownloadLogs.
+     */
+    skip?: number
+    distinct?: DownloadLogScalarFieldEnum | DownloadLogScalarFieldEnum[]
+  }
+
+  /**
+   * DownloadLog create
+   */
+  export type DownloadLogCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DownloadLog
+     */
+    select?: DownloadLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DownloadLog
+     */
+    omit?: DownloadLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DownloadLogInclude<ExtArgs> | null
+    /**
+     * The data needed to create a DownloadLog.
+     */
+    data: XOR<DownloadLogCreateInput, DownloadLogUncheckedCreateInput>
+  }
+
+  /**
+   * DownloadLog createMany
+   */
+  export type DownloadLogCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many DownloadLogs.
+     */
+    data: DownloadLogCreateManyInput | DownloadLogCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * DownloadLog createManyAndReturn
+   */
+  export type DownloadLogCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DownloadLog
+     */
+    select?: DownloadLogSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the DownloadLog
+     */
+    omit?: DownloadLogOmit<ExtArgs> | null
+    /**
+     * The data used to create many DownloadLogs.
+     */
+    data: DownloadLogCreateManyInput | DownloadLogCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DownloadLogIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * DownloadLog update
+   */
+  export type DownloadLogUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DownloadLog
+     */
+    select?: DownloadLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DownloadLog
+     */
+    omit?: DownloadLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DownloadLogInclude<ExtArgs> | null
+    /**
+     * The data needed to update a DownloadLog.
+     */
+    data: XOR<DownloadLogUpdateInput, DownloadLogUncheckedUpdateInput>
+    /**
+     * Choose, which DownloadLog to update.
+     */
+    where: DownloadLogWhereUniqueInput
+  }
+
+  /**
+   * DownloadLog updateMany
+   */
+  export type DownloadLogUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update DownloadLogs.
+     */
+    data: XOR<DownloadLogUpdateManyMutationInput, DownloadLogUncheckedUpdateManyInput>
+    /**
+     * Filter which DownloadLogs to update
+     */
+    where?: DownloadLogWhereInput
+  }
+
+  /**
+   * DownloadLog upsert
+   */
+  export type DownloadLogUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DownloadLog
+     */
+    select?: DownloadLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DownloadLog
+     */
+    omit?: DownloadLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DownloadLogInclude<ExtArgs> | null
+    /**
+     * The filter to search for the DownloadLog to update in case it exists.
+     */
+    where: DownloadLogWhereUniqueInput
+    /**
+     * In case the DownloadLog found by the `where` argument doesn't exist, create a new DownloadLog with this data.
+     */
+    create: XOR<DownloadLogCreateInput, DownloadLogUncheckedCreateInput>
+    /**
+     * In case the DownloadLog was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<DownloadLogUpdateInput, DownloadLogUncheckedUpdateInput>
+  }
+
+  /**
+   * DownloadLog delete
+   */
+  export type DownloadLogDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DownloadLog
+     */
+    select?: DownloadLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DownloadLog
+     */
+    omit?: DownloadLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DownloadLogInclude<ExtArgs> | null
+    /**
+     * Filter which DownloadLog to delete.
+     */
+    where: DownloadLogWhereUniqueInput
+  }
+
+  /**
+   * DownloadLog deleteMany
+   */
+  export type DownloadLogDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which DownloadLogs to delete
+     */
+    where?: DownloadLogWhereInput
+  }
+
+  /**
+   * DownloadLog without action
+   */
+  export type DownloadLogDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the DownloadLog
+     */
+    select?: DownloadLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the DownloadLog
+     */
+    omit?: DownloadLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DownloadLogInclude<ExtArgs> | null
   }
 
 
@@ -18482,6 +19676,21 @@ export namespace Prisma {
   export type UserProgressScalarFieldEnum = (typeof UserProgressScalarFieldEnum)[keyof typeof UserProgressScalarFieldEnum]
 
 
+  export const DownloadLogScalarFieldEnum: {
+    id: 'id',
+    token: 'token',
+    ip: 'ip',
+    userAgent: 'userAgent',
+    downloadedAt: 'downloadedAt',
+    userId: 'userId',
+    courseId: 'courseId',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type DownloadLogScalarFieldEnum = (typeof DownloadLogScalarFieldEnum)[keyof typeof DownloadLogScalarFieldEnum]
+
+
   export const ArticleScalarFieldEnum: {
     id: 'id',
     title: 'title',
@@ -18791,6 +20000,7 @@ export namespace Prisma {
     passwordReset?: XOR<PasswordResetNullableRelationFilter, PasswordResetWhereInput> | null
     externalAccounts?: ExternalAccountListRelationFilter
     userProgress?: UserProgressListRelationFilter
+    downloadLogs?: DownloadLogListRelationFilter
     comments?: CommentListRelationFilter
     mfa?: XOR<MultiFactorAuthenticationNullableRelationFilter, MultiFactorAuthenticationWhereInput> | null
     restrictions?: RestrictionListRelationFilter
@@ -18814,6 +20024,7 @@ export namespace Prisma {
     passwordReset?: PasswordResetOrderByWithRelationInput
     externalAccounts?: ExternalAccountOrderByRelationAggregateInput
     userProgress?: UserProgressOrderByRelationAggregateInput
+    downloadLogs?: DownloadLogOrderByRelationAggregateInput
     comments?: CommentOrderByRelationAggregateInput
     mfa?: MultiFactorAuthenticationOrderByWithRelationInput
     restrictions?: RestrictionOrderByRelationAggregateInput
@@ -18840,6 +20051,7 @@ export namespace Prisma {
     passwordReset?: XOR<PasswordResetNullableRelationFilter, PasswordResetWhereInput> | null
     externalAccounts?: ExternalAccountListRelationFilter
     userProgress?: UserProgressListRelationFilter
+    downloadLogs?: DownloadLogListRelationFilter
     comments?: CommentListRelationFilter
     mfa?: XOR<MultiFactorAuthenticationNullableRelationFilter, MultiFactorAuthenticationWhereInput> | null
     restrictions?: RestrictionListRelationFilter
@@ -19376,6 +20588,7 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Course"> | Date | string
     updatedAt?: DateTimeFilter<"Course"> | Date | string
     lessons?: LessonListRelationFilter
+    downloadLogs?: DownloadLogListRelationFilter
   }
 
   export type CourseOrderByWithRelationInput = {
@@ -19392,6 +20605,7 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     lessons?: LessonOrderByRelationAggregateInput
+    downloadLogs?: DownloadLogOrderByRelationAggregateInput
   }
 
   export type CourseWhereUniqueInput = Prisma.AtLeast<{
@@ -19411,6 +20625,7 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Course"> | Date | string
     updatedAt?: DateTimeFilter<"Course"> | Date | string
     lessons?: LessonListRelationFilter
+    downloadLogs?: DownloadLogListRelationFilter
   }, "id" | "slug">
 
   export type CourseOrderByWithAggregationInput = {
@@ -19598,6 +20813,84 @@ export namespace Prisma {
     lessonId?: StringWithAggregatesFilter<"UserProgress"> | string
     createdAt?: DateTimeWithAggregatesFilter<"UserProgress"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"UserProgress"> | Date | string
+  }
+
+  export type DownloadLogWhereInput = {
+    AND?: DownloadLogWhereInput | DownloadLogWhereInput[]
+    OR?: DownloadLogWhereInput[]
+    NOT?: DownloadLogWhereInput | DownloadLogWhereInput[]
+    id?: StringFilter<"DownloadLog"> | string
+    token?: StringFilter<"DownloadLog"> | string
+    ip?: StringNullableFilter<"DownloadLog"> | string | null
+    userAgent?: StringNullableFilter<"DownloadLog"> | string | null
+    downloadedAt?: DateTimeFilter<"DownloadLog"> | Date | string
+    userId?: StringFilter<"DownloadLog"> | string
+    courseId?: StringFilter<"DownloadLog"> | string
+    createdAt?: DateTimeFilter<"DownloadLog"> | Date | string
+    updatedAt?: DateTimeFilter<"DownloadLog"> | Date | string
+    user?: XOR<UserRelationFilter, UserWhereInput>
+    course?: XOR<CourseRelationFilter, CourseWhereInput>
+  }
+
+  export type DownloadLogOrderByWithRelationInput = {
+    id?: SortOrder
+    token?: SortOrder
+    ip?: SortOrderInput | SortOrder
+    userAgent?: SortOrderInput | SortOrder
+    downloadedAt?: SortOrder
+    userId?: SortOrder
+    courseId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    user?: UserOrderByWithRelationInput
+    course?: CourseOrderByWithRelationInput
+  }
+
+  export type DownloadLogWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: DownloadLogWhereInput | DownloadLogWhereInput[]
+    OR?: DownloadLogWhereInput[]
+    NOT?: DownloadLogWhereInput | DownloadLogWhereInput[]
+    token?: StringFilter<"DownloadLog"> | string
+    ip?: StringNullableFilter<"DownloadLog"> | string | null
+    userAgent?: StringNullableFilter<"DownloadLog"> | string | null
+    downloadedAt?: DateTimeFilter<"DownloadLog"> | Date | string
+    userId?: StringFilter<"DownloadLog"> | string
+    courseId?: StringFilter<"DownloadLog"> | string
+    createdAt?: DateTimeFilter<"DownloadLog"> | Date | string
+    updatedAt?: DateTimeFilter<"DownloadLog"> | Date | string
+    user?: XOR<UserRelationFilter, UserWhereInput>
+    course?: XOR<CourseRelationFilter, CourseWhereInput>
+  }, "id">
+
+  export type DownloadLogOrderByWithAggregationInput = {
+    id?: SortOrder
+    token?: SortOrder
+    ip?: SortOrderInput | SortOrder
+    userAgent?: SortOrderInput | SortOrder
+    downloadedAt?: SortOrder
+    userId?: SortOrder
+    courseId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: DownloadLogCountOrderByAggregateInput
+    _max?: DownloadLogMaxOrderByAggregateInput
+    _min?: DownloadLogMinOrderByAggregateInput
+  }
+
+  export type DownloadLogScalarWhereWithAggregatesInput = {
+    AND?: DownloadLogScalarWhereWithAggregatesInput | DownloadLogScalarWhereWithAggregatesInput[]
+    OR?: DownloadLogScalarWhereWithAggregatesInput[]
+    NOT?: DownloadLogScalarWhereWithAggregatesInput | DownloadLogScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"DownloadLog"> | string
+    token?: StringWithAggregatesFilter<"DownloadLog"> | string
+    ip?: StringNullableWithAggregatesFilter<"DownloadLog"> | string | null
+    userAgent?: StringNullableWithAggregatesFilter<"DownloadLog"> | string | null
+    downloadedAt?: DateTimeWithAggregatesFilter<"DownloadLog"> | Date | string
+    userId?: StringWithAggregatesFilter<"DownloadLog"> | string
+    courseId?: StringWithAggregatesFilter<"DownloadLog"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"DownloadLog"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"DownloadLog"> | Date | string
   }
 
   export type ArticleWhereInput = {
@@ -19922,6 +21215,7 @@ export namespace Prisma {
     passwordReset?: PasswordResetCreateNestedOneWithoutUserInput
     externalAccounts?: ExternalAccountCreateNestedManyWithoutUserInput
     userProgress?: UserProgressCreateNestedManyWithoutUserInput
+    downloadLogs?: DownloadLogCreateNestedManyWithoutUserInput
     comments?: CommentCreateNestedManyWithoutAuthorInput
     mfa?: MultiFactorAuthenticationCreateNestedOneWithoutUserInput
     restrictions?: RestrictionCreateNestedManyWithoutUserInput
@@ -19945,6 +21239,7 @@ export namespace Prisma {
     passwordReset?: PasswordResetUncheckedCreateNestedOneWithoutUserInput
     externalAccounts?: ExternalAccountUncheckedCreateNestedManyWithoutUserInput
     userProgress?: UserProgressUncheckedCreateNestedManyWithoutUserInput
+    downloadLogs?: DownloadLogUncheckedCreateNestedManyWithoutUserInput
     comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
     mfa?: MultiFactorAuthenticationUncheckedCreateNestedOneWithoutUserInput
     restrictions?: RestrictionUncheckedCreateNestedManyWithoutUserInput
@@ -19968,6 +21263,7 @@ export namespace Prisma {
     passwordReset?: PasswordResetUpdateOneWithoutUserNestedInput
     externalAccounts?: ExternalAccountUpdateManyWithoutUserNestedInput
     userProgress?: UserProgressUpdateManyWithoutUserNestedInput
+    downloadLogs?: DownloadLogUpdateManyWithoutUserNestedInput
     comments?: CommentUpdateManyWithoutAuthorNestedInput
     mfa?: MultiFactorAuthenticationUpdateOneWithoutUserNestedInput
     restrictions?: RestrictionUpdateManyWithoutUserNestedInput
@@ -19991,6 +21287,7 @@ export namespace Prisma {
     passwordReset?: PasswordResetUncheckedUpdateOneWithoutUserNestedInput
     externalAccounts?: ExternalAccountUncheckedUpdateManyWithoutUserNestedInput
     userProgress?: UserProgressUncheckedUpdateManyWithoutUserNestedInput
+    downloadLogs?: DownloadLogUncheckedUpdateManyWithoutUserNestedInput
     comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
     mfa?: MultiFactorAuthenticationUncheckedUpdateOneWithoutUserNestedInput
     restrictions?: RestrictionUncheckedUpdateManyWithoutUserNestedInput
@@ -20559,6 +21856,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     lessons?: LessonCreateNestedManyWithoutCourseInput
+    downloadLogs?: DownloadLogCreateNestedManyWithoutCourseInput
   }
 
   export type CourseUncheckedCreateInput = {
@@ -20575,6 +21873,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     lessons?: LessonUncheckedCreateNestedManyWithoutCourseInput
+    downloadLogs?: DownloadLogUncheckedCreateNestedManyWithoutCourseInput
   }
 
   export type CourseUpdateInput = {
@@ -20591,6 +21890,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     lessons?: LessonUpdateManyWithoutCourseNestedInput
+    downloadLogs?: DownloadLogUpdateManyWithoutCourseNestedInput
   }
 
   export type CourseUncheckedUpdateInput = {
@@ -20607,6 +21907,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     lessons?: LessonUncheckedUpdateManyWithoutCourseNestedInput
+    downloadLogs?: DownloadLogUncheckedUpdateManyWithoutCourseNestedInput
   }
 
   export type CourseCreateManyInput = {
@@ -20805,6 +22106,88 @@ export namespace Prisma {
     isCompleted?: BoolFieldUpdateOperationsInput | boolean
     userId?: StringFieldUpdateOperationsInput | string
     lessonId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DownloadLogCreateInput = {
+    id?: string
+    token: string
+    ip?: string | null
+    userAgent?: string | null
+    downloadedAt?: Date | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutDownloadLogsInput
+    course: CourseCreateNestedOneWithoutDownloadLogsInput
+  }
+
+  export type DownloadLogUncheckedCreateInput = {
+    id?: string
+    token: string
+    ip?: string | null
+    userAgent?: string | null
+    downloadedAt?: Date | string
+    userId: string
+    courseId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type DownloadLogUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    token?: StringFieldUpdateOperationsInput | string
+    ip?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    downloadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutDownloadLogsNestedInput
+    course?: CourseUpdateOneRequiredWithoutDownloadLogsNestedInput
+  }
+
+  export type DownloadLogUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    token?: StringFieldUpdateOperationsInput | string
+    ip?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    downloadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    userId?: StringFieldUpdateOperationsInput | string
+    courseId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DownloadLogCreateManyInput = {
+    id?: string
+    token: string
+    ip?: string | null
+    userAgent?: string | null
+    downloadedAt?: Date | string
+    userId: string
+    courseId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type DownloadLogUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    token?: StringFieldUpdateOperationsInput | string
+    ip?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    downloadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DownloadLogUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    token?: StringFieldUpdateOperationsInput | string
+    ip?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    downloadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    userId?: StringFieldUpdateOperationsInput | string
+    courseId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -21227,6 +22610,12 @@ export namespace Prisma {
     none?: UserProgressWhereInput
   }
 
+  export type DownloadLogListRelationFilter = {
+    every?: DownloadLogWhereInput
+    some?: DownloadLogWhereInput
+    none?: DownloadLogWhereInput
+  }
+
   export type CommentListRelationFilter = {
     every?: CommentWhereInput
     some?: CommentWhereInput
@@ -21265,6 +22654,10 @@ export namespace Prisma {
   }
 
   export type UserProgressOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type DownloadLogOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -21969,6 +23362,42 @@ export namespace Prisma {
     updatedAt?: SortOrder
   }
 
+  export type DownloadLogCountOrderByAggregateInput = {
+    id?: SortOrder
+    token?: SortOrder
+    ip?: SortOrder
+    userAgent?: SortOrder
+    downloadedAt?: SortOrder
+    userId?: SortOrder
+    courseId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type DownloadLogMaxOrderByAggregateInput = {
+    id?: SortOrder
+    token?: SortOrder
+    ip?: SortOrder
+    userAgent?: SortOrder
+    downloadedAt?: SortOrder
+    userId?: SortOrder
+    courseId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type DownloadLogMinOrderByAggregateInput = {
+    id?: SortOrder
+    token?: SortOrder
+    ip?: SortOrder
+    userAgent?: SortOrder
+    downloadedAt?: SortOrder
+    userId?: SortOrder
+    courseId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
   export type ArticleCountOrderByAggregateInput = {
     id?: SortOrder
     title?: SortOrder
@@ -22255,6 +23684,13 @@ export namespace Prisma {
     connect?: UserProgressWhereUniqueInput | UserProgressWhereUniqueInput[]
   }
 
+  export type DownloadLogCreateNestedManyWithoutUserInput = {
+    create?: XOR<DownloadLogCreateWithoutUserInput, DownloadLogUncheckedCreateWithoutUserInput> | DownloadLogCreateWithoutUserInput[] | DownloadLogUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: DownloadLogCreateOrConnectWithoutUserInput | DownloadLogCreateOrConnectWithoutUserInput[]
+    createMany?: DownloadLogCreateManyUserInputEnvelope
+    connect?: DownloadLogWhereUniqueInput | DownloadLogWhereUniqueInput[]
+  }
+
   export type CommentCreateNestedManyWithoutAuthorInput = {
     create?: XOR<CommentCreateWithoutAuthorInput, CommentUncheckedCreateWithoutAuthorInput> | CommentCreateWithoutAuthorInput[] | CommentUncheckedCreateWithoutAuthorInput[]
     connectOrCreate?: CommentCreateOrConnectWithoutAuthorInput | CommentCreateOrConnectWithoutAuthorInput[]
@@ -22312,6 +23748,13 @@ export namespace Prisma {
     connectOrCreate?: UserProgressCreateOrConnectWithoutUserInput | UserProgressCreateOrConnectWithoutUserInput[]
     createMany?: UserProgressCreateManyUserInputEnvelope
     connect?: UserProgressWhereUniqueInput | UserProgressWhereUniqueInput[]
+  }
+
+  export type DownloadLogUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<DownloadLogCreateWithoutUserInput, DownloadLogUncheckedCreateWithoutUserInput> | DownloadLogCreateWithoutUserInput[] | DownloadLogUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: DownloadLogCreateOrConnectWithoutUserInput | DownloadLogCreateOrConnectWithoutUserInput[]
+    createMany?: DownloadLogCreateManyUserInputEnvelope
+    connect?: DownloadLogWhereUniqueInput | DownloadLogWhereUniqueInput[]
   }
 
   export type CommentUncheckedCreateNestedManyWithoutAuthorInput = {
@@ -22423,6 +23866,20 @@ export namespace Prisma {
     deleteMany?: UserProgressScalarWhereInput | UserProgressScalarWhereInput[]
   }
 
+  export type DownloadLogUpdateManyWithoutUserNestedInput = {
+    create?: XOR<DownloadLogCreateWithoutUserInput, DownloadLogUncheckedCreateWithoutUserInput> | DownloadLogCreateWithoutUserInput[] | DownloadLogUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: DownloadLogCreateOrConnectWithoutUserInput | DownloadLogCreateOrConnectWithoutUserInput[]
+    upsert?: DownloadLogUpsertWithWhereUniqueWithoutUserInput | DownloadLogUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: DownloadLogCreateManyUserInputEnvelope
+    set?: DownloadLogWhereUniqueInput | DownloadLogWhereUniqueInput[]
+    disconnect?: DownloadLogWhereUniqueInput | DownloadLogWhereUniqueInput[]
+    delete?: DownloadLogWhereUniqueInput | DownloadLogWhereUniqueInput[]
+    connect?: DownloadLogWhereUniqueInput | DownloadLogWhereUniqueInput[]
+    update?: DownloadLogUpdateWithWhereUniqueWithoutUserInput | DownloadLogUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: DownloadLogUpdateManyWithWhereWithoutUserInput | DownloadLogUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: DownloadLogScalarWhereInput | DownloadLogScalarWhereInput[]
+  }
+
   export type CommentUpdateManyWithoutAuthorNestedInput = {
     create?: XOR<CommentCreateWithoutAuthorInput, CommentUncheckedCreateWithoutAuthorInput> | CommentCreateWithoutAuthorInput[] | CommentUncheckedCreateWithoutAuthorInput[]
     connectOrCreate?: CommentCreateOrConnectWithoutAuthorInput | CommentCreateOrConnectWithoutAuthorInput[]
@@ -22531,6 +23988,20 @@ export namespace Prisma {
     update?: UserProgressUpdateWithWhereUniqueWithoutUserInput | UserProgressUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: UserProgressUpdateManyWithWhereWithoutUserInput | UserProgressUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: UserProgressScalarWhereInput | UserProgressScalarWhereInput[]
+  }
+
+  export type DownloadLogUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<DownloadLogCreateWithoutUserInput, DownloadLogUncheckedCreateWithoutUserInput> | DownloadLogCreateWithoutUserInput[] | DownloadLogUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: DownloadLogCreateOrConnectWithoutUserInput | DownloadLogCreateOrConnectWithoutUserInput[]
+    upsert?: DownloadLogUpsertWithWhereUniqueWithoutUserInput | DownloadLogUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: DownloadLogCreateManyUserInputEnvelope
+    set?: DownloadLogWhereUniqueInput | DownloadLogWhereUniqueInput[]
+    disconnect?: DownloadLogWhereUniqueInput | DownloadLogWhereUniqueInput[]
+    delete?: DownloadLogWhereUniqueInput | DownloadLogWhereUniqueInput[]
+    connect?: DownloadLogWhereUniqueInput | DownloadLogWhereUniqueInput[]
+    update?: DownloadLogUpdateWithWhereUniqueWithoutUserInput | DownloadLogUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: DownloadLogUpdateManyWithWhereWithoutUserInput | DownloadLogUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: DownloadLogScalarWhereInput | DownloadLogScalarWhereInput[]
   }
 
   export type CommentUncheckedUpdateManyWithoutAuthorNestedInput = {
@@ -22826,11 +24297,25 @@ export namespace Prisma {
     connect?: LessonWhereUniqueInput | LessonWhereUniqueInput[]
   }
 
+  export type DownloadLogCreateNestedManyWithoutCourseInput = {
+    create?: XOR<DownloadLogCreateWithoutCourseInput, DownloadLogUncheckedCreateWithoutCourseInput> | DownloadLogCreateWithoutCourseInput[] | DownloadLogUncheckedCreateWithoutCourseInput[]
+    connectOrCreate?: DownloadLogCreateOrConnectWithoutCourseInput | DownloadLogCreateOrConnectWithoutCourseInput[]
+    createMany?: DownloadLogCreateManyCourseInputEnvelope
+    connect?: DownloadLogWhereUniqueInput | DownloadLogWhereUniqueInput[]
+  }
+
   export type LessonUncheckedCreateNestedManyWithoutCourseInput = {
     create?: XOR<LessonCreateWithoutCourseInput, LessonUncheckedCreateWithoutCourseInput> | LessonCreateWithoutCourseInput[] | LessonUncheckedCreateWithoutCourseInput[]
     connectOrCreate?: LessonCreateOrConnectWithoutCourseInput | LessonCreateOrConnectWithoutCourseInput[]
     createMany?: LessonCreateManyCourseInputEnvelope
     connect?: LessonWhereUniqueInput | LessonWhereUniqueInput[]
+  }
+
+  export type DownloadLogUncheckedCreateNestedManyWithoutCourseInput = {
+    create?: XOR<DownloadLogCreateWithoutCourseInput, DownloadLogUncheckedCreateWithoutCourseInput> | DownloadLogCreateWithoutCourseInput[] | DownloadLogUncheckedCreateWithoutCourseInput[]
+    connectOrCreate?: DownloadLogCreateOrConnectWithoutCourseInput | DownloadLogCreateOrConnectWithoutCourseInput[]
+    createMany?: DownloadLogCreateManyCourseInputEnvelope
+    connect?: DownloadLogWhereUniqueInput | DownloadLogWhereUniqueInput[]
   }
 
   export type LessonUpdateManyWithoutCourseNestedInput = {
@@ -22847,6 +24332,20 @@ export namespace Prisma {
     deleteMany?: LessonScalarWhereInput | LessonScalarWhereInput[]
   }
 
+  export type DownloadLogUpdateManyWithoutCourseNestedInput = {
+    create?: XOR<DownloadLogCreateWithoutCourseInput, DownloadLogUncheckedCreateWithoutCourseInput> | DownloadLogCreateWithoutCourseInput[] | DownloadLogUncheckedCreateWithoutCourseInput[]
+    connectOrCreate?: DownloadLogCreateOrConnectWithoutCourseInput | DownloadLogCreateOrConnectWithoutCourseInput[]
+    upsert?: DownloadLogUpsertWithWhereUniqueWithoutCourseInput | DownloadLogUpsertWithWhereUniqueWithoutCourseInput[]
+    createMany?: DownloadLogCreateManyCourseInputEnvelope
+    set?: DownloadLogWhereUniqueInput | DownloadLogWhereUniqueInput[]
+    disconnect?: DownloadLogWhereUniqueInput | DownloadLogWhereUniqueInput[]
+    delete?: DownloadLogWhereUniqueInput | DownloadLogWhereUniqueInput[]
+    connect?: DownloadLogWhereUniqueInput | DownloadLogWhereUniqueInput[]
+    update?: DownloadLogUpdateWithWhereUniqueWithoutCourseInput | DownloadLogUpdateWithWhereUniqueWithoutCourseInput[]
+    updateMany?: DownloadLogUpdateManyWithWhereWithoutCourseInput | DownloadLogUpdateManyWithWhereWithoutCourseInput[]
+    deleteMany?: DownloadLogScalarWhereInput | DownloadLogScalarWhereInput[]
+  }
+
   export type LessonUncheckedUpdateManyWithoutCourseNestedInput = {
     create?: XOR<LessonCreateWithoutCourseInput, LessonUncheckedCreateWithoutCourseInput> | LessonCreateWithoutCourseInput[] | LessonUncheckedCreateWithoutCourseInput[]
     connectOrCreate?: LessonCreateOrConnectWithoutCourseInput | LessonCreateOrConnectWithoutCourseInput[]
@@ -22859,6 +24358,20 @@ export namespace Prisma {
     update?: LessonUpdateWithWhereUniqueWithoutCourseInput | LessonUpdateWithWhereUniqueWithoutCourseInput[]
     updateMany?: LessonUpdateManyWithWhereWithoutCourseInput | LessonUpdateManyWithWhereWithoutCourseInput[]
     deleteMany?: LessonScalarWhereInput | LessonScalarWhereInput[]
+  }
+
+  export type DownloadLogUncheckedUpdateManyWithoutCourseNestedInput = {
+    create?: XOR<DownloadLogCreateWithoutCourseInput, DownloadLogUncheckedCreateWithoutCourseInput> | DownloadLogCreateWithoutCourseInput[] | DownloadLogUncheckedCreateWithoutCourseInput[]
+    connectOrCreate?: DownloadLogCreateOrConnectWithoutCourseInput | DownloadLogCreateOrConnectWithoutCourseInput[]
+    upsert?: DownloadLogUpsertWithWhereUniqueWithoutCourseInput | DownloadLogUpsertWithWhereUniqueWithoutCourseInput[]
+    createMany?: DownloadLogCreateManyCourseInputEnvelope
+    set?: DownloadLogWhereUniqueInput | DownloadLogWhereUniqueInput[]
+    disconnect?: DownloadLogWhereUniqueInput | DownloadLogWhereUniqueInput[]
+    delete?: DownloadLogWhereUniqueInput | DownloadLogWhereUniqueInput[]
+    connect?: DownloadLogWhereUniqueInput | DownloadLogWhereUniqueInput[]
+    update?: DownloadLogUpdateWithWhereUniqueWithoutCourseInput | DownloadLogUpdateWithWhereUniqueWithoutCourseInput[]
+    updateMany?: DownloadLogUpdateManyWithWhereWithoutCourseInput | DownloadLogUpdateManyWithWhereWithoutCourseInput[]
+    deleteMany?: DownloadLogScalarWhereInput | DownloadLogScalarWhereInput[]
   }
 
   export type UserProgressCreateNestedManyWithoutLessonInput = {
@@ -22943,6 +24456,34 @@ export namespace Prisma {
     upsert?: LessonUpsertWithoutUserProgressInput
     connect?: LessonWhereUniqueInput
     update?: XOR<XOR<LessonUpdateToOneWithWhereWithoutUserProgressInput, LessonUpdateWithoutUserProgressInput>, LessonUncheckedUpdateWithoutUserProgressInput>
+  }
+
+  export type UserCreateNestedOneWithoutDownloadLogsInput = {
+    create?: XOR<UserCreateWithoutDownloadLogsInput, UserUncheckedCreateWithoutDownloadLogsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutDownloadLogsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type CourseCreateNestedOneWithoutDownloadLogsInput = {
+    create?: XOR<CourseCreateWithoutDownloadLogsInput, CourseUncheckedCreateWithoutDownloadLogsInput>
+    connectOrCreate?: CourseCreateOrConnectWithoutDownloadLogsInput
+    connect?: CourseWhereUniqueInput
+  }
+
+  export type UserUpdateOneRequiredWithoutDownloadLogsNestedInput = {
+    create?: XOR<UserCreateWithoutDownloadLogsInput, UserUncheckedCreateWithoutDownloadLogsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutDownloadLogsInput
+    upsert?: UserUpsertWithoutDownloadLogsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutDownloadLogsInput, UserUpdateWithoutDownloadLogsInput>, UserUncheckedUpdateWithoutDownloadLogsInput>
+  }
+
+  export type CourseUpdateOneRequiredWithoutDownloadLogsNestedInput = {
+    create?: XOR<CourseCreateWithoutDownloadLogsInput, CourseUncheckedCreateWithoutDownloadLogsInput>
+    connectOrCreate?: CourseCreateOrConnectWithoutDownloadLogsInput
+    upsert?: CourseUpsertWithoutDownloadLogsInput
+    connect?: CourseWhereUniqueInput
+    update?: XOR<XOR<CourseUpdateToOneWithWhereWithoutDownloadLogsInput, CourseUpdateWithoutDownloadLogsInput>, CourseUncheckedUpdateWithoutDownloadLogsInput>
   }
 
   export type CommentCreateNestedManyWithoutArticleInput = {
@@ -23594,6 +25135,38 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type DownloadLogCreateWithoutUserInput = {
+    id?: string
+    token: string
+    ip?: string | null
+    userAgent?: string | null
+    downloadedAt?: Date | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    course: CourseCreateNestedOneWithoutDownloadLogsInput
+  }
+
+  export type DownloadLogUncheckedCreateWithoutUserInput = {
+    id?: string
+    token: string
+    ip?: string | null
+    userAgent?: string | null
+    downloadedAt?: Date | string
+    courseId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type DownloadLogCreateOrConnectWithoutUserInput = {
+    where: DownloadLogWhereUniqueInput
+    create: XOR<DownloadLogCreateWithoutUserInput, DownloadLogUncheckedCreateWithoutUserInput>
+  }
+
+  export type DownloadLogCreateManyUserInputEnvelope = {
+    data: DownloadLogCreateManyUserInput | DownloadLogCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
   export type CommentCreateWithoutAuthorInput = {
     id?: string
     content: string
@@ -23851,6 +25424,37 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"UserProgress"> | Date | string
   }
 
+  export type DownloadLogUpsertWithWhereUniqueWithoutUserInput = {
+    where: DownloadLogWhereUniqueInput
+    update: XOR<DownloadLogUpdateWithoutUserInput, DownloadLogUncheckedUpdateWithoutUserInput>
+    create: XOR<DownloadLogCreateWithoutUserInput, DownloadLogUncheckedCreateWithoutUserInput>
+  }
+
+  export type DownloadLogUpdateWithWhereUniqueWithoutUserInput = {
+    where: DownloadLogWhereUniqueInput
+    data: XOR<DownloadLogUpdateWithoutUserInput, DownloadLogUncheckedUpdateWithoutUserInput>
+  }
+
+  export type DownloadLogUpdateManyWithWhereWithoutUserInput = {
+    where: DownloadLogScalarWhereInput
+    data: XOR<DownloadLogUpdateManyMutationInput, DownloadLogUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type DownloadLogScalarWhereInput = {
+    AND?: DownloadLogScalarWhereInput | DownloadLogScalarWhereInput[]
+    OR?: DownloadLogScalarWhereInput[]
+    NOT?: DownloadLogScalarWhereInput | DownloadLogScalarWhereInput[]
+    id?: StringFilter<"DownloadLog"> | string
+    token?: StringFilter<"DownloadLog"> | string
+    ip?: StringNullableFilter<"DownloadLog"> | string | null
+    userAgent?: StringNullableFilter<"DownloadLog"> | string | null
+    downloadedAt?: DateTimeFilter<"DownloadLog"> | Date | string
+    userId?: StringFilter<"DownloadLog"> | string
+    courseId?: StringFilter<"DownloadLog"> | string
+    createdAt?: DateTimeFilter<"DownloadLog"> | Date | string
+    updatedAt?: DateTimeFilter<"DownloadLog"> | Date | string
+  }
+
   export type CommentUpsertWithWhereUniqueWithoutAuthorInput = {
     where: CommentWhereUniqueInput
     update: XOR<CommentUpdateWithoutAuthorInput, CommentUncheckedUpdateWithoutAuthorInput>
@@ -24019,6 +25623,7 @@ export namespace Prisma {
     emailVerification?: EmailVerificationCreateNestedOneWithoutUserInput
     passwordReset?: PasswordResetCreateNestedOneWithoutUserInput
     userProgress?: UserProgressCreateNestedManyWithoutUserInput
+    downloadLogs?: DownloadLogCreateNestedManyWithoutUserInput
     comments?: CommentCreateNestedManyWithoutAuthorInput
     mfa?: MultiFactorAuthenticationCreateNestedOneWithoutUserInput
     restrictions?: RestrictionCreateNestedManyWithoutUserInput
@@ -24041,6 +25646,7 @@ export namespace Prisma {
     emailVerification?: EmailVerificationUncheckedCreateNestedOneWithoutUserInput
     passwordReset?: PasswordResetUncheckedCreateNestedOneWithoutUserInput
     userProgress?: UserProgressUncheckedCreateNestedManyWithoutUserInput
+    downloadLogs?: DownloadLogUncheckedCreateNestedManyWithoutUserInput
     comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
     mfa?: MultiFactorAuthenticationUncheckedCreateNestedOneWithoutUserInput
     restrictions?: RestrictionUncheckedCreateNestedManyWithoutUserInput
@@ -24079,6 +25685,7 @@ export namespace Prisma {
     emailVerification?: EmailVerificationUpdateOneWithoutUserNestedInput
     passwordReset?: PasswordResetUpdateOneWithoutUserNestedInput
     userProgress?: UserProgressUpdateManyWithoutUserNestedInput
+    downloadLogs?: DownloadLogUpdateManyWithoutUserNestedInput
     comments?: CommentUpdateManyWithoutAuthorNestedInput
     mfa?: MultiFactorAuthenticationUpdateOneWithoutUserNestedInput
     restrictions?: RestrictionUpdateManyWithoutUserNestedInput
@@ -24101,6 +25708,7 @@ export namespace Prisma {
     emailVerification?: EmailVerificationUncheckedUpdateOneWithoutUserNestedInput
     passwordReset?: PasswordResetUncheckedUpdateOneWithoutUserNestedInput
     userProgress?: UserProgressUncheckedUpdateManyWithoutUserNestedInput
+    downloadLogs?: DownloadLogUncheckedUpdateManyWithoutUserNestedInput
     comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
     mfa?: MultiFactorAuthenticationUncheckedUpdateOneWithoutUserNestedInput
     restrictions?: RestrictionUncheckedUpdateManyWithoutUserNestedInput
@@ -24123,6 +25731,7 @@ export namespace Prisma {
     passwordReset?: PasswordResetCreateNestedOneWithoutUserInput
     externalAccounts?: ExternalAccountCreateNestedManyWithoutUserInput
     userProgress?: UserProgressCreateNestedManyWithoutUserInput
+    downloadLogs?: DownloadLogCreateNestedManyWithoutUserInput
     comments?: CommentCreateNestedManyWithoutAuthorInput
     mfa?: MultiFactorAuthenticationCreateNestedOneWithoutUserInput
     restrictions?: RestrictionCreateNestedManyWithoutUserInput
@@ -24145,6 +25754,7 @@ export namespace Prisma {
     passwordReset?: PasswordResetUncheckedCreateNestedOneWithoutUserInput
     externalAccounts?: ExternalAccountUncheckedCreateNestedManyWithoutUserInput
     userProgress?: UserProgressUncheckedCreateNestedManyWithoutUserInput
+    downloadLogs?: DownloadLogUncheckedCreateNestedManyWithoutUserInput
     comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
     mfa?: MultiFactorAuthenticationUncheckedCreateNestedOneWithoutUserInput
     restrictions?: RestrictionUncheckedCreateNestedManyWithoutUserInput
@@ -24183,6 +25793,7 @@ export namespace Prisma {
     passwordReset?: PasswordResetUpdateOneWithoutUserNestedInput
     externalAccounts?: ExternalAccountUpdateManyWithoutUserNestedInput
     userProgress?: UserProgressUpdateManyWithoutUserNestedInput
+    downloadLogs?: DownloadLogUpdateManyWithoutUserNestedInput
     comments?: CommentUpdateManyWithoutAuthorNestedInput
     mfa?: MultiFactorAuthenticationUpdateOneWithoutUserNestedInput
     restrictions?: RestrictionUpdateManyWithoutUserNestedInput
@@ -24205,6 +25816,7 @@ export namespace Prisma {
     passwordReset?: PasswordResetUncheckedUpdateOneWithoutUserNestedInput
     externalAccounts?: ExternalAccountUncheckedUpdateManyWithoutUserNestedInput
     userProgress?: UserProgressUncheckedUpdateManyWithoutUserNestedInput
+    downloadLogs?: DownloadLogUncheckedUpdateManyWithoutUserNestedInput
     comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
     mfa?: MultiFactorAuthenticationUncheckedUpdateOneWithoutUserNestedInput
     restrictions?: RestrictionUncheckedUpdateManyWithoutUserNestedInput
@@ -24227,6 +25839,7 @@ export namespace Prisma {
     emailVerification?: EmailVerificationCreateNestedOneWithoutUserInput
     externalAccounts?: ExternalAccountCreateNestedManyWithoutUserInput
     userProgress?: UserProgressCreateNestedManyWithoutUserInput
+    downloadLogs?: DownloadLogCreateNestedManyWithoutUserInput
     comments?: CommentCreateNestedManyWithoutAuthorInput
     mfa?: MultiFactorAuthenticationCreateNestedOneWithoutUserInput
     restrictions?: RestrictionCreateNestedManyWithoutUserInput
@@ -24249,6 +25862,7 @@ export namespace Prisma {
     emailVerification?: EmailVerificationUncheckedCreateNestedOneWithoutUserInput
     externalAccounts?: ExternalAccountUncheckedCreateNestedManyWithoutUserInput
     userProgress?: UserProgressUncheckedCreateNestedManyWithoutUserInput
+    downloadLogs?: DownloadLogUncheckedCreateNestedManyWithoutUserInput
     comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
     mfa?: MultiFactorAuthenticationUncheckedCreateNestedOneWithoutUserInput
     restrictions?: RestrictionUncheckedCreateNestedManyWithoutUserInput
@@ -24287,6 +25901,7 @@ export namespace Prisma {
     emailVerification?: EmailVerificationUpdateOneWithoutUserNestedInput
     externalAccounts?: ExternalAccountUpdateManyWithoutUserNestedInput
     userProgress?: UserProgressUpdateManyWithoutUserNestedInput
+    downloadLogs?: DownloadLogUpdateManyWithoutUserNestedInput
     comments?: CommentUpdateManyWithoutAuthorNestedInput
     mfa?: MultiFactorAuthenticationUpdateOneWithoutUserNestedInput
     restrictions?: RestrictionUpdateManyWithoutUserNestedInput
@@ -24309,6 +25924,7 @@ export namespace Prisma {
     emailVerification?: EmailVerificationUncheckedUpdateOneWithoutUserNestedInput
     externalAccounts?: ExternalAccountUncheckedUpdateManyWithoutUserNestedInput
     userProgress?: UserProgressUncheckedUpdateManyWithoutUserNestedInput
+    downloadLogs?: DownloadLogUncheckedUpdateManyWithoutUserNestedInput
     comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
     mfa?: MultiFactorAuthenticationUncheckedUpdateOneWithoutUserNestedInput
     restrictions?: RestrictionUncheckedUpdateManyWithoutUserNestedInput
@@ -24391,6 +26007,7 @@ export namespace Prisma {
     passwordReset?: PasswordResetCreateNestedOneWithoutUserInput
     externalAccounts?: ExternalAccountCreateNestedManyWithoutUserInput
     userProgress?: UserProgressCreateNestedManyWithoutUserInput
+    downloadLogs?: DownloadLogCreateNestedManyWithoutUserInput
     comments?: CommentCreateNestedManyWithoutAuthorInput
     restrictions?: RestrictionCreateNestedManyWithoutUserInput
     subscription?: SubscriptionCreateNestedOneWithoutUserInput
@@ -24413,6 +26030,7 @@ export namespace Prisma {
     passwordReset?: PasswordResetUncheckedCreateNestedOneWithoutUserInput
     externalAccounts?: ExternalAccountUncheckedCreateNestedManyWithoutUserInput
     userProgress?: UserProgressUncheckedCreateNestedManyWithoutUserInput
+    downloadLogs?: DownloadLogUncheckedCreateNestedManyWithoutUserInput
     comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
     restrictions?: RestrictionUncheckedCreateNestedManyWithoutUserInput
     subscription?: SubscriptionUncheckedCreateNestedOneWithoutUserInput
@@ -24512,6 +26130,7 @@ export namespace Prisma {
     passwordReset?: PasswordResetUpdateOneWithoutUserNestedInput
     externalAccounts?: ExternalAccountUpdateManyWithoutUserNestedInput
     userProgress?: UserProgressUpdateManyWithoutUserNestedInput
+    downloadLogs?: DownloadLogUpdateManyWithoutUserNestedInput
     comments?: CommentUpdateManyWithoutAuthorNestedInput
     restrictions?: RestrictionUpdateManyWithoutUserNestedInput
     subscription?: SubscriptionUpdateOneWithoutUserNestedInput
@@ -24534,6 +26153,7 @@ export namespace Prisma {
     passwordReset?: PasswordResetUncheckedUpdateOneWithoutUserNestedInput
     externalAccounts?: ExternalAccountUncheckedUpdateManyWithoutUserNestedInput
     userProgress?: UserProgressUncheckedUpdateManyWithoutUserNestedInput
+    downloadLogs?: DownloadLogUncheckedUpdateManyWithoutUserNestedInput
     comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
     restrictions?: RestrictionUncheckedUpdateManyWithoutUserNestedInput
     subscription?: SubscriptionUncheckedUpdateOneWithoutUserNestedInput
@@ -24660,6 +26280,7 @@ export namespace Prisma {
     passwordReset?: PasswordResetCreateNestedOneWithoutUserInput
     externalAccounts?: ExternalAccountCreateNestedManyWithoutUserInput
     userProgress?: UserProgressCreateNestedManyWithoutUserInput
+    downloadLogs?: DownloadLogCreateNestedManyWithoutUserInput
     comments?: CommentCreateNestedManyWithoutAuthorInput
     mfa?: MultiFactorAuthenticationCreateNestedOneWithoutUserInput
     subscription?: SubscriptionCreateNestedOneWithoutUserInput
@@ -24682,6 +26303,7 @@ export namespace Prisma {
     passwordReset?: PasswordResetUncheckedCreateNestedOneWithoutUserInput
     externalAccounts?: ExternalAccountUncheckedCreateNestedManyWithoutUserInput
     userProgress?: UserProgressUncheckedCreateNestedManyWithoutUserInput
+    downloadLogs?: DownloadLogUncheckedCreateNestedManyWithoutUserInput
     comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
     mfa?: MultiFactorAuthenticationUncheckedCreateNestedOneWithoutUserInput
     subscription?: SubscriptionUncheckedCreateNestedOneWithoutUserInput
@@ -24720,6 +26342,7 @@ export namespace Prisma {
     passwordReset?: PasswordResetUpdateOneWithoutUserNestedInput
     externalAccounts?: ExternalAccountUpdateManyWithoutUserNestedInput
     userProgress?: UserProgressUpdateManyWithoutUserNestedInput
+    downloadLogs?: DownloadLogUpdateManyWithoutUserNestedInput
     comments?: CommentUpdateManyWithoutAuthorNestedInput
     mfa?: MultiFactorAuthenticationUpdateOneWithoutUserNestedInput
     subscription?: SubscriptionUpdateOneWithoutUserNestedInput
@@ -24742,6 +26365,7 @@ export namespace Prisma {
     passwordReset?: PasswordResetUncheckedUpdateOneWithoutUserNestedInput
     externalAccounts?: ExternalAccountUncheckedUpdateManyWithoutUserNestedInput
     userProgress?: UserProgressUncheckedUpdateManyWithoutUserNestedInput
+    downloadLogs?: DownloadLogUncheckedUpdateManyWithoutUserNestedInput
     comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
     mfa?: MultiFactorAuthenticationUncheckedUpdateOneWithoutUserNestedInput
     subscription?: SubscriptionUncheckedUpdateOneWithoutUserNestedInput
@@ -24784,6 +26408,38 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type DownloadLogCreateWithoutCourseInput = {
+    id?: string
+    token: string
+    ip?: string | null
+    userAgent?: string | null
+    downloadedAt?: Date | string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutDownloadLogsInput
+  }
+
+  export type DownloadLogUncheckedCreateWithoutCourseInput = {
+    id?: string
+    token: string
+    ip?: string | null
+    userAgent?: string | null
+    downloadedAt?: Date | string
+    userId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type DownloadLogCreateOrConnectWithoutCourseInput = {
+    where: DownloadLogWhereUniqueInput
+    create: XOR<DownloadLogCreateWithoutCourseInput, DownloadLogUncheckedCreateWithoutCourseInput>
+  }
+
+  export type DownloadLogCreateManyCourseInputEnvelope = {
+    data: DownloadLogCreateManyCourseInput | DownloadLogCreateManyCourseInput[]
+    skipDuplicates?: boolean
+  }
+
   export type LessonUpsertWithWhereUniqueWithoutCourseInput = {
     where: LessonWhereUniqueInput
     update: XOR<LessonUpdateWithoutCourseInput, LessonUncheckedUpdateWithoutCourseInput>
@@ -24814,6 +26470,22 @@ export namespace Prisma {
     courseId?: StringFilter<"Lesson"> | string
     createdAt?: DateTimeFilter<"Lesson"> | Date | string
     updatedAt?: DateTimeFilter<"Lesson"> | Date | string
+  }
+
+  export type DownloadLogUpsertWithWhereUniqueWithoutCourseInput = {
+    where: DownloadLogWhereUniqueInput
+    update: XOR<DownloadLogUpdateWithoutCourseInput, DownloadLogUncheckedUpdateWithoutCourseInput>
+    create: XOR<DownloadLogCreateWithoutCourseInput, DownloadLogUncheckedCreateWithoutCourseInput>
+  }
+
+  export type DownloadLogUpdateWithWhereUniqueWithoutCourseInput = {
+    where: DownloadLogWhereUniqueInput
+    data: XOR<DownloadLogUpdateWithoutCourseInput, DownloadLogUncheckedUpdateWithoutCourseInput>
+  }
+
+  export type DownloadLogUpdateManyWithWhereWithoutCourseInput = {
+    where: DownloadLogScalarWhereInput
+    data: XOR<DownloadLogUpdateManyMutationInput, DownloadLogUncheckedUpdateManyWithoutCourseInput>
   }
 
   export type UserProgressCreateWithoutLessonInput = {
@@ -24855,6 +26527,7 @@ export namespace Prisma {
     views?: number
     createdAt?: Date | string
     updatedAt?: Date | string
+    downloadLogs?: DownloadLogCreateNestedManyWithoutCourseInput
   }
 
   export type CourseUncheckedCreateWithoutLessonsInput = {
@@ -24870,6 +26543,7 @@ export namespace Prisma {
     views?: number
     createdAt?: Date | string
     updatedAt?: Date | string
+    downloadLogs?: DownloadLogUncheckedCreateNestedManyWithoutCourseInput
   }
 
   export type CourseCreateOrConnectWithoutLessonsInput = {
@@ -24917,6 +26591,7 @@ export namespace Prisma {
     views?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    downloadLogs?: DownloadLogUpdateManyWithoutCourseNestedInput
   }
 
   export type CourseUncheckedUpdateWithoutLessonsInput = {
@@ -24932,6 +26607,7 @@ export namespace Prisma {
     views?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    downloadLogs?: DownloadLogUncheckedUpdateManyWithoutCourseNestedInput
   }
 
   export type UserCreateWithoutUserProgressInput = {
@@ -24949,6 +26625,7 @@ export namespace Prisma {
     emailVerification?: EmailVerificationCreateNestedOneWithoutUserInput
     passwordReset?: PasswordResetCreateNestedOneWithoutUserInput
     externalAccounts?: ExternalAccountCreateNestedManyWithoutUserInput
+    downloadLogs?: DownloadLogCreateNestedManyWithoutUserInput
     comments?: CommentCreateNestedManyWithoutAuthorInput
     mfa?: MultiFactorAuthenticationCreateNestedOneWithoutUserInput
     restrictions?: RestrictionCreateNestedManyWithoutUserInput
@@ -24971,6 +26648,7 @@ export namespace Prisma {
     emailVerification?: EmailVerificationUncheckedCreateNestedOneWithoutUserInput
     passwordReset?: PasswordResetUncheckedCreateNestedOneWithoutUserInput
     externalAccounts?: ExternalAccountUncheckedCreateNestedManyWithoutUserInput
+    downloadLogs?: DownloadLogUncheckedCreateNestedManyWithoutUserInput
     comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
     mfa?: MultiFactorAuthenticationUncheckedCreateNestedOneWithoutUserInput
     restrictions?: RestrictionUncheckedCreateNestedManyWithoutUserInput
@@ -25040,6 +26718,7 @@ export namespace Prisma {
     emailVerification?: EmailVerificationUpdateOneWithoutUserNestedInput
     passwordReset?: PasswordResetUpdateOneWithoutUserNestedInput
     externalAccounts?: ExternalAccountUpdateManyWithoutUserNestedInput
+    downloadLogs?: DownloadLogUpdateManyWithoutUserNestedInput
     comments?: CommentUpdateManyWithoutAuthorNestedInput
     mfa?: MultiFactorAuthenticationUpdateOneWithoutUserNestedInput
     restrictions?: RestrictionUpdateManyWithoutUserNestedInput
@@ -25062,6 +26741,7 @@ export namespace Prisma {
     emailVerification?: EmailVerificationUncheckedUpdateOneWithoutUserNestedInput
     passwordReset?: PasswordResetUncheckedUpdateOneWithoutUserNestedInput
     externalAccounts?: ExternalAccountUncheckedUpdateManyWithoutUserNestedInput
+    downloadLogs?: DownloadLogUncheckedUpdateManyWithoutUserNestedInput
     comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
     mfa?: MultiFactorAuthenticationUncheckedUpdateOneWithoutUserNestedInput
     restrictions?: RestrictionUncheckedUpdateManyWithoutUserNestedInput
@@ -25104,6 +26784,194 @@ export namespace Prisma {
     courseId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserCreateWithoutDownloadLogsInput = {
+    id?: string
+    email: string
+    password?: string | null
+    username: string
+    displayName: string
+    avatar?: string | null
+    points?: number
+    role?: $Enums.UserRole
+    isAutoRenewal?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    emailVerification?: EmailVerificationCreateNestedOneWithoutUserInput
+    passwordReset?: PasswordResetCreateNestedOneWithoutUserInput
+    externalAccounts?: ExternalAccountCreateNestedManyWithoutUserInput
+    userProgress?: UserProgressCreateNestedManyWithoutUserInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    mfa?: MultiFactorAuthenticationCreateNestedOneWithoutUserInput
+    restrictions?: RestrictionCreateNestedManyWithoutUserInput
+    subscription?: SubscriptionCreateNestedOneWithoutUserInput
+    payments?: PaymentCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutDownloadLogsInput = {
+    id?: string
+    email: string
+    password?: string | null
+    username: string
+    displayName: string
+    avatar?: string | null
+    points?: number
+    role?: $Enums.UserRole
+    isAutoRenewal?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    emailVerification?: EmailVerificationUncheckedCreateNestedOneWithoutUserInput
+    passwordReset?: PasswordResetUncheckedCreateNestedOneWithoutUserInput
+    externalAccounts?: ExternalAccountUncheckedCreateNestedManyWithoutUserInput
+    userProgress?: UserProgressUncheckedCreateNestedManyWithoutUserInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    mfa?: MultiFactorAuthenticationUncheckedCreateNestedOneWithoutUserInput
+    restrictions?: RestrictionUncheckedCreateNestedManyWithoutUserInput
+    subscription?: SubscriptionUncheckedCreateNestedOneWithoutUserInput
+    payments?: PaymentUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutDownloadLogsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutDownloadLogsInput, UserUncheckedCreateWithoutDownloadLogsInput>
+  }
+
+  export type CourseCreateWithoutDownloadLogsInput = {
+    id?: string
+    title: string
+    slug: string
+    shortDescription?: string | null
+    fullDescription?: string | null
+    thumbnail?: string | null
+    youtubeUrl?: string | null
+    attachment?: string | null
+    isPublished?: boolean
+    views?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    lessons?: LessonCreateNestedManyWithoutCourseInput
+  }
+
+  export type CourseUncheckedCreateWithoutDownloadLogsInput = {
+    id?: string
+    title: string
+    slug: string
+    shortDescription?: string | null
+    fullDescription?: string | null
+    thumbnail?: string | null
+    youtubeUrl?: string | null
+    attachment?: string | null
+    isPublished?: boolean
+    views?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    lessons?: LessonUncheckedCreateNestedManyWithoutCourseInput
+  }
+
+  export type CourseCreateOrConnectWithoutDownloadLogsInput = {
+    where: CourseWhereUniqueInput
+    create: XOR<CourseCreateWithoutDownloadLogsInput, CourseUncheckedCreateWithoutDownloadLogsInput>
+  }
+
+  export type UserUpsertWithoutDownloadLogsInput = {
+    update: XOR<UserUpdateWithoutDownloadLogsInput, UserUncheckedUpdateWithoutDownloadLogsInput>
+    create: XOR<UserCreateWithoutDownloadLogsInput, UserUncheckedCreateWithoutDownloadLogsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutDownloadLogsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutDownloadLogsInput, UserUncheckedUpdateWithoutDownloadLogsInput>
+  }
+
+  export type UserUpdateWithoutDownloadLogsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    username?: StringFieldUpdateOperationsInput | string
+    displayName?: StringFieldUpdateOperationsInput | string
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    points?: IntFieldUpdateOperationsInput | number
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    isAutoRenewal?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    emailVerification?: EmailVerificationUpdateOneWithoutUserNestedInput
+    passwordReset?: PasswordResetUpdateOneWithoutUserNestedInput
+    externalAccounts?: ExternalAccountUpdateManyWithoutUserNestedInput
+    userProgress?: UserProgressUpdateManyWithoutUserNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    mfa?: MultiFactorAuthenticationUpdateOneWithoutUserNestedInput
+    restrictions?: RestrictionUpdateManyWithoutUserNestedInput
+    subscription?: SubscriptionUpdateOneWithoutUserNestedInput
+    payments?: PaymentUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutDownloadLogsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    username?: StringFieldUpdateOperationsInput | string
+    displayName?: StringFieldUpdateOperationsInput | string
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    points?: IntFieldUpdateOperationsInput | number
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    isAutoRenewal?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    emailVerification?: EmailVerificationUncheckedUpdateOneWithoutUserNestedInput
+    passwordReset?: PasswordResetUncheckedUpdateOneWithoutUserNestedInput
+    externalAccounts?: ExternalAccountUncheckedUpdateManyWithoutUserNestedInput
+    userProgress?: UserProgressUncheckedUpdateManyWithoutUserNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    mfa?: MultiFactorAuthenticationUncheckedUpdateOneWithoutUserNestedInput
+    restrictions?: RestrictionUncheckedUpdateManyWithoutUserNestedInput
+    subscription?: SubscriptionUncheckedUpdateOneWithoutUserNestedInput
+    payments?: PaymentUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type CourseUpsertWithoutDownloadLogsInput = {
+    update: XOR<CourseUpdateWithoutDownloadLogsInput, CourseUncheckedUpdateWithoutDownloadLogsInput>
+    create: XOR<CourseCreateWithoutDownloadLogsInput, CourseUncheckedCreateWithoutDownloadLogsInput>
+    where?: CourseWhereInput
+  }
+
+  export type CourseUpdateToOneWithWhereWithoutDownloadLogsInput = {
+    where?: CourseWhereInput
+    data: XOR<CourseUpdateWithoutDownloadLogsInput, CourseUncheckedUpdateWithoutDownloadLogsInput>
+  }
+
+  export type CourseUpdateWithoutDownloadLogsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    shortDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    fullDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    thumbnail?: NullableStringFieldUpdateOperationsInput | string | null
+    youtubeUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachment?: NullableStringFieldUpdateOperationsInput | string | null
+    isPublished?: BoolFieldUpdateOperationsInput | boolean
+    views?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lessons?: LessonUpdateManyWithoutCourseNestedInput
+  }
+
+  export type CourseUncheckedUpdateWithoutDownloadLogsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    shortDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    fullDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    thumbnail?: NullableStringFieldUpdateOperationsInput | string | null
+    youtubeUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachment?: NullableStringFieldUpdateOperationsInput | string | null
+    isPublished?: BoolFieldUpdateOperationsInput | boolean
+    views?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lessons?: LessonUncheckedUpdateManyWithoutCourseNestedInput
   }
 
   export type CommentCreateWithoutArticleInput = {
@@ -25168,6 +27036,7 @@ export namespace Prisma {
     passwordReset?: PasswordResetCreateNestedOneWithoutUserInput
     externalAccounts?: ExternalAccountCreateNestedManyWithoutUserInput
     userProgress?: UserProgressCreateNestedManyWithoutUserInput
+    downloadLogs?: DownloadLogCreateNestedManyWithoutUserInput
     mfa?: MultiFactorAuthenticationCreateNestedOneWithoutUserInput
     restrictions?: RestrictionCreateNestedManyWithoutUserInput
     subscription?: SubscriptionCreateNestedOneWithoutUserInput
@@ -25190,6 +27059,7 @@ export namespace Prisma {
     passwordReset?: PasswordResetUncheckedCreateNestedOneWithoutUserInput
     externalAccounts?: ExternalAccountUncheckedCreateNestedManyWithoutUserInput
     userProgress?: UserProgressUncheckedCreateNestedManyWithoutUserInput
+    downloadLogs?: DownloadLogUncheckedCreateNestedManyWithoutUserInput
     mfa?: MultiFactorAuthenticationUncheckedCreateNestedOneWithoutUserInput
     restrictions?: RestrictionUncheckedCreateNestedManyWithoutUserInput
     subscription?: SubscriptionUncheckedCreateNestedOneWithoutUserInput
@@ -25255,6 +27125,7 @@ export namespace Prisma {
     passwordReset?: PasswordResetUpdateOneWithoutUserNestedInput
     externalAccounts?: ExternalAccountUpdateManyWithoutUserNestedInput
     userProgress?: UserProgressUpdateManyWithoutUserNestedInput
+    downloadLogs?: DownloadLogUpdateManyWithoutUserNestedInput
     mfa?: MultiFactorAuthenticationUpdateOneWithoutUserNestedInput
     restrictions?: RestrictionUpdateManyWithoutUserNestedInput
     subscription?: SubscriptionUpdateOneWithoutUserNestedInput
@@ -25277,6 +27148,7 @@ export namespace Prisma {
     passwordReset?: PasswordResetUncheckedUpdateOneWithoutUserNestedInput
     externalAccounts?: ExternalAccountUncheckedUpdateManyWithoutUserNestedInput
     userProgress?: UserProgressUncheckedUpdateManyWithoutUserNestedInput
+    downloadLogs?: DownloadLogUncheckedUpdateManyWithoutUserNestedInput
     mfa?: MultiFactorAuthenticationUncheckedUpdateOneWithoutUserNestedInput
     restrictions?: RestrictionUncheckedUpdateManyWithoutUserNestedInput
     subscription?: SubscriptionUncheckedUpdateOneWithoutUserNestedInput
@@ -25332,6 +27204,7 @@ export namespace Prisma {
     passwordReset?: PasswordResetCreateNestedOneWithoutUserInput
     externalAccounts?: ExternalAccountCreateNestedManyWithoutUserInput
     userProgress?: UserProgressCreateNestedManyWithoutUserInput
+    downloadLogs?: DownloadLogCreateNestedManyWithoutUserInput
     comments?: CommentCreateNestedManyWithoutAuthorInput
     mfa?: MultiFactorAuthenticationCreateNestedOneWithoutUserInput
     restrictions?: RestrictionCreateNestedManyWithoutUserInput
@@ -25354,6 +27227,7 @@ export namespace Prisma {
     passwordReset?: PasswordResetUncheckedCreateNestedOneWithoutUserInput
     externalAccounts?: ExternalAccountUncheckedCreateNestedManyWithoutUserInput
     userProgress?: UserProgressUncheckedCreateNestedManyWithoutUserInput
+    downloadLogs?: DownloadLogUncheckedCreateNestedManyWithoutUserInput
     comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
     mfa?: MultiFactorAuthenticationUncheckedCreateNestedOneWithoutUserInput
     restrictions?: RestrictionUncheckedCreateNestedManyWithoutUserInput
@@ -25428,6 +27302,7 @@ export namespace Prisma {
     passwordReset?: PasswordResetUpdateOneWithoutUserNestedInput
     externalAccounts?: ExternalAccountUpdateManyWithoutUserNestedInput
     userProgress?: UserProgressUpdateManyWithoutUserNestedInput
+    downloadLogs?: DownloadLogUpdateManyWithoutUserNestedInput
     comments?: CommentUpdateManyWithoutAuthorNestedInput
     mfa?: MultiFactorAuthenticationUpdateOneWithoutUserNestedInput
     restrictions?: RestrictionUpdateManyWithoutUserNestedInput
@@ -25450,6 +27325,7 @@ export namespace Prisma {
     passwordReset?: PasswordResetUncheckedUpdateOneWithoutUserNestedInput
     externalAccounts?: ExternalAccountUncheckedUpdateManyWithoutUserNestedInput
     userProgress?: UserProgressUncheckedUpdateManyWithoutUserNestedInput
+    downloadLogs?: DownloadLogUncheckedUpdateManyWithoutUserNestedInput
     comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
     mfa?: MultiFactorAuthenticationUncheckedUpdateOneWithoutUserNestedInput
     restrictions?: RestrictionUncheckedUpdateManyWithoutUserNestedInput
@@ -25488,6 +27364,7 @@ export namespace Prisma {
     passwordReset?: PasswordResetCreateNestedOneWithoutUserInput
     externalAccounts?: ExternalAccountCreateNestedManyWithoutUserInput
     userProgress?: UserProgressCreateNestedManyWithoutUserInput
+    downloadLogs?: DownloadLogCreateNestedManyWithoutUserInput
     comments?: CommentCreateNestedManyWithoutAuthorInput
     mfa?: MultiFactorAuthenticationCreateNestedOneWithoutUserInput
     restrictions?: RestrictionCreateNestedManyWithoutUserInput
@@ -25510,6 +27387,7 @@ export namespace Prisma {
     passwordReset?: PasswordResetUncheckedCreateNestedOneWithoutUserInput
     externalAccounts?: ExternalAccountUncheckedCreateNestedManyWithoutUserInput
     userProgress?: UserProgressUncheckedCreateNestedManyWithoutUserInput
+    downloadLogs?: DownloadLogUncheckedCreateNestedManyWithoutUserInput
     comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
     mfa?: MultiFactorAuthenticationUncheckedCreateNestedOneWithoutUserInput
     restrictions?: RestrictionUncheckedCreateNestedManyWithoutUserInput
@@ -25575,6 +27453,7 @@ export namespace Prisma {
     passwordReset?: PasswordResetUpdateOneWithoutUserNestedInput
     externalAccounts?: ExternalAccountUpdateManyWithoutUserNestedInput
     userProgress?: UserProgressUpdateManyWithoutUserNestedInput
+    downloadLogs?: DownloadLogUpdateManyWithoutUserNestedInput
     comments?: CommentUpdateManyWithoutAuthorNestedInput
     mfa?: MultiFactorAuthenticationUpdateOneWithoutUserNestedInput
     restrictions?: RestrictionUpdateManyWithoutUserNestedInput
@@ -25597,6 +27476,7 @@ export namespace Prisma {
     passwordReset?: PasswordResetUncheckedUpdateOneWithoutUserNestedInput
     externalAccounts?: ExternalAccountUncheckedUpdateManyWithoutUserNestedInput
     userProgress?: UserProgressUncheckedUpdateManyWithoutUserNestedInput
+    downloadLogs?: DownloadLogUncheckedUpdateManyWithoutUserNestedInput
     comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
     mfa?: MultiFactorAuthenticationUncheckedUpdateOneWithoutUserNestedInput
     restrictions?: RestrictionUncheckedUpdateManyWithoutUserNestedInput
@@ -25651,6 +27531,17 @@ export namespace Prisma {
     id?: string
     isCompleted?: boolean
     lessonId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type DownloadLogCreateManyUserInput = {
+    id?: string
+    token: string
+    ip?: string | null
+    userAgent?: string | null
+    downloadedAt?: Date | string
+    courseId: string
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -25739,6 +27630,39 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     isCompleted?: BoolFieldUpdateOperationsInput | boolean
     lessonId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DownloadLogUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    token?: StringFieldUpdateOperationsInput | string
+    ip?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    downloadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    course?: CourseUpdateOneRequiredWithoutDownloadLogsNestedInput
+  }
+
+  export type DownloadLogUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    token?: StringFieldUpdateOperationsInput | string
+    ip?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    downloadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    courseId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DownloadLogUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    token?: StringFieldUpdateOperationsInput | string
+    ip?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    downloadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    courseId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -25904,6 +27828,17 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
+  export type DownloadLogCreateManyCourseInput = {
+    id?: string
+    token: string
+    ip?: string | null
+    userAgent?: string | null
+    downloadedAt?: Date | string
+    userId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type LessonUpdateWithoutCourseInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
@@ -25938,6 +27873,39 @@ export namespace Prisma {
     position?: IntFieldUpdateOperationsInput | number
     kinescopeId?: NullableStringFieldUpdateOperationsInput | string | null
     isPublished?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DownloadLogUpdateWithoutCourseInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    token?: StringFieldUpdateOperationsInput | string
+    ip?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    downloadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutDownloadLogsNestedInput
+  }
+
+  export type DownloadLogUncheckedUpdateWithoutCourseInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    token?: StringFieldUpdateOperationsInput | string
+    ip?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    downloadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    userId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DownloadLogUncheckedUpdateManyWithoutCourseInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    token?: StringFieldUpdateOperationsInput | string
+    ip?: NullableStringFieldUpdateOperationsInput | string | null
+    userAgent?: NullableStringFieldUpdateOperationsInput | string | null
+    downloadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    userId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

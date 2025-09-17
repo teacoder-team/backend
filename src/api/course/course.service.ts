@@ -1,4 +1,9 @@
+import { HttpService } from '@nestjs/axios'
 import { Injectable, NotFoundException } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
+import { User } from '@prisma/generated'
+import { randomBytes } from 'crypto'
+import { firstValueFrom } from 'rxjs'
 
 import { slugify } from '@/common/utils/slugify'
 import { PrismaService } from '@/infra/prisma/prisma.service'
@@ -10,7 +15,9 @@ import { CreateCourseRequest } from './dto'
 export class CourseService {
 	public constructor(
 		private readonly prismaService: PrismaService,
-		private readonly redisService: RedisService
+		private readonly redisService: RedisService,
+		private readonly configService: ConfigService,
+		private readonly httpService: HttpService
 	) {}
 
 	public async getAll() {
@@ -21,7 +28,12 @@ export class CourseService {
 			orderBy: {
 				createdAt: 'desc'
 			},
-			include: {
+			select: {
+				id: true,
+				title: true,
+				slug: true,
+				shortDescription: true,
+				thumbnail: true,
 				_count: {
 					select: {
 						lessons: {
@@ -45,7 +57,12 @@ export class CourseService {
 			orderBy: {
 				views: 'desc'
 			},
-			include: {
+			select: {
+				id: true,
+				title: true,
+				slug: true,
+				shortDescription: true,
+				thumbnail: true,
 				_count: {
 					select: {
 						lessons: {
@@ -74,6 +91,17 @@ export class CourseService {
 			where: {
 				slug,
 				isPublished: true
+			},
+			select: {
+				id: true,
+				title: true,
+				slug: true,
+				shortDescription: true,
+				fullDescription: true,
+				thumbnail: true,
+				youtubeUrl: true,
+				views: true,
+				createdAt: true
 			}
 		})
 
@@ -132,6 +160,85 @@ export class CourseService {
 		})
 
 		return true
+	}
+
+	public async generateDownloadLink(id: string) {
+		const course = await this.prismaService.course.findUnique({
+			where: {
+				id
+			}
+		})
+
+		if (!course || !course.attachment)
+			throw new NotFoundException('Курс не найден')
+
+		const token = randomBytes(16).toString('hex')
+
+		await this.redisService.set(`course:download:${token}`, id, 'EX', 100)
+
+		return { token }
+	}
+
+	public async resolveDownloadToken(
+		token: string,
+		user: User,
+		ip: string,
+		userAgent: string
+	) {
+		const courseId = await this.redisService.get(`course:download:${token}`)
+
+		if (!courseId)
+			throw new NotFoundException('Ссылка недействительна или истекла')
+
+		const course = await this.prismaService.course.findUnique({
+			where: {
+				id: courseId
+			},
+			select: {
+				id: true,
+				title: true,
+				attachment: true
+			}
+		})
+
+		if (!course) throw new NotFoundException('Курс не найден')
+
+		await this.prismaService.downloadLog.create({
+			data: {
+				token,
+				ip,
+				userAgent,
+				downloadedAt: new Date(),
+				user: {
+					connect: {
+						id: user.id
+					}
+				},
+				course: {
+					connect: {
+						id: course.id
+					}
+				}
+			}
+		})
+
+		return course
+	}
+
+	public async fetchAttachmentStream(attachment: string) {
+		const fileUrl = `${process.env.STORAGE_URL}/attachments/${attachment}`
+
+		const response = await firstValueFrom(
+			this.httpService.get(fileUrl, {
+				responseType: 'stream'
+			})
+		)
+
+		return {
+			stream: response.data,
+			contentType:
+				response.headers['Content-Type'] || 'application/octet-stream'
+		}
 	}
 
 	public async create(dto: CreateCourseRequest) {
