@@ -38,6 +38,12 @@ export class AccountService {
 				}
 			})
 
+		const isPremium = !!(await this.prismaService.subscription.findUnique({
+			where: {
+				userId: user.id
+			}
+		}))
+
 		return {
 			id: user.id,
 			displayName: user.displayName,
@@ -45,7 +51,9 @@ export class AccountService {
 			avatar: user.avatar,
 			isEmailVerified: emailVerification
 				? emailVerification.status === EmailVerificationStatus.VERIFIED
-				: false
+				: false,
+			isAutoBilling: user.isAutoBilling,
+			isPremium
 		}
 	}
 

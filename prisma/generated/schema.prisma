@@ -22,7 +22,7 @@ model User {
 
   role UserRole @default(STUDENT)
 
-  isAutoRenewal Boolean @default(false) @map("is_auto_renewal")
+  isAutoBilling Boolean @default(false) @map("is_auto_billing")
 
   emailVerification EmailVerification?
   passwordReset     PasswordReset?
@@ -251,10 +251,10 @@ model DownloadLog {
   downloadedAt DateTime @default(now()) @map("downloaded_at")
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String @map("course_id")
+  userId String @map("user_id")
 
   course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  courseId String @map("course_ud")
+  courseId String @map("course_id")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

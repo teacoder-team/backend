@@ -2544,7 +2544,7 @@ export namespace Prisma {
     avatar: string | null
     points: number | null
     role: $Enums.UserRole | null
-    isAutoRenewal: boolean | null
+    isAutoBilling: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -2558,7 +2558,7 @@ export namespace Prisma {
     avatar: string | null
     points: number | null
     role: $Enums.UserRole | null
-    isAutoRenewal: boolean | null
+    isAutoBilling: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -2572,7 +2572,7 @@ export namespace Prisma {
     avatar: number
     points: number
     role: number
-    isAutoRenewal: number
+    isAutoBilling: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -2596,7 +2596,7 @@ export namespace Prisma {
     avatar?: true
     points?: true
     role?: true
-    isAutoRenewal?: true
+    isAutoBilling?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -2610,7 +2610,7 @@ export namespace Prisma {
     avatar?: true
     points?: true
     role?: true
-    isAutoRenewal?: true
+    isAutoBilling?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -2624,7 +2624,7 @@ export namespace Prisma {
     avatar?: true
     points?: true
     role?: true
-    isAutoRenewal?: true
+    isAutoBilling?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -2725,7 +2725,7 @@ export namespace Prisma {
     avatar: string | null
     points: number
     role: $Enums.UserRole
-    isAutoRenewal: boolean
+    isAutoBilling: boolean
     createdAt: Date
     updatedAt: Date
     _count: UserCountAggregateOutputType | null
@@ -2758,7 +2758,7 @@ export namespace Prisma {
     avatar?: boolean
     points?: boolean
     role?: boolean
-    isAutoRenewal?: boolean
+    isAutoBilling?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     emailVerification?: boolean | User$emailVerificationArgs<ExtArgs>
@@ -2783,7 +2783,7 @@ export namespace Prisma {
     avatar?: boolean
     points?: boolean
     role?: boolean
-    isAutoRenewal?: boolean
+    isAutoBilling?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["user"]>
@@ -2798,12 +2798,12 @@ export namespace Prisma {
     avatar?: boolean
     points?: boolean
     role?: boolean
-    isAutoRenewal?: boolean
+    isAutoBilling?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "password" | "username" | "displayName" | "avatar" | "points" | "role" | "isAutoRenewal" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "password" | "username" | "displayName" | "avatar" | "points" | "role" | "isAutoBilling" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     emailVerification?: boolean | User$emailVerificationArgs<ExtArgs>
     passwordReset?: boolean | User$passwordResetArgs<ExtArgs>
@@ -2842,7 +2842,7 @@ export namespace Prisma {
       avatar: string | null
       points: number
       role: $Enums.UserRole
-      isAutoRenewal: boolean
+      isAutoBilling: boolean
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["user"]>
@@ -3256,7 +3256,7 @@ export namespace Prisma {
     readonly avatar: FieldRef<"User", 'String'>
     readonly points: FieldRef<"User", 'Int'>
     readonly role: FieldRef<"User", 'UserRole'>
-    readonly isAutoRenewal: FieldRef<"User", 'Boolean'>
+    readonly isAutoBilling: FieldRef<"User", 'Boolean'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
     readonly updatedAt: FieldRef<"User", 'DateTime'>
   }
@@ -19529,7 +19529,7 @@ export namespace Prisma {
     avatar: 'avatar',
     points: 'points',
     role: 'role',
-    isAutoRenewal: 'isAutoRenewal',
+    isAutoBilling: 'isAutoBilling',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -19993,7 +19993,7 @@ export namespace Prisma {
     avatar?: StringNullableFilter<"User"> | string | null
     points?: IntFilter<"User"> | number
     role?: EnumUserRoleFilter<"User"> | $Enums.UserRole
-    isAutoRenewal?: BoolFilter<"User"> | boolean
+    isAutoBilling?: BoolFilter<"User"> | boolean
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     emailVerification?: XOR<EmailVerificationNullableRelationFilter, EmailVerificationWhereInput> | null
@@ -20017,7 +20017,7 @@ export namespace Prisma {
     avatar?: SortOrderInput | SortOrder
     points?: SortOrder
     role?: SortOrder
-    isAutoRenewal?: SortOrder
+    isAutoBilling?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     emailVerification?: EmailVerificationOrderByWithRelationInput
@@ -20044,7 +20044,7 @@ export namespace Prisma {
     avatar?: StringNullableFilter<"User"> | string | null
     points?: IntFilter<"User"> | number
     role?: EnumUserRoleFilter<"User"> | $Enums.UserRole
-    isAutoRenewal?: BoolFilter<"User"> | boolean
+    isAutoBilling?: BoolFilter<"User"> | boolean
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     emailVerification?: XOR<EmailVerificationNullableRelationFilter, EmailVerificationWhereInput> | null
@@ -20068,7 +20068,7 @@ export namespace Prisma {
     avatar?: SortOrderInput | SortOrder
     points?: SortOrder
     role?: SortOrder
-    isAutoRenewal?: SortOrder
+    isAutoBilling?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: UserCountOrderByAggregateInput
@@ -20090,7 +20090,7 @@ export namespace Prisma {
     avatar?: StringNullableWithAggregatesFilter<"User"> | string | null
     points?: IntWithAggregatesFilter<"User"> | number
     role?: EnumUserRoleWithAggregatesFilter<"User"> | $Enums.UserRole
-    isAutoRenewal?: BoolWithAggregatesFilter<"User"> | boolean
+    isAutoBilling?: BoolWithAggregatesFilter<"User"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
   }
@@ -21208,7 +21208,7 @@ export namespace Prisma {
     avatar?: string | null
     points?: number
     role?: $Enums.UserRole
-    isAutoRenewal?: boolean
+    isAutoBilling?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     emailVerification?: EmailVerificationCreateNestedOneWithoutUserInput
@@ -21232,7 +21232,7 @@ export namespace Prisma {
     avatar?: string | null
     points?: number
     role?: $Enums.UserRole
-    isAutoRenewal?: boolean
+    isAutoBilling?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     emailVerification?: EmailVerificationUncheckedCreateNestedOneWithoutUserInput
@@ -21256,7 +21256,7 @@ export namespace Prisma {
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     points?: IntFieldUpdateOperationsInput | number
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-    isAutoRenewal?: BoolFieldUpdateOperationsInput | boolean
+    isAutoBilling?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     emailVerification?: EmailVerificationUpdateOneWithoutUserNestedInput
@@ -21280,7 +21280,7 @@ export namespace Prisma {
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     points?: IntFieldUpdateOperationsInput | number
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-    isAutoRenewal?: BoolFieldUpdateOperationsInput | boolean
+    isAutoBilling?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     emailVerification?: EmailVerificationUncheckedUpdateOneWithoutUserNestedInput
@@ -21304,7 +21304,7 @@ export namespace Prisma {
     avatar?: string | null
     points?: number
     role?: $Enums.UserRole
-    isAutoRenewal?: boolean
+    isAutoBilling?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -21318,7 +21318,7 @@ export namespace Prisma {
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     points?: IntFieldUpdateOperationsInput | number
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-    isAutoRenewal?: BoolFieldUpdateOperationsInput | boolean
+    isAutoBilling?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -21332,7 +21332,7 @@ export namespace Prisma {
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     points?: IntFieldUpdateOperationsInput | number
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-    isAutoRenewal?: BoolFieldUpdateOperationsInput | boolean
+    isAutoBilling?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -22682,7 +22682,7 @@ export namespace Prisma {
     avatar?: SortOrder
     points?: SortOrder
     role?: SortOrder
-    isAutoRenewal?: SortOrder
+    isAutoBilling?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -22700,7 +22700,7 @@ export namespace Prisma {
     avatar?: SortOrder
     points?: SortOrder
     role?: SortOrder
-    isAutoRenewal?: SortOrder
+    isAutoBilling?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -22714,7 +22714,7 @@ export namespace Prisma {
     avatar?: SortOrder
     points?: SortOrder
     role?: SortOrder
-    isAutoRenewal?: SortOrder
+    isAutoBilling?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -25617,7 +25617,7 @@ export namespace Prisma {
     avatar?: string | null
     points?: number
     role?: $Enums.UserRole
-    isAutoRenewal?: boolean
+    isAutoBilling?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     emailVerification?: EmailVerificationCreateNestedOneWithoutUserInput
@@ -25640,7 +25640,7 @@ export namespace Prisma {
     avatar?: string | null
     points?: number
     role?: $Enums.UserRole
-    isAutoRenewal?: boolean
+    isAutoBilling?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     emailVerification?: EmailVerificationUncheckedCreateNestedOneWithoutUserInput
@@ -25679,7 +25679,7 @@ export namespace Prisma {
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     points?: IntFieldUpdateOperationsInput | number
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-    isAutoRenewal?: BoolFieldUpdateOperationsInput | boolean
+    isAutoBilling?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     emailVerification?: EmailVerificationUpdateOneWithoutUserNestedInput
@@ -25702,7 +25702,7 @@ export namespace Prisma {
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     points?: IntFieldUpdateOperationsInput | number
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-    isAutoRenewal?: BoolFieldUpdateOperationsInput | boolean
+    isAutoBilling?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     emailVerification?: EmailVerificationUncheckedUpdateOneWithoutUserNestedInput
@@ -25725,7 +25725,7 @@ export namespace Prisma {
     avatar?: string | null
     points?: number
     role?: $Enums.UserRole
-    isAutoRenewal?: boolean
+    isAutoBilling?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     passwordReset?: PasswordResetCreateNestedOneWithoutUserInput
@@ -25748,7 +25748,7 @@ export namespace Prisma {
     avatar?: string | null
     points?: number
     role?: $Enums.UserRole
-    isAutoRenewal?: boolean
+    isAutoBilling?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     passwordReset?: PasswordResetUncheckedCreateNestedOneWithoutUserInput
@@ -25787,7 +25787,7 @@ export namespace Prisma {
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     points?: IntFieldUpdateOperationsInput | number
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-    isAutoRenewal?: BoolFieldUpdateOperationsInput | boolean
+    isAutoBilling?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     passwordReset?: PasswordResetUpdateOneWithoutUserNestedInput
@@ -25810,7 +25810,7 @@ export namespace Prisma {
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     points?: IntFieldUpdateOperationsInput | number
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-    isAutoRenewal?: BoolFieldUpdateOperationsInput | boolean
+    isAutoBilling?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     passwordReset?: PasswordResetUncheckedUpdateOneWithoutUserNestedInput
@@ -25833,7 +25833,7 @@ export namespace Prisma {
     avatar?: string | null
     points?: number
     role?: $Enums.UserRole
-    isAutoRenewal?: boolean
+    isAutoBilling?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     emailVerification?: EmailVerificationCreateNestedOneWithoutUserInput
@@ -25856,7 +25856,7 @@ export namespace Prisma {
     avatar?: string | null
     points?: number
     role?: $Enums.UserRole
-    isAutoRenewal?: boolean
+    isAutoBilling?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     emailVerification?: EmailVerificationUncheckedCreateNestedOneWithoutUserInput
@@ -25895,7 +25895,7 @@ export namespace Prisma {
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     points?: IntFieldUpdateOperationsInput | number
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-    isAutoRenewal?: BoolFieldUpdateOperationsInput | boolean
+    isAutoBilling?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     emailVerification?: EmailVerificationUpdateOneWithoutUserNestedInput
@@ -25918,7 +25918,7 @@ export namespace Prisma {
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     points?: IntFieldUpdateOperationsInput | number
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-    isAutoRenewal?: BoolFieldUpdateOperationsInput | boolean
+    isAutoBilling?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     emailVerification?: EmailVerificationUncheckedUpdateOneWithoutUserNestedInput
@@ -26000,7 +26000,7 @@ export namespace Prisma {
     avatar?: string | null
     points?: number
     role?: $Enums.UserRole
-    isAutoRenewal?: boolean
+    isAutoBilling?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     emailVerification?: EmailVerificationCreateNestedOneWithoutUserInput
@@ -26023,7 +26023,7 @@ export namespace Prisma {
     avatar?: string | null
     points?: number
     role?: $Enums.UserRole
-    isAutoRenewal?: boolean
+    isAutoBilling?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     emailVerification?: EmailVerificationUncheckedCreateNestedOneWithoutUserInput
@@ -26123,7 +26123,7 @@ export namespace Prisma {
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     points?: IntFieldUpdateOperationsInput | number
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-    isAutoRenewal?: BoolFieldUpdateOperationsInput | boolean
+    isAutoBilling?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     emailVerification?: EmailVerificationUpdateOneWithoutUserNestedInput
@@ -26146,7 +26146,7 @@ export namespace Prisma {
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     points?: IntFieldUpdateOperationsInput | number
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-    isAutoRenewal?: BoolFieldUpdateOperationsInput | boolean
+    isAutoBilling?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     emailVerification?: EmailVerificationUncheckedUpdateOneWithoutUserNestedInput
@@ -26273,7 +26273,7 @@ export namespace Prisma {
     avatar?: string | null
     points?: number
     role?: $Enums.UserRole
-    isAutoRenewal?: boolean
+    isAutoBilling?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     emailVerification?: EmailVerificationCreateNestedOneWithoutUserInput
@@ -26296,7 +26296,7 @@ export namespace Prisma {
     avatar?: string | null
     points?: number
     role?: $Enums.UserRole
-    isAutoRenewal?: boolean
+    isAutoBilling?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     emailVerification?: EmailVerificationUncheckedCreateNestedOneWithoutUserInput
@@ -26335,7 +26335,7 @@ export namespace Prisma {
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     points?: IntFieldUpdateOperationsInput | number
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-    isAutoRenewal?: BoolFieldUpdateOperationsInput | boolean
+    isAutoBilling?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     emailVerification?: EmailVerificationUpdateOneWithoutUserNestedInput
@@ -26358,7 +26358,7 @@ export namespace Prisma {
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     points?: IntFieldUpdateOperationsInput | number
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-    isAutoRenewal?: BoolFieldUpdateOperationsInput | boolean
+    isAutoBilling?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     emailVerification?: EmailVerificationUncheckedUpdateOneWithoutUserNestedInput
@@ -26619,7 +26619,7 @@ export namespace Prisma {
     avatar?: string | null
     points?: number
     role?: $Enums.UserRole
-    isAutoRenewal?: boolean
+    isAutoBilling?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     emailVerification?: EmailVerificationCreateNestedOneWithoutUserInput
@@ -26642,7 +26642,7 @@ export namespace Prisma {
     avatar?: string | null
     points?: number
     role?: $Enums.UserRole
-    isAutoRenewal?: boolean
+    isAutoBilling?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     emailVerification?: EmailVerificationUncheckedCreateNestedOneWithoutUserInput
@@ -26712,7 +26712,7 @@ export namespace Prisma {
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     points?: IntFieldUpdateOperationsInput | number
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-    isAutoRenewal?: BoolFieldUpdateOperationsInput | boolean
+    isAutoBilling?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     emailVerification?: EmailVerificationUpdateOneWithoutUserNestedInput
@@ -26735,7 +26735,7 @@ export namespace Prisma {
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     points?: IntFieldUpdateOperationsInput | number
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-    isAutoRenewal?: BoolFieldUpdateOperationsInput | boolean
+    isAutoBilling?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     emailVerification?: EmailVerificationUncheckedUpdateOneWithoutUserNestedInput
@@ -26795,7 +26795,7 @@ export namespace Prisma {
     avatar?: string | null
     points?: number
     role?: $Enums.UserRole
-    isAutoRenewal?: boolean
+    isAutoBilling?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     emailVerification?: EmailVerificationCreateNestedOneWithoutUserInput
@@ -26818,7 +26818,7 @@ export namespace Prisma {
     avatar?: string | null
     points?: number
     role?: $Enums.UserRole
-    isAutoRenewal?: boolean
+    isAutoBilling?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     emailVerification?: EmailVerificationUncheckedCreateNestedOneWithoutUserInput
@@ -26894,7 +26894,7 @@ export namespace Prisma {
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     points?: IntFieldUpdateOperationsInput | number
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-    isAutoRenewal?: BoolFieldUpdateOperationsInput | boolean
+    isAutoBilling?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     emailVerification?: EmailVerificationUpdateOneWithoutUserNestedInput
@@ -26917,7 +26917,7 @@ export namespace Prisma {
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     points?: IntFieldUpdateOperationsInput | number
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-    isAutoRenewal?: BoolFieldUpdateOperationsInput | boolean
+    isAutoBilling?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     emailVerification?: EmailVerificationUncheckedUpdateOneWithoutUserNestedInput
@@ -27029,7 +27029,7 @@ export namespace Prisma {
     avatar?: string | null
     points?: number
     role?: $Enums.UserRole
-    isAutoRenewal?: boolean
+    isAutoBilling?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     emailVerification?: EmailVerificationCreateNestedOneWithoutUserInput
@@ -27052,7 +27052,7 @@ export namespace Prisma {
     avatar?: string | null
     points?: number
     role?: $Enums.UserRole
-    isAutoRenewal?: boolean
+    isAutoBilling?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     emailVerification?: EmailVerificationUncheckedCreateNestedOneWithoutUserInput
@@ -27118,7 +27118,7 @@ export namespace Prisma {
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     points?: IntFieldUpdateOperationsInput | number
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-    isAutoRenewal?: BoolFieldUpdateOperationsInput | boolean
+    isAutoBilling?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     emailVerification?: EmailVerificationUpdateOneWithoutUserNestedInput
@@ -27141,7 +27141,7 @@ export namespace Prisma {
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     points?: IntFieldUpdateOperationsInput | number
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-    isAutoRenewal?: BoolFieldUpdateOperationsInput | boolean
+    isAutoBilling?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     emailVerification?: EmailVerificationUncheckedUpdateOneWithoutUserNestedInput
@@ -27197,7 +27197,7 @@ export namespace Prisma {
     avatar?: string | null
     points?: number
     role?: $Enums.UserRole
-    isAutoRenewal?: boolean
+    isAutoBilling?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     emailVerification?: EmailVerificationCreateNestedOneWithoutUserInput
@@ -27220,7 +27220,7 @@ export namespace Prisma {
     avatar?: string | null
     points?: number
     role?: $Enums.UserRole
-    isAutoRenewal?: boolean
+    isAutoBilling?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     emailVerification?: EmailVerificationUncheckedCreateNestedOneWithoutUserInput
@@ -27295,7 +27295,7 @@ export namespace Prisma {
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     points?: IntFieldUpdateOperationsInput | number
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-    isAutoRenewal?: BoolFieldUpdateOperationsInput | boolean
+    isAutoBilling?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     emailVerification?: EmailVerificationUpdateOneWithoutUserNestedInput
@@ -27318,7 +27318,7 @@ export namespace Prisma {
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     points?: IntFieldUpdateOperationsInput | number
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-    isAutoRenewal?: BoolFieldUpdateOperationsInput | boolean
+    isAutoBilling?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     emailVerification?: EmailVerificationUncheckedUpdateOneWithoutUserNestedInput
@@ -27357,7 +27357,7 @@ export namespace Prisma {
     avatar?: string | null
     points?: number
     role?: $Enums.UserRole
-    isAutoRenewal?: boolean
+    isAutoBilling?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     emailVerification?: EmailVerificationCreateNestedOneWithoutUserInput
@@ -27380,7 +27380,7 @@ export namespace Prisma {
     avatar?: string | null
     points?: number
     role?: $Enums.UserRole
-    isAutoRenewal?: boolean
+    isAutoBilling?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     emailVerification?: EmailVerificationUncheckedCreateNestedOneWithoutUserInput
@@ -27446,7 +27446,7 @@ export namespace Prisma {
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     points?: IntFieldUpdateOperationsInput | number
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-    isAutoRenewal?: BoolFieldUpdateOperationsInput | boolean
+    isAutoBilling?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     emailVerification?: EmailVerificationUpdateOneWithoutUserNestedInput
@@ -27469,7 +27469,7 @@ export namespace Prisma {
     avatar?: NullableStringFieldUpdateOperationsInput | string | null
     points?: IntFieldUpdateOperationsInput | number
     role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
-    isAutoRenewal?: BoolFieldUpdateOperationsInput | boolean
+    isAutoBilling?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     emailVerification?: EmailVerificationUncheckedUpdateOneWithoutUserNestedInput

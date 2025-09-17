@@ -166,4 +166,16 @@ export class UsersController {
 
 		return this.usersService.changeAvatar(user, file)
 	}
+
+	@ApiOperation({
+		summary: 'Toggle Auto Billing',
+		description:
+			'Enable or disable auto billing for the authenticated user (toggles current state).'
+	})
+	@Authorization()
+	@Patch('@me/billing')
+	@HttpCode(HttpStatus.OK)
+	public async toggleAutoBilling(@Authorized() user: User) {
+		return await this.usersService.toggleAutoBilling(user)
+	}
 }
