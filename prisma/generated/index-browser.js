@@ -129,6 +129,7 @@ exports.Prisma.UserScalarFieldEnum = {
   avatar: 'avatar',
   points: 'points',
   role: 'role',
+  isAutoRenewal: 'isAutoRenewal',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -264,9 +265,39 @@ exports.Prisma.CommentScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.SubscriptionScalarFieldEnum = {
+  id: 'id',
+  plan: 'plan',
+  startedAt: 'startedAt',
+  expiresAt: 'expiresAt',
+  isActive: 'isActive',
+  userId: 'userId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.PaymentScalarFieldEnum = {
+  id: 'id',
+  amount: 'amount',
+  currency: 'currency',
+  status: 'status',
+  method: 'method',
+  providerPaymentId: 'providerPaymentId',
+  metadata: 'metadata',
+  userId: 'userId',
+  subscriptionId: 'subscriptionId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
+};
+
+exports.Prisma.NullableJsonNullValueInput = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull
 };
 
 exports.Prisma.QueryMode = {
@@ -277,6 +308,12 @@ exports.Prisma.QueryMode = {
 exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
+};
+
+exports.Prisma.JsonNullValueFilter = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull,
+  AnyNull: Prisma.AnyNull
 };
 exports.UserRole = exports.$Enums.UserRole = {
   STUDENT: 'STUDENT',
@@ -311,6 +348,18 @@ exports.RestrictionStatus = exports.$Enums.RestrictionStatus = {
   CANCELED: 'CANCELED'
 };
 
+exports.PaymentStatus = exports.$Enums.PaymentStatus = {
+  PENDING: 'PENDING',
+  SUCCESS: 'SUCCESS',
+  FAILED: 'FAILED'
+};
+
+exports.PaymentMethod = exports.$Enums.PaymentMethod = {
+  BANK_CARD: 'BANK_CARD',
+  SBP: 'SBP',
+  CRYPTO: 'CRYPTO'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   ExternalAccount: 'ExternalAccount',
@@ -324,7 +373,9 @@ exports.Prisma.ModelName = {
   Lesson: 'Lesson',
   UserProgress: 'UserProgress',
   Article: 'Article',
-  Comment: 'Comment'
+  Comment: 'Comment',
+  Subscription: 'Subscription',
+  Payment: 'Payment'
 };
 
 /**
