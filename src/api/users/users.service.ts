@@ -326,4 +326,20 @@ export class UsersService {
 
 		return uploadedFile
 	}
+
+	public async toggleAutoBilling(user: User) {
+		const updatedUser = await this.prismaService.user.update({
+			where: {
+				id: user.id
+			},
+			data: {
+				isAutoBilling: !user.isAutoBilling
+			},
+			select: {
+				isAutoBilling: true
+			}
+		})
+
+		return updatedUser
+	}
 }

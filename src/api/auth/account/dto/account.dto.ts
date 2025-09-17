@@ -31,4 +31,16 @@ export class AccountResponse {
 		example: true
 	})
 	public isEmailVerified: boolean
+
+	@ApiProperty({
+		description: 'Indicates whether auto billing is enabled for the user',
+		example: false
+	})
+	public isAutoBilling: boolean
+
+	@ApiProperty({
+		description: 'Indicates whether the user has an active subscription',
+		example: true
+	})
+	public isPremium: boolean
 }

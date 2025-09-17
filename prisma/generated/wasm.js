@@ -129,7 +129,7 @@ exports.Prisma.UserScalarFieldEnum = {
   avatar: 'avatar',
   points: 'points',
   role: 'role',
-  isAutoRenewal: 'isAutoRenewal',
+  isAutoBilling: 'isAutoBilling',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
