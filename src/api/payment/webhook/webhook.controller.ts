@@ -1,4 +1,11 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common'
+import {
+	Body,
+	Controller,
+	HttpCode,
+	HttpStatus,
+	Ip,
+	Post
+} from '@nestjs/common'
 import { ApiOkResponse, ApiOperation } from '@nestjs/swagger'
 
 import { ClientIp } from '@/common/decorators'
@@ -21,7 +28,7 @@ export class WebhookController {
 	})
 	@Post('yookassa')
 	@HttpCode(HttpStatus.OK)
-	public async yookassaWebhook(@Body() payload: any, @ClientIp() ip: string) {
+	public async yookassaWebhook(@Body() payload: any, @Ip() ip: string) {
 		console.log('YOOKASSA WEBHOOK IP: ', ip)
 
 		this.webhookService.verifyWebhook(ip)
