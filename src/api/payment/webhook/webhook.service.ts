@@ -4,8 +4,8 @@ import {
 	UnauthorizedException
 } from '@nestjs/common'
 import { PaymentStatus } from '@prisma/generated'
+import CidrMatcher from 'cidr-matcher'
 import { addMonths } from 'date-fns'
-import CIDR from 'ip-cidr'
 import { YookassaService } from 'nestjs-yookassa'
 
 import { IS_DEV_ENV } from '@/common/utils'
@@ -14,6 +14,7 @@ import { PrismaService } from '@/infra/prisma/prisma.service'
 @Injectable()
 export class WebhookService {
 	private readonly ALLOWED_IPS: string[]
+	private readonly matcher: CidrMatcher
 
 	public constructor(
 		private readonly prismaService: PrismaService,
@@ -23,11 +24,13 @@ export class WebhookService {
 			'185.71.76.0/27',
 			'185.71.77.0/27',
 			'77.75.153.0/25',
-			'77.75.156.11',
-			'77.75.156.35',
+			'77.75.156.11/32',
+			'77.75.156.35/32',
 			'77.75.154.128/25',
 			'2a02:5180::/32'
 		]
+
+		this.matcher = new CidrMatcher(this.ALLOWED_IPS)
 	}
 
 	public async handleYookassa(payload: any) {
@@ -42,17 +45,8 @@ export class WebhookService {
 	}
 
 	public verifyWebhook(ip: string) {
-		if (IS_DEV_ENV) return
-
-		for (const range of this.ALLOWED_IPS) {
-			if (range.includes('/')) {
-				const cidr = new CIDR(range)
-
-				if (cidr.contains(ip)) return
-			} else if (ip === range) return
-		}
-
-		throw new UnauthorizedException(`Invalid IP: ${ip}`)
+		if (!this.matcher.contains(ip))
+			throw new UnauthorizedException(`Invalid IP: ${ip}`)
 	}
 
 	public async handleCrypto(payload: any) {
