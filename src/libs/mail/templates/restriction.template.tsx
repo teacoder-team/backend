@@ -21,7 +21,7 @@ interface RestrictionTemplateProps {
 	violations: number
 }
 
-const baseUrl = process.env['SITE_URL']
+const baseUrl = process.env['HOSTS_APP']
 
 export function RestrictionTemplate({ user, restriction, violations }: RestrictionTemplateProps) {
 	const logo = `${baseUrl}/touch-icons/512x512.png`

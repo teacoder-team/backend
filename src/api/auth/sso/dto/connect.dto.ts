@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 
-export class ExternalConnectResponse {
+export class SsoConnectResponse {
 	@ApiProperty({
 		description:
 			'The URL for authorization via the external provider (e.g., Google, GitHub)',

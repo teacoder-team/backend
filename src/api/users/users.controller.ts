@@ -13,7 +13,7 @@ import {
 	UseInterceptors
 } from '@nestjs/common'
 import { FileInterceptor } from '@nestjs/platform-express'
-import { ApiHeader, ApiOkResponse, ApiOperation } from '@nestjs/swagger'
+import { ApiOkResponse, ApiOperation } from '@nestjs/swagger'
 import { type User, UserRole } from '@prisma/generated'
 
 import { Authorization } from '@/common/decorators/auth.decorator'
@@ -38,10 +38,6 @@ export class UsersController {
 	})
 	@ApiOkResponse({
 		type: [UserResponse]
-	})
-	@ApiHeader({
-		name: 'X-Session-Token',
-		required: true
 	})
 	@Authorization(UserRole.ADMIN)
 	@Get()
@@ -71,10 +67,6 @@ export class UsersController {
 	@ApiOkResponse({
 		type: MeStatisticsResponse
 	})
-	@ApiHeader({
-		name: 'X-Session-Token',
-		required: true
-	})
 	@Authorization()
 	@Get('@me/statistics')
 	@HttpCode(HttpStatus.OK)
@@ -90,10 +82,6 @@ export class UsersController {
 	@ApiOkResponse({
 		type: [MeProgressResponse]
 	})
-	@ApiHeader({
-		name: 'X-Session-Token',
-		required: true
-	})
 	@Authorization()
 	@Get('@me/progress')
 	@HttpCode(HttpStatus.OK)
@@ -107,10 +95,6 @@ export class UsersController {
 	})
 	@ApiOkResponse({
 		type: Boolean
-	})
-	@ApiHeader({
-		name: 'X-Session-Token',
-		required: true
 	})
 	@Authorization()
 	@Patch('@me')
@@ -128,10 +112,6 @@ export class UsersController {
 	})
 	@ApiOkResponse({
 		type: Boolean
-	})
-	@ApiHeader({
-		name: 'X-Session-Token',
-		required: true
 	})
 	@Authorization()
 	@UseInterceptors(

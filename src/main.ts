@@ -5,11 +5,10 @@ import {
 } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { NestFactory, Reflector } from '@nestjs/core'
-import { ThrottlerGuard } from '@nestjs/throttler'
+import type { NestExpressApplication } from '@nestjs/platform-express'
 import helmet from 'helmet'
 
 import { AppModule } from './app.module'
-import { LoggingInterceptor } from './common/interceptors'
 import { setupSwagger } from './common/utils'
 import {
 	getCorsConfig,
@@ -18,26 +17,27 @@ import {
 } from './config'
 
 async function bootstrap() {
-	const app = await NestFactory.create(AppModule)
+	const app = await NestFactory.create<NestExpressApplication>(AppModule)
 
 	const config = app.get(ConfigService)
 	const logger = new Logger(AppModule.name)
+
+	app.set('trust proxy', true)
 
 	app.use(helmet(getHelmetConfig()))
 
 	app.useGlobalInterceptors(
 		new ClassSerializerInterceptor(app.get(Reflector))
 	)
-	app.useGlobalInterceptors(new LoggingInterceptor())
-
+	// app.useGlobalInterceptors(new LoggingInterceptor())
 	app.useGlobalPipes(new ValidationPipe(getValidationPipeConfig()))
 
 	app.enableCors(getCorsConfig(config))
 
 	setupSwagger(app)
 
-	const port = config.getOrThrow<number>('APPLICATION_PORT')
-	const host = config.getOrThrow<string>('APPLICATION_URL')
+	const port = config.getOrThrow<number>('HTTP_PORT')
+	const host = config.getOrThrow<string>('HTTP_HOST')
 
 	try {
 		await app.listen(port)

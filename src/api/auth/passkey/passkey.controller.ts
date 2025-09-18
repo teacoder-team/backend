@@ -8,7 +8,7 @@ import {
 	Param,
 	Post
 } from '@nestjs/common'
-import { ApiHeader, ApiOkResponse, ApiOperation } from '@nestjs/swagger'
+import { ApiOkResponse, ApiOperation } from '@nestjs/swagger'
 import { User } from '@prisma/generated'
 
 import {
@@ -36,7 +36,6 @@ export class PasskeyController {
 			'Retrieve the list of registered passkeys for the authenticated user.'
 	})
 	@ApiOkResponse({ type: [PasskeyResponse] })
-	@ApiHeader({ name: 'X-Session-Token', required: true })
 	@Authorization()
 	@Get()
 	@HttpCode(HttpStatus.OK)
@@ -49,7 +48,6 @@ export class PasskeyController {
 		description: 'Register a passkey for an account.'
 	})
 	@ApiOkResponse({ type: RegisterPasskeyResponse })
-	@ApiHeader({ name: 'X-Session-Token', required: true })
 	@Authorization()
 	@Post()
 	@HttpCode(HttpStatus.OK)
@@ -80,7 +78,6 @@ export class PasskeyController {
 			'Generate options required to initiate WebAuthn registration.'
 	})
 	@ApiOkResponse({ type: GeneratePasskeyOptionsResponse })
-	@ApiHeader({ name: 'X-Session-Token', required: true })
 	@Authorization()
 	@Post('register-options')
 	@HttpCode(HttpStatus.OK)
@@ -93,7 +90,6 @@ export class PasskeyController {
 		description: 'Delete a registered passkey by its ID.'
 	})
 	@ApiOkResponse({ type: Boolean })
-	@ApiHeader({ name: 'X-Session-Token', required: true })
 	@Authorization()
 	@Delete(':id')
 	@HttpCode(HttpStatus.OK)

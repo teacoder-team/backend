@@ -279,7 +279,6 @@ exports.Prisma.CommentScalarFieldEnum = {
 
 exports.Prisma.SubscriptionScalarFieldEnum = {
   id: 'id',
-  plan: 'plan',
   startedAt: 'startedAt',
   expiresAt: 'expiresAt',
   isActive: 'isActive',

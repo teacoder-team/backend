@@ -7,6 +7,7 @@ import { HeleketModule } from '@/libs/heleket/heleket.module'
 
 import { PaymentController } from './payment.controller'
 import { PaymentService } from './payment.service'
+import { SchedulerModule } from './scheduler/scheduler.module'
 import { WebhookModule } from './webhook/webhook.module'
 
 @Module({
@@ -21,7 +22,8 @@ import { WebhookModule } from './webhook/webhook.module'
 			useFactory: getHeleketConfig,
 			inject: [ConfigService]
 		}),
-		WebhookModule
+		WebhookModule,
+		SchedulerModule
 	],
 	controllers: [PaymentController],
 	providers: [PaymentService]

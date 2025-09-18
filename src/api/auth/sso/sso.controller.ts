@@ -12,17 +12,10 @@ import {
 	UseGuards
 } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import {
-	ApiHeader,
-	ApiOkResponse,
-	ApiOperation,
-	ApiTags
-} from '@nestjs/swagger'
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger'
 import type { User } from '@prisma/generated'
 import { Response } from 'express'
 
-import { AllowedProvider } from '@/api/oauth/interfaces'
-import { OAuthService } from '@/api/oauth/oauth.service'
 import {
 	Authorization,
 	Authorized,
@@ -30,15 +23,17 @@ import {
 	UserAgent
 } from '@/common/decorators'
 import { ProviderGuard } from '@/common/guards'
+import { AllowedProvider } from '@/libs/oauth/interfaces'
+import { OAuthService } from '@/libs/oauth/oauth.service'
 
-import { ExternalStatusResponse } from './dto'
-import { ExternalService } from './external.service'
+import { SsoConnectResponse, SsoStatusResponse } from './dto'
+import { SsoService } from './sso.service'
 
-@ApiTags('External')
-@Controller('auth/external')
-export class ExternalController {
+@ApiTags('Sso')
+@Controller('auth/sso')
+export class SsoController {
 	public constructor(
-		private readonly externalService: ExternalService,
+		private readonly ssoService: SsoService,
 		private readonly oauthService: OAuthService,
 		private readonly configService: ConfigService
 	) {}
@@ -49,38 +44,23 @@ export class ExternalController {
 			'Returns the status of external accounts (e.g., Google, GitHub) linked to the current user.'
 	})
 	@ApiOkResponse({
-		type: ExternalStatusResponse
-	})
-	@ApiHeader({
-		name: 'X-Session-Token',
-		required: true
+		type: SsoStatusResponse
 	})
 	@Authorization()
 	@Get()
 	@HttpCode(HttpStatus.OK)
 	public async fetchStatus(@Authorized() user: User) {
-		return this.externalService.fetchStatus(user)
+		return this.ssoService.fetchStatus(user)
 	}
 
-	// @ApiOperation({
-	// 	summary: 'Get OAuth Authorization URL',
-	// 	description:
-	// 		'Returns the URL for authorization via an external provider (e.g., Google, GitHub).'
-	// })
-	// @ApiOkResponse({
-	// 	type: ExternalConnectResponse
-	// })
-	// @UseGuards(ProviderGuard)
-	// @Post(':provider')
-	// @HttpCode(HttpStatus.OK)
-	// public async connect(@Param('provider') provider: AllowedProvider) {
-	// 	const providerInstance = this.oauthService.findService(provider)
-
-	// 	return {
-	// 		url: providerInstance.getAuthUrl()
-	// 	}
-	// }
-
+	@ApiOperation({
+		summary: 'Get login URL for external provider',
+		description:
+			'Generates the login URL for the specified external provider (e.g., Google, GitHub).'
+	})
+	@ApiOkResponse({
+		type: SsoConnectResponse
+	})
 	@Post('login/:provider')
 	@HttpCode(HttpStatus.OK)
 	@UseGuards(ProviderGuard)
@@ -94,6 +74,14 @@ export class ExternalController {
 		return { url: providerInstance.getAuthUrl(state) }
 	}
 
+	@ApiOperation({
+		summary: 'Get connect URL for external provider',
+		description:
+			'Generates the connect URL to link an external account to the current user.'
+	})
+	@ApiOkResponse({
+		type: SsoConnectResponse
+	})
 	@Authorization()
 	@Post('connect/:provider')
 	@HttpCode(HttpStatus.OK)
@@ -111,8 +99,13 @@ export class ExternalController {
 		return { url: providerInstance.getAuthUrl(state) }
 	}
 
-	@Get('callback/:provider')
+	@ApiOperation({
+		summary: 'Callback from external provider',
+		description:
+			'Handles the callback from an external provider after login or connect action.'
+	})
 	@UseGuards(ProviderGuard)
+	@Get('callback/:provider')
 	@HttpCode(HttpStatus.OK)
 	public async callback(
 		@Query('code') code: string,
@@ -124,7 +117,7 @@ export class ExternalController {
 	) {
 		if (!code) throw new BadRequestException('No code provided')
 
-		const siteUrl = this.configService.getOrThrow<string>('SITE_URL')
+		const siteUrl = this.configService.getOrThrow<string>('HOSTS_APP')
 
 		const parsedState = state
 			? JSON.parse(Buffer.from(state, 'base64').toString('utf-8'))
@@ -134,7 +127,7 @@ export class ExternalController {
 
 		try {
 			if (parsedState.action === 'connect' && parsedState.userId) {
-				await this.externalService.connect(
+				await this.ssoService.connect(
 					provider,
 					code,
 					parsedState.userId
@@ -142,7 +135,7 @@ export class ExternalController {
 
 				return res.redirect(`${siteUrl}/account/connections`)
 			} else if (parsedState.action === 'login') {
-				const result = await this.externalService.login(
+				const result = await this.ssoService.login(
 					provider,
 					code,
 					ip,
@@ -179,10 +172,6 @@ export class ExternalController {
 	@ApiOkResponse({
 		type: Boolean
 	})
-	@ApiHeader({
-		name: 'X-Session-Token',
-		required: true
-	})
 	@Authorization()
 	@UseGuards(ProviderGuard)
 	@Delete(':provider')
@@ -191,6 +180,6 @@ export class ExternalController {
 		@Param('provider') provider: AllowedProvider,
 		@Authorized() user: User
 	) {
-		return this.externalService.unlink(provider, user)
+		return this.ssoService.unlink(provider, user)
 	}
 }

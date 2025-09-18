@@ -10,7 +10,6 @@ import {
 	Res
 } from '@nestjs/common'
 import {
-	ApiHeader,
 	ApiOkResponse,
 	ApiOperation,
 	ApiResponse,
@@ -19,7 +18,12 @@ import {
 import { User, UserRole } from '@prisma/generated'
 import { Response } from 'express'
 
-import { Authorized, ClientIp, UserAgent } from '@/common/decorators'
+import {
+	Authorized,
+	ClientIp,
+	PremiumOnly,
+	UserAgent
+} from '@/common/decorators'
 import { Authorization } from '@/common/decorators/auth.decorator'
 
 import { LessonResponse } from '../lesson/dto'
@@ -29,7 +33,8 @@ import {
 	CourseResponse,
 	CoursesResponse,
 	CreateCourseRequest,
-	CreateCourseResponse
+	CreateCourseResponse,
+	GenerateDownloadLinkResponse
 } from './dto'
 
 @ApiTags('Course')
@@ -103,32 +108,42 @@ export class CourseController {
 		await this.courseService.incrementViews(id)
 	}
 
-	@ApiHeader({
-		name: 'X-Session-Token'
+	@ApiOperation({
+		summary: 'Generate download link',
+		description: 'Generates a secure download link for a course.'
 	})
-	@Authorization()
+	@ApiOkResponse({
+		type: GenerateDownloadLinkResponse
+	})
+	@PremiumOnly()
 	@Post(':id/download-link')
 	@HttpCode(HttpStatus.OK)
-	public async generateDownloadLink(@Param('id') id: string) {
-		return await this.courseService.generateDownloadLink(id)
+	public async generateDownloadLink(
+		@Param('id') id: string,
+		@Authorized() user: User
+	) {
+		return await this.courseService.generateDownloadLink(id, user)
 	}
 
-	@ApiHeader({
-		name: 'X-Session-Token'
+	@ApiOperation({
+		summary: 'Resolve download token',
+		description:
+			'Resolves a download token to stream the course attachment.'
 	})
-	@Authorization()
+	@ApiOkResponse({
+		description:
+			'The requested course file is streamed as a ZIP attachment.'
+	})
 	@Get('download/:token')
 	@HttpCode(HttpStatus.OK)
 	public async resolveDownloadToken(
 		@Param('token') token: string,
 		@ClientIp() ip: string,
 		@UserAgent() userAgent: string,
-		@Authorized() user: User,
 		@Res() res: Response
 	) {
 		const course = await this.courseService.resolveDownloadToken(
 			token,
-			user,
 			ip,
 			userAgent
 		)
@@ -146,15 +161,6 @@ export class CourseController {
 			res.setHeader('Content-Type', contentType as string)
 
 			stream.pipe(res)
-
-			stream.on('end', () => {
-				res.end()
-			})
-
-			stream.on('error', err => {
-				console.error('Stream error:', err)
-				res.status(500).end()
-			})
 		} catch (err) {
 			console.error(err)
 			res.status(500).end()
@@ -168,10 +174,6 @@ export class CourseController {
 	@ApiResponse({
 		status: HttpStatus.OK,
 		type: CreateCourseResponse
-	})
-	@ApiHeader({
-		name: 'X-Session-Token',
-		required: true
 	})
 	@Authorization(UserRole.ADMIN)
 	@Post()

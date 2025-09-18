@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 
-export class ExternalStatusResponse {
+export class SsoStatusResponse {
 	@ApiProperty({
 		description: 'Indicates whether the GitHub account is connected',
 		example: true

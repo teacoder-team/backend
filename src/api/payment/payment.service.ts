@@ -3,10 +3,12 @@ import {
 	Injectable,
 	MethodNotAllowedException
 } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
 import { PaymentMethod, type User } from '@prisma/generated'
 import {
 	ConfirmationEnum,
 	CurrencyEnum,
+	type PaymentCreateRequest,
 	PaymentMethodsEnum,
 	YookassaService
 } from 'nestjs-yookassa'
@@ -20,13 +22,17 @@ import { InitPaymentRequest } from './dto'
 
 @Injectable()
 export class PaymentService {
-	private readonly SUBSCRIPTION_PRICE = 249
+	private readonly HOSTS_APP: string
+	private readonly SUBSCRIPTION_PRICE = 299
 
 	public constructor(
 		private readonly prismaService: PrismaService,
+		private readonly configService: ConfigService,
 		private readonly yookassaService: YookassaService,
 		private readonly heleketService: HeleketService
-	) {}
+	) {
+		this.HOSTS_APP = this.configService.getOrThrow<string>('HOSTS_APP')
+	}
 
 	public async create(dto: InitPaymentRequest, user: User) {
 		const { method } = dto
@@ -51,41 +57,22 @@ export class PaymentService {
 
 		switch (method) {
 			case PaymentMethod.BANK_CARD:
-				providerResponse = await this.yookassaService.createPayment({
-					amount: {
-						value: this.SUBSCRIPTION_PRICE,
-						currency: CurrencyEnum.RUB
-					},
-					description: 'Оплата премиум-подписки на 1 месяц',
-					receipt: {
-						customer: {
-							email: user.email
-						},
-						items: [
-							{
-								amount: {
-									value: this.SUBSCRIPTION_PRICE,
-									currency: CurrencyEnum.RUB
-								},
-								description: 'Премиум-доступ на 30 дней',
-								quantity: 1,
-								vat_code: VatCodesEnum.ndsNone
-							}
-						]
-					},
-					payment_method_data: {
-						type: PaymentMethodsEnum.bank_card
-					},
-					confirmation: {
-						type: ConfirmationEnum.redirect,
-						return_url: 'https://teacoder.ru/payment/success'
-					},
-					save_payment_method: true,
-					metadata: {
-						payment_id: payment.id
-					},
-					merchant_customer_id: user.id
-				})
+				providerResponse = await this.yookassaService.createPayment(
+					this.createYooKassaPaymentData(
+						payment.id,
+						user,
+						PaymentMethodsEnum.bank_card
+					)
+				)
+				break
+			case PaymentMethod.SBP:
+				providerResponse = await this.yookassaService.createPayment(
+					this.createYooKassaPaymentData(
+						payment.id,
+						user,
+						PaymentMethodsEnum.sbp
+					)
+				)
 				break
 			case PaymentMethod.CRYPTO:
 				// providerResponse = await this.heleketService.createPayment({
@@ -116,12 +103,53 @@ export class PaymentService {
 			}
 		})
 
-		console.log(providerResponse)
-
 		return {
 			url:
 				providerResponse?.confirmation?.confirmation_url ||
 				providerResponse?.url
+		}
+	}
+
+	private createYooKassaPaymentData(
+		paymentId: string,
+		user: User,
+		paymentMethod: PaymentMethodsEnum
+	): PaymentCreateRequest {
+		return {
+			amount: {
+				value: this.SUBSCRIPTION_PRICE,
+				currency: CurrencyEnum.RUB
+			},
+			description: 'Оплата премиум-подписки на 1 месяц',
+			receipt: {
+				customer: {
+					email: user.email
+				},
+				items: [
+					{
+						amount: {
+							value: this.SUBSCRIPTION_PRICE,
+							currency: CurrencyEnum.RUB
+						},
+						description: 'Премиум-доступ на 30 дней',
+						quantity: 1,
+						vat_code: VatCodesEnum.ndsNone
+					}
+				]
+			},
+			payment_method_data: {
+				// @ts-ignore
+				type: paymentMethod
+			},
+			confirmation: {
+				type: ConfirmationEnum.redirect,
+				return_url: `${this.HOSTS_APP}/payment/success`
+			},
+			save_payment_method: true,
+			metadata: {
+				payment_id: paymentId
+			},
+			merchant_customer_id: user.id
 		}
 	}
 }

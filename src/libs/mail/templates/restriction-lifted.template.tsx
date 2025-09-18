@@ -20,7 +20,7 @@ interface RestrictionLiftedTemplateProps {
 	violations: number
 }
 
-const baseUrl = process.env['SITE_URL']
+const baseUrl = process.env['HOSTS_APP']
 
 export function RestrictionLiftedTemplate({ user, violations }: RestrictionLiftedTemplateProps) {
 	const logo = `${baseUrl}/touch-icons/512x512.png`

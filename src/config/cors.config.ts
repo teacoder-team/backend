@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config'
 
 export function getCorsConfig(config: ConfigService): CorsOptions {
 	return {
-		origin: config.getOrThrow<string>('ALLOWED_ORIGINS').split(','),
+		origin: config.getOrThrow<string>('HTTP_CORS').split(','),
 		methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE']
 	}
 }

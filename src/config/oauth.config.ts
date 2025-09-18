@@ -1,11 +1,11 @@
 import { ConfigService } from '@nestjs/config'
 
-import type { OAuthOptions } from '@/api/oauth/oauth.constants'
-import { GithubProvider, GoogleProvider } from '@/api/oauth/providers'
+import { OAuthOptions } from '@/libs/oauth/oauth.constants'
+import { GithubProvider, GoogleProvider } from '@/libs/oauth/providers'
 
 export function getOAuthConfig(configService: ConfigService): OAuthOptions {
 	return {
-		baseUrl: configService.getOrThrow<string>('APPLICATION_URL'),
+		baseUrl: configService.getOrThrow<string>('HOSTS_REST'),
 		services: [
 			new GoogleProvider({
 				clientId: configService.getOrThrow<string>('GOOGLE_CLIENT_ID'),

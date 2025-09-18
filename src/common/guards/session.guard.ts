@@ -18,7 +18,7 @@ export class SessionAuthGuard implements CanActivate {
 	) {}
 
 	public async canActivate(context: ExecutionContext): Promise<boolean> {
-		const request = context.switchToHttp().getRequest() as Request
+		const request = context.switchToHttp().getRequest<Request>()
 
 		const token = request.headers['x-session-token'] as string
 
