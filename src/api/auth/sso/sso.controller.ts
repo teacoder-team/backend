@@ -12,12 +12,7 @@ import {
 	UseGuards
 } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import {
-	ApiHeader,
-	ApiOkResponse,
-	ApiOperation,
-	ApiTags
-} from '@nestjs/swagger'
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger'
 import type { User } from '@prisma/generated'
 import { Response } from 'express'
 

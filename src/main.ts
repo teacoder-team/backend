@@ -9,7 +9,6 @@ import type { NestExpressApplication } from '@nestjs/platform-express'
 import helmet from 'helmet'
 
 import { AppModule } from './app.module'
-import { LoggingInterceptor } from './common/interceptors'
 import { setupSwagger } from './common/utils'
 import {
 	getCorsConfig,
@@ -30,7 +29,7 @@ async function bootstrap() {
 	app.useGlobalInterceptors(
 		new ClassSerializerInterceptor(app.get(Reflector))
 	)
-	app.useGlobalInterceptors(new LoggingInterceptor())
+	// app.useGlobalInterceptors(new LoggingInterceptor())
 	app.useGlobalPipes(new ValidationPipe(getValidationPipeConfig()))
 
 	app.enableCors(getCorsConfig(config))

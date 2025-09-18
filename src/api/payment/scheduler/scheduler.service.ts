@@ -14,7 +14,7 @@ export class SchedulerService {
 		private readonly yookassaService: YookassaService
 	) {}
 
-	@Cron(CronExpression.EVERY_10_SECONDS, {
+	@Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT, {
 		timeZone: 'Europe/Moscow'
 	})
 	public async handleAutoBilling() {

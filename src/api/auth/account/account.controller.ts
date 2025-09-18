@@ -8,12 +8,7 @@ import {
 	Patch,
 	Post
 } from '@nestjs/common'
-import {
-	ApiHeader,
-	ApiOkResponse,
-	ApiOperation,
-	ApiTags
-} from '@nestjs/swagger'
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger'
 import type { User } from '@prisma/generated'
 import { Turnstile } from 'nestjs-cloudflare-captcha'
 
@@ -47,10 +42,6 @@ export class AccountController {
 	@ApiOkResponse({
 		type: AccountResponse
 	})
-	@ApiHeader({
-		name: 'X-Session-Token',
-		required: true
-	})
 	@Authorization()
 	@Get()
 	@HttpCode(HttpStatus.OK)
@@ -82,10 +73,6 @@ export class AccountController {
 	})
 	@ApiOkResponse({
 		type: Boolean
-	})
-	@ApiHeader({
-		name: 'X-Session-Token',
-		required: true
 	})
 	@Authorization()
 	@Post('verify')
@@ -141,10 +128,6 @@ export class AccountController {
 	@ApiOkResponse({
 		type: Boolean
 	})
-	@ApiHeader({
-		name: 'X-Session-Token',
-		required: true
-	})
 	@Authorization()
 	@Patch('change/email')
 	@HttpCode(HttpStatus.OK)
@@ -161,10 +144,6 @@ export class AccountController {
 	})
 	@ApiOkResponse({
 		type: Boolean
-	})
-	@ApiHeader({
-		name: 'X-Session-Token',
-		required: true
 	})
 	@Authorization()
 	@Patch('change/password')

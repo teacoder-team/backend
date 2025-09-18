@@ -8,12 +8,7 @@ import {
 	Param,
 	Post
 } from '@nestjs/common'
-import {
-	ApiHeader,
-	ApiOkResponse,
-	ApiOperation,
-	ApiTags
-} from '@nestjs/swagger'
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger'
 import { User, UserRole } from '@prisma/generated'
 
 import { Authorization, Authorized } from '@/common/decorators'
@@ -36,10 +31,6 @@ export class RestrictionController {
 	@ApiOkResponse({
 		type: ActiveRestrictionResponse
 	})
-	@ApiHeader({
-		name: 'X-Session-Token',
-		required: true
-	})
 	@Authorization()
 	@Get()
 	@HttpCode(HttpStatus.OK)
@@ -55,10 +46,6 @@ export class RestrictionController {
 	@ApiOkResponse({
 		type: Boolean
 	})
-	@ApiHeader({
-		name: 'X-Session-Token',
-		required: true
-	})
 	@Authorization(UserRole.ADMIN)
 	@Post()
 	@HttpCode(HttpStatus.OK)
@@ -72,10 +59,6 @@ export class RestrictionController {
 	})
 	@ApiOkResponse({
 		type: Boolean
-	})
-	@ApiHeader({
-		name: 'X-Session-Token',
-		required: true
 	})
 	@Authorization(UserRole.ADMIN)
 	@Delete(':userId')

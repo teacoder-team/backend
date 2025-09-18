@@ -12,12 +12,7 @@ import {
 	UseInterceptors
 } from '@nestjs/common'
 import { FileInterceptor } from '@nestjs/platform-express'
-import {
-	ApiHeader,
-	ApiOkResponse,
-	ApiOperation,
-	ApiTags
-} from '@nestjs/swagger'
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger'
 import { type User, UserRole } from '@prisma/generated'
 
 import { Authorization, Authorized } from '@/common/decorators'
@@ -57,10 +52,6 @@ export class LessonController {
 	@ApiOkResponse({
 		type: ProgressResponse
 	})
-	@ApiHeader({
-		name: 'X-Session-Token',
-		required: true
-	})
 	@Authorization()
 	@Get(':id/progress')
 	@HttpCode(HttpStatus.OK)
@@ -78,10 +69,6 @@ export class LessonController {
 	@ApiOkResponse({
 		type: CreateLessonResponse
 	})
-	@ApiHeader({
-		name: 'X-Session-Token',
-		required: true
-	})
 	@Authorization(UserRole.ADMIN)
 	@Post()
 	@HttpCode(HttpStatus.OK)
@@ -92,10 +79,6 @@ export class LessonController {
 	@ApiOperation({
 		summary: 'Upload Lesson Video',
 		description: 'Upload a video file associated with the lesson.'
-	})
-	@ApiHeader({
-		name: 'X-Session-Token',
-		required: true
 	})
 	@Authorization(UserRole.ADMIN)
 	@UseInterceptors(

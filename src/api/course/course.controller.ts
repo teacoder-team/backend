@@ -10,7 +10,6 @@ import {
 	Res
 } from '@nestjs/common'
 import {
-	ApiHeader,
 	ApiOkResponse,
 	ApiOperation,
 	ApiResponse,
@@ -34,7 +33,8 @@ import {
 	CourseResponse,
 	CoursesResponse,
 	CreateCourseRequest,
-	CreateCourseResponse
+	CreateCourseResponse,
+	GenerateDownloadLinkResponse
 } from './dto'
 
 @ApiTags('Course')
@@ -108,8 +108,12 @@ export class CourseController {
 		await this.courseService.incrementViews(id)
 	}
 
-	@ApiHeader({
-		name: 'X-Session-Token'
+	@ApiOperation({
+		summary: 'Generate download link',
+		description: 'Generates a secure download link for a course.'
+	})
+	@ApiOkResponse({
+		type: GenerateDownloadLinkResponse
 	})
 	@PremiumOnly()
 	@Post(':id/download-link')
@@ -121,8 +125,14 @@ export class CourseController {
 		return await this.courseService.generateDownloadLink(id, user)
 	}
 
-	@ApiHeader({
-		name: 'X-Session-Token'
+	@ApiOperation({
+		summary: 'Resolve download token',
+		description:
+			'Resolves a download token to stream the course attachment.'
+	})
+	@ApiOkResponse({
+		description:
+			'The requested course file is streamed as a ZIP attachment.'
 	})
 	@Get('download/:token')
 	@HttpCode(HttpStatus.OK)
@@ -164,10 +174,6 @@ export class CourseController {
 	@ApiResponse({
 		status: HttpStatus.OK,
 		type: CreateCourseResponse
-	})
-	@ApiHeader({
-		name: 'X-Session-Token',
-		required: true
 	})
 	@Authorization(UserRole.ADMIN)
 	@Post()
