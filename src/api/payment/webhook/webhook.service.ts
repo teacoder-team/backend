@@ -36,15 +36,27 @@ export class WebhookService {
 	public async handleYookassa(payload: any) {
 		if (payload.event === 'payment.waiting_for_capture') {
 			return await this.yookassaService.capturePayment(payload.object.id)
-		} else if (payload.event === 'payment.succeeded')
+		} else if (payload.event === 'payment.succeeded') {
 			return await this.processPayment({
 				provider: 'yookassa',
 				paymentId: payload.object.metadata.payment_id,
 				paymentData: payload.object
 			})
+		} else if (payload.event === 'payment.canceled') {
+			return await this.prismaService.payment.update({
+				where: {
+					id: payload.object.metadata.payment_id
+				},
+				data: {
+					status: PaymentStatus.FAILED
+				}
+			})
+		}
 	}
 
 	public verifyWebhook(ip: string) {
+		if (IS_DEV_ENV) return
+
 		if (!this.matcher.contains(ip))
 			throw new UnauthorizedException(`Invalid IP: ${ip}`)
 	}

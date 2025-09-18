@@ -115,7 +115,8 @@ export class CourseController {
 	@ApiOkResponse({
 		type: GenerateDownloadLinkResponse
 	})
-	@PremiumOnly()
+	@Authorization()
+	// @PremiumOnly()
 	@Post(':id/download-link')
 	@HttpCode(HttpStatus.OK)
 	public async generateDownloadLink(
