@@ -14,7 +14,6 @@ import {
 } from 'nestjs-yookassa'
 import { VatCodesEnum } from 'nestjs-yookassa/dist/interfaces/receipt-details.interface'
 
-import { IS_DEV_ENV } from '@/common/utils'
 import { PrismaService } from '@/infra/prisma/prisma.service'
 import { HeleketService } from '@/libs/heleket/heleket.service'
 
@@ -36,9 +35,6 @@ export class PaymentService {
 
 	public async create(dto: InitPaymentRequest, user: User) {
 		const { method } = dto
-
-		if (!IS_DEV_ENV)
-			throw new MethodNotAllowedException('Method not allowed')
 
 		const payment = await this.prismaService.payment.create({
 			data: {
