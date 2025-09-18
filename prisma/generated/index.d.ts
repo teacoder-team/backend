@@ -17367,7 +17367,6 @@ export namespace Prisma {
 
   export type SubscriptionMinAggregateOutputType = {
     id: string | null
-    plan: string | null
     startedAt: Date | null
     expiresAt: Date | null
     isActive: boolean | null
@@ -17378,7 +17377,6 @@ export namespace Prisma {
 
   export type SubscriptionMaxAggregateOutputType = {
     id: string | null
-    plan: string | null
     startedAt: Date | null
     expiresAt: Date | null
     isActive: boolean | null
@@ -17389,7 +17387,6 @@ export namespace Prisma {
 
   export type SubscriptionCountAggregateOutputType = {
     id: number
-    plan: number
     startedAt: number
     expiresAt: number
     isActive: number
@@ -17402,7 +17399,6 @@ export namespace Prisma {
 
   export type SubscriptionMinAggregateInputType = {
     id?: true
-    plan?: true
     startedAt?: true
     expiresAt?: true
     isActive?: true
@@ -17413,7 +17409,6 @@ export namespace Prisma {
 
   export type SubscriptionMaxAggregateInputType = {
     id?: true
-    plan?: true
     startedAt?: true
     expiresAt?: true
     isActive?: true
@@ -17424,7 +17419,6 @@ export namespace Prisma {
 
   export type SubscriptionCountAggregateInputType = {
     id?: true
-    plan?: true
     startedAt?: true
     expiresAt?: true
     isActive?: true
@@ -17508,7 +17502,6 @@ export namespace Prisma {
 
   export type SubscriptionGroupByOutputType = {
     id: string
-    plan: string
     startedAt: Date
     expiresAt: Date | null
     isActive: boolean
@@ -17536,7 +17529,6 @@ export namespace Prisma {
 
   export type SubscriptionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    plan?: boolean
     startedAt?: boolean
     expiresAt?: boolean
     isActive?: boolean
@@ -17550,7 +17542,6 @@ export namespace Prisma {
 
   export type SubscriptionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    plan?: boolean
     startedAt?: boolean
     expiresAt?: boolean
     isActive?: boolean
@@ -17563,7 +17554,6 @@ export namespace Prisma {
 
   export type SubscriptionSelectScalar = {
     id?: boolean
-    plan?: boolean
     startedAt?: boolean
     expiresAt?: boolean
     isActive?: boolean
@@ -17572,7 +17562,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type SubscriptionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "plan" | "startedAt" | "expiresAt" | "isActive" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["subscription"]>
+  export type SubscriptionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "startedAt" | "expiresAt" | "isActive" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["subscription"]>
   export type SubscriptionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
     payments?: boolean | Subscription$paymentsArgs<ExtArgs>
@@ -17590,7 +17580,6 @@ export namespace Prisma {
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
-      plan: string
       startedAt: Date
       expiresAt: Date | null
       isActive: boolean
@@ -17993,7 +17982,6 @@ export namespace Prisma {
    */
   interface SubscriptionFieldRefs {
     readonly id: FieldRef<"Subscription", 'String'>
-    readonly plan: FieldRef<"Subscription", 'String'>
     readonly startedAt: FieldRef<"Subscription", 'DateTime'>
     readonly expiresAt: FieldRef<"Subscription", 'DateTime'>
     readonly isActive: FieldRef<"Subscription", 'Boolean'>
@@ -19721,7 +19709,6 @@ export namespace Prisma {
 
   export const SubscriptionScalarFieldEnum: {
     id: 'id',
-    plan: 'plan',
     startedAt: 'startedAt',
     expiresAt: 'expiresAt',
     isActive: 'isActive',
@@ -21041,7 +21028,6 @@ export namespace Prisma {
     OR?: SubscriptionWhereInput[]
     NOT?: SubscriptionWhereInput | SubscriptionWhereInput[]
     id?: StringFilter<"Subscription"> | string
-    plan?: StringFilter<"Subscription"> | string
     startedAt?: DateTimeFilter<"Subscription"> | Date | string
     expiresAt?: DateTimeNullableFilter<"Subscription"> | Date | string | null
     isActive?: BoolFilter<"Subscription"> | boolean
@@ -21054,7 +21040,6 @@ export namespace Prisma {
 
   export type SubscriptionOrderByWithRelationInput = {
     id?: SortOrder
-    plan?: SortOrder
     startedAt?: SortOrder
     expiresAt?: SortOrderInput | SortOrder
     isActive?: SortOrder
@@ -21071,7 +21056,6 @@ export namespace Prisma {
     AND?: SubscriptionWhereInput | SubscriptionWhereInput[]
     OR?: SubscriptionWhereInput[]
     NOT?: SubscriptionWhereInput | SubscriptionWhereInput[]
-    plan?: StringFilter<"Subscription"> | string
     startedAt?: DateTimeFilter<"Subscription"> | Date | string
     expiresAt?: DateTimeNullableFilter<"Subscription"> | Date | string | null
     isActive?: BoolFilter<"Subscription"> | boolean
@@ -21083,7 +21067,6 @@ export namespace Prisma {
 
   export type SubscriptionOrderByWithAggregationInput = {
     id?: SortOrder
-    plan?: SortOrder
     startedAt?: SortOrder
     expiresAt?: SortOrderInput | SortOrder
     isActive?: SortOrder
@@ -21100,7 +21083,6 @@ export namespace Prisma {
     OR?: SubscriptionScalarWhereWithAggregatesInput[]
     NOT?: SubscriptionScalarWhereWithAggregatesInput | SubscriptionScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Subscription"> | string
-    plan?: StringWithAggregatesFilter<"Subscription"> | string
     startedAt?: DateTimeWithAggregatesFilter<"Subscription"> | Date | string
     expiresAt?: DateTimeNullableWithAggregatesFilter<"Subscription"> | Date | string | null
     isActive?: BoolWithAggregatesFilter<"Subscription"> | boolean
@@ -22350,7 +22332,6 @@ export namespace Prisma {
 
   export type SubscriptionCreateInput = {
     id?: string
-    plan: string
     startedAt?: Date | string
     expiresAt?: Date | string | null
     isActive?: boolean
@@ -22362,7 +22343,6 @@ export namespace Prisma {
 
   export type SubscriptionUncheckedCreateInput = {
     id?: string
-    plan: string
     startedAt?: Date | string
     expiresAt?: Date | string | null
     isActive?: boolean
@@ -22374,7 +22354,6 @@ export namespace Prisma {
 
   export type SubscriptionUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    plan?: StringFieldUpdateOperationsInput | string
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
@@ -22386,7 +22365,6 @@ export namespace Prisma {
 
   export type SubscriptionUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    plan?: StringFieldUpdateOperationsInput | string
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
@@ -22398,7 +22376,6 @@ export namespace Prisma {
 
   export type SubscriptionCreateManyInput = {
     id?: string
-    plan: string
     startedAt?: Date | string
     expiresAt?: Date | string | null
     isActive?: boolean
@@ -22409,7 +22386,6 @@ export namespace Prisma {
 
   export type SubscriptionUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    plan?: StringFieldUpdateOperationsInput | string
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
@@ -22419,7 +22395,6 @@ export namespace Prisma {
 
   export type SubscriptionUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
-    plan?: StringFieldUpdateOperationsInput | string
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
@@ -23471,7 +23446,6 @@ export namespace Prisma {
 
   export type SubscriptionCountOrderByAggregateInput = {
     id?: SortOrder
-    plan?: SortOrder
     startedAt?: SortOrder
     expiresAt?: SortOrder
     isActive?: SortOrder
@@ -23482,7 +23456,6 @@ export namespace Prisma {
 
   export type SubscriptionMaxOrderByAggregateInput = {
     id?: SortOrder
-    plan?: SortOrder
     startedAt?: SortOrder
     expiresAt?: SortOrder
     isActive?: SortOrder
@@ -23493,7 +23466,6 @@ export namespace Prisma {
 
   export type SubscriptionMinOrderByAggregateInput = {
     id?: SortOrder
-    plan?: SortOrder
     startedAt?: SortOrder
     expiresAt?: SortOrder
     isActive?: SortOrder
@@ -25248,7 +25220,6 @@ export namespace Prisma {
 
   export type SubscriptionCreateWithoutUserInput = {
     id?: string
-    plan: string
     startedAt?: Date | string
     expiresAt?: Date | string | null
     isActive?: boolean
@@ -25259,7 +25230,6 @@ export namespace Prisma {
 
   export type SubscriptionUncheckedCreateWithoutUserInput = {
     id?: string
-    plan: string
     startedAt?: Date | string
     expiresAt?: Date | string | null
     isActive?: boolean
@@ -25555,7 +25525,6 @@ export namespace Prisma {
 
   export type SubscriptionUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
-    plan?: StringFieldUpdateOperationsInput | string
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
@@ -25566,7 +25535,6 @@ export namespace Prisma {
 
   export type SubscriptionUncheckedUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
-    plan?: StringFieldUpdateOperationsInput | string
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
@@ -27401,7 +27369,6 @@ export namespace Prisma {
 
   export type SubscriptionCreateWithoutPaymentsInput = {
     id?: string
-    plan: string
     startedAt?: Date | string
     expiresAt?: Date | string | null
     isActive?: boolean
@@ -27412,7 +27379,6 @@ export namespace Prisma {
 
   export type SubscriptionUncheckedCreateWithoutPaymentsInput = {
     id?: string
-    plan: string
     startedAt?: Date | string
     expiresAt?: Date | string | null
     isActive?: boolean
@@ -27496,7 +27462,6 @@ export namespace Prisma {
 
   export type SubscriptionUpdateWithoutPaymentsInput = {
     id?: StringFieldUpdateOperationsInput | string
-    plan?: StringFieldUpdateOperationsInput | string
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
@@ -27507,7 +27472,6 @@ export namespace Prisma {
 
   export type SubscriptionUncheckedUpdateWithoutPaymentsInput = {
     id?: StringFieldUpdateOperationsInput | string
-    plan?: StringFieldUpdateOperationsInput | string
     startedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean

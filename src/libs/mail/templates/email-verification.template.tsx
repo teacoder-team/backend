@@ -21,7 +21,7 @@ interface EmailVerificationTemplateProps {
 	token: string
 }
 
-const baseUrl = process.env['SITE_URL']
+const baseUrl = process.env['HOSTS_APP']
 
 export function EmailVerificationTemplate({ user, token }: EmailVerificationTemplateProps) {
 	const logo = `${baseUrl}/touch-icons/512x512.png`

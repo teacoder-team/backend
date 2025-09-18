@@ -162,7 +162,7 @@ export class CourseService {
 		return true
 	}
 
-	public async generateDownloadLink(id: string) {
+	public async generateDownloadLink(id: string, user: User) {
 		const course = await this.prismaService.course.findUnique({
 			where: {
 				id
@@ -174,21 +174,32 @@ export class CourseService {
 
 		const token = randomBytes(16).toString('hex')
 
-		await this.redisService.set(`course:download:${token}`, id, 'EX', 100)
+		await this.redisService.set(
+			`course:download:${token}`,
+			JSON.stringify({
+				courseId: course.id,
+				userId: user.id
+			}),
+			'EX',
+			60 * 5
+		)
 
-		return { token }
+		return {
+			url: `${this.configService.getOrThrow<string>('HOSTS_REST')}/courses/download/${token}`
+		}
 	}
 
 	public async resolveDownloadToken(
 		token: string,
-		user: User,
 		ip: string,
 		userAgent: string
 	) {
-		const courseId = await this.redisService.get(`course:download:${token}`)
+		const data = await this.redisService.get(`course:download:${token}`)
 
-		if (!courseId)
+		if (!data)
 			throw new NotFoundException('Ссылка недействительна или истекла')
+
+		const { courseId, userId } = JSON.parse(data)
 
 		const course = await this.prismaService.course.findUnique({
 			where: {
@@ -211,7 +222,7 @@ export class CourseService {
 				downloadedAt: new Date(),
 				user: {
 					connect: {
-						id: user.id
+						id: userId
 					}
 				},
 				course: {

@@ -9,16 +9,15 @@ import {
 	type User
 } from '@prisma/generated'
 import { randomBytes } from 'crypto'
-import { Response } from 'express'
 
-import { AllowedProvider } from '@/api/oauth/interfaces'
-import { OAuthService } from '@/api/oauth/oauth.service'
 import { slugify } from '@/common/utils'
 import { PrismaService } from '@/infra/prisma/prisma.service'
 import { RedisService } from '@/infra/redis/redis.service'
+import { AllowedProvider } from '@/libs/oauth/interfaces'
+import { OAuthService } from '@/libs/oauth/oauth.service'
 
 @Injectable()
-export class ExternalService {
+export class SsoService {
 	private readonly providerMap: Record<AllowedProvider, AccountProvider> = {
 		google: AccountProvider.GOOGLE,
 		github: AccountProvider.GITHUB

@@ -304,8 +304,6 @@ model Comment {
 model Subscription {
   id String @id @default(uuid())
 
-  plan String
-
   startedAt DateTime  @default(now()) @map("started_at")
   expiresAt DateTime? @map("expires_at")
 

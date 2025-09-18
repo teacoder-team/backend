@@ -19,7 +19,12 @@ import {
 import { User, UserRole } from '@prisma/generated'
 import { Response } from 'express'
 
-import { Authorized, ClientIp, UserAgent } from '@/common/decorators'
+import {
+	Authorized,
+	ClientIp,
+	PremiumOnly,
+	UserAgent
+} from '@/common/decorators'
 import { Authorization } from '@/common/decorators/auth.decorator'
 
 import { LessonResponse } from '../lesson/dto'
@@ -106,29 +111,29 @@ export class CourseController {
 	@ApiHeader({
 		name: 'X-Session-Token'
 	})
-	@Authorization()
+	@PremiumOnly()
 	@Post(':id/download-link')
 	@HttpCode(HttpStatus.OK)
-	public async generateDownloadLink(@Param('id') id: string) {
-		return await this.courseService.generateDownloadLink(id)
+	public async generateDownloadLink(
+		@Param('id') id: string,
+		@Authorized() user: User
+	) {
+		return await this.courseService.generateDownloadLink(id, user)
 	}
 
 	@ApiHeader({
 		name: 'X-Session-Token'
 	})
-	@Authorization()
 	@Get('download/:token')
 	@HttpCode(HttpStatus.OK)
 	public async resolveDownloadToken(
 		@Param('token') token: string,
 		@ClientIp() ip: string,
 		@UserAgent() userAgent: string,
-		@Authorized() user: User,
 		@Res() res: Response
 	) {
 		const course = await this.courseService.resolveDownloadToken(
 			token,
-			user,
 			ip,
 			userAgent
 		)
@@ -146,15 +151,6 @@ export class CourseController {
 			res.setHeader('Content-Type', contentType as string)
 
 			stream.pipe(res)
-
-			stream.on('end', () => {
-				res.end()
-			})
-
-			stream.on('error', err => {
-				console.error('Stream error:', err)
-				res.status(500).end()
-			})
 		} catch (err) {
 			console.error(err)
 			res.status(500).end()

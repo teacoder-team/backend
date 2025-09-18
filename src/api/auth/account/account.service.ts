@@ -38,20 +38,26 @@ export class AccountService {
 				}
 			})
 
-		const isPremium = !!(await this.prismaService.subscription.findUnique({
+		const subscription = await this.prismaService.subscription.findUnique({
 			where: {
 				userId: user.id
 			}
-		}))
+		})
+
+		const isEmailVerified = emailVerification
+			? emailVerification.status === EmailVerificationStatus.VERIFIED
+			: false
+		const isPremium =
+			subscription &&
+			subscription.isActive &&
+			(!subscription.expiresAt || subscription.expiresAt > new Date())
 
 		return {
 			id: user.id,
 			displayName: user.displayName,
 			email: user.email,
 			avatar: user.avatar,
-			isEmailVerified: emailVerification
-				? emailVerification.status === EmailVerificationStatus.VERIFIED
-				: false,
+			isEmailVerified,
 			isAutoBilling: user.isAutoBilling,
 			isPremium
 		}

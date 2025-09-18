@@ -7,6 +7,7 @@ import { getBullmqConfig } from '@/config'
 import { HeleketModule } from './heleket/heleket.module'
 import { KinescopeModule } from './kinescope/kinescope.module'
 import { MailModule } from './mail/mail.module'
+import { OAuthModule } from './oauth/oauth.module'
 import { StorageModule } from './storage/storage.module'
 
 @Module({
@@ -16,6 +17,7 @@ import { StorageModule } from './storage/storage.module'
 			useFactory: getBullmqConfig,
 			inject: [ConfigService]
 		}),
+		OAuthModule,
 		MailModule,
 		StorageModule,
 		KinescopeModule,

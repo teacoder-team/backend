@@ -91,7 +91,7 @@ export class BaseService {
 	}
 
 	public getRedirectUrl() {
-		return `${this._baseUrl}/auth/external/callback/${this.options.name}`
+		return `${this._baseUrl}/auth/sso/callback/${this.options.name}`
 	}
 
 	public set baseUrl(value: string) {

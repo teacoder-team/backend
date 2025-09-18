@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 
-import { OAuthModule } from '@/api/oauth/oauth.module'
 import { getOAuthConfig } from '@/config'
+import { OAuthModule } from '@/libs/oauth/oauth.module'
 
-import { ExternalController } from './external.controller'
-import { ExternalService } from './external.service'
+import { SsoController } from './sso.controller'
+import { SsoService } from './sso.service'
 
 @Module({
 	imports: [
@@ -15,7 +15,7 @@ import { ExternalService } from './external.service'
 			inject: [ConfigService]
 		})
 	],
-	controllers: [ExternalController],
-	providers: [ExternalService]
+	controllers: [SsoController],
+	providers: [SsoService]
 })
-export class ExternalModule {}
+export class SsoModule {}
