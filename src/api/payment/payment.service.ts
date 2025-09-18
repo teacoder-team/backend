@@ -22,7 +22,7 @@ import { InitPaymentRequest } from './dto'
 @Injectable()
 export class PaymentService {
 	private readonly HOSTS_APP: string
-	private readonly SUBSCRIPTION_PRICE = 299
+	private readonly SUBSCRIPTION_PRICE = 349
 
 	public constructor(
 		private readonly prismaService: PrismaService,
@@ -142,6 +142,9 @@ export class PaymentService {
 				return_url: `${this.HOSTS_APP}/payment/success`
 			},
 			save_payment_method: true,
+			...(paymentMethod === 'sbp' && {
+				capture: true
+			}),
 			metadata: {
 				payment_id: paymentId
 			},
