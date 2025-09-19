@@ -72,7 +72,7 @@ export class WebhookService {
 	}
 
 	public async handleCrypto(payload: any) {
-		if (payload.status !== 'paid') return
+		if (payload.status !== 'paid' || payload.status !== 'paid_over') return
 
 		await this.processPayment({
 			provider: 'crypto',
