@@ -22,7 +22,7 @@ import { InitPaymentRequest } from './dto'
 @Injectable()
 export class PaymentService {
 	private readonly HOSTS_APP: string
-	private readonly SUBSCRIPTION_PRICE = 1
+	private readonly SUBSCRIPTION_PRICE = 349
 
 	public constructor(
 		private readonly prismaService: PrismaService,
