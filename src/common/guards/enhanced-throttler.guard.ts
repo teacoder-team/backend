@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common'
+import { ExecutionContext, Injectable, Logger } from '@nestjs/common'
 import {
 	ThrottlerException,
 	ThrottlerGuard,
@@ -11,6 +11,12 @@ import { IS_DEV_ENV } from '../utils'
 @Injectable()
 export class EnhancedThrottlerGuard extends ThrottlerGuard {
 	private readonly logger = new Logger(EnhancedThrottlerGuard.name)
+
+	public async canActivate(context: ExecutionContext): Promise<boolean> {
+		if (context.getType() !== 'http') return true
+
+		return super.canActivate(context)
+	}
 
 	protected async getTracker(req: Request): Promise<string> {
 		const ip = IS_DEV_ENV

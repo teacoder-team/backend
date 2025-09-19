@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common'
 import { Cron, CronExpression } from '@nestjs/schedule'
 import { PaymentStatus } from '@prisma/generated'
 import { CurrencyEnum, YookassaService } from 'nestjs-yookassa'
+import { VatCodesEnum } from 'nestjs-yookassa/dist/interfaces/receipt-details.interface'
 
 import { PrismaService } from '@/infra/prisma/prisma.service'
 
@@ -114,12 +115,28 @@ export class SchedulerService {
 
 					const result = await this.yookassaService.createPayment({
 						amount: {
-							value: lastSuccess.amount,
+							value: 1,
 							currency: CurrencyEnum.RUB
 						},
 						capture: true,
 						description: 'Ежемесячная подписка',
 						payment_method_id: lastSuccess.providerPaymentId,
+						receipt: {
+							customer: {
+								email: user.email
+							},
+							items: [
+								{
+									amount: {
+										value: 1,
+										currency: CurrencyEnum.RUB
+									},
+									description: 'Ежемесячная подписка',
+									quantity: 1,
+									vat_code: VatCodesEnum.ndsNone
+								}
+							]
+						},
 						metadata: {
 							payment_id: payment.id
 						}

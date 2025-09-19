@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 
+import { BotService } from '@/bot/bot.service'
 import { getOAuthConfig } from '@/config'
 import { OAuthModule } from '@/libs/oauth/oauth.module'
 
@@ -16,6 +17,6 @@ import { SsoService } from './sso.service'
 		})
 	],
 	controllers: [SsoController],
-	providers: [SsoService]
+	providers: [SsoService, BotService]
 })
 export class SsoModule {}

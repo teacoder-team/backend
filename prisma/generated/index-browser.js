@@ -296,7 +296,26 @@ exports.Prisma.PaymentScalarFieldEnum = {
   providerPaymentId: 'providerPaymentId',
   metadata: 'metadata',
   userId: 'userId',
+  paymentMethodId: 'paymentMethodId',
   subscriptionId: 'subscriptionId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.UserPaymentMethodScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  type: 'type',
+  provider: 'provider',
+  providerId: 'providerId',
+  last4: 'last4',
+  first6: 'first6',
+  expiryMonth: 'expiryMonth',
+  expiryYear: 'expiryYear',
+  cardType: 'cardType',
+  isActive: 'isActive',
+  metadata: 'metadata',
+  userId: 'userId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -368,7 +387,12 @@ exports.PaymentStatus = exports.$Enums.PaymentStatus = {
 exports.PaymentMethod = exports.$Enums.PaymentMethod = {
   BANK_CARD: 'BANK_CARD',
   SBP: 'SBP',
+  YOOMONEY: 'YOOMONEY',
   CRYPTO: 'CRYPTO'
+};
+
+exports.PaymentProvider = exports.$Enums.PaymentProvider = {
+  YOOKASSA: 'YOOKASSA'
 };
 
 exports.Prisma.ModelName = {
@@ -387,7 +411,8 @@ exports.Prisma.ModelName = {
   Article: 'Article',
   Comment: 'Comment',
   Subscription: 'Subscription',
-  Payment: 'Payment'
+  Payment: 'Payment',
+  UserPaymentMethod: 'UserPaymentMethod'
 };
 
 /**

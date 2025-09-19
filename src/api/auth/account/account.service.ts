@@ -5,10 +5,10 @@ import {
 	NotFoundException
 } from '@nestjs/common'
 import { EmailVerificationStatus, type User } from '@prisma/generated'
-import { hash, verify } from 'argon2'
+import { hash } from 'argon2'
 import { randomBytes } from 'crypto'
-import validate from 'deep-email-validator'
 
+import { BotService } from '@/bot/bot.service'
 import { slugify } from '@/common/utils'
 import { PrismaService } from '@/infra/prisma/prisma.service'
 import { RedisService } from '@/infra/redis/redis.service'
@@ -27,7 +27,8 @@ export class AccountService {
 	public constructor(
 		private readonly prismaService: PrismaService,
 		private readonly redisService: RedisService,
-		private readonly mailService: MailService
+		private readonly mailService: MailService,
+		private readonly botService: BotService
 	) {}
 
 	public async getMe(user: User) {
@@ -96,6 +97,10 @@ export class AccountService {
 			ip,
 			userAgent
 		)
+
+		const userSession = await this.redisService.getUserSession(session.id)
+
+		await this.botService.sendNewUser(user, userSession)
 
 		return session
 	}
