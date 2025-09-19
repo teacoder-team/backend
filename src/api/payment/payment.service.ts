@@ -22,6 +22,8 @@ import { InitPaymentRequest } from './dto'
 @Injectable()
 export class PaymentService {
 	private readonly HOSTS_APP: string
+	private readonly HOSTS_REST: string
+
 	private readonly SUBSCRIPTION_PRICE = 349
 
 	public constructor(
@@ -31,6 +33,7 @@ export class PaymentService {
 		private readonly heleketService: HeleketService
 	) {
 		this.HOSTS_APP = this.configService.getOrThrow<string>('HOSTS_APP')
+		this.HOSTS_REST = this.configService.getOrThrow<string>('HOSTS_REST')
 	}
 
 	public async create(dto: InitPaymentRequest, user: User) {
@@ -80,19 +83,15 @@ export class PaymentService {
 				)
 				break
 			case PaymentMethod.CRYPTO:
-				// providerResponse = await this.heleketService.createPayment({
-				// 	// amount: String(this.SUBSCRIPTION_PRICE),
-				// 	amount: '40',
-				// 	currency: 'RUB',
-				// 	order_id: payment.id,
-				// 	url_return: 'http://localhost:14701/premium',
-				// 	url_success: 'http://localhost:14701/payment/success',
-				// 	url_callback:
-				// 		'https://72263b5f4671.ngrok-free.app/webhook/crypto'
-				// })
-				throw new BadRequestException(
-					'This payment method is not available yet'
-				)
+				providerResponse = await this.heleketService.createPayment({
+					amount: String(this.SUBSCRIPTION_PRICE),
+					currency: 'RUB',
+					order_id: payment.id,
+					url_return: `${this.HOSTS_APP}/payment/success`,
+					url_success: `${this.HOSTS_APP}/premium`,
+					url_callback: `${this.HOSTS_REST}/webhook/crypto`
+				})
+				break
 			default:
 				throw new BadRequestException('Unsupported payment provider')
 		}

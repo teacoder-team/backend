@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { Cron, CronExpression } from '@nestjs/schedule'
-import { PaymentStatus } from '@prisma/generated'
+import { PaymentMethod, PaymentStatus } from '@prisma/generated'
 import { CurrencyEnum, YookassaService } from 'nestjs-yookassa'
 import { VatCodesEnum } from 'nestjs-yookassa/dist/interfaces/receipt-details.interface'
 
@@ -65,7 +65,10 @@ export class SchedulerService {
 				const lastSuccess = await this.prismaService.payment.findFirst({
 					where: {
 						userId: user.id,
-						status: PaymentStatus.SUCCESS
+						status: PaymentStatus.SUCCESS,
+						method: {
+							not: PaymentMethod.CRYPTO
+						}
 					},
 					orderBy: {
 						createdAt: 'desc'
