@@ -22,7 +22,7 @@ import { InitPaymentRequest } from './dto'
 @Injectable()
 export class PaymentService {
 	private readonly HOSTS_APP: string
-	private readonly SUBSCRIPTION_PRICE = 349
+	private readonly SUBSCRIPTION_PRICE = 1
 
 	public constructor(
 		private readonly prismaService: PrismaService,
@@ -67,6 +67,15 @@ export class PaymentService {
 						payment.id,
 						user,
 						PaymentMethodsEnum.sbp
+					)
+				)
+				break
+			case PaymentMethod.YOOMONEY:
+				providerResponse = await this.yookassaService.createPayment(
+					this.createYooKassaPaymentData(
+						payment.id,
+						user,
+						PaymentMethodsEnum.yoo_money
 					)
 				)
 				break

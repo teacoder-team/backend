@@ -3,7 +3,11 @@ import {
 	Injectable,
 	UnauthorizedException
 } from '@nestjs/common'
-import { PaymentStatus } from '@prisma/generated'
+import {
+	PaymentMethod,
+	PaymentProvider,
+	PaymentStatus
+} from '@prisma/generated'
 import CidrMatcher from 'cidr-matcher'
 import { addMonths } from 'date-fns'
 import { YookassaService } from 'nestjs-yookassa'
@@ -15,6 +19,12 @@ import { PrismaService } from '@/infra/prisma/prisma.service'
 export class WebhookService {
 	private readonly ALLOWED_IPS: string[]
 	private readonly matcher: CidrMatcher
+
+	private readonly paymentTypeMap: Record<string, PaymentMethod> = {
+		bank_card: 'BANK_CARD',
+		sbp: 'SBP',
+		yoo_money: 'YOOMONEY'
+	}
 
 	public constructor(
 		private readonly prismaService: PrismaService,
@@ -34,6 +44,8 @@ export class WebhookService {
 	}
 
 	public async handleYookassa(payload: any) {
+		console.log('YOOKASSA WEBHOOK: ', JSON.stringify(payload))
+
 		if (payload.event === 'payment.waiting_for_capture') {
 			return await this.yookassaService.capturePayment(payload.object.id)
 		} else if (payload.event === 'payment.succeeded') {
@@ -135,5 +147,55 @@ export class WebhookService {
 				}
 			}
 		})
+
+		await this.savePaymentMethod(
+			payment.user.id,
+			paymentData.payment_method
+		)
+	}
+
+	private async savePaymentMethod(userId: string, metadata: any) {
+		const { id, type, title, card, status } = metadata
+
+		const method = await this.prismaService.userPaymentMethod.upsert({
+			where: {
+				providerId: id
+			},
+			update: {
+				title,
+				type: this.paymentTypeMap[type],
+				...(card && {
+					first6: card.first6,
+					last4: card.last4,
+					cardType: card.card_type,
+					expiryMonth: parseInt(card.expiry_month),
+					expiryYear: parseInt(card.expiry_year)
+				}),
+				isActive: status === 'active',
+				metadata
+			},
+			create: {
+				title,
+				type: this.paymentTypeMap[type],
+				provider: PaymentProvider.YOOKASSA,
+				providerId: id,
+				...(card && {
+					first6: card.first6,
+					last4: card.last4,
+					cardType: card.card_type,
+					expiryMonth: parseInt(card.expiry_month),
+					expiryYear: parseInt(card.expiry_year)
+				}),
+				isActive: status === 'active',
+				metadata,
+				user: {
+					connect: {
+						id: userId
+					}
+				}
+			}
+		})
+
+		return method
 	}
 }

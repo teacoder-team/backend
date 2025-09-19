@@ -36,8 +36,9 @@ model User {
   mfa          MultiFactorAuthentication?
   restrictions Restriction[]
 
-  subscription Subscription?
-  payments     Payment[]
+  subscription   Subscription?
+  paymentMethods UserPaymentMethod[]
+  payments       Payment[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -335,6 +336,9 @@ model Payment {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String @map("user_id")
 
+  paymentMethod   UserPaymentMethod? @relation(fields: [paymentMethodId], references: [id])
+  paymentMethodId String?            @map("payment_method_id")
+
   subscription   Subscription? @relation(fields: [subscriptionId], references: [id])
   subscriptionId String?       @map("subscription_id")
 
@@ -342,6 +346,36 @@ model Payment {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("payments")
+}
+
+model UserPaymentMethod {
+  id String @id @default(uuid())
+
+  title String?
+
+  type       PaymentMethod
+  provider   PaymentProvider
+  providerId String          @unique @map("provider_id")
+
+  last4       String?
+  first6      String?
+  expiryMonth Int?    @map("expiry_month")
+  expiryYear  Int?    @map("expiry_year")
+  cardType    String? @map("card_type")
+
+  isActive Boolean @default(true) @map("is_active")
+
+  metadata Json?
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @map("user_id")
+
+  payments Payment[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("user_payment_methods")
 }
 
 enum UserRole {
@@ -397,9 +431,16 @@ enum PaymentStatus {
   @@map("payment_statuses")
 }
 
+enum PaymentProvider {
+  YOOKASSA
+
+  @@map("payment_providers")
+}
+
 enum PaymentMethod {
   BANK_CARD
   SBP
+  YOOMONEY
   CRYPTO
 
   @@map("payment_methods")
