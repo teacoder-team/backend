@@ -115,7 +115,7 @@ export class SchedulerService {
 
 					const result = await this.yookassaService.createPayment({
 						amount: {
-							value: 1,
+							value: payment.amount,
 							currency: CurrencyEnum.RUB
 						},
 						capture: true,
@@ -128,7 +128,7 @@ export class SchedulerService {
 							items: [
 								{
 									amount: {
-										value: 1,
+										value: payment.amount,
 										currency: CurrencyEnum.RUB
 									},
 									description: 'Ежемесячная подписка',
