@@ -99,6 +99,38 @@ export class RedisService
 		return session
 	}
 
+	public async getUserSession(
+		sessionId: string
+	): Promise<UserSession | null> {
+		try {
+			const raw = await this.get(`user_sessions:${sessionId}`)
+
+			if (!raw) {
+				this.logger.warn(
+					`UserSession not found for sessionId: ${sessionId}`
+				)
+				return null
+			}
+
+			const data: UserSession = JSON.parse(raw)
+
+			if (!data || !data.id || !data.sessionId) {
+				this.logger.warn(
+					`Invalid UserSession data for sessionId: ${sessionId}`
+				)
+				return null
+			}
+
+			return data
+		} catch (error) {
+			this.logger.error(
+				`Failed to get UserSession for sessionId: ${sessionId}`,
+				error
+			)
+			throw error
+		}
+	}
+
 	public async createMfaTicket(userId: string, allowedMethods: string[]) {
 		const data = {
 			ticket: randomBytes(20).toString('hex'),

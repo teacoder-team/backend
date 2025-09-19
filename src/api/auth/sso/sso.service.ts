@@ -10,6 +10,7 @@ import {
 } from '@prisma/generated'
 import { randomBytes } from 'crypto'
 
+import { BotService } from '@/bot/bot.service'
 import { slugify } from '@/common/utils'
 import { PrismaService } from '@/infra/prisma/prisma.service'
 import { RedisService } from '@/infra/redis/redis.service'
@@ -26,7 +27,8 @@ export class SsoService {
 	public constructor(
 		private readonly prismaService: PrismaService,
 		private readonly redisService: RedisService,
-		private readonly oauthService: OAuthService
+		private readonly oauthService: OAuthService,
+		private readonly botService: BotService
 	) {}
 
 	public async fetchStatus(user: User) {
@@ -126,6 +128,7 @@ export class SsoService {
 		})
 
 		let user: User | null = account?.user ?? null
+		let isNewUser = false
 
 		if (!user) {
 			user = await this.prismaService.user.findUnique({
@@ -186,6 +189,8 @@ export class SsoService {
 						}
 					}
 				})
+
+				isNewUser = true
 			}
 		}
 
@@ -194,6 +199,14 @@ export class SsoService {
 			ip,
 			userAgent
 		)
+
+		if (isNewUser) {
+			const userSession = await this.redisService.getUserSession(
+				session.id
+			)
+
+			await this.botService.sendNewUser(user, userSession)
+		}
 
 		return session
 	}

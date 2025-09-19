@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 
 import { ApiModule } from './api/api.module'
+import { BotModule } from './bot/bot.module'
 import { IS_DEV_ENV } from './common/utils'
 import { InfraModule } from './infra/infra.module'
 import { LibsModule } from './libs/libs.module'
@@ -14,7 +15,8 @@ import { LibsModule } from './libs/libs.module'
 		}),
 		ApiModule,
 		InfraModule,
-		LibsModule
+		LibsModule,
+		BotModule
 	]
 })
 export class AppModule {}

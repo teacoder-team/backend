@@ -59,6 +59,7 @@
 		"ioredis": "^5.4.1",
 		"ip-cidr": "^4.0.2",
 		"nestjs-cloudflare-captcha": "^0.0.10",
+		"nestjs-telegraf": "^2.9.1",
 		"nestjs-yookassa": "^1.1.28",
 		"otpauth": "^9.3.6",
 		"prisma": "^5.22.0",
@@ -68,6 +69,7 @@
 		"reflect-metadata": "^0.2.2",
 		"rxjs": "^7.8.1",
 		"sharp": "^0.33.5",
+		"telegraf": "^4.16.3",
 		"ua-parser-js": "^2.0.0",
 		"yaml": "^2.7.0",
 		"yarn": "^1.22.22"
