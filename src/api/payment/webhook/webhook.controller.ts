@@ -8,8 +8,6 @@ import {
 } from '@nestjs/common'
 import { ApiOkResponse, ApiOperation } from '@nestjs/swagger'
 
-import { ClientIp } from '@/common/decorators'
-
 import { WebhookService } from './webhook.service'
 
 @Controller('webhook')
@@ -29,8 +27,6 @@ export class WebhookController {
 	@Post('yookassa')
 	@HttpCode(HttpStatus.OK)
 	public async yookassaWebhook(@Body() payload: any, @Ip() ip: string) {
-		console.log('YOOKASSA WEBHOOK IP: ', ip)
-
 		this.webhookService.verifyWebhook(ip)
 
 		await this.webhookService.handleYookassa(payload)
@@ -38,11 +34,13 @@ export class WebhookController {
 		return { ok: true }
 	}
 
-	// @Post('crypto')
-	// @HttpCode(HttpStatus.OK)
-	// public async cryptoWebhook(@Body() payload: any) {
-	// 	await this.webhookService.handleCrypto(payload)
+	@Post('crypto')
+	@HttpCode(HttpStatus.OK)
+	public async cryptoWebhook(@Body() payload: any) {
+		console.log(payload)
 
-	// 	return { ok: true }
-	// }
+		await this.webhookService.handleCrypto(payload)
+
+		return { ok: true }
+	}
 }

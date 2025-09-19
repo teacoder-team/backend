@@ -44,8 +44,6 @@ export class WebhookService {
 	}
 
 	public async handleYookassa(payload: any) {
-		console.log('YOOKASSA WEBHOOK: ', JSON.stringify(payload))
-
 		if (payload.event === 'payment.waiting_for_capture') {
 			return await this.yookassaService.capturePayment(payload.object.id)
 		} else if (payload.event === 'payment.succeeded') {
@@ -120,6 +118,13 @@ export class WebhookService {
 			}
 		})
 
+		if (provider === 'yookassa') {
+			await this.savePaymentMethod(
+				payment.user.id,
+				paymentData.payment_method
+			)
+		}
+
 		const now = new Date()
 
 		let expiresAt = payment.user.subscription?.expiresAt ?? now
@@ -147,11 +152,6 @@ export class WebhookService {
 				}
 			}
 		})
-
-		await this.savePaymentMethod(
-			payment.user.id,
-			paymentData.payment_method
-		)
 	}
 
 	private async savePaymentMethod(userId: string, metadata: any) {
