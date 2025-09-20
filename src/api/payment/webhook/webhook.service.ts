@@ -72,13 +72,22 @@ export class WebhookService {
 	}
 
 	public async handleCrypto(payload: any) {
-		if (payload.status !== 'paid' || payload.status !== 'paid_over') return
-
-		await this.processPayment({
-			provider: 'crypto',
-			paymentId: payload.order_id,
-			paymentData: payload
-		})
+		if (payload.status === 'paid' || payload.status === 'paid_over') {
+			return await this.processPayment({
+				provider: 'crypto',
+				paymentId: payload.order_id,
+				paymentData: payload
+			})
+		} else if (payload.status === 'fail') {
+			return await this.prismaService.payment.update({
+				where: {
+					id: payload.order_id
+				},
+				data: {
+					status: PaymentStatus.FAILED
+				}
+			})
+		}
 	}
 
 	private async processPayment({
