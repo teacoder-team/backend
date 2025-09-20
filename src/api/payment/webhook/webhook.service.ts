@@ -114,6 +114,16 @@ export class WebhookService {
 
 		if (!payment) throw new BadRequestException('Payment not found')
 
+		let paymentMethodId = null
+
+		if (provider === 'yookassa') {
+			const method = await this.savePaymentMethod(
+				payment.user.id,
+				paymentData.payment_method
+			)
+			paymentMethodId = method.id
+		}
+
 		await this.prismaService.payment.update({
 			where: {
 				id: paymentId
@@ -123,16 +133,10 @@ export class WebhookService {
 				...(provider === 'crypto' && {
 					currency: paymentData.payer_currency
 				}),
-				metadata: paymentData
+				metadata: paymentData,
+				...(paymentMethodId && { paymentMethodId })
 			}
 		})
-
-		if (provider === 'yookassa') {
-			await this.savePaymentMethod(
-				payment.user.id,
-				paymentData.payment_method
-			)
-		}
 
 		const now = new Date()
 
