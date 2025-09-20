@@ -1,6 +1,6 @@
 import { HttpService } from '@nestjs/axios'
-import { Inject, Injectable } from '@nestjs/common'
-import { createHash } from 'crypto'
+import { BadRequestException, Inject, Injectable } from '@nestjs/common'
+import { createHash, timingSafeEqual } from 'crypto'
 import { firstValueFrom } from 'rxjs'
 
 import { type HeleketOptions, HeleketOptionsSymbol } from '@/common/interfaces'
@@ -8,12 +8,14 @@ import { type HeleketOptions, HeleketOptionsSymbol } from '@/common/interfaces'
 import type {
 	ApiResponse,
 	CreatePaymentRequest,
-	CreatePaymentResponse
+	CreatePaymentResponse,
+	HeleketPaymentWebhook
 } from './interfaces'
 
 @Injectable()
 export class HeleketService {
 	private readonly API_URL: string
+	private readonly TRUSTED_IPS: string[]
 
 	public constructor(
 		@Inject(HeleketOptionsSymbol)
@@ -21,6 +23,7 @@ export class HeleketService {
 		private readonly httpService: HttpService
 	) {
 		this.API_URL = 'https://api.heleket.com/v1'
+		this.TRUSTED_IPS = ['31.133.220.8']
 	}
 
 	public async createPayment(data: CreatePaymentRequest) {
@@ -30,6 +33,31 @@ export class HeleketService {
 		)
 
 		return response.result
+	}
+
+	public verifyWebhook(ip: string, payload: HeleketPaymentWebhook) {
+		if (!this.TRUSTED_IPS.includes(ip))
+			throw new BadRequestException('Invalid IP')
+
+		const { sign } = payload
+		const dataCopy = { ...payload }
+		delete dataCopy.sign
+
+		const jsonData = JSON.stringify(dataCopy).replace(/\//g, '\\/')
+
+		const base64Data = Buffer.from(jsonData, 'utf8').toString('base64')
+
+		const hash = createHash('md5')
+			.update(base64Data + this.options.apiKey, 'utf8')
+			.digest('hex')
+
+		if (
+			!timingSafeEqual(
+				Buffer.from(hash.toLowerCase(), 'utf8'),
+				Buffer.from(sign.toLowerCase(), 'utf8')
+			)
+		)
+			throw new BadRequestException('Invalid signature')
 	}
 
 	private async request<T = any>(
