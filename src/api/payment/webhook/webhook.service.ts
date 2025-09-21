@@ -12,6 +12,7 @@ import CidrMatcher from 'cidr-matcher'
 import { addMonths } from 'date-fns'
 import { YookassaService } from 'nestjs-yookassa'
 
+import { BotService } from '@/bot/bot.service'
 import { IS_DEV_ENV } from '@/common/utils'
 import { PrismaService } from '@/infra/prisma/prisma.service'
 
@@ -28,7 +29,8 @@ export class WebhookService {
 
 	public constructor(
 		private readonly prismaService: PrismaService,
-		private readonly yookassaService: YookassaService
+		private readonly yookassaService: YookassaService,
+		private readonly botService: BotService
 	) {
 		this.ALLOWED_IPS = [
 			'185.71.76.0/27',
@@ -147,7 +149,7 @@ export class WebhookService {
 
 		expiresAt = addMonths(expiresAt, 1)
 
-		await this.prismaService.subscription.upsert({
+		const subscription = await this.prismaService.subscription.upsert({
 			where: {
 				userId: payment.user.id
 			},
@@ -166,6 +168,12 @@ export class WebhookService {
 				}
 			}
 		})
+
+		await this.botService.sendSubscriptionPurchased(
+			payment.user,
+			payment,
+			subscription
+		)
 	}
 
 	private async savePaymentMethod(userId: string, metadata: any) {

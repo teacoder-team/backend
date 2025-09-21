@@ -37,4 +37,18 @@ export class BotService {
 			}
 		)
 	}
+
+	public async sendSubscriptionPurchased(
+		user: User,
+		payment: Payment & { paymentMethod?: UserPaymentMethod | null },
+		subscription: Subscription
+	) {
+		await this.bot.telegram.sendMessage(
+			this.OWNER_ID,
+			MESSAGES.subscriptionPurchased(user, payment, subscription),
+			{
+				parse_mode: 'HTML'
+			}
+		)
+	}
 }

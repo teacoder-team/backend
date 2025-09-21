@@ -27,5 +27,23 @@ export const MESSAGES = {
 
 <b>🕒 Время регистрации:</b> ${new Date().toLocaleString()}
 
-<b>👨‍💻 Общее количество пользователей:</b> ${count}`
+<b>👨‍💻 Общее количество пользователей:</b> ${count}`,
+	subscriptionPurchased: (
+		user: User,
+		payment: Payment & { paymentMethod?: UserPaymentMethod | null },
+		subscription: Subscription
+	) => `
+✅ <b>Новая подписка! 🎉</b>
+
+<b>👤 Пользователь:</b> ${user.displayName}  
+<b>📧 Email:</b> ${user.email}  
+
+<b>💰 Сумма платежа:</b> ${payment.amount} ${payment.currency}  
+<b>📦 Статус платежа:</b> ${payment.status}
+<b>💳 Способ оплаты:</b> ${payment.method}
+
+<b>🕒 Дата платежа:</b> ${payment.createdAt.toLocaleString()}  
+<b>🕒 Начало подписки:</b> ${subscription.startedAt.toLocaleString()}  
+<b>⏳ Действует до:</b> ${subscription.expiresAt.toLocaleString()}
+`
 }
