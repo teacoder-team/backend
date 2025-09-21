@@ -1,11 +1,14 @@
 import { ConfigService } from '@nestjs/config'
+import {
+	GithubProvider,
+	GoogleProvider,
+	SentinelOptions
+} from '@teacoder/sentinel'
 
-import { OAuthOptions } from '@/libs/oauth/oauth.constants'
-import { GithubProvider, GoogleProvider } from '@/libs/oauth/providers'
-
-export function getOAuthConfig(configService: ConfigService): OAuthOptions {
+export function getOAuthConfig(configService: ConfigService): SentinelOptions {
 	return {
 		baseUrl: configService.getOrThrow<string>('HOSTS_REST'),
+
 		services: [
 			new GoogleProvider({
 				clientId: configService.getOrThrow<string>('GOOGLE_CLIENT_ID'),

@@ -1,16 +1,16 @@
 import { Module } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
+import { SentinelModule } from '@teacoder/sentinel'
 
 import { BotService } from '@/bot/bot.service'
 import { getOAuthConfig } from '@/config'
-import { OAuthModule } from '@/libs/oauth/oauth.module'
 
 import { SsoController } from './sso.controller'
 import { SsoService } from './sso.service'
 
 @Module({
 	imports: [
-		OAuthModule.forRootAsync({
+		SentinelModule.forRootAsync({
 			imports: [ConfigModule],
 			useFactory: getOAuthConfig,
 			inject: [ConfigService]

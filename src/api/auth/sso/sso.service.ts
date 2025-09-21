@@ -8,14 +8,13 @@ import {
 	EmailVerificationStatus,
 	type User
 } from '@prisma/generated'
+import { AllowedProvider, SentinelService } from '@teacoder/sentinel'
 import { randomBytes } from 'crypto'
 
 import { BotService } from '@/bot/bot.service'
 import { slugify } from '@/common/utils'
 import { PrismaService } from '@/infra/prisma/prisma.service'
 import { RedisService } from '@/infra/redis/redis.service'
-import { AllowedProvider } from '@/libs/oauth/interfaces'
-import { OAuthService } from '@/libs/oauth/oauth.service'
 
 @Injectable()
 export class SsoService {
@@ -27,7 +26,7 @@ export class SsoService {
 	public constructor(
 		private readonly prismaService: PrismaService,
 		private readonly redisService: RedisService,
-		private readonly oauthService: OAuthService,
+		private readonly sentinelService: SentinelService,
 		private readonly botService: BotService
 	) {}
 
@@ -55,7 +54,7 @@ export class SsoService {
 		code: string,
 		userId: string
 	) {
-		const external = await this.oauthService
+		const external = await this.sentinelService
 			.findService(provider)
 			.getUserByCode(code)
 		const providerEnum = this.providerMap[provider]
@@ -113,7 +112,7 @@ export class SsoService {
 		ip: string,
 		userAgent: string
 	) {
-		const external = await this.oauthService
+		const external = await this.sentinelService
 			.findService(provider)
 			.getUserByCode(code)
 		const providerEnum = this.providerMap[provider]
