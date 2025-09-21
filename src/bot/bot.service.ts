@@ -1,6 +1,11 @@
 import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import { User } from '@prisma/generated'
+import type {
+	Payment,
+	Subscription,
+	User,
+	UserPaymentMethod
+} from '@prisma/generated'
 import { InjectBot } from 'nestjs-telegraf'
 import { Telegraf } from 'telegraf'
 
@@ -26,7 +31,21 @@ export class BotService {
 
 		await this.bot.telegram.sendMessage(
 			this.OWNER_ID,
-			MESSAGES.newUserMessage(user, session, count),
+			MESSAGES.newUser(user, session, count),
+			{
+				parse_mode: 'HTML'
+			}
+		)
+	}
+
+	public async sendSubscriptionPurchased(
+		user: User,
+		payment: Payment & { paymentMethod?: UserPaymentMethod | null },
+		subscription: Subscription
+	) {
+		await this.bot.telegram.sendMessage(
+			this.OWNER_ID,
+			MESSAGES.subscriptionPurchased(user, payment, subscription),
 			{
 				parse_mode: 'HTML'
 			}

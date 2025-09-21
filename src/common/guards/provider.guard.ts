@@ -4,24 +4,22 @@ import {
 	Injectable,
 	NotFoundException
 } from '@nestjs/common'
-import { Request } from 'express'
-
-import { OAuthService } from '@/libs/oauth/oauth.service'
+import { SentinelService } from '@teacoder/sentinel'
+import type { Request } from 'express'
 
 @Injectable()
 export class ProviderGuard implements CanActivate {
-	public constructor(private readonly oauthService: OAuthService) {}
+	public constructor(private readonly sentinelService: SentinelService) {}
 
 	public canActivate(context: ExecutionContext) {
 		const request = context.switchToHttp().getRequest<Request>()
 
 		const provider = request.params.provider
 
-		const providerInstance = this.oauthService.findService(provider)
+		const providerInstance = this.sentinelService.findService(provider)
 
-		if (!providerInstance) {
+		if (!providerInstance)
 			throw new NotFoundException('Провайдер не найден')
-		}
 
 		return true
 	}

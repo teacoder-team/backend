@@ -28,3 +28,4 @@ COPY --chown=nodejs:nodejs --from=builder /app/dist ./dist
 COPY --chown=nodejs:nodejs --from=builder /app/prisma/generated ./prisma/generated
 
 CMD ["node", "dist/main"]
+

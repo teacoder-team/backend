@@ -14,7 +14,8 @@ import {
 import { ConfigService } from '@nestjs/config'
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger'
 import type { User } from '@prisma/generated'
-import { Response } from 'express'
+import { type AllowedProvider, SentinelService } from '@teacoder/sentinel'
+import type { Response } from 'express'
 
 import {
 	Authorization,
@@ -23,8 +24,6 @@ import {
 	UserAgent
 } from '@/common/decorators'
 import { ProviderGuard } from '@/common/guards'
-import { AllowedProvider } from '@/libs/oauth/interfaces'
-import { OAuthService } from '@/libs/oauth/oauth.service'
 
 import { SsoConnectResponse, SsoStatusResponse } from './dto'
 import { SsoService } from './sso.service'
@@ -34,7 +33,7 @@ import { SsoService } from './sso.service'
 export class SsoController {
 	public constructor(
 		private readonly ssoService: SsoService,
-		private readonly oauthService: OAuthService,
+		private readonly sentinelService: SentinelService,
 		private readonly configService: ConfigService
 	) {}
 
@@ -65,7 +64,7 @@ export class SsoController {
 	@HttpCode(HttpStatus.OK)
 	@UseGuards(ProviderGuard)
 	public async getLoginUrl(@Param('provider') provider: AllowedProvider) {
-		const providerInstance = this.oauthService.findService(provider)
+		const providerInstance = this.sentinelService.findService(provider)
 
 		const state = Buffer.from(JSON.stringify({ action: 'login' })).toString(
 			'base64'
@@ -90,7 +89,7 @@ export class SsoController {
 		@Param('provider') provider: AllowedProvider,
 		@Authorized() user: User
 	) {
-		const providerInstance = this.oauthService.findService(provider)
+		const providerInstance = this.sentinelService.findService(provider)
 
 		const state = Buffer.from(
 			JSON.stringify({ action: 'connect', userId: user.id })
