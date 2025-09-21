@@ -28,6 +28,7 @@ import {
 import { LoginSessionResponse } from '../session/dto'
 
 import {
+	MfaPasskeyRequest,
 	MfaRecoveryRequest,
 	MfaStatusResponse,
 	MfaTotpRequest,
@@ -151,7 +152,7 @@ export class MfaController {
 	@Post('verify')
 	@HttpCode(HttpStatus.OK)
 	public async verify(
-		@Body() dto: MfaTotpRequest | MfaRecoveryRequest,
+		@Body() dto: MfaTotpRequest | MfaPasskeyRequest | MfaRecoveryRequest,
 		@ClientIp() ip: string,
 		@UserAgent() userAgent: string
 	) {

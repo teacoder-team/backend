@@ -14,7 +14,10 @@ import * as QRCode from 'qrcode'
 import { PrismaService } from '@/infra/prisma/prisma.service'
 import { RedisService } from '@/infra/redis/redis.service'
 
+import { PasskeyService } from '../passkey/passkey.service'
+
 import {
+	MfaPasskeyRequest,
 	MfaRecoveryRequest,
 	MfaTotpRequest,
 	TotpDisableRequest,
@@ -25,7 +28,8 @@ import {
 export class MfaService {
 	public constructor(
 		private readonly prismaService: PrismaService,
-		protected readonly redisService: RedisService
+		private readonly redisService: RedisService,
+		private readonly passkeyService: PasskeyService
 	) {}
 
 	public async fetchStatus(user: User) {
@@ -252,7 +256,7 @@ export class MfaService {
 	}
 
 	public async verify(
-		dto: MfaTotpRequest | MfaRecoveryRequest,
+		dto: MfaTotpRequest | MfaPasskeyRequest | MfaRecoveryRequest,
 		ip: string,
 		userAgent: string
 	) {
@@ -285,6 +289,14 @@ export class MfaService {
 			}
 
 			await this.verifyRecoveryCode(user, dto.recoveryCode)
+		} else if ('passkey' in dto) {
+			if (!ticket.allowedMethods.includes('passkey'))
+				throw new BadRequestException('Метод Passkey не разрешен')
+
+			await this.passkeyService.verifyAuthentication(
+				user,
+				dto.attestationResponse
+			)
 		}
 
 		const session = await this.redisService.createSession(

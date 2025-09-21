@@ -20,7 +20,8 @@ import { RedisService } from '@/infra/redis/redis.service'
 export class SsoService {
 	private readonly providerMap: Record<AllowedProvider, AccountProvider> = {
 		google: AccountProvider.GOOGLE,
-		github: AccountProvider.GITHUB
+		github: AccountProvider.GITHUB,
+		yandex: AccountProvider.YANDEX
 	}
 
 	public constructor(
@@ -211,16 +212,11 @@ export class SsoService {
 	}
 
 	public async unlink(provider: AllowedProvider, user: User) {
-		const providerMapping: Record<AllowedProvider, AccountProvider> = {
-			google: AccountProvider.GOOGLE,
-			github: AccountProvider.GITHUB
-		}
-
 		const account = await this.prismaService.externalAccount.findUnique({
 			where: {
 				userId_provider: {
 					userId: user.id,
-					provider: providerMapping[provider]
+					provider: this.providerMap[provider]
 				}
 			}
 		})
@@ -231,7 +227,7 @@ export class SsoService {
 			where: {
 				userId_provider: {
 					userId: user.id,
-					provider: providerMapping[provider]
+					provider: this.providerMap[provider]
 				}
 			}
 		})

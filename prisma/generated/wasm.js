@@ -168,6 +168,7 @@ exports.Prisma.PasswordResetScalarFieldEnum = {
 exports.Prisma.MultiFactorAuthenticationScalarFieldEnum = {
   id: 'id',
   recoveryCodes: 'recoveryCodes',
+  currentChallenge: 'currentChallenge',
   totpId: 'totpId',
   userId: 'userId',
   createdAt: 'createdAt',
@@ -352,7 +353,8 @@ exports.UserRole = exports.$Enums.UserRole = {
 
 exports.AccountProvider = exports.$Enums.AccountProvider = {
   GOOGLE: 'GOOGLE',
-  GITHUB: 'GITHUB'
+  GITHUB: 'GITHUB',
+  YANDEX: 'YANDEX'
 };
 
 exports.EmailVerificationStatus = exports.$Enums.EmailVerificationStatus = {

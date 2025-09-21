@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsNotEmpty, IsString, MaxLength, MinLength } from 'class-validator'
+import {
+	IsNotEmpty,
+	IsObject,
+	IsString,
+	MaxLength,
+	MinLength
+} from 'class-validator'
 
 export class MfaTotpRequest {
 	@ApiProperty({
@@ -21,6 +27,19 @@ export class MfaTotpRequest {
 	@MinLength(6)
 	@MaxLength(6)
 	public totpCode: string
+}
+
+export class MfaPasskeyRequest {
+	@ApiProperty({
+		description: 'MFA Ticket',
+		example: 'aca7247545d1333e155cd9bc0d94f9a8f1a49859'
+	})
+	@IsString()
+	@IsNotEmpty()
+	public ticket: string
+
+	@IsObject()
+	public attestationResponse: string
 }
 
 export class MfaRecoveryRequest {

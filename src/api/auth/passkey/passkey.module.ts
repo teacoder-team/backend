@@ -5,6 +5,7 @@ import { PasskeyService } from './passkey.service'
 
 @Module({
 	controllers: [PasskeyController],
-	providers: [PasskeyService]
+	providers: [PasskeyService],
+	exports: [PasskeyService]
 })
 export class PasskeyModule {}
