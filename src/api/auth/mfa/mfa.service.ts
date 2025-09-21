@@ -272,13 +272,13 @@ export class MfaService {
 		if (!user) throw new NotFoundException('Пользователь не найден')
 
 		if ('totpCode' in dto) {
-			if (!ticket.allowedMethods.includes('Totp')) {
+			if (!ticket.allowedMethods.includes('totp')) {
 				throw new BadRequestException('Метод TOTP не разрешен')
 			}
 
 			await this.verifyTotpCode(user, dto.totpCode)
 		} else if ('recoveryCode' in dto) {
-			if (!ticket.allowedMethods.includes('Recovery')) {
+			if (!ticket.allowedMethods.includes('recovery')) {
 				throw new BadRequestException(
 					'Метод восстановления не разрешен'
 				)

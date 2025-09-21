@@ -59,9 +59,9 @@ export class SessionService {
 			const allowedMethods: string[] = []
 
 			if (mfa.totp?.status === TotpStatus.ENABLED)
-				allowedMethods.push('Totp')
-			if (mfa.passkeys.length > 0) allowedMethods.push('Passkey')
-			if (mfa.recoveryCodes.length > 0) allowedMethods.push('Recovery')
+				allowedMethods.push('totp')
+			if (mfa.passkeys.length > 0) allowedMethods.push('passkey')
+			if (mfa.recoveryCodes.length > 0) allowedMethods.push('recovery')
 
 			const ticket = await this.redisService.createMfaTicket(
 				user.id,
@@ -112,9 +112,9 @@ export class SessionService {
 			const allowedMethods: string[] = []
 
 			if (mfa.totp?.status === TotpStatus.ENABLED)
-				allowedMethods.push('Totp')
-			if (mfa.passkeys.length > 0) allowedMethods.push('Passkey')
-			if (mfa.recoveryCodes.length > 0) allowedMethods.push('Recovery')
+				allowedMethods.push('totp')
+			if (mfa.passkeys.length > 0) allowedMethods.push('passkey')
+			if (mfa.recoveryCodes.length > 0) allowedMethods.push('recovery')
 
 			const ticket = await this.redisService.createMfaTicket(
 				admin.id,
