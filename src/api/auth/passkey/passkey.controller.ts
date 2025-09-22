@@ -11,19 +11,9 @@ import {
 import { ApiOkResponse, ApiOperation } from '@nestjs/swagger'
 import { User } from '@prisma/generated'
 
-import {
-	Authorization,
-	Authorized,
-	ClientIp,
-	UserAgent
-} from '@/common/decorators'
+import { Authorization, Authorized } from '@/common/decorators'
 
-import {
-	GeneratePasskeyOptionsResponse,
-	PasskeyResponse,
-	RegisterPasskeyRequest,
-	RegisterPasskeyResponse
-} from './dto'
+import { PasskeyResponse } from './dto'
 import { PasskeyService } from './passkey.service'
 
 @Controller('auth/passkey')
@@ -43,46 +33,33 @@ export class PasskeyController {
 		return this.passkeyService.fetchPasskeys(user)
 	}
 
-	@ApiOperation({
-		summary: 'Register Passkey​​',
-		description: 'Register a passkey for an account.'
-	})
-	@ApiOkResponse({ type: RegisterPasskeyResponse })
 	@Authorization()
-	@Post()
+	@Post('register/options')
 	@HttpCode(HttpStatus.OK)
-	public async registerPasskey(
+	public async generateRegistrationOptions(@Authorized() user: User) {
+		return this.passkeyService.generateRegistrationOptions(user)
+	}
+
+	@Authorization()
+	@Post('register/verify')
+	@HttpCode(HttpStatus.OK)
+	public async verifyRegistration(
 		@Authorized() user: User,
-		@Body() dto: RegisterPasskeyRequest,
-		@ClientIp() ip: string,
-		@UserAgent() userAgent: string
+		@Body() body: { deviceName: string; attestationResponse: any }
 	) {
-		return this.passkeyService.registerPasskey(user, dto, ip, userAgent)
+		return this.passkeyService.verifyRegistration(
+			user,
+			body.deviceName,
+			body.attestationResponse
+		)
 	}
 
-	@Post('login-options')
+	@Post('login/options')
 	@HttpCode(HttpStatus.OK)
-	async generateLoginOptions() {
-		return this.passkeyService.generateLoginOptions()
-	}
-
-	@Post('login')
-	@HttpCode(HttpStatus.OK)
-	async verifyLogin(@Body() body: { credential: any }) {
-		return this.passkeyService.verifyLogin(body)
-	}
-
-	@ApiOperation({
-		summary: 'Generate Registration Options',
-		description:
-			'Generate options required to initiate WebAuthn registration.'
-	})
-	@ApiOkResponse({ type: GeneratePasskeyOptionsResponse })
-	@Authorization()
-	@Post('register-options')
-	@HttpCode(HttpStatus.OK)
-	public async generatePasskeyOptions(@Authorized() user: User) {
-		return this.passkeyService.generateRegisterOptions(user)
+	public async generateAuthenticationOptions(
+		@Body() dto: { userId: string }
+	) {
+		return this.passkeyService.generateAuthenticationOptions(dto.userId)
 	}
 
 	@ApiOperation({

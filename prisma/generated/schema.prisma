@@ -103,7 +103,8 @@ model MultiFactorAuthentication {
 
   recoveryCodes String[] @default([]) @map("recovery_codes")
 
-  passkeys Passkey[]
+  currentChallenge String?   @map("current_challenge")
+  passkeys         Passkey[]
 
   totp   Totp?   @relation(fields: [totpId], references: [id], onDelete: Cascade)
   totpId String? @unique @map("totp_id")
@@ -388,6 +389,7 @@ enum UserRole {
 enum AccountProvider {
   GOOGLE
   GITHUB
+  YANDEX
 
   @@map("account_providers")
 }

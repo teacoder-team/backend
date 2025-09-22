@@ -7,7 +7,6 @@ import {
 import { ConfigService } from '@nestjs/config'
 import { User } from '@prisma/generated'
 import {
-	AuthenticatorTransportFuture,
 	generateAuthenticationOptions,
 	generateRegistrationOptions,
 	verifyAuthenticationResponse,
@@ -17,8 +16,6 @@ import base64url from 'base64url'
 
 import { PrismaService } from '@/infra/prisma/prisma.service'
 import { RedisService } from '@/infra/redis/redis.service'
-
-import { RegisterPasskeyRequest } from './dto'
 
 @Injectable()
 export class PasskeyService {
@@ -64,243 +61,176 @@ export class PasskeyService {
 		return mfa.passkeys
 	}
 
-	public async registerPasskey(
-		user: User,
-		dto: RegisterPasskeyRequest,
-		ip: string,
-		userAgent: string
-	) {
-		const { deviceName, transports } = dto
-
-		let mfa = await this.prismaService.multiFactorAuthentication.findUnique(
-			{ where: { userId: user.id }, include: { passkeys: true } }
-		)
-
-		if (!mfa) {
-			mfa = await this.prismaService.multiFactorAuthentication.create({
-				data: { userId: user.id },
-				include: { passkeys: true }
-			})
-		}
-
-		const json = await this.redisService.get(`webauthn:register:${user.id}`)
-		const challenge = JSON.parse(json)
-
-		console.log('REGISTER: ', challenge)
-
-		const result = await verifyRegistrationResponse({
-			response: {
-				id: dto.credential.id,
-				rawId: dto.credential.rawId,
-				response: {
-					clientDataJSON: dto.credential.response.clientDataJSON,
-					attestationObject: dto.credential.response.attestationObject
-				},
-				type: 'public-key',
-				clientExtensionResults: dto.credential.clientExtensionResults
-			},
-			expectedChallenge: challenge.challenge,
-			expectedOrigin: this.WEBAUTHN_ORIGIN,
-			expectedRPID: this.WEBAUTHN_RP_ID
-		})
-
-		if (!result.verified || !result.registrationInfo?.credential.id)
-			throw new BadRequestException('Registration verification failed')
-
-		const { credential } = result.registrationInfo
-
-		console.log('--- REGISTRATION DEBUG START ---')
-		console.log('dto.credential.id (client):', dto.credential.id)
-		console.log('dto.credential.rawId (client):', dto.credential.rawId)
-		try {
-			console.log(
-				'client rawId hex:',
-				Buffer.from(dto.credential.rawId, 'base64url').toString('hex')
-			)
-		} catch (e) {
-			console.log('cannot decode client rawId')
-		}
-
-		console.log(
-			'result.registrationInfo.credential.id (verifier):',
-			result.registrationInfo?.credential.id
-		)
-
-		const savedId =
-			typeof result.registrationInfo?.credential.id === 'string'
-				? result.registrationInfo.credential.id
-				: base64url.encode(
-						Buffer.from(result.registrationInfo.credential.id)
-					)
-
-		console.log('will save credentialIdBase64url:', savedId)
-		console.log('--- REGISTRATION DEBUG END ---')
-
-		const credentialIdBase64url =
-			typeof credential.id === 'string'
-				? credential.id
-				: base64url.encode(Buffer.from(credential.id))
-
-		const publicKeyBase64url =
-			typeof credential.publicKey === 'string'
-				? credential.publicKey
-				: base64url.encode(Buffer.from(credential.publicKey))
-
-		const passkey = await this.prismaService.passkey.create({
-			data: {
-				deviceName,
-				credentialId: credentialIdBase64url,
-				publicKey: publicKeyBase64url,
-				transports,
-				lastUsedAt: new Date(),
-				ip,
-				userAgent,
-				mfa: {
-					connect: {
-						id: mfa.id
-					}
-				}
-			},
-			select: {
-				id: true,
-				deviceName: true,
-				transports: true
-			}
-		})
-
-		return passkey
-	}
-
-	public async generateRegisterOptions(user: User) {
-		const passkeys = await this.prismaService.passkey.findMany({
-			where: {
-				mfa: {
+	public async generateRegistrationOptions(user: User) {
+		const mfa =
+			await this.prismaService.multiFactorAuthentication.findUnique({
+				where: {
 					userId: user.id
+				},
+				include: {
+					passkeys: true
 				}
-			}
-		})
+			})
 
 		const options = await generateRegistrationOptions({
 			rpName: this.WEBAUTHN_RP_NAME,
 			rpID: this.WEBAUTHN_RP_ID,
 			userID: new TextEncoder().encode(user.id),
-			userName: user.email,
 			userDisplayName: user.displayName,
-			timeout: 1000 * 60,
+			userName: user.email,
 			attestationType: 'none',
-			authenticatorSelection: {
-				residentKey: 'preferred',
-				userVerification: 'preferred'
-			},
-			excludeCredentials: passkeys.map(passkey => ({
-				id: passkey.credentialId,
-				transports: passkey.transports as AuthenticatorTransportFuture[]
+			excludeCredentials: mfa?.passkeys.map(pk => ({
+				id: base64url.encode(Buffer.from(pk.credentialId, 'base64')),
+				type: 'public-key'
 			})),
-			supportedAlgorithmIDs: [-7, -257]
+			authenticatorSelection: {
+				residentKey: 'discouraged',
+				userVerification: 'preferred'
+			}
 		})
 
-		await this.redisService.set(
-			`webauthn:register:${user.id}`,
-			JSON.stringify(options),
-			'EX',
-			600
-		)
-
-		return options
-	}
-
-	async generateLoginOptions() {
-		const options = await generateAuthenticationOptions({
-			rpID: this.WEBAUTHN_RP_ID,
-			timeout: 1000 * 60,
-			userVerification: 'preferred'
-		})
-
-		await this.redisService.set(
-			`webauthn:login:${options.challenge}`,
-			JSON.stringify(options),
-			'EX',
-			60_000
-		)
-
-		return options
-	}
-
-	async verifyLogin(body: any) {
-		const {
-			credential: { id, response }
-		} = body
-
-		const incomingId =
-			typeof id === 'string' ? id : base64url.encode(Buffer.from(id))
-
-		const passkey = await this.prismaService.passkey.findUnique({
+		await this.prismaService.multiFactorAuthentication.update({
 			where: {
-				credentialId: '445tbx9naFlio4zprr6m2trC3YXyV5M2S1p1dcPxEhc'
+				userId: user.id
 			},
-			include: {
+			data: {
+				currentChallenge: options.challenge
+			}
+		})
+
+		return options
+	}
+
+	public async verifyRegistration(
+		user: User,
+		deviceName: string,
+		attestationResponse: any
+	) {
+		const mfa =
+			await this.prismaService.multiFactorAuthentication.findUnique({
+				where: {
+					userId: user.id
+				}
+			})
+
+		if (!mfa?.currentChallenge)
+			throw new BadRequestException('No challenge found')
+
+		const verification = await verifyRegistrationResponse({
+			response: attestationResponse,
+			expectedChallenge: mfa.currentChallenge,
+			expectedOrigin: this.WEBAUTHN_ORIGIN,
+			expectedRPID: this.WEBAUTHN_RP_ID
+		})
+
+		if (!verification.verified)
+			throw new BadRequestException('Verification failed')
+
+		const {
+			credential: { id, publicKey }
+		} = verification.registrationInfo
+
+		await this.prismaService.passkey.create({
+			data: {
+				deviceName,
+				credentialId: id,
+				publicKey: publicKey.toString(),
+				userAgent: '',
+				ip: '',
 				mfa: {
-					include: {
-						user: true
+					connect: {
+						userId: user.id
 					}
 				}
 			}
 		})
 
-		if (!passkey) throw new NotFoundException('Ключ не найден')
+		return { success: true }
+	}
 
-		const clientDataJSONbuf = Buffer.from(response.clientDataJSON, 'base64')
-		const clientData = JSON.parse(clientDataJSONbuf.toString('utf8'))
-		const challengeFromClient = clientData.challenge
+	public async generateAuthenticationOptions(userId: string) {
+		const mfa =
+			await this.prismaService.multiFactorAuthentication.findUnique({
+				where: {
+					userId
+				},
+				include: {
+					passkeys: true
+				}
+			})
 
-		const json = await this.redisService.get(
-			`webauthn:login:${passkey.credentialId}`
+		if (!mfa || !mfa.passkeys.length)
+			throw new NotFoundException('Нет зарегистрированных ключей доступа')
+
+		const options = await generateAuthenticationOptions({
+			rpID: this.WEBAUTHN_RP_ID,
+			userVerification: 'preferred',
+			allowCredentials: mfa.passkeys.map(pk => ({
+				id: pk.credentialId,
+				type: 'public-key'
+			}))
+		})
+
+		await this.redisService.set(
+			`passkey_challenge:${userId}`,
+			options.challenge,
+			'EX',
+			300
 		)
-		if (!json) throw new BadRequestException('Challenge expired or missing')
 
-		const options = JSON.parse(json)
+		return options
+	}
+
+	public async verifyAuthentication(user: User, assertionResponse: any) {
+		const expectedChallenge = await this.redisService.get(
+			`passkey_challenge:${user.id}`
+		)
+		if (!expectedChallenge)
+			throw new BadRequestException('Challenge не найден или истёк')
+
+		const mfa =
+			await this.prismaService.multiFactorAuthentication.findUnique({
+				where: {
+					userId: user.id
+				},
+				include: {
+					passkeys: true
+				}
+			})
+
+		const passkey = mfa.passkeys.find(
+			pk => pk.credentialId === assertionResponse.id
+		)
+
+		if (!passkey) throw new BadRequestException('Ключ не зарегистрирован')
 
 		const verification = await verifyAuthenticationResponse({
-			response: {
-				id,
-				rawId: response.rawId,
-				type: 'public-key',
-				response: {
-					authenticatorData: response.authenticatorData,
-					clientDataJSON: response.clientDataJSON,
-					signature: response.signature,
-					userHandle: response.userHandle
-				},
-				clientExtensionResults: response.clientExtensionResults
-			},
-			expectedChallenge: options.challenge,
+			response: assertionResponse,
+			expectedChallenge,
 			expectedOrigin: this.WEBAUTHN_ORIGIN,
 			expectedRPID: this.WEBAUTHN_RP_ID,
 			credential: {
 				id: passkey.credentialId,
-				publicKey: Buffer.from(passkey.publicKey, 'base64url'),
-				counter: passkey.counter || 0
+				publicKey: base64url.toBuffer(passkey.publicKey),
+				counter: passkey.counter ?? 0
 			}
 		})
 
 		if (!verification.verified)
-			throw new UnauthorizedException(
-				'Authentication verification failed'
-			)
+			throw new UnauthorizedException('Аутентификация ключа не пройдена')
 
 		await this.prismaService.passkey.update({
 			where: {
 				id: passkey.id
 			},
 			data: {
-				lastUsedAt: new Date(),
-				counter: verification.authenticationInfo?.newCounter
+				counter: verification.authenticationInfo.newCounter
 			}
 		})
 
-		console.log(body)
-		// Возвращаем пользователя (или создаём JWT)
-		return passkey.mfa.user
+		await this.redisService.del(`passkey_challenge:${user.id}`)
+
+		return true
 	}
 
 	public async delete(id: string, user: User) {
