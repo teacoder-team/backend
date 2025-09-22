@@ -134,7 +134,7 @@ export class WebhookService {
 				status: PaymentStatus.SUCCESS,
 				...(provider === 'crypto' && {
 					currency: paymentData.payer_currency,
-					amount: paymentData.payer_amount
+					amount: parseFloat(paymentData.payer_amount)
 				}),
 				metadata: paymentData,
 				...(paymentMethodId && { paymentMethodId })
