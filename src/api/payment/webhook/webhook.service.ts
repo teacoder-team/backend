@@ -3,6 +3,7 @@ import {
 	Injectable,
 	UnauthorizedException
 } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
 import {
 	PaymentMethod,
 	PaymentProvider,
@@ -10,6 +11,7 @@ import {
 } from '@prisma/generated'
 import CidrMatcher from 'cidr-matcher'
 import { addMonths } from 'date-fns'
+import { ApiClient as NalogApiClient } from 'nalog.ru'
 import { YookassaService } from 'nestjs-yookassa'
 
 import { BotService } from '@/bot/bot.service'

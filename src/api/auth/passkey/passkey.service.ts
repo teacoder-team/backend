@@ -5,7 +5,7 @@ import {
 	UnauthorizedException
 } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import { User } from '@prisma/generated'
+import { TotpStatus, User } from '@prisma/generated'
 import {
 	generateAuthenticationOptions,
 	generateRegistrationOptions,
@@ -13,6 +13,7 @@ import {
 	verifyRegistrationResponse
 } from '@simplewebauthn/server'
 import base64url from 'base64url'
+import { randomBytes } from 'crypto'
 
 import { PrismaService } from '@/infra/prisma/prisma.service'
 import { RedisService } from '@/infra/redis/redis.service'
@@ -145,7 +146,20 @@ export class PasskeyService {
 			}
 		})
 
-		return { success: true }
+		if (!mfa.recoveryCodes || mfa.recoveryCodes.length === 0) {
+			const recoveryCodes = this.generateRecovery()
+
+			await this.prismaService.multiFactorAuthentication.update({
+				where: {
+					userId: user.id
+				},
+				data: {
+					recoveryCodes
+				}
+			})
+		}
+
+		return true
 	}
 
 	public async generateAuthenticationOptions(userId: string) {
@@ -235,15 +249,58 @@ export class PasskeyService {
 
 	public async delete(id: string, user: User) {
 		const passkey = await this.prismaService.passkey.findUnique({
-			where: { id },
-			include: { mfa: true }
+			where: {
+				id
+			},
+			include: {
+				mfa: {
+					include: {
+						totp: true,
+						passkeys: true
+					}
+				}
+			}
 		})
 
 		if (!passkey || passkey.mfa.userId !== user.id)
 			throw new NotFoundException('Ключ доступа не найден')
 
-		await this.prismaService.passkey.delete({ where: { id: passkey.id } })
+		await this.prismaService.passkey.delete({
+			where: {
+				id: passkey.id
+			}
+		})
+
+		const remainingPasskeys = passkey.mfa.passkeys.filter(
+			pk => pk.id !== passkey.id
+		)
+
+		if (
+			(!passkey.mfa.totp ||
+				passkey.mfa.totp.status !== TotpStatus.ENABLED) &&
+			remainingPasskeys.length === 0 &&
+			passkey.mfa.recoveryCodes?.length
+		) {
+			await this.prismaService.multiFactorAuthentication.update({
+				where: {
+					id: passkey.mfa.id
+				},
+				data: {
+					recoveryCodes: []
+				}
+			})
+		}
 
 		return true
+	}
+
+	private generateRecovery(): string[] {
+		const recoveryCodes = Array.from({ length: 12 }, () => {
+			const code = randomBytes(5).toString('hex')
+
+			return `${code.slice(0, 5)}-${code.slice(5)}`
+		})
+
+		return recoveryCodes
 	}
 }

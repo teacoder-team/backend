@@ -12,7 +12,7 @@ import {
 	UseGuards
 } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger'
+import { ApiOkResponse, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger'
 import type { User } from '@prisma/generated'
 import { type AllowedProvider, SentinelService } from '@teacoder/sentinel'
 import type { Response } from 'express'
@@ -57,6 +57,12 @@ export class SsoController {
 		description:
 			'Generates the login URL for the specified external provider (e.g., Google, GitHub).'
 	})
+	@ApiParam({
+		name: 'provider',
+		description: 'The external provider (google, github, etc.)',
+		required: true,
+		schema: { type: 'string' }
+	})
 	@ApiOkResponse({
 		type: SsoConnectResponse
 	})
@@ -77,6 +83,12 @@ export class SsoController {
 		summary: 'Get connect URL for external provider',
 		description:
 			'Generates the connect URL to link an external account to the current user.'
+	})
+	@ApiParam({
+		name: 'provider',
+		description: 'The external provider (google, github, etc.)',
+		required: true,
+		schema: { type: 'string' }
 	})
 	@ApiOkResponse({
 		type: SsoConnectResponse
@@ -102,6 +114,12 @@ export class SsoController {
 		summary: 'Callback from external provider',
 		description:
 			'Handles the callback from an external provider after login or connect action.'
+	})
+	@ApiParam({
+		name: 'provider',
+		description: 'The external provider (google, github, etc.)',
+		required: true,
+		schema: { type: 'string' }
 	})
 	@UseGuards(ProviderGuard)
 	@Get('callback/:provider')
@@ -167,6 +185,12 @@ export class SsoController {
 		summary: 'Unlink External Account',
 		description:
 			'Unlink an external account (e.g., Google, GitHub) from the current user.'
+	})
+	@ApiParam({
+		name: 'provider',
+		description: 'The external provider (google, github, etc.)',
+		required: true,
+		schema: { type: 'string' }
 	})
 	@ApiOkResponse({
 		type: Boolean
