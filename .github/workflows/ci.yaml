@@ -8,58 +8,35 @@ on:
 
 jobs:
     install:
-        name: 📦 Install dependencies
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout repository
-              uses: actions/checkout@v4
-
-            - name: Use Node.js 20.12.0
-              uses: actions/setup-node@v4
-              with:
-                  node-version: 20.12.0
-                  cache: 'yarn'
-
-            - name: Install dependencies
-              run: yarn install --frozen-lockfile
-
-            - name: Cache node_modules
-              uses: actions/cache@v4
-              with:
-                  path: node_modules
-                  key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+      name: 📦 Install dependencies
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout repository
+          uses: actions/checkout@v4
+    
+        - name: Use Node.js 20.12.0
+          uses: actions/setup-node@v4
+          with:
+            node-version: 20.12.0
+    
+        - name: Install dependencies
+          run: yarn install --frozen-lockfile --production=false
 
     build:
-        name: 🏗️ Build project
-        runs-on: ubuntu-latest
-        needs: install
-        steps:
-            - name: Checkout repository
-              uses: actions/checkout@v4
-
-            - name: Use Node.js 20.12.0
-              uses: actions/setup-node@v4
-              with:
-                  node-version: 20.12.0
-                  cache: 'yarn'
-
-            - name: Restore node_modules from cache
-              uses: actions/cache@v4
-              with:
-                  path: node_modules
-                  key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
-
-            - name: Install NestJS CLI
-              run: yarn global add @nestjs/cli
-
-            - name: Build project
-              run: yarn run build
-
-            - name: Upload dist as artifact
-              uses: actions/upload-artifact@v4
-              with:
-                  name: dist
-                  path: dist/
+      name: 🏗️ Build project
+      runs-on: ubuntu-latest
+      needs: install
+      steps:
+        - name: Checkout repository
+          uses: actions/checkout@v4
+    
+        - name: Use Node.js 20.12.0
+          uses: actions/setup-node@v4
+          with:
+            node-version: 20.12.0
+    
+        - name: Build project
+          run: yarn run build
 
     deploy:
         name: 🚀 Deploy to Dokploy
