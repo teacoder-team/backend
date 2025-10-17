@@ -142,6 +142,7 @@ export class MfaController {
 		schema: {
 			anyOf: [
 				{ $ref: getSchemaPath(MfaTotpRequest) },
+				{ $ref: getSchemaPath(MfaPasskeyRequest) },
 				{ $ref: getSchemaPath(MfaRecoveryRequest) }
 			]
 		}
