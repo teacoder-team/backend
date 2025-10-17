@@ -49,6 +49,9 @@ jobs:
                   path: node_modules
                   key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
 
+            - name: Install NestJS CLI
+              run: yarn global add @nestjs/cli
+
             - name: Build project
               run: yarn run build
 
