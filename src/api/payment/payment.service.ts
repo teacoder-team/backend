@@ -71,15 +71,6 @@ export class PaymentService {
 					)
 				)
 				break
-			case PaymentMethod.YOOMONEY:
-				providerResponse = await this.yookassaService.createPayment(
-					this.createYooKassaPaymentData(
-						payment.id,
-						user,
-						PaymentMethodsEnum.yoo_money
-					)
-				)
-				break
 			case PaymentMethod.INTERNATIONAL_CARD:
 				providerResponse = this.robokassaService.createPaymentUrl({
 					invId: payment.id,
