@@ -117,7 +117,9 @@ export class PasskeyService {
 	public async verifyRegistration(
 		user: User,
 		deviceName: string,
-		attestationResponse: any
+		attestationResponse: any,
+		userAgent: string,
+		ip: string
 	) {
 		const mfa =
 			await this.prismaService.multiFactorAuthentication.findUnique({
@@ -148,8 +150,9 @@ export class PasskeyService {
 				deviceName,
 				credentialId: id,
 				publicKey: publicKey.toString(),
-				userAgent: '',
-				ip: '',
+				userAgent,
+				ip,
+				lastUsedAt: new Date(),
 				mfa: {
 					connect: {
 						userId: user.id
@@ -250,7 +253,10 @@ export class PasskeyService {
 				id: passkey.id
 			},
 			data: {
-				counter: verification.authenticationInfo.newCounter
+				counter: {
+					increment: 1
+				},
+				lastUsedAt: new Date()
 			}
 		})
 

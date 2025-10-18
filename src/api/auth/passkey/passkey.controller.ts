@@ -5,13 +5,14 @@ import {
 	Get,
 	HttpCode,
 	HttpStatus,
+	Ip,
 	Param,
 	Post
 } from '@nestjs/common'
 import { ApiOkResponse, ApiOperation } from '@nestjs/swagger'
 import { User } from '@prisma/generated'
 
-import { Authorization, Authorized } from '@/common/decorators'
+import { Authorization, Authorized, UserAgent } from '@/common/decorators'
 
 import { PasskeyResponse } from './dto'
 import { PasskeyService } from './passkey.service'
@@ -45,12 +46,16 @@ export class PasskeyController {
 	@HttpCode(HttpStatus.OK)
 	public async verifyRegistration(
 		@Authorized() user: User,
-		@Body() body: { deviceName: string; attestationResponse: any }
+		@Body() body: { deviceName: string; attestationResponse: any },
+		@UserAgent() userAgent: string,
+		@Ip() ip: string
 	) {
 		return this.passkeyService.verifyRegistration(
 			user,
 			body.deviceName,
-			body.attestationResponse
+			body.attestationResponse,
+			userAgent,
+			ip
 		)
 	}
 
