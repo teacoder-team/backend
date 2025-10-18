@@ -1,34 +1,36 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { createHash } from 'crypto'
 
-import {
-	type RobokassaOptions,
-	RobokassaOptionsSymbol
-} from '@/common/interfaces'
-
+import { HashAlgorithm } from './enums'
+import { type RobokassaOptions, RobokassaOptionsSymbol } from './interfaces'
 import type { CreatePaymentRequest } from './interfaces'
 
 @Injectable()
 export class RobokassaService {
-	private readonly BASE_URL: string
+	private readonly BASE_URL = 'https://auth.robokassa.ru/Merchant/Index.aspx'
 
 	public constructor(
 		@Inject(RobokassaOptionsSymbol)
 		private readonly options: RobokassaOptions
-	) {
-		this.BASE_URL = 'https://auth.robokassa.ru/Merchant/Index.aspx'
-	}
+	) {}
 
 	public createPaymentUrl(data: CreatePaymentRequest) {
-		const { login, password } = this.options
-
-		console.log('ROBOKASSA PAYMENT: ', data)
+		const {
+			login,
+			password1,
+			isTest,
+			algorithm = HashAlgorithm.SHA512
+		} = this.options
 
 		const { outSum, invId, description, email, culture } = data
 
-		const signature = createHash('sha512')
-			.update(`${login}:${outSum}:${invId}:${password}`)
-			.digest('hex')
+		const signature = this.createSignature({
+			login,
+			outSum,
+			invId,
+			password: password1,
+			algorithm
+		})
 
 		const url = new URL(this.BASE_URL)
 
@@ -40,7 +42,44 @@ export class RobokassaService {
 
 		if (email) url.searchParams.set('Email', email)
 		if (culture) url.searchParams.set('Culture', culture)
+		if (isTest) url.searchParams.set('IsTest', '1')
 
 		return { url: url.toString() }
+	}
+
+	public isResultSignatureValid(
+		signature: string,
+		outSum: number,
+		invId: string
+	): boolean {
+		const { login, password2, algorithm } = this.options
+
+		const expected = this.createSignature({
+			login,
+			outSum,
+			invId,
+			password: password2,
+			algorithm
+		})
+
+		return expected.toLowerCase() === signature.toLowerCase()
+	}
+
+	private createSignature({
+		login,
+		outSum,
+		invId,
+		password,
+		algorithm
+	}: {
+		login: string
+		outSum: number
+		invId: string
+		password: string
+		algorithm: HashAlgorithm
+	}): string {
+		return createHash(algorithm)
+			.update(`${login}:${outSum}:${invId}:${password}`)
+			.digest('hex')
 	}
 }

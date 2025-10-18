@@ -5,8 +5,7 @@ import {
 	type RobokassaAsyncOptions,
 	type RobokassaOptions,
 	RobokassaOptionsSymbol
-} from '@/common/interfaces'
-
+} from './interfaces'
 import { RobokassaService } from './robokassa.service'
 
 @Module({})

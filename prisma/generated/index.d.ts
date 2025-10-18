@@ -177,7 +177,8 @@ export const PaymentMethod: {
   SBP: 'SBP',
   YOOMONEY: 'YOOMONEY',
   CRYPTO: 'CRYPTO',
-  INTERNATIONAL_CARD: 'INTERNATIONAL_CARD'
+  INTERNATIONAL_CARD: 'INTERNATIONAL_CARD',
+  TELEGRAM_STARS: 'TELEGRAM_STARS'
 };
 
 export type PaymentMethod = (typeof PaymentMethod)[keyof typeof PaymentMethod]

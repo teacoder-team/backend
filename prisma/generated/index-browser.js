@@ -391,7 +391,8 @@ exports.PaymentMethod = exports.$Enums.PaymentMethod = {
   SBP: 'SBP',
   YOOMONEY: 'YOOMONEY',
   CRYPTO: 'CRYPTO',
-  INTERNATIONAL_CARD: 'INTERNATIONAL_CARD'
+  INTERNATIONAL_CARD: 'INTERNATIONAL_CARD',
+  TELEGRAM_STARS: 'TELEGRAM_STARS'
 };
 
 exports.PaymentProvider = exports.$Enums.PaymentProvider = {

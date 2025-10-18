@@ -4,4 +4,7 @@ export interface CreatePaymentRequest {
 	description: string
 	email?: string
 	culture?: string
+	resultUrl?: string
+	successUrl?: string
+	failUrl?: string
 }
