@@ -36,7 +36,7 @@ jobs:
             node-version: 20.12.0
     
         - name: Build project
-          run: yarn run build
+          run: yarn nest build
 
     deploy:
         name: 🚀 Deploy to Dokploy
