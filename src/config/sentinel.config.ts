@@ -8,7 +8,6 @@ import {
 export function getOAuthConfig(configService: ConfigService): SentinelOptions {
 	return {
 		baseUrl: configService.getOrThrow<string>('HOSTS_REST'),
-
 		services: [
 			new GoogleProvider({
 				clientId: configService.getOrThrow<string>('GOOGLE_CLIENT_ID'),

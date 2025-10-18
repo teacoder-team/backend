@@ -435,6 +435,7 @@ enum PaymentStatus {
 
 enum PaymentProvider {
   YOOKASSA
+  ROBOKASSA
 
   @@map("payment_providers")
 }
@@ -444,6 +445,7 @@ enum PaymentMethod {
   SBP
   YOOMONEY
   CRYPTO
+  INTERNATIONAL_CARD
 
   @@map("payment_methods")
 }

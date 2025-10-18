@@ -165,7 +165,8 @@ export type PaymentStatus = (typeof PaymentStatus)[keyof typeof PaymentStatus]
 
 
 export const PaymentProvider: {
-  YOOKASSA: 'YOOKASSA'
+  YOOKASSA: 'YOOKASSA',
+  ROBOKASSA: 'ROBOKASSA'
 };
 
 export type PaymentProvider = (typeof PaymentProvider)[keyof typeof PaymentProvider]
@@ -175,7 +176,8 @@ export const PaymentMethod: {
   BANK_CARD: 'BANK_CARD',
   SBP: 'SBP',
   YOOMONEY: 'YOOMONEY',
-  CRYPTO: 'CRYPTO'
+  CRYPTO: 'CRYPTO',
+  INTERNATIONAL_CARD: 'INTERNATIONAL_CARD'
 };
 
 export type PaymentMethod = (typeof PaymentMethod)[keyof typeof PaymentMethod]
