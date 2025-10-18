@@ -63,15 +63,27 @@ export class PasskeyService {
 	}
 
 	public async generateRegistrationOptions(user: User) {
-		const mfa =
-			await this.prismaService.multiFactorAuthentication.findUnique({
+		let mfa = await this.prismaService.multiFactorAuthentication.findUnique(
+			{
 				where: {
 					userId: user.id
 				},
 				include: {
 					passkeys: true
 				}
+			}
+		)
+
+		if (!mfa) {
+			mfa = await this.prismaService.multiFactorAuthentication.create({
+				data: {
+					userId: user.id
+				},
+				include: {
+					passkeys: true
+				}
 			})
+		}
 
 		const options = await generateRegistrationOptions({
 			rpName: this.WEBAUTHN_RP_NAME,
