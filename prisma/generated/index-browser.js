@@ -390,11 +390,14 @@ exports.PaymentMethod = exports.$Enums.PaymentMethod = {
   BANK_CARD: 'BANK_CARD',
   SBP: 'SBP',
   YOOMONEY: 'YOOMONEY',
-  CRYPTO: 'CRYPTO'
+  CRYPTO: 'CRYPTO',
+  INTERNATIONAL_CARD: 'INTERNATIONAL_CARD',
+  TELEGRAM_STARS: 'TELEGRAM_STARS'
 };
 
 exports.PaymentProvider = exports.$Enums.PaymentProvider = {
-  YOOKASSA: 'YOOKASSA'
+  YOOKASSA: 'YOOKASSA',
+  ROBOKASSA: 'ROBOKASSA'
 };
 
 exports.Prisma.ModelName = {

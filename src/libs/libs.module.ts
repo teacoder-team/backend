@@ -7,6 +7,7 @@ import { getBullmqConfig } from '@/config'
 import { HeleketModule } from './heleket/heleket.module'
 import { KinescopeModule } from './kinescope/kinescope.module'
 import { MailModule } from './mail/mail.module'
+import { RobokassaModule } from './robokassa/robokassa.module'
 import { StorageModule } from './storage/storage.module'
 
 @Module({
@@ -19,6 +20,7 @@ import { StorageModule } from './storage/storage.module'
 		MailModule,
 		StorageModule,
 		KinescopeModule,
+		RobokassaModule,
 		HeleketModule
 	]
 })

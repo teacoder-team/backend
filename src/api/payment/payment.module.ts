@@ -2,8 +2,13 @@ import { Module } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { YookassaModule } from 'nestjs-yookassa'
 
-import { getHeleketConfig, getYookassaConfig } from '@/config'
+import {
+	getHeleketConfig,
+	getRobokassaConfig,
+	getYookassaConfig
+} from '@/config'
 import { HeleketModule } from '@/libs/heleket/heleket.module'
+import { RobokassaModule } from '@/libs/robokassa/robokassa.module'
 
 import { PaymentController } from './payment.controller'
 import { PaymentService } from './payment.service'
@@ -15,6 +20,11 @@ import { WebhookModule } from './webhook/webhook.module'
 		YookassaModule.forRootAsync({
 			imports: [ConfigModule],
 			useFactory: getYookassaConfig,
+			inject: [ConfigService]
+		}),
+		RobokassaModule.forRootAsync({
+			imports: [ConfigModule],
+			useFactory: getRobokassaConfig,
 			inject: [ConfigService]
 		}),
 		HeleketModule.forRootAsync({

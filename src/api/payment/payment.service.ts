@@ -12,6 +12,7 @@ import { VatCodesEnum } from 'nestjs-yookassa/dist/interfaces/receipt-details.in
 
 import { PrismaService } from '@/infra/prisma/prisma.service'
 import { HeleketService } from '@/libs/heleket/heleket.service'
+import { RobokassaService } from '@/libs/robokassa/robokassa.service'
 
 import { InitPaymentRequest } from './dto'
 
@@ -26,6 +27,7 @@ export class PaymentService {
 		private readonly prismaService: PrismaService,
 		private readonly configService: ConfigService,
 		private readonly yookassaService: YookassaService,
+		private readonly robokassaService: RobokassaService,
 		private readonly heleketService: HeleketService
 	) {
 		this.HOSTS_APP = this.configService.getOrThrow<string>('HOSTS_APP')
@@ -69,14 +71,13 @@ export class PaymentService {
 					)
 				)
 				break
-			case PaymentMethod.YOOMONEY:
-				providerResponse = await this.yookassaService.createPayment(
-					this.createYooKassaPaymentData(
-						payment.id,
-						user,
-						PaymentMethodsEnum.yoo_money
-					)
-				)
+			case PaymentMethod.INTERNATIONAL_CARD:
+				providerResponse = this.robokassaService.createPaymentUrl({
+					invId: payment.id,
+					outSum: this.SUBSCRIPTION_PRICE,
+					description: 'Оплата премиум-подписки на 1 месяц',
+					email: user.email
+				})
 				break
 			case PaymentMethod.CRYPTO:
 				providerResponse = await this.heleketService.createPayment({
@@ -92,16 +93,17 @@ export class PaymentService {
 				throw new BadRequestException('Unsupported payment provider')
 		}
 
-		await this.prismaService.payment.update({
-			where: {
-				id: payment.id
-			},
-			data: {
-				providerPaymentId:
-					providerResponse?.id ?? providerResponse?.uuid,
-				metadata: providerResponse
-			}
-		})
+		if (payment.method !== PaymentMethod.INTERNATIONAL_CARD)
+			await this.prismaService.payment.update({
+				where: {
+					id: payment.id
+				},
+				data: {
+					providerPaymentId:
+						providerResponse?.id ?? providerResponse?.uuid,
+					metadata: providerResponse
+				}
+			})
 
 		return {
 			url:
