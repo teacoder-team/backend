@@ -25,11 +25,6 @@ jobs:
       - name: Build project
         run: yarn run build
 
-      - name: Download build artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: dist
-
       - name: Deploy to Dokploy
         env:
           DOKPLOY_URL: ${{ secrets.DOKPLOY_URL }}
