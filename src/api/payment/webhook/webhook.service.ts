@@ -92,6 +92,14 @@ export class WebhookService {
 		}
 	}
 
+	public async handleRobokassa(payload: any) {
+		return await this.processPayment({
+			provider: 'robokassa',
+			paymentId: payload.Shp_paymentId,
+			paymentData: payload
+		})
+	}
+
 	public async handleCrypto(payload: HeleketPaymentWebhookResponse) {
 		this.logger.log(
 			`Received Heleket webhook: ${payload.uuid}, status=${payload.status}`
@@ -129,7 +137,7 @@ export class WebhookService {
 		paymentId,
 		paymentData
 	}: {
-		provider: 'yookassa' | 'crypto'
+		provider: 'yookassa' | 'robokassa' | 'crypto'
 		paymentId: string
 		paymentData: any
 	}) {
@@ -162,6 +170,7 @@ export class WebhookService {
 				payment.user.id,
 				paymentData.payment_method
 			)
+
 			paymentMethodId = method.id
 		}
 

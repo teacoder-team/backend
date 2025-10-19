@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { createHash } from 'crypto'
 
 import { HashAlgorithm } from './enums'
@@ -8,11 +8,14 @@ import type { CreatePaymentRequest } from './interfaces'
 @Injectable()
 export class RobokassaService {
 	private readonly BASE_URL = 'https://auth.robokassa.ru/Merchant/Index.aspx'
+	private readonly TRUSTED_IPS: string[]
 
 	public constructor(
 		@Inject(RobokassaOptionsSymbol)
 		private readonly options: RobokassaOptions
-	) {}
+	) {
+		this.TRUSTED_IPS = ['185.59.216.65', '185.59.217.65']
+	}
 
 	public createPaymentUrl(data: CreatePaymentRequest) {
 		const {
@@ -76,22 +79,44 @@ export class RobokassaService {
 		return { url: url.toString() }
 	}
 
-	public isResultSignatureValid(
-		signature: string,
-		outSum: number,
-		invId: number
-	): boolean {
-		const { login, password2, algorithm } = this.options
+	public verifyWebhook(ip: string, payload: any) {
+		if (!this.TRUSTED_IPS.includes(ip))
+			throw new BadRequestException('Invalid IP: ', ip)
 
-		const expected = this.createSignature({
-			login,
-			outSum,
-			invId,
-			password: password2,
-			algorithm
-		})
+		if (!this.isResultSignatureValid(payload))
+			throw new BadRequestException('Invalid signature')
 
-		return expected.toLowerCase() === signature.toLowerCase()
+		return true
+	}
+
+	public isResultSignatureValid(payload: Record<string, any>): boolean {
+		const outSum = payload.OutSum ?? payload.out_summ
+		const invId = payload.InvId ?? payload.inv_id
+		const signatureValue = payload.SignatureValue ?? payload.crc
+
+		if (!outSum || !invId || !signatureValue) return false
+
+		const shps = Object.fromEntries(
+			Object.entries(payload)
+				.filter(([k]) => k.startsWith('Shp_'))
+				.sort(([a], [b]) => a.localeCompare(b))
+		)
+
+		const formattedSum =
+			payload.IsTest === '1' ? String(outSum) : Number(outSum).toFixed(6)
+
+		let base = `${formattedSum}:${invId}:${this.options.password2}`
+
+		for (const [key, value] of Object.entries(shps)) {
+			base += `:${key}=${encodeURIComponent(value)}`
+		}
+
+		const expectedHash = createHash(this.options.algorithm)
+			.update(base)
+			.digest('hex')
+			.toUpperCase()
+
+		return expectedHash === signatureValue.toUpperCase()
 	}
 
 	private createSignature({
