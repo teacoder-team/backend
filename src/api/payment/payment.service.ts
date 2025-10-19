@@ -21,7 +21,7 @@ export class PaymentService {
 	private readonly HOSTS_APP: string
 	private readonly HOSTS_REST: string
 
-	private readonly SUBSCRIPTION_PRICE = 50
+	private readonly SUBSCRIPTION_PRICE = 349
 
 	public constructor(
 		private readonly prismaService: PrismaService,
