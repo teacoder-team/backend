@@ -40,6 +40,14 @@ export class WebhookController {
 		return { ok: true }
 	}
 
+	@Post('robokassa')
+	@HttpCode(HttpStatus.OK)
+	public async robokassa(@Body() payload: any, @Ip() ip: string) {
+		console.log('ROBOKASSA WEBHOOK: ', payload)
+
+		return { ok: true }
+	}
+
 	@ApiOperation({
 		summary: 'Heleket Webhook',
 		description: 'Endpoint to receive Heleket crypto payment events.'
