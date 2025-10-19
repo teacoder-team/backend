@@ -37,7 +37,7 @@ export class HeleketService {
 
 	public verifyWebhook(ip: string, payload: HeleketPaymentWebhookResponse) {
 		if (!this.TRUSTED_IPS.includes(ip))
-			throw new BadRequestException('Invalid IP')
+			throw new BadRequestException('Invalid IP: ', ip)
 
 		const { sign } = payload
 		const dataCopy = { ...payload }

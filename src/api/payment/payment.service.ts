@@ -73,10 +73,13 @@ export class PaymentService {
 				break
 			case PaymentMethod.INTERNATIONAL_CARD:
 				providerResponse = this.robokassaService.createPaymentUrl({
-					invId: payment.id,
+					invId: 123456,
 					outSum: this.SUBSCRIPTION_PRICE,
 					description: 'Оплата премиум-подписки на 1 месяц',
-					email: user.email
+					email: user.email,
+					shps: {
+						Shp_paymentId: payment.id
+					}
 				})
 				break
 			case PaymentMethod.CRYPTO:
