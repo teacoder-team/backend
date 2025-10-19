@@ -10,6 +10,7 @@ import { ApiOkResponse, ApiOperation } from '@nestjs/swagger'
 
 import { HeleketService } from '@/libs/heleket/heleket.service'
 
+import { HeleketPaymentWebhookResponse } from './dto'
 import { WebhookService } from './webhook.service'
 
 @Controller('webhook')
@@ -31,7 +32,7 @@ export class WebhookController {
 	})
 	@Post('yookassa')
 	@HttpCode(HttpStatus.OK)
-	public async yookassaWebhook(@Body() payload: any, @Ip() ip: string) {
+	public async yookassa(@Body() payload: any, @Ip() ip: string) {
 		this.webhookService.verifyWebhook(ip)
 
 		await this.webhookService.handleYookassa(payload)
@@ -49,9 +50,12 @@ export class WebhookController {
 			example: { ok: true }
 		}
 	})
-	@Post('crypto')
+	@Post('heleket')
 	@HttpCode(HttpStatus.OK)
-	public async cryptoWebhook(@Body() payload: any, @Ip() ip: string) {
+	public async crypto(
+		@Body() payload: HeleketPaymentWebhookResponse,
+		@Ip() ip: string
+	) {
 		this.heleketService.verifyWebhook(ip, payload)
 
 		await this.webhookService.handleCrypto(payload)

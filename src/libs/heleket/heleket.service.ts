@@ -3,13 +3,13 @@ import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { createHash, timingSafeEqual } from 'crypto'
 import { firstValueFrom } from 'rxjs'
 
+import { HeleketPaymentWebhookResponse } from '@/api/payment/webhook/dto'
 import { type HeleketOptions, HeleketOptionsSymbol } from '@/common/interfaces'
 
 import type {
 	ApiResponse,
 	CreatePaymentRequest,
-	CreatePaymentResponse,
-	HeleketPaymentWebhook
+	CreatePaymentResponse
 } from './interfaces'
 
 @Injectable()
@@ -35,7 +35,7 @@ export class HeleketService {
 		return response.result
 	}
 
-	public verifyWebhook(ip: string, payload: HeleketPaymentWebhook) {
+	public verifyWebhook(ip: string, payload: HeleketPaymentWebhookResponse) {
 		if (!this.TRUSTED_IPS.includes(ip))
 			throw new BadRequestException('Invalid IP')
 

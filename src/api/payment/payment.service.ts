@@ -21,7 +21,7 @@ export class PaymentService {
 	private readonly HOSTS_APP: string
 	private readonly HOSTS_REST: string
 
-	private readonly SUBSCRIPTION_PRICE = 349
+	private readonly SUBSCRIPTION_PRICE = 50
 
 	public constructor(
 		private readonly prismaService: PrismaService,
@@ -86,7 +86,7 @@ export class PaymentService {
 					order_id: payment.id,
 					url_return: `${this.HOSTS_APP}/payment/success`,
 					url_success: `${this.HOSTS_APP}/premium`,
-					url_callback: `${this.HOSTS_REST}/webhook/crypto`
+					url_callback: `${this.HOSTS_REST}/webhook/heleket`
 				})
 				break
 			default:

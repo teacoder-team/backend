@@ -3,7 +3,6 @@ import {
 	Injectable,
 	UnauthorizedException
 } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
 import {
 	PaymentMethod,
 	PaymentProvider,
@@ -11,12 +10,13 @@ import {
 } from '@prisma/generated'
 import CidrMatcher from 'cidr-matcher'
 import { addMonths } from 'date-fns'
-import { ApiClient as NalogApiClient } from 'nalog.ru'
 import { YookassaService } from 'nestjs-yookassa'
 
 import { BotService } from '@/bot/bot.service'
 import { IS_DEV_ENV } from '@/common/utils'
 import { PrismaService } from '@/infra/prisma/prisma.service'
+
+import { HeleketPaymentWebhookResponse } from './dto'
 
 @Injectable()
 export class WebhookService {
@@ -25,8 +25,7 @@ export class WebhookService {
 
 	private readonly paymentTypeMap: Record<string, PaymentMethod> = {
 		bank_card: 'BANK_CARD',
-		sbp: 'SBP',
-		yoo_money: 'YOOMONEY'
+		sbp: 'SBP'
 	}
 
 	public constructor(
@@ -75,7 +74,7 @@ export class WebhookService {
 			throw new UnauthorizedException(`Invalid IP: ${ip}`)
 	}
 
-	public async handleCrypto(payload: any) {
+	public async handleCrypto(payload: HeleketPaymentWebhookResponse) {
 		if (payload.status === 'paid' || payload.status === 'paid_over') {
 			return await this.processPayment({
 				provider: 'crypto',
