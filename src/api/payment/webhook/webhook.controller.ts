@@ -9,6 +9,7 @@ import {
 import { ApiOkResponse, ApiOperation } from '@nestjs/swagger'
 
 import { HeleketService } from '@/libs/heleket/heleket.service'
+import { RobokassaService } from '@/libs/robokassa/robokassa.service'
 
 import { HeleketPaymentWebhookResponse } from './dto'
 import { WebhookService } from './webhook.service'
@@ -17,6 +18,7 @@ import { WebhookService } from './webhook.service'
 export class WebhookController {
 	public constructor(
 		private readonly webhookService: WebhookService,
+		private readonly robokassaService: RobokassaService,
 		private readonly heleketService: HeleketService
 	) {}
 
@@ -43,9 +45,11 @@ export class WebhookController {
 	@Post('robokassa')
 	@HttpCode(HttpStatus.OK)
 	public async robokassa(@Body() payload: any, @Ip() ip: string) {
-		console.log('ROBOKASSA WEBHOOK: ', payload)
+		this.robokassaService.verifyWebhook(ip, payload)
 
-		return { ok: true }
+		await this.webhookService.handleRobokassa(payload)
+
+		return `OK${payload.InvId ?? payload.inv_id}`
 	}
 
 	@ApiOperation({

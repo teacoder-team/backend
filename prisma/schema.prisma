@@ -332,7 +332,9 @@ model Payment {
   method PaymentMethod
 
   providerPaymentId String? @map("provider_payment_id")
-  metadata          Json?
+  invoiceId         Int?    @map("invoice_id")
+
+  metadata Json?
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String @map("user_id")

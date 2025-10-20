@@ -92,6 +92,16 @@ export class WebhookService {
 		}
 	}
 
+	public async handleRobokassa(payload: any) {
+		console.log('ROBOKASSA WEBHOOK: ', payload)
+
+		return await this.processPayment({
+			provider: 'robokassa',
+			paymentId: payload.Shp_payment_id,
+			paymentData: payload
+		})
+	}
+
 	public async handleCrypto(payload: HeleketPaymentWebhookResponse) {
 		this.logger.log(
 			`Received Heleket webhook: ${payload.uuid}, status=${payload.status}`
@@ -129,7 +139,7 @@ export class WebhookService {
 		paymentId,
 		paymentData
 	}: {
-		provider: 'yookassa' | 'crypto'
+		provider: 'yookassa' | 'robokassa' | 'crypto'
 		paymentId: string
 		paymentData: any
 	}) {
@@ -162,6 +172,7 @@ export class WebhookService {
 				payment.user.id,
 				paymentData.payment_method
 			)
+
 			paymentMethodId = method.id
 		}
 
@@ -181,6 +192,24 @@ export class WebhookService {
 		})
 
 		this.logger.log(`Payment ${paymentId} marked as SUCCESS`)
+
+		if (
+			!payment.user.isAutoBilling &&
+			(provider === 'yookassa' || provider === 'robokassa')
+		) {
+			await this.prismaService.user.update({
+				where: {
+					id: payment.user.id
+				},
+				data: {
+					isAutoBilling: true
+				}
+			})
+
+			this.logger.log(
+				`Auto-billing enabled for user ${payment.user.id} (provider: ${provider})`
+			)
+		}
 
 		const now = new Date()
 

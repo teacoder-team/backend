@@ -42,6 +42,7 @@ export class PaymentService {
 				amount: this.SUBSCRIPTION_PRICE,
 				currency: 'RUB',
 				method,
+				invoiceId: this.generateInvoiceId(),
 				user: {
 					connect: {
 						id: user.id
@@ -73,10 +74,13 @@ export class PaymentService {
 				break
 			case PaymentMethod.INTERNATIONAL_CARD:
 				providerResponse = this.robokassaService.createPaymentUrl({
-					invId: payment.id,
+					invId: payment.invoiceId,
 					outSum: this.SUBSCRIPTION_PRICE,
 					description: 'Оплата премиум-подписки на 1 месяц',
-					email: user.email
+					email: user.email,
+					shps: {
+						Shp_payment_id: payment.id
+					}
 				})
 				break
 			case PaymentMethod.CRYPTO:
@@ -156,5 +160,14 @@ export class PaymentService {
 			},
 			merchant_customer_id: user.id
 		}
+	}
+
+	private generateInvoiceId() {
+		const digits = 8
+
+		const min = Math.pow(10, digits - 1)
+		const max = Math.pow(10, digits) - 1
+
+		return Math.floor(Math.random() * (max - min + 1)) + min
 	}
 }

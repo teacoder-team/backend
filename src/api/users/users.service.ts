@@ -258,12 +258,33 @@ export class UsersService {
 				id: true,
 				displayName: true,
 				avatar: true,
-				points: true
+				points: true,
+				subscription: {
+					select: {
+						isActive: true,
+						expiresAt: true
+					}
+				}
 			},
 			take: 15
 		})
 
-		return users
+		return users.map(user => {
+			const isPremium = !!(
+				user.subscription &&
+				user.subscription.isActive &&
+				(!user.subscription.expiresAt ||
+					user.subscription.expiresAt > new Date())
+			)
+
+			return {
+				id: user.id,
+				displayName: user.displayName,
+				avatar: user.avatar,
+				points: user.points,
+				isPremium
+			}
+		})
 	}
 
 	public async patchUser(user: User, dto: PatchUserRequest) {
