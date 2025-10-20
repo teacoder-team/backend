@@ -295,6 +295,7 @@ exports.Prisma.PaymentScalarFieldEnum = {
   status: 'status',
   method: 'method',
   providerPaymentId: 'providerPaymentId',
+  invoiceId: 'invoiceId',
   metadata: 'metadata',
   userId: 'userId',
   paymentMethodId: 'paymentMethodId',

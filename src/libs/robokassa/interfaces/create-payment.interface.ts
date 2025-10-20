@@ -12,4 +12,5 @@ export interface CreatePaymentRequest {
 	paymentMethods?: string[]
 	expirationDate?: string
 	encoding?: string
+	isRecurring?: boolean
 }

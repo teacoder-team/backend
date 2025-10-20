@@ -1,4 +1,5 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
+import axios from 'axios'
 import { createHash } from 'crypto'
 
 import { HashAlgorithm } from './enums'
@@ -7,7 +8,7 @@ import type { CreatePaymentRequest } from './interfaces'
 
 @Injectable()
 export class RobokassaService {
-	private readonly BASE_URL = 'https://auth.robokassa.ru/Merchant/Index.aspx'
+	private readonly BASE_URL = 'https://auth.robokassa.ru'
 	private readonly TRUSTED_IPS: string[]
 
 	public constructor(
@@ -37,7 +38,8 @@ export class RobokassaService {
 			encoding = 'utf-8',
 			resultUrl,
 			successUrl,
-			failUrl
+			failUrl,
+			isRecurring
 		} = data
 
 		let signatureBase = `${login}:${outSum}:${invId}:${password1}`
@@ -53,7 +55,7 @@ export class RobokassaService {
 			.update(signatureBase)
 			.digest('hex')
 
-		const url = new URL(this.BASE_URL)
+		const url = new URL(`${this.BASE_URL}/Merchant/Index.aspx`)
 
 		url.searchParams.set('MerchantLogin', login)
 		url.searchParams.set('OutSum', outSum.toString())
@@ -71,12 +73,55 @@ export class RobokassaService {
 		if (resultUrl) url.searchParams.set('URL', resultUrl)
 		if (successUrl) url.searchParams.set('SuccessURL', successUrl)
 		if (failUrl) url.searchParams.set('FailURL', failUrl)
+		if (isRecurring) url.searchParams.set('Recurring', 'true')
 
 		sortedShpKeys.forEach(key => {
 			url.searchParams.set(key, shps[key])
 		})
 
 		return { url: url.toString() }
+	}
+
+	public async createRecurringPayment({
+		outSum,
+		description,
+		invId,
+		previousInvoiceId
+	}: {
+		outSum: number
+		description: string
+		invId: number
+		previousInvoiceId: number
+	}) {
+		const {
+			login,
+			password1,
+			algorithm = HashAlgorithm.SHA512
+		} = this.options
+
+		const signatureBase = `${login}:${outSum}:${invId}:${password1}`
+		const signature = createHash(algorithm)
+			.update(signatureBase)
+			.digest('hex')
+
+		const params = new URLSearchParams({
+			MerchantLogin: login,
+			OutSum: outSum.toString(),
+			InvoiceID: invId.toString(),
+			PreviousInvoiceID: previousInvoiceId.toString(),
+			Description: description,
+			SignatureValue: signature
+		})
+
+		const { data } = await axios.post(
+			`${this.BASE_URL}/Merchant/Recurring`,
+			params
+		)
+
+		if (!data.startsWith('OK'))
+			throw new Error(`Recurring payment failed: ${data}`)
+
+		return data
 	}
 
 	public verifyWebhook(ip: string, payload: any) {
