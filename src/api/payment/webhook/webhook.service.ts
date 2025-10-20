@@ -93,6 +93,8 @@ export class WebhookService {
 	}
 
 	public async handleRobokassa(payload: any) {
+		console.log('ROBOKASSA WEBHOOK: ', payload)
+
 		return await this.processPayment({
 			provider: 'robokassa',
 			paymentId: payload.Shp_paymentId,

@@ -48,10 +48,11 @@ export class AccountService {
 		const isEmailVerified = emailVerification
 			? emailVerification.status === EmailVerificationStatus.VERIFIED
 			: false
-		const isPremium =
+		const isPremium = !!(
 			subscription &&
 			subscription.isActive &&
 			(!subscription.expiresAt || subscription.expiresAt > new Date())
+		)
 
 		return {
 			id: user.id,
