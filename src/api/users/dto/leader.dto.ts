@@ -24,4 +24,10 @@ export class LeaderResponse {
 		example: 1500
 	})
 	public points: number
+
+	@ApiProperty({
+		description: 'Whether the user has an active premium subscription',
+		example: true
+	})
+	public isPremium: boolean
 }
