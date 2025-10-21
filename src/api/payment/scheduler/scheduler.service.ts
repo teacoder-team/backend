@@ -23,7 +23,7 @@ export class SchedulerService {
 		private readonly robokassaService: RobokassaService
 	) {}
 
-	@Cron(CronExpression.EVERY_10_SECONDS, {
+	@Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT, {
 		timeZone: 'Europe/Moscow'
 	})
 	public async handleAutoBilling() {

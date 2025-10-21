@@ -206,7 +206,6 @@ export class AccountService {
 
 		await this.prismaService.passwordReset.upsert({
 			where: {
-				token,
 				userId: user.id
 			},
 			update: {
