@@ -14,10 +14,10 @@ import { addMonths } from 'date-fns'
 import { YookassaService } from 'nestjs-yookassa'
 
 import { BotService } from '@/bot/bot.service'
-import { IS_DEV_ENV } from '@/common/utils'
 import { PrismaService } from '@/infra/prisma/prisma.service'
 import { HeleketPaymentStatus } from '@/libs/heleket/enums'
 import { MailService } from '@/libs/mail/mail.service'
+import { IS_DEV_ENV } from '@/shared/utils'
 
 import { HeleketPaymentWebhookResponse } from './dto'
 

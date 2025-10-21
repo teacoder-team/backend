@@ -9,10 +9,10 @@ import { hash } from 'argon2'
 import { randomBytes } from 'crypto'
 
 import { BotService } from '@/bot/bot.service'
-import { slugify } from '@/common/utils'
 import { PrismaService } from '@/infra/prisma/prisma.service'
 import { RedisService } from '@/infra/redis/redis.service'
 import { MailService } from '@/libs/mail/mail.service'
+import { slugify } from '@/shared/utils'
 
 import {
 	ChangeEmailRequest,

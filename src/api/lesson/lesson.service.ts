@@ -2,9 +2,9 @@ import { Injectable, NotFoundException } from '@nestjs/common'
 import { User } from '@prisma/generated'
 import { randomBytes } from 'crypto'
 
-import { slugify } from '@/common/utils'
 import { PrismaService } from '@/infra/prisma/prisma.service'
 import { KinescopeService } from '@/libs/kinescope/kinescope.service'
+import { slugify } from '@/shared/utils'
 
 import { CreateLessonRequest } from './dto'
 

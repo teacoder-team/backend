@@ -2,7 +2,7 @@ import { Controller, Get, HttpCode, HttpStatus } from '@nestjs/common'
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger'
 import { UserRole } from '@prisma/generated'
 
-import { Authorization } from '@/common/decorators'
+import { Authorization } from '@/shared/decorators'
 
 import { RegistrationsResponse, StatisticsResponse } from './dto'
 import { StatisticsService } from './statistics.service'

@@ -1,6 +1,6 @@
 import { ConfigService } from '@nestjs/config'
 
-import type { KinescopeOptions } from '@/common/interfaces'
+import type { KinescopeOptions } from '@/shared/interfaces'
 
 export function getKinescopeConfig(
 	configService: ConfigService

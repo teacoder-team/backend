@@ -24,7 +24,7 @@ import {
 	Authorized,
 	ClientIp,
 	UserAgent
-} from '@/common/decorators'
+} from '@/shared/decorators'
 
 import {
 	LoginMfaResponse,

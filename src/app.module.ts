@@ -3,9 +3,10 @@ import { ConfigModule } from '@nestjs/config'
 
 import { ApiModule } from './api/api.module'
 import { BotModule } from './bot/bot.module'
-import { IS_DEV_ENV } from './common/utils'
+import { CourseModule } from './domains/course/course.module'
 import { InfraModule } from './infra/infra.module'
 import { LibsModule } from './libs/libs.module'
+import { IS_DEV_ENV } from './shared/utils'
 
 @Module({
 	imports: [
@@ -16,7 +17,8 @@ import { LibsModule } from './libs/libs.module'
 		ApiModule,
 		InfraModule,
 		LibsModule,
-		BotModule
+		BotModule,
+		CourseModule
 	]
 })
 export class AppModule {}
