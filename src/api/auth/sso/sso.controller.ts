@@ -17,6 +17,7 @@ import type { User } from '@prisma/generated'
 import { type AllowedProvider, SentinelService } from '@teacoder/sentinel'
 import type { Response } from 'express'
 
+import { AllConfigs } from '@/config/definitions'
 import {
 	Authorization,
 	Authorized,
@@ -34,7 +35,7 @@ export class SsoController {
 	public constructor(
 		private readonly ssoService: SsoService,
 		private readonly sentinelService: SentinelService,
-		private readonly configService: ConfigService
+		private readonly configService: ConfigService<AllConfigs>
 	) {}
 
 	@ApiOperation({
@@ -134,7 +135,7 @@ export class SsoController {
 	) {
 		if (!code) throw new BadRequestException('No code provided')
 
-		const siteUrl = this.configService.getOrThrow<string>('HOSTS_APP')
+		const siteUrl = this.configService.get('hosts.app', { infer: true })
 
 		const parsedState = state
 			? JSON.parse(Buffer.from(state, 'base64').toString('utf-8'))

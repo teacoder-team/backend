@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config'
 import FormData from 'form-data'
 import { lastValueFrom } from 'rxjs'
 
+import type { AllConfigs } from '@/config/definitions'
 import type { FileResponse } from '@/shared/interfaces'
 
 @Injectable()
@@ -14,11 +15,11 @@ export class StorageService {
 	private readonly apiKey: string
 
 	public constructor(
-		private readonly configService: ConfigService,
+		private readonly configService: ConfigService<AllConfigs>,
 		private readonly httpService: HttpService
 	) {
-		this.storageUrl = this.configService.getOrThrow<string>('STORAGE_URL')
-		this.apiKey = this.configService.getOrThrow<string>('STORAGE_API_KEY')
+		this.storageUrl = this.configService.get('storage.url', { infer: true })
+		this.apiKey = this.configService.get('storage.apiKey', { infer: true })
 	}
 
 	public async uploadFile(

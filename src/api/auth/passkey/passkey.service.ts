@@ -5,7 +5,7 @@ import {
 	UnauthorizedException
 } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import { TotpStatus, User } from '@prisma/generated'
+import { TotpStatus, type User } from '@prisma/generated'
 import {
 	generateAuthenticationOptions,
 	generateRegistrationOptions,
@@ -15,6 +15,7 @@ import {
 import base64url from 'base64url'
 import { randomBytes } from 'crypto'
 
+import type { AllConfigs } from '@/config/definitions'
 import { PrismaService } from '@/infra/prisma/prisma.service'
 import { RedisService } from '@/infra/redis/redis.service'
 
@@ -27,14 +28,17 @@ export class PasskeyService {
 	public constructor(
 		private readonly prismaService: PrismaService,
 		private readonly redisService: RedisService,
-		private readonly configService: ConfigService
+		private readonly configService: ConfigService<AllConfigs>
 	) {
-		this.WEBAUTHN_RP_NAME =
-			this.configService.getOrThrow<string>('WEBAUTHN_RP_NAME')
-		this.WEBAUTHN_RP_ID =
-			this.configService.getOrThrow<string>('WEBAUTHN_RP_ID')
-		this.WEBAUTHN_ORIGIN =
-			this.configService.getOrThrow<string>('WEBAUTHN_ORIGIN')
+		this.WEBAUTHN_RP_NAME = this.configService.get('webauthn.rpName', {
+			infer: true
+		})
+		this.WEBAUTHN_RP_ID = this.configService.get('webauthn.rpId', {
+			infer: true
+		})
+		this.WEBAUTHN_ORIGIN = this.configService.get('webauthn.origin', {
+			infer: true
+		})
 	}
 
 	public async fetchPasskeys(user: User) {

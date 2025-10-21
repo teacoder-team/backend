@@ -14,12 +14,13 @@ import {
 	getHelmetConfig,
 	getValidationPipeConfig
 } from './config'
+import type { AllConfigs } from './config/definitions'
 import { setupSwagger } from './shared/utils'
 
 async function bootstrap() {
 	const app = await NestFactory.create<NestExpressApplication>(AppModule)
 
-	const config = app.get(ConfigService)
+	const config = app.get(ConfigService<AllConfigs>)
 	const logger = new Logger(AppModule.name)
 
 	app.set('trust proxy', true)
@@ -36,8 +37,8 @@ async function bootstrap() {
 
 	setupSwagger(app)
 
-	const port = config.getOrThrow<number>('HTTP_PORT')
-	const host = config.getOrThrow<string>('HTTP_HOST')
+	const port = config.get('app.port', { infer: true })
+	const host = config.get('app.host', { infer: true })
 
 	try {
 		await app.listen(port)

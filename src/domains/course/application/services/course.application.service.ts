@@ -5,6 +5,7 @@ import { User } from '@prisma/generated'
 import { randomBytes } from 'crypto'
 import { firstValueFrom } from 'rxjs'
 
+import type { AllConfigs } from '@/config/definitions'
 import { RedisService } from '@/infra/redis/redis.service'
 import { slugify } from '@/shared/utils/slugify'
 
@@ -19,7 +20,7 @@ export class CourseApplicationService {
 		@Inject('DownloadLogRepository')
 		private readonly downloadLogRepo: DownloadLogRepository,
 		private readonly redisService: RedisService,
-		private readonly configService: ConfigService,
+		private readonly configService: ConfigService<AllConfigs>,
 		private readonly httpService: HttpService
 	) {}
 
@@ -100,7 +101,7 @@ export class CourseApplicationService {
 		)
 
 		return {
-			url: `${this.configService.getOrThrow<string>('HOSTS_REST')}/courses/download/${token}`
+			url: `${this.configService.get('hosts.rest', { infer: true })}/courses/download/${token}`
 		}
 	}
 

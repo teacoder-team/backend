@@ -10,6 +10,7 @@ import {
 } from 'nestjs-yookassa'
 import { VatCodesEnum } from 'nestjs-yookassa/dist/interfaces/receipt-details.interface'
 
+import type { AllConfigs } from '@/config/definitions'
 import { PrismaService } from '@/infra/prisma/prisma.service'
 import { HeleketService } from '@/libs/heleket/heleket.service'
 import { RobokassaService } from '@/libs/robokassa/robokassa.service'
@@ -25,13 +26,13 @@ export class PaymentService {
 
 	public constructor(
 		private readonly prismaService: PrismaService,
-		private readonly configService: ConfigService,
+		private readonly configService: ConfigService<AllConfigs>,
 		private readonly yookassaService: YookassaService,
 		private readonly robokassaService: RobokassaService,
 		private readonly heleketService: HeleketService
 	) {
-		this.HOSTS_APP = this.configService.getOrThrow<string>('HOSTS_APP')
-		this.HOSTS_REST = this.configService.getOrThrow<string>('HOSTS_REST')
+		this.HOSTS_APP = this.configService.get('hosts.app', { infer: true })
+		this.HOSTS_REST = this.configService.get('hosts.rest', { infer: true })
 	}
 
 	public async create(dto: InitPaymentRequest, user: User) {
