@@ -17,7 +17,7 @@ import {
 	Authorized,
 	ClientIp,
 	UserAgent
-} from '@/common/decorators'
+} from '@/shared/decorators'
 
 import { AccountService } from './account.service'
 import {

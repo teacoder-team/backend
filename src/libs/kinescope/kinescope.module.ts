@@ -5,7 +5,7 @@ import {
 	type KinescopeAsyncOptions,
 	type KinescopeOptions,
 	KinescopeOptionsSymbol
-} from '@/common/interfaces'
+} from '@/shared/interfaces'
 
 import { KinescopeService } from './kinescope.service'
 

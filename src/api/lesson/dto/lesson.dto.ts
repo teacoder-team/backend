@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 
-import { CourseResponse } from '@/api/course/dto'
+import { CourseResponse } from '@/domains/course/application/dto/course.response'
 
 export class LessonResponse {
 	@ApiProperty({

@@ -22,8 +22,8 @@ import {
 	Authorized,
 	ClientIp,
 	UserAgent
-} from '@/common/decorators'
-import { ProviderGuard } from '@/common/guards'
+} from '@/shared/decorators'
+import { ProviderGuard } from '@/shared/guards'
 
 import { SsoConnectResponse, SsoStatusResponse } from './dto'
 import { SsoService } from './sso.service'

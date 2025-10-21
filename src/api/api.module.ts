@@ -5,8 +5,8 @@ import { ScheduleModule } from '@nestjs/schedule'
 import { ThrottlerModule } from '@nestjs/throttler'
 import { TurnstileModule } from 'nestjs-cloudflare-captcha'
 
-import { EnhancedThrottlerGuard } from '@/common/guards'
 import { getThrottlerConfig, getTurnstileConfig } from '@/config'
+import { EnhancedThrottlerGuard } from '@/shared/guards'
 
 import { ArticleModule } from './article/article.module'
 import { AccountModule } from './auth/account/account.module'
@@ -15,7 +15,6 @@ import { PasskeyModule } from './auth/passkey/passkey.module'
 import { SessionModule } from './auth/session/session.module'
 import { SsoModule } from './auth/sso/sso.module'
 import { CommentModule } from './comment/comment.module'
-import { CourseModule } from './course/course.module'
 import { LessonModule } from './lesson/lesson.module'
 import { PaymentModule } from './payment/payment.module'
 import { ProgressModule } from './progress/progress.module'
@@ -43,7 +42,6 @@ import { UsersModule } from './users/users.module'
 		PasskeyModule,
 		RestrictionModule,
 		UsersModule,
-		CourseModule,
 		LessonModule,
 		ProgressModule,
 		ArticleModule,

@@ -23,7 +23,7 @@ import {
 	Authorized,
 	ClientIp,
 	UserAgent
-} from '@/common/decorators'
+} from '@/shared/decorators'
 
 import { LoginSessionResponse } from '../session/dto'
 

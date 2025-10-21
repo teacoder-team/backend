@@ -1,7 +1,12 @@
 import { MailerService } from '@nestjs-modules/mailer'
 import { InjectQueue } from '@nestjs/bullmq'
 import { Injectable } from '@nestjs/common'
-import type { Restriction, User } from '@prisma/generated'
+import type {
+	Payment,
+	Restriction,
+	Subscription,
+	User
+} from '@prisma/generated'
 import { render } from '@react-email/components'
 import { Queue } from 'bullmq'
 
@@ -9,6 +14,7 @@ import { EmailVerificationTemplate } from './templates/email-verification.templa
 import { ResetPasswordTemplate } from './templates/reset-password.template'
 import { RestrictionLiftedTemplate } from './templates/restriction-lifted.template'
 import { RestrictionTemplate } from './templates/restriction.template'
+import { SubscriptionSuccessTemplate } from './templates/subscription-success.template'
 
 @Injectable()
 export class MailService {
@@ -35,6 +41,28 @@ export class MailService {
 		await this.queue.add(
 			'send-email',
 			{ email: user.email, subject: 'Сброс пароля', html },
+			{ removeOnComplete: true }
+		)
+
+		return true
+	}
+
+	public async sendSubscriptionSuccess(
+		user: User,
+		payment: Payment,
+		subscription: Subscription
+	) {
+		const html = await render(
+			SubscriptionSuccessTemplate({ user, payment, subscription })
+		)
+
+		await this.queue.add(
+			'send-email',
+			{
+				email: user.email,
+				subject: 'Подписка успешно активирована',
+				html
+			},
 			{ removeOnComplete: true }
 		)
 

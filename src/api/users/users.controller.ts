@@ -16,8 +16,8 @@ import { FileInterceptor } from '@nestjs/platform-express'
 import { ApiOkResponse, ApiOperation } from '@nestjs/swagger'
 import { type User, UserRole } from '@prisma/generated'
 
-import { Authorization } from '@/common/decorators/auth.decorator'
-import { Authorized } from '@/common/decorators/authorized.decorator'
+import { Authorization } from '@/shared/decorators/auth.decorator'
+import { Authorized } from '@/shared/decorators/authorized.decorator'
 
 import {
 	LeaderResponse,

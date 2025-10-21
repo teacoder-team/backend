@@ -11,7 +11,7 @@ import {
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger'
 import { User, UserRole } from '@prisma/generated'
 
-import { Authorization, Authorized } from '@/common/decorators'
+import { Authorization, Authorized } from '@/shared/decorators'
 
 import { ActiveRestrictionResponse, CreateRestrictionRequest } from './dto'
 import { RestrictionService } from './restriction.service'

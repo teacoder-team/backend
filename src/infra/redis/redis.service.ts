@@ -12,7 +12,7 @@ import Redis from 'ioredis'
 import { UAParser } from 'ua-parser-js'
 import { v4 as uuidv4 } from 'uuid'
 
-import type { Session, UserSession } from '@/common/interfaces'
+import type { Session, UserSession } from '@/shared/interfaces'
 
 @Injectable()
 export class RedisService

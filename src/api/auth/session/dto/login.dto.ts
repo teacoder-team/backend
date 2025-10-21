@@ -7,7 +7,7 @@ import {
 	MinLength
 } from 'class-validator'
 
-import { Session } from '@/common/interfaces'
+import { Session } from '@/shared/interfaces'
 
 export class LoginRequest {
 	@ApiProperty({

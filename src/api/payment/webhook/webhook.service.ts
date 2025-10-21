@@ -14,9 +14,10 @@ import { addMonths } from 'date-fns'
 import { YookassaService } from 'nestjs-yookassa'
 
 import { BotService } from '@/bot/bot.service'
-import { IS_DEV_ENV } from '@/common/utils'
 import { PrismaService } from '@/infra/prisma/prisma.service'
 import { HeleketPaymentStatus } from '@/libs/heleket/enums'
+import { MailService } from '@/libs/mail/mail.service'
+import { IS_DEV_ENV } from '@/shared/utils'
 
 import { HeleketPaymentWebhookResponse } from './dto'
 
@@ -35,6 +36,7 @@ export class WebhookService {
 	public constructor(
 		private readonly prismaService: PrismaService,
 		private readonly yookassaService: YookassaService,
+		private readonly mailService: MailService,
 		private readonly botService: BotService
 	) {
 		this.ALLOWED_IPS = [
@@ -241,6 +243,12 @@ export class WebhookService {
 
 		this.logger.log(
 			`Subscription updated for user ${payment.user.id} until ${expiresAt.toISOString()}`
+		)
+
+		await this.mailService.sendSubscriptionSuccess(
+			payment.user,
+			payment,
+			subscription
 		)
 
 		await this.botService.sendSubscriptionPurchased(

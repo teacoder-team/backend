@@ -1,8 +1,8 @@
 import { ConfigService } from '@nestjs/config'
 
-import { isDev } from '@/common/utils'
 import { HashAlgorithm } from '@/libs/robokassa/enums'
 import type { RobokassaOptions } from '@/libs/robokassa/interfaces'
+import { isDev } from '@/shared/utils'
 
 export function getRobokassaConfig(
 	configService: ConfigService

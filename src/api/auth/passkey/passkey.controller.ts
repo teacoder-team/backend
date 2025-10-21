@@ -12,7 +12,7 @@ import {
 import { ApiOkResponse, ApiOperation } from '@nestjs/swagger'
 import { User } from '@prisma/generated'
 
-import { Authorization, Authorized, UserAgent } from '@/common/decorators'
+import { Authorization, Authorized, UserAgent } from '@/shared/decorators'
 
 import { PasskeyResponse } from './dto'
 import { PasskeyService } from './passkey.service'

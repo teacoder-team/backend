@@ -10,7 +10,7 @@ import {
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger'
 import type { User } from '@prisma/generated'
 
-import { Authorization, Authorized } from '@/common/decorators'
+import { Authorization, Authorized } from '@/shared/decorators'
 
 import { CreateProgressRequest, CreateProgressResponse } from './dto'
 import { ProgressService } from './progress.service'

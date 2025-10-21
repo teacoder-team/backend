@@ -4,7 +4,7 @@ import { createHash, timingSafeEqual } from 'crypto'
 import { firstValueFrom } from 'rxjs'
 
 import { HeleketPaymentWebhookResponse } from '@/api/payment/webhook/dto'
-import { type HeleketOptions, HeleketOptionsSymbol } from '@/common/interfaces'
+import { type HeleketOptions, HeleketOptionsSymbol } from '@/shared/interfaces'
 
 import type {
 	ApiResponse,

@@ -1,7 +1,7 @@
 import { ConfigService } from '@nestjs/config'
 import type { TurnstileOptions } from 'nestjs-cloudflare-captcha'
 
-import { isDev } from '@/common/utils'
+import { isDev } from '@/shared/utils'
 
 export function getTurnstileConfig(
 	configService: ConfigService

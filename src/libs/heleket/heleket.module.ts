@@ -5,7 +5,7 @@ import {
 	type HeleketAsyncOptions,
 	type HeleketOptions,
 	HeleketOptionsSymbol
-} from '@/common/interfaces'
+} from '@/shared/interfaces'
 
 import { HeleketService } from './heleket.service'
 

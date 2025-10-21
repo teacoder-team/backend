@@ -9,12 +9,12 @@ import type { NestExpressApplication } from '@nestjs/platform-express'
 import helmet from 'helmet'
 
 import { AppModule } from './app.module'
-import { setupSwagger } from './common/utils'
 import {
 	getCorsConfig,
 	getHelmetConfig,
 	getValidationPipeConfig
 } from './config'
+import { setupSwagger } from './shared/utils'
 
 async function bootstrap() {
 	const app = await NestFactory.create<NestExpressApplication>(AppModule)

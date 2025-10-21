@@ -2,7 +2,7 @@ import { ThrottlerStorageRedisService } from '@nest-lab/throttler-storage-redis'
 import { ConfigService } from '@nestjs/config'
 import { seconds, type ThrottlerModuleOptions } from '@nestjs/throttler'
 
-import { isDev } from '@/common/utils'
+import { isDev } from '@/shared/utils'
 
 import { getRedisConfig } from './redis.config'
 

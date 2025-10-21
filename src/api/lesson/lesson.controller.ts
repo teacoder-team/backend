@@ -15,7 +15,7 @@ import { FileInterceptor } from '@nestjs/platform-express'
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger'
 import { type User, UserRole } from '@prisma/generated'
 
-import { Authorization, Authorized } from '@/common/decorators'
+import { Authorization, Authorized } from '@/shared/decorators'
 
 import { ProgressResponse } from '../progress/dto/progress.dto'
 

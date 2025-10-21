@@ -12,9 +12,9 @@ import { AllowedProvider, SentinelService } from '@teacoder/sentinel'
 import { randomBytes } from 'crypto'
 
 import { BotService } from '@/bot/bot.service'
-import { slugify } from '@/common/utils'
 import { PrismaService } from '@/infra/prisma/prisma.service'
 import { RedisService } from '@/infra/redis/redis.service'
+import { slugify } from '@/shared/utils'
 
 @Injectable()
 export class SsoService {

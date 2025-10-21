@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config'
 import FormData from 'form-data'
 import { lastValueFrom } from 'rxjs'
 
-import type { FileResponse } from '@/common/interfaces'
+import type { FileResponse } from '@/shared/interfaces'
 
 @Injectable()
 export class StorageService {

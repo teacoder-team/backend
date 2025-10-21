@@ -1,6 +1,6 @@
 import { ConfigService } from '@nestjs/config'
 
-import type { HeleketOptions } from '@/common/interfaces'
+import type { HeleketOptions } from '@/shared/interfaces'
 
 export function getHeleketConfig(configService: ConfigService): HeleketOptions {
 	return {

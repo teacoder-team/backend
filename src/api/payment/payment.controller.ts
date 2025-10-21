@@ -2,7 +2,7 @@ import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common'
 import { ApiOkResponse, ApiOperation } from '@nestjs/swagger'
 import type { User } from '@prisma/generated'
 
-import { Authorization, Authorized } from '@/common/decorators'
+import { Authorization, Authorized } from '@/shared/decorators'
 
 import { InitPaymentRequest, InitPaymentResponse } from './dto'
 import { PaymentService } from './payment.service'

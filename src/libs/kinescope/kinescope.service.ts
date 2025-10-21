@@ -6,7 +6,7 @@ import {
 	type KinescopeOptions,
 	KinescopeOptionsSymbol,
 	type KinescopeVideoResponse
-} from '@/common/interfaces'
+} from '@/shared/interfaces'
 
 @Injectable()
 export class KinescopeService {
