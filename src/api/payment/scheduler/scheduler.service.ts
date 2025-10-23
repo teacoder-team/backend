@@ -16,22 +16,22 @@ import { VatCodesEnum } from 'nestjs-yookassa/dist/interfaces/receipt-details.in
 
 import { PrismaService } from '@/infra/prisma/prisma.service'
 import { HeleketService } from '@/libs/heleket/heleket.service'
+import { MailService } from '@/libs/mail/mail.service'
 import { RobokassaService } from '@/libs/robokassa/robokassa.service'
 
 @Injectable()
 export class SchedulerService {
 	private readonly logger = new Logger(SchedulerService.name)
 
-	private readonly INVOICE_LIFETIME_DAYS = 7
-
 	public constructor(
 		private readonly prismaService: PrismaService,
+		private readonly mailService: MailService,
 		private readonly yookassaService: YookassaService,
 		private readonly robokassaService: RobokassaService,
 		private readonly heleketService: HeleketService
 	) {}
 
-	@Cron(CronExpression.EVERY_10_SECONDS, {
+	@Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT, {
 		timeZone: 'Europe/Moscow'
 	})
 	public async handleAutoBilling() {
@@ -88,7 +88,7 @@ export class SchedulerService {
 
 					const payment = await this.prismaService.payment.create({
 						data: {
-							amount: 10,
+							amount: 349,
 							currency: 'RUB',
 							method: lastSuccess.method,
 							invoiceId: this.generateInvoiceId(),
@@ -311,7 +311,7 @@ export class SchedulerService {
 			const invoice = await this.yookassaService.createInvoice({
 				payment_data: {
 					amount: {
-						value: 10,
+						value: payment.amount,
 						currency: CurrencyEnum.RUB
 					},
 					description: 'Продление подписки',
@@ -328,7 +328,7 @@ export class SchedulerService {
 								description: 'Продление подписки',
 								quantity: 1,
 								amount: {
-									value: 10,
+									value: payment.amount,
 									currency: CurrencyEnum.RUB
 								},
 								vat_code: VatCodesEnum.ndsNone
@@ -340,7 +340,7 @@ export class SchedulerService {
 					{
 						description: 'Продление подписки',
 						price: {
-							value: 10,
+							value: payment.amount,
 							currency: CurrencyEnum.RUB
 						},
 						quantity: 1
@@ -350,9 +350,24 @@ export class SchedulerService {
 					type: DeliveryMethodEnum.SELF
 				},
 				expires_at: new Date(
-					Date.now() + 7 * 24 * 60 * 60 * 1000
+					Date.now() + 3 * 24 * 60 * 60 * 1000
 				).toISOString()
 			})
+
+			await this.prismaService.payment.update({
+				where: {
+					id: payment.id
+				},
+				data: {
+					metadata: JSON.stringify(invoice)
+				}
+			})
+
+			await this.mailService.sendSubscriptionBlockedEmail(
+				user,
+				payment,
+				invoice.delivery_method.url
+			)
 
 			this.logger.log(
 				`Yookassa invoice created for user ${user.id} (subscription ${sub.id}): ${invoice.id} ${invoice.delivery_method.url}`
@@ -372,18 +387,24 @@ export class SchedulerService {
 		payment: Payment
 	) {
 		try {
-			const providerResponse = await this.heleketService.createPayment({
+			const invoice = await this.heleketService.createPayment({
 				amount: String(payment.amount),
 				currency: 'RUB',
 				order_id: payment.id,
 				url_return: `${process.env.HOSTS_APP}/payment/success`,
 				url_success: `${process.env.HOSTS_APP}/premium`,
 				url_callback: `${process.env.HOSTS_REST}/webhook/heleket`,
-				lifetime: this.INVOICE_LIFETIME_DAYS * 24 * 60 * 60
+				lifetime: 43200
 			})
 
+			await this.mailService.sendSubscriptionBlockedEmail(
+				user,
+				payment,
+				invoice.url
+			)
+
 			this.logger.log(
-				`Heleket invoice created for user ${user.id} (subscription ${sub.id}): ${providerResponse.url}`
+				`Heleket invoice created for user ${user.id} (subscription ${sub.id}): ${invoice.url}`
 			)
 
 			await this.prismaService.payment.update({
@@ -391,11 +412,11 @@ export class SchedulerService {
 					id: payment.id
 				},
 				data: {
-					metadata: JSON.stringify(providerResponse)
+					metadata: JSON.stringify(invoice)
 				}
 			})
 
-			return providerResponse
+			return invoice
 		} catch (err) {
 			this.logger.error(
 				`Failed to create Heleket invoice for user ${user.id}, subscription ${sub.id}: ${err?.message ?? err}`

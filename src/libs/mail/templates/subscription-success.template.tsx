@@ -22,7 +22,7 @@ interface SubscriptionSuccessTemplateProps {
 	subscription: Subscription
 }
 
-const baseUrl = 'https://teacoder.ru'
+const baseUrl = process.env['HOSTS_APP']
 
 export function SubscriptionSuccessTemplate({
 	user,

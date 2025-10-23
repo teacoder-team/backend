@@ -14,6 +14,7 @@ import { EmailVerificationTemplate } from './templates/email-verification.templa
 import { ResetPasswordTemplate } from './templates/reset-password.template'
 import { RestrictionLiftedTemplate } from './templates/restriction-lifted.template'
 import { RestrictionTemplate } from './templates/restriction.template'
+import { SubscriptionBlockedTemplate } from './templates/subscription-blocked.template'
 import { SubscriptionSuccessTemplate } from './templates/subscription-success.template'
 
 @Injectable()
@@ -61,6 +62,28 @@ export class MailService {
 			{
 				email: user.email,
 				subject: 'Подписка успешно активирована',
+				html
+			},
+			{ removeOnComplete: true }
+		)
+
+		return true
+	}
+
+	public async sendSubscriptionBlockedEmail(
+		user: User,
+		payment: Payment,
+		payUrl: string
+	) {
+		const html = await render(
+			SubscriptionBlockedTemplate({ user, payment, payUrl })
+		)
+
+		await this.queue.add(
+			'send-email',
+			{
+				email: user.email,
+				subject: 'Ваша подписка приостановлена',
 				html
 			},
 			{ removeOnComplete: true }

@@ -4,11 +4,12 @@ import { createHash, createHmac } from 'crypto'
 
 import { HashAlgorithm } from './enums'
 import { type RobokassaOptions, RobokassaOptionsSymbol } from './interfaces'
-import type { CreateInvoiceRequest, CreatePaymentRequest } from './interfaces'
+import type { CreatePaymentRequest } from './interfaces'
 
 @Injectable()
 export class RobokassaService {
 	private readonly BASE_URL = 'https://auth.robokassa.ru'
+
 	private readonly TRUSTED_IPS: string[]
 
 	public constructor(
@@ -162,13 +163,5 @@ export class RobokassaService {
 			.toUpperCase()
 
 		return expectedHash === signatureValue.toUpperCase()
-	}
-
-	private toBase64Url(input: string | Buffer): string {
-		return Buffer.from(input)
-			.toString('base64')
-			.replace(/\+/g, '-')
-			.replace(/\//g, '_')
-			.replace(/=+$/, '')
 	}
 }
