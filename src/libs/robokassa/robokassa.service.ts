@@ -1,10 +1,10 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import axios from 'axios'
-import { createHash } from 'crypto'
+import { createHash, createHmac } from 'crypto'
 
 import { HashAlgorithm } from './enums'
 import { type RobokassaOptions, RobokassaOptionsSymbol } from './interfaces'
-import type { CreatePaymentRequest } from './interfaces'
+import type { CreateInvoiceRequest, CreatePaymentRequest } from './interfaces'
 
 @Injectable()
 export class RobokassaService {
@@ -164,21 +164,11 @@ export class RobokassaService {
 		return expectedHash === signatureValue.toUpperCase()
 	}
 
-	private createSignature({
-		login,
-		outSum,
-		invId,
-		password,
-		algorithm
-	}: {
-		login: string
-		outSum: number
-		invId: number
-		password: string
-		algorithm: HashAlgorithm
-	}): string {
-		return createHash(algorithm)
-			.update(`${login}:${outSum}:${invId}:${password}`)
-			.digest('hex')
+	private toBase64Url(input: string | Buffer): string {
+		return Buffer.from(input)
+			.toString('base64')
+			.replace(/\+/g, '-')
+			.replace(/\//g, '_')
+			.replace(/=+$/, '')
 	}
 }

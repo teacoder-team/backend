@@ -7,23 +7,31 @@ import {
 	Subscription,
 	User
 } from '@prisma/generated'
-import { CurrencyEnum, YookassaService } from 'nestjs-yookassa'
+import {
+	CurrencyEnum,
+	DeliveryMethodEnum,
+	YookassaService
+} from 'nestjs-yookassa'
 import { VatCodesEnum } from 'nestjs-yookassa/dist/interfaces/receipt-details.interface'
 
 import { PrismaService } from '@/infra/prisma/prisma.service'
+import { HeleketService } from '@/libs/heleket/heleket.service'
 import { RobokassaService } from '@/libs/robokassa/robokassa.service'
 
 @Injectable()
 export class SchedulerService {
 	private readonly logger = new Logger(SchedulerService.name)
 
+	private readonly INVOICE_LIFETIME_DAYS = 7
+
 	public constructor(
 		private readonly prismaService: PrismaService,
 		private readonly yookassaService: YookassaService,
-		private readonly robokassaService: RobokassaService
+		private readonly robokassaService: RobokassaService,
+		private readonly heleketService: HeleketService
 	) {}
 
-	@Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT, {
+	@Cron(CronExpression.EVERY_10_SECONDS, {
 		timeZone: 'Europe/Moscow'
 	})
 	public async handleAutoBilling() {
@@ -66,6 +74,45 @@ export class SchedulerService {
 					this.logger.log(
 						`Subscription ${sub.id} deactivated (auto-billing disabled) for user ${user.id}`
 					)
+
+					const lastSuccess =
+						await this.prismaService.payment.findFirst({
+							where: {
+								userId: user.id,
+								status: PaymentStatus.SUCCESS
+							},
+							orderBy: {
+								createdAt: 'desc'
+							}
+						})
+
+					const payment = await this.prismaService.payment.create({
+						data: {
+							amount: 10,
+							currency: 'RUB',
+							method: lastSuccess.method,
+							invoiceId: this.generateInvoiceId(),
+							subscription: {
+								connect: {
+									id: sub.id
+								}
+							},
+							user: {
+								connect: {
+									id: user.id
+								}
+							}
+						}
+					})
+
+					if (
+						lastSuccess.method === PaymentMethod.BANK_CARD ||
+						lastSuccess.method === PaymentMethod.SBP
+					) {
+						await this.createYookassaInvoice(sub, user, payment)
+					} else if (lastSuccess.method === PaymentMethod.CRYPTO) {
+						await this.createHeleketInvoice(sub, user, payment)
+					}
 
 					continue
 				}
@@ -251,6 +298,107 @@ export class SchedulerService {
 		} catch (err) {
 			this.logger.error(
 				`Robokassa auto-charge failed for user ${user.id}, subscription ${sub.id}: ${err?.message ?? err}`
+			)
+		}
+	}
+
+	private async createYookassaInvoice(
+		sub: Subscription,
+		user: User,
+		payment: Payment
+	) {
+		try {
+			const invoice = await this.yookassaService.createInvoice({
+				payment_data: {
+					amount: {
+						value: 10,
+						currency: CurrencyEnum.RUB
+					},
+					description: 'Продление подписки',
+					capture: false,
+					metadata: {
+						payment_id: payment.id
+					},
+					receipt: {
+						customer: {
+							email: user.email
+						},
+						items: [
+							{
+								description: 'Продление подписки',
+								quantity: 1,
+								amount: {
+									value: 10,
+									currency: CurrencyEnum.RUB
+								},
+								vat_code: VatCodesEnum.ndsNone
+							}
+						]
+					}
+				},
+				cart: [
+					{
+						description: 'Продление подписки',
+						price: {
+							value: 10,
+							currency: CurrencyEnum.RUB
+						},
+						quantity: 1
+					}
+				],
+				delivery_method_data: {
+					type: DeliveryMethodEnum.SELF
+				},
+				expires_at: new Date(
+					Date.now() + 7 * 24 * 60 * 60 * 1000
+				).toISOString()
+			})
+
+			this.logger.log(
+				`Yookassa invoice created for user ${user.id} (subscription ${sub.id}): ${invoice.id} ${invoice.delivery_method.url}`
+			)
+
+			return invoice
+		} catch (err) {
+			this.logger.error(
+				`Failed to create Yookassa invoice for user ${user.id}, subscription ${sub.id}: ${err?.message ?? err}`
+			)
+		}
+	}
+
+	private async createHeleketInvoice(
+		sub: Subscription,
+		user: User,
+		payment: Payment
+	) {
+		try {
+			const providerResponse = await this.heleketService.createPayment({
+				amount: String(payment.amount),
+				currency: 'RUB',
+				order_id: payment.id,
+				url_return: `${process.env.HOSTS_APP}/payment/success`,
+				url_success: `${process.env.HOSTS_APP}/premium`,
+				url_callback: `${process.env.HOSTS_REST}/webhook/heleket`,
+				lifetime: this.INVOICE_LIFETIME_DAYS * 24 * 60 * 60
+			})
+
+			this.logger.log(
+				`Heleket invoice created for user ${user.id} (subscription ${sub.id}): ${providerResponse.url}`
+			)
+
+			await this.prismaService.payment.update({
+				where: {
+					id: payment.id
+				},
+				data: {
+					metadata: JSON.stringify(providerResponse)
+				}
+			})
+
+			return providerResponse
+		} catch (err) {
+			this.logger.error(
+				`Failed to create Heleket invoice for user ${user.id}, subscription ${sub.id}: ${err?.message ?? err}`
 			)
 		}
 	}

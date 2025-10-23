@@ -57,7 +57,7 @@ export class PaymentService {
 		switch (method) {
 			case PaymentMethod.BANK_CARD:
 				providerResponse = await this.yookassaService.createPayment(
-					this.createYooKassaPaymentData(
+					this.createYookassaPaymentData(
 						payment.id,
 						user,
 						PaymentMethodsEnum.bank_card
@@ -66,7 +66,7 @@ export class PaymentService {
 				break
 			case PaymentMethod.SBP:
 				providerResponse = await this.yookassaService.createPayment(
-					this.createYooKassaPaymentData(
+					this.createYookassaPaymentData(
 						payment.id,
 						user,
 						PaymentMethodsEnum.sbp
@@ -117,7 +117,7 @@ export class PaymentService {
 		}
 	}
 
-	private createYooKassaPaymentData(
+	private createYookassaPaymentData(
 		paymentId: string,
 		user: User,
 		paymentMethod: PaymentMethodsEnum
