@@ -9,6 +9,7 @@ import type {
 import { InjectBot } from 'nestjs-telegraf'
 import { Telegraf } from 'telegraf'
 
+import type { AllConfigs } from '@/config/definitions'
 import { PrismaService } from '@/infra/prisma/prisma.service'
 
 import { MESSAGES } from './bot.messages'
@@ -19,11 +20,12 @@ export class BotService {
 
 	public constructor(
 		private readonly prismaService: PrismaService,
-		private readonly configService: ConfigService,
+		private readonly configService: ConfigService<AllConfigs>,
 		@InjectBot() private readonly bot: Telegraf
 	) {
-		this.OWNER_ID =
-			this.configService.getOrThrow<string>('TELEGRAM_OWNER_ID')
+		this.OWNER_ID = this.configService.get('telegram.ownerId', {
+			infer: true
+		})
 	}
 
 	public async sendNewUser(user: User, session: any) {

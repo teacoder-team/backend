@@ -10,6 +10,7 @@ import {
 } from 'nestjs-yookassa'
 import { VatCodesEnum } from 'nestjs-yookassa/dist/interfaces/receipt-details.interface'
 
+import type { AllConfigs } from '@/config/definitions'
 import { PrismaService } from '@/infra/prisma/prisma.service'
 import { HeleketService } from '@/libs/heleket/heleket.service'
 import { RobokassaService } from '@/libs/robokassa/robokassa.service'
@@ -21,17 +22,17 @@ export class PaymentService {
 	private readonly HOSTS_APP: string
 	private readonly HOSTS_REST: string
 
-	private readonly SUBSCRIPTION_PRICE = 349
+	private readonly SUBSCRIPTION_PRICE = 10
 
 	public constructor(
 		private readonly prismaService: PrismaService,
-		private readonly configService: ConfigService,
+		private readonly configService: ConfigService<AllConfigs>,
 		private readonly yookassaService: YookassaService,
 		private readonly robokassaService: RobokassaService,
 		private readonly heleketService: HeleketService
 	) {
-		this.HOSTS_APP = this.configService.getOrThrow<string>('HOSTS_APP')
-		this.HOSTS_REST = this.configService.getOrThrow<string>('HOSTS_REST')
+		this.HOSTS_APP = this.configService.get('hosts.app', { infer: true })
+		this.HOSTS_REST = this.configService.get('hosts.rest', { infer: true })
 	}
 
 	public async create(dto: InitPaymentRequest, user: User) {
@@ -56,7 +57,7 @@ export class PaymentService {
 		switch (method) {
 			case PaymentMethod.BANK_CARD:
 				providerResponse = await this.yookassaService.createPayment(
-					this.createYooKassaPaymentData(
+					this.createYookassaPaymentData(
 						payment.id,
 						user,
 						PaymentMethodsEnum.bank_card
@@ -65,7 +66,7 @@ export class PaymentService {
 				break
 			case PaymentMethod.SBP:
 				providerResponse = await this.yookassaService.createPayment(
-					this.createYooKassaPaymentData(
+					this.createYookassaPaymentData(
 						payment.id,
 						user,
 						PaymentMethodsEnum.sbp
@@ -78,6 +79,7 @@ export class PaymentService {
 					outSum: this.SUBSCRIPTION_PRICE,
 					description: 'Оплата премиум-подписки на 1 месяц',
 					email: user.email,
+					isRecurring: true,
 					shps: {
 						Shp_payment_id: payment.id
 					}
@@ -116,7 +118,7 @@ export class PaymentService {
 		}
 	}
 
-	private createYooKassaPaymentData(
+	private createYookassaPaymentData(
 		paymentId: string,
 		user: User,
 		paymentMethod: PaymentMethodsEnum

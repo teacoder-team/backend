@@ -5,7 +5,6 @@ import {
 	UnauthorizedException
 } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import { Cron, CronExpression } from '@nestjs/schedule'
 import { TotpStatus, User, UserRole } from '@prisma/generated'
 import { verify } from 'argon2'
 
@@ -222,25 +221,6 @@ export class SessionService {
 		}
 
 		return true
-	}
-
-	@Cron(CronExpression.EVERY_6_HOURS)
-	public async cleanupSessions() {
-		const userSessions = await this.redisService.keys(`user_sessions:*`)
-
-		for (const userSession of userSessions) {
-			const sessions = await this.redisService.hgetall(userSession)
-
-			for (const sessionId in sessions) {
-				const existSession = await this.redisService.exists(
-					`sessions:${sessionId}`
-				)
-
-				if (!existSession) {
-					await this.redisService.hdel(userSession, sessionId)
-				}
-			}
-		}
 	}
 
 	private async getSessionDetails(session: any) {

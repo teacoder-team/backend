@@ -12,6 +12,8 @@ import Redis from 'ioredis'
 import { UAParser } from 'ua-parser-js'
 import { v4 as uuidv4 } from 'uuid'
 
+import { getRedisConfig } from '@/config'
+import type { AllConfigs } from '@/config/definitions'
 import type { Session, UserSession } from '@/shared/interfaces'
 
 @Injectable()
@@ -22,8 +24,10 @@ export class RedisService
 	private readonly logger = new Logger(RedisService.name)
 	private parser: UAParser
 
-	public constructor(private readonly configService: ConfigService) {
-		super(configService.getOrThrow<string>('REDIS_URI'))
+	public constructor(
+		private readonly configService: ConfigService<AllConfigs>
+	) {
+		super(getRedisConfig(configService))
 
 		this.parser = new UAParser()
 	}
