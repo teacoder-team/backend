@@ -15,18 +15,28 @@ export function getThrottlerConfig(
 		throttlers: [
 			{
 				name: 'strict',
-				ttl: seconds(10),
-				limit: 10
+				ttl: seconds(30),
+				limit: 20
 			},
 			{
 				name: 'moderate',
-				ttl: seconds(60),
-				limit: 60
+				ttl: seconds(120),
+				limit: 100
 			},
 			{
 				name: 'relaxed',
-				ttl: seconds(300),
-				limit: 500
+				ttl: seconds(600),
+				limit: 1000
+			},
+			{
+				name: 'burst',
+				ttl: seconds(5),
+				limit: 50
+			},
+			{
+				name: 'hourly',
+				ttl: seconds(3600),
+				limit: 5000
 			}
 		],
 		errorMessage:
@@ -34,6 +44,6 @@ export function getThrottlerConfig(
 		storage: new ThrottlerStorageRedisService(
 			getRedisConfig(configService)
 		),
-		skipIf: context => !isDev(configService)
+		skipIf: context => isDev(configService)
 	}
 }
