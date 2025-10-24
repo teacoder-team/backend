@@ -314,7 +314,8 @@ export class SchedulerService {
 						value: payment.amount,
 						currency: CurrencyEnum.RUB
 					},
-					description: 'Продление подписки',
+					description:
+						'Оплата счета за продление премиум-подписки на 1 месяц',
 					capture: false,
 					metadata: {
 						payment_id: payment.id
@@ -325,7 +326,8 @@ export class SchedulerService {
 						},
 						items: [
 							{
-								description: 'Продление подписки',
+								description:
+									'Продление премиум-подписки на 1 месяц',
 								quantity: 1,
 								amount: {
 									value: payment.amount,
@@ -338,7 +340,7 @@ export class SchedulerService {
 				},
 				cart: [
 					{
-						description: 'Продление подписки',
+						description: 'Продление премиум-подписки на 1 месяц',
 						price: {
 							value: payment.amount,
 							currency: CurrencyEnum.RUB
