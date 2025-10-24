@@ -23,8 +23,8 @@ export class WebhookController {
 	) {}
 
 	@ApiOperation({
-		summary: 'YooKassa Webhook',
-		description: 'Endpoint to receive YooKassa webhook events.'
+		summary: 'Yookassa Webhook',
+		description: 'Endpoint to receive Yookassa webhook events'
 	})
 	@ApiOkResponse({
 		description: 'Webhook processed successfully',
@@ -42,6 +42,16 @@ export class WebhookController {
 		return { ok: true }
 	}
 
+	@ApiOperation({
+		summary: 'Robokassa Webhook',
+		description: 'Endpoint to receive Robokassa payment notifications'
+	})
+	@ApiOkResponse({
+		description: 'Webhook processed successfully',
+		schema: {
+			example: 'OK12345'
+		}
+	})
 	@Post('robokassa')
 	@HttpCode(HttpStatus.OK)
 	public async robokassa(@Body() payload: any, @Ip() ip: string) {
@@ -54,7 +64,7 @@ export class WebhookController {
 
 	@ApiOperation({
 		summary: 'Heleket Webhook',
-		description: 'Endpoint to receive Heleket crypto payment events.'
+		description: 'Endpoint to receive Heleket crypto payment events'
 	})
 	@ApiOkResponse({
 		description: 'Webhook processed successfully',
