@@ -21,6 +21,7 @@ export class SsoService {
 	private readonly providerMap: Record<AllowedProvider, AccountProvider> = {
 		google: AccountProvider.GOOGLE,
 		github: AccountProvider.GITHUB,
+		discord: AccountProvider.DISCORD,
 		yandex: AccountProvider.YANDEX
 	}
 
@@ -44,6 +45,9 @@ export class SsoService {
 			),
 			github: accounts.some(
 				account => account.provider === AccountProvider.GITHUB
+			),
+			discord: accounts.some(
+				account => account.provider === AccountProvider.DISCORD
 			)
 		}
 

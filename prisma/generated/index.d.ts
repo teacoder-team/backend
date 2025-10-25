@@ -114,6 +114,8 @@ export type UserRole = (typeof UserRole)[keyof typeof UserRole]
 export const AccountProvider: {
   GOOGLE: 'GOOGLE',
   GITHUB: 'GITHUB',
+  DISCORD: 'DISCORD',
+  TELEGRAM: 'TELEGRAM',
   YANDEX: 'YANDEX'
 };
 

@@ -12,4 +12,10 @@ export class SsoStatusResponse {
 		example: false
 	})
 	public google: boolean
+
+	@ApiProperty({
+		description: 'Indicates whether the Discord account is connected',
+		example: false
+	})
+	public discord: boolean
 }

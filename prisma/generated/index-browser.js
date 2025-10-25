@@ -355,6 +355,8 @@ exports.UserRole = exports.$Enums.UserRole = {
 exports.AccountProvider = exports.$Enums.AccountProvider = {
   GOOGLE: 'GOOGLE',
   GITHUB: 'GITHUB',
+  DISCORD: 'DISCORD',
+  TELEGRAM: 'TELEGRAM',
   YANDEX: 'YANDEX'
 };
 
