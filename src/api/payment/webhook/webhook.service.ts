@@ -13,7 +13,7 @@ import CidrMatcher from 'cidr-matcher'
 import { addMonths } from 'date-fns'
 import { YookassaService } from 'nestjs-yookassa'
 
-import { BotService } from '@/bot/bot.service'
+import { TeamanagerBotService } from '@/bots/teamanager/teamanager.bot.service'
 import { PrismaService } from '@/infra/prisma/prisma.service'
 import { HeleketPaymentStatus } from '@/libs/heleket/enums'
 import { MailService } from '@/libs/mail/mail.service'
@@ -37,7 +37,7 @@ export class WebhookService {
 		private readonly prismaService: PrismaService,
 		private readonly yookassaService: YookassaService,
 		private readonly mailService: MailService,
-		private readonly botService: BotService
+		private readonly botService: TeamanagerBotService
 	) {
 		this.ALLOWED_IPS = [
 			'185.71.76.0/27',

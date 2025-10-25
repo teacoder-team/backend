@@ -8,7 +8,8 @@ export const telegramEnv = registerAs<TelegramConfig>('telegram', () => {
 	validateEnv(process.env, TelegramValidator)
 
 	return {
-		token: process.env.TELEGRAM_BOT_TOKEN,
+		teamanagerToken: process.env.TEAMANAGER_BOT_TOKEN,
+		teacoderToken: process.env.TEACODER_BOT_TOKEN,
 		ownerId: process.env.TELEGRAM_OWNER_ID
 	}
 })

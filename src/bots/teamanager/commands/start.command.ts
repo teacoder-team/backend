@@ -4,7 +4,7 @@ import { Context } from 'telegraf'
 
 import type { AllConfigs } from '@/config/definitions'
 
-import { MESSAGES } from '../bot.messages'
+import { MESSAGES } from '../../shared/messages'
 
 @Update()
 export class StartCommand {

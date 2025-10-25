@@ -1,12 +1,13 @@
 import { Module } from '@nestjs/common'
 
-import { BotService } from '@/bot/bot.service'
+import { TeamanagerBotModule } from '@/bots/teamanager/teamanager.bot.module'
 
 import { WebhookController } from './webhook.controller'
 import { WebhookService } from './webhook.service'
 
 @Module({
+	imports: [TeamanagerBotModule],
 	controllers: [WebhookController],
-	providers: [WebhookService, BotService]
+	providers: [WebhookService]
 })
 export class WebhookModule {}
