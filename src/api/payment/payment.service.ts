@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { PaymentMethod, type User } from '@prisma/generated'
+import { lookup } from 'geoip-country'
 import {
 	ConfirmationEnum,
 	CurrencyEnum,
@@ -24,6 +25,8 @@ export class PaymentService {
 
 	private readonly SUBSCRIPTION_PRICE = 349
 
+	private readonly CRYPTO_BLOCKED_COUNTRIES: string[]
+
 	public constructor(
 		private readonly prismaService: PrismaService,
 		private readonly configService: ConfigService<AllConfigs>,
@@ -33,6 +36,84 @@ export class PaymentService {
 	) {
 		this.HOSTS_APP = this.configService.get('hosts.app', { infer: true })
 		this.HOSTS_REST = this.configService.get('hosts.rest', { infer: true })
+
+		this.CRYPTO_BLOCKED_COUNTRIES = [
+			'RU',
+			'CN',
+			'EG',
+			'DZ',
+			'AF',
+			'BD',
+			'TN',
+			'NP',
+			'MA',
+			'BO',
+			'IQ',
+			'PK',
+			'KW',
+			'NC',
+			'XK',
+			'MM',
+			'MZ',
+			'BI',
+			'GN',
+			'HT',
+			'HN'
+		]
+	}
+
+	public async getAvailableMethods(ip: string) {
+		const countryCode = this.getCountryCode(ip)
+
+		const methods = [
+			{
+				id: PaymentMethod.BANK_CARD,
+				name: 'Банковская карта',
+				description: 'Оплата картой российских банков',
+				isAvailable: true
+			},
+			{
+				id: PaymentMethod.SBP,
+				name: 'СБП',
+				description: 'Оплата через Систему быстрых платежей',
+				isAvailable: true
+			},
+			// {
+			// 	id: PaymentMethod.YOOMONEY,
+			// 	name: 'ЮMoney',
+			// 	description: 'Оплата через кошелек ЮMoney',
+			// 	icon: YoomoneyIcon,
+			// 	isAvailable: true
+			// },
+			// {
+			// 	id: PaymentMethod.CRYPTO,
+			// 	name: 'Криптовалюта',
+			// 	description: 'Оплата с помощью BTC, USDT, TON',
+			// 	isAvailable: true
+			// },
+			{
+				id: PaymentMethod.INTERNATIONAL_CARD,
+				name: 'Международные карты',
+				description: 'Оплата картой зарубежных банков',
+				isAvailable: false
+			},
+			{
+				id: PaymentMethod.TELEGRAM_STARS,
+				name: 'Telegram Stars',
+				description: 'Оплата подписки через звёзды Telegram',
+				isAvailable: false
+			}
+		]
+
+		// return methods.filter(
+		// 	m =>
+		// 		!(
+		// 			m.id === PaymentMethod.CRYPTO &&
+		// 			this.CRYPTO_BLOCKED_COUNTRIES.includes(countryCode)
+		// 		)
+		// )
+
+		return methods
 	}
 
 	public async create(dto: InitPaymentRequest, user: User) {
@@ -162,6 +243,12 @@ export class PaymentService {
 			},
 			merchant_customer_id: user.id
 		}
+	}
+
+	private getCountryCode(ip: string) {
+		const geo = lookup(ip)
+
+		return geo.country
 	}
 
 	private generateInvoiceId() {
