@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { SentinelModule } from '@teacoder/sentinel'
 
-import { BotService } from '@/bot/bot.service'
+import { TeamanagerBotModule } from '@/bots/teamanager/teamanager.bot.module'
 import { getOAuthConfig } from '@/config'
 
 import { SsoController } from './sso.controller'
@@ -14,9 +14,10 @@ import { SsoService } from './sso.service'
 			imports: [ConfigModule],
 			useFactory: getOAuthConfig,
 			inject: [ConfigService]
-		})
+		}),
+		TeamanagerBotModule
 	],
 	controllers: [SsoController],
-	providers: [SsoService, BotService]
+	providers: [SsoService]
 })
 export class SsoModule {}

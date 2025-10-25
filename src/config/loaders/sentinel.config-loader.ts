@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config'
 import {
+	DiscordProvider,
 	GithubProvider,
 	GoogleProvider,
 	SentinelOptions
@@ -36,6 +37,18 @@ export function getOAuthConfig(
 					}
 				),
 				scopes: ['read:user', 'user:email']
+			}),
+			new DiscordProvider({
+				clientId: configService.get('sentinel.discord.clientId', {
+					infer: true
+				}),
+				clientSecret: configService.get(
+					'sentinel.discord.clientSecret',
+					{
+						infer: true
+					}
+				),
+				scopes: ['identify', 'email']
 			})
 		]
 	}

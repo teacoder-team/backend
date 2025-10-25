@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 
 import { ApiModule } from './api/api.module'
-import { BotModule } from './bot/bot.module'
+import { BotModule } from './bots/bot.module'
 import {
 	appEnv,
 	heleketEnv,

@@ -8,7 +8,7 @@ import { EmailVerificationStatus, type User } from '@prisma/generated'
 import { hash } from 'argon2'
 import { randomBytes } from 'crypto'
 
-import { BotService } from '@/bot/bot.service'
+import { TeamanagerBotService } from '@/bots/teamanager/teamanager.bot.service'
 import { PrismaService } from '@/infra/prisma/prisma.service'
 import { RedisService } from '@/infra/redis/redis.service'
 import { MailService } from '@/libs/mail/mail.service'
@@ -28,7 +28,7 @@ export class AccountService {
 		private readonly prismaService: PrismaService,
 		private readonly redisService: RedisService,
 		private readonly mailService: MailService,
-		private readonly botService: BotService
+		private readonly botService: TeamanagerBotService
 	) {}
 
 	public async getMe(user: User) {

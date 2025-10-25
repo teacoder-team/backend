@@ -391,6 +391,8 @@ enum UserRole {
 enum AccountProvider {
   GOOGLE
   GITHUB
+  DISCORD
+  TELEGRAM
   YANDEX
 
   @@map("account_providers")

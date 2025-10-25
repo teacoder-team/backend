@@ -2968,10 +2968,10 @@
   dependencies:
     defer-to-connect "^2.0.0"
 
-"@teacoder/sentinel@^1.0.2":
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/@teacoder/sentinel/-/sentinel-1.0.2.tgz#8bf74be838342e52904779fc57c32b5cfe8588cb"
-  integrity sha512-AojfNqosf41pB4KRJnngkWtW9xL5EDtb+LA93DpQcPnVe3g7V1qVECWovnNxPciD5XsXLsnwCia+svzKivPjXw==
+"@teacoder/sentinel@^1.0.4":
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/@teacoder/sentinel/-/sentinel-1.0.4.tgz#4ce0f8bf67cf7ee0c19c6d6c517493452d6c1c5f"
+  integrity sha512-0RPYtfWBYcibQFDMfs+oVbIckI9BECFAfp4lSSisEgLcdvAVqN/B9/KvZMXJo1hsS9x/8oZErAUn4gaJxeHqyA==
   dependencies:
     "@nestjs/common" "^11.1.6"
     "@nestjs/core" "^11.1.6"

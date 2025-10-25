@@ -1,4 +1,5 @@
 export interface TelegramConfig {
-	token: string
+	teamanagerToken: string
+	teacoderToken: string
 	ownerId: string
 }

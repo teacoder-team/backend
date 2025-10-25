@@ -11,7 +11,7 @@ import {
 import { AllowedProvider, SentinelService } from '@teacoder/sentinel'
 import { randomBytes } from 'crypto'
 
-import { BotService } from '@/bot/bot.service'
+import { TeamanagerBotService } from '@/bots/teamanager/teamanager.bot.service'
 import { PrismaService } from '@/infra/prisma/prisma.service'
 import { RedisService } from '@/infra/redis/redis.service'
 import { slugify } from '@/shared/utils'
@@ -21,6 +21,7 @@ export class SsoService {
 	private readonly providerMap: Record<AllowedProvider, AccountProvider> = {
 		google: AccountProvider.GOOGLE,
 		github: AccountProvider.GITHUB,
+		discord: AccountProvider.DISCORD,
 		yandex: AccountProvider.YANDEX
 	}
 
@@ -28,7 +29,7 @@ export class SsoService {
 		private readonly prismaService: PrismaService,
 		private readonly redisService: RedisService,
 		private readonly sentinelService: SentinelService,
-		private readonly botService: BotService
+		private readonly botService: TeamanagerBotService
 	) {}
 
 	public async fetchStatus(user: User) {
@@ -44,6 +45,9 @@ export class SsoService {
 			),
 			github: accounts.some(
 				account => account.provider === AccountProvider.GITHUB
+			),
+			discord: accounts.some(
+				account => account.provider === AccountProvider.DISCORD
 			)
 		}
 
