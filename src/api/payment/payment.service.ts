@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { PaymentMethod, type User } from '@prisma/generated'
+import { lookup } from 'geoip-country'
 import {
 	ConfirmationEnum,
 	CurrencyEnum,
@@ -24,6 +25,8 @@ export class PaymentService {
 
 	private readonly SUBSCRIPTION_PRICE = 349
 
+	private readonly CRYPTO_BLOCKED_COUNTRIES: string[]
+
 	public constructor(
 		private readonly prismaService: PrismaService,
 		private readonly configService: ConfigService<AllConfigs>,
@@ -33,10 +36,36 @@ export class PaymentService {
 	) {
 		this.HOSTS_APP = this.configService.get('hosts.app', { infer: true })
 		this.HOSTS_REST = this.configService.get('hosts.rest', { infer: true })
+
+		this.CRYPTO_BLOCKED_COUNTRIES = [
+			'RU',
+			'CN',
+			'EG',
+			'DZ',
+			'AF',
+			'BD',
+			'TN',
+			'NP',
+			'MA',
+			'BO',
+			'IQ',
+			'PK',
+			'KW',
+			'NC',
+			'XK',
+			'MM',
+			'MZ',
+			'BI',
+			'GN',
+			'HT',
+			'HN'
+		]
 	}
 
-	public async getAvailableMethods() {
-		return [
+	public async getAvailableMethods(ip: string) {
+		const countryCode = this.getCountryCode(ip)
+
+		const methods = [
 			{
 				id: PaymentMethod.BANK_CARD,
 				name: 'Банковская карта',
@@ -75,6 +104,14 @@ export class PaymentService {
 				isAvailable: false
 			}
 		]
+
+		return methods.filter(
+			m =>
+				!(
+					m.id === PaymentMethod.CRYPTO &&
+					this.CRYPTO_BLOCKED_COUNTRIES.includes(countryCode)
+				)
+		)
 	}
 
 	public async create(dto: InitPaymentRequest, user: User) {
@@ -204,6 +241,12 @@ export class PaymentService {
 			},
 			merchant_customer_id: user.id
 		}
+	}
+
+	private getCountryCode(ip: string) {
+		const geo = lookup(ip)
+
+		return geo.country
 	}
 
 	private generateInvoiceId() {

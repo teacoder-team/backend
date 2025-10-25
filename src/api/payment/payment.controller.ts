@@ -9,7 +9,7 @@ import {
 import { ApiOkResponse, ApiOperation } from '@nestjs/swagger'
 import type { User } from '@prisma/generated'
 
-import { Authorization, Authorized } from '@/shared/decorators'
+import { Authorization, Authorized, ClientIp } from '@/shared/decorators'
 
 import {
 	InitPaymentRequest,
@@ -32,8 +32,8 @@ export class PaymentController {
 	})
 	@Get('methods')
 	@HttpCode(HttpStatus.OK)
-	public async getAvailableMethods() {
-		return await this.paymentService.getAvailableMethods()
+	public async getAvailableMethods(@ClientIp() ip: string) {
+		return await this.paymentService.getAvailableMethods(ip)
 	}
 
 	@ApiOperation({
