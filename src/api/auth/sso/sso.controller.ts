@@ -127,15 +127,32 @@ export class SsoController {
 	@HttpCode(HttpStatus.OK)
 	public async callback(
 		@Query('code') code: string,
+		@Query('error') error: string,
 		@Query('state') state: string,
 		@Param('provider') provider: AllowedProvider,
 		@ClientIp() ip: string,
 		@UserAgent() userAgent: string,
 		@Res() res: Response
 	) {
-		if (!code) throw new BadRequestException('No code provided')
-
 		const siteUrl = this.configService.get('hosts.app', { infer: true })
+
+		if (error) {
+			const parsedState = state
+				? JSON.parse(Buffer.from(state, 'base64').toString('utf-8'))
+				: null
+
+			if (parsedState?.action === 'connect') {
+				return res.redirect(
+					`${siteUrl}/account/connections?error=${error}`
+				)
+			} else if (parsedState?.action === 'login') {
+				return res.redirect(`${siteUrl}/auth/login?error=${error}`)
+			} else {
+				return res.redirect(`${siteUrl}?error=${error}`)
+			}
+		}
+
+		if (!code) throw new BadRequestException('No code provided')
 
 		const parsedState = state
 			? JSON.parse(Buffer.from(state, 'base64').toString('utf-8'))
