@@ -35,6 +35,48 @@ export class PaymentService {
 		this.HOSTS_REST = this.configService.get('hosts.rest', { infer: true })
 	}
 
+	public async getAvailableMethods() {
+		return [
+			{
+				id: PaymentMethod.BANK_CARD,
+				name: 'Банковская карта',
+				description: 'Оплата картой российских банков',
+				isAvailable: true
+			},
+			{
+				id: PaymentMethod.SBP,
+				name: 'СБП',
+				description: 'Оплата через Систему быстрых платежей',
+				isAvailable: true
+			},
+			// {
+			// 	id: PaymentMethod.YOOMONEY,
+			// 	name: 'ЮMoney',
+			// 	description: 'Оплата через кошелек ЮMoney',
+			// 	icon: YoomoneyIcon,
+			// 	isAvailable: true
+			// },
+			{
+				id: PaymentMethod.CRYPTO,
+				name: 'Криптовалюта',
+				description: 'Оплата с помощью BTC, USDT, TON',
+				isAvailable: true
+			},
+			{
+				id: PaymentMethod.INTERNATIONAL_CARD,
+				name: 'Международные карты',
+				description: 'Оплата картой зарубежных банков',
+				isAvailable: false
+			},
+			{
+				id: PaymentMethod.TELEGRAM_STARS,
+				name: 'Telegram Stars',
+				description: 'Оплата подписки через звёзды Telegram',
+				isAvailable: false
+			}
+		]
+	}
+
 	public async create(dto: InitPaymentRequest, user: User) {
 		const { method } = dto
 
