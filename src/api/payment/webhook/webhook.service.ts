@@ -136,7 +136,7 @@ export class WebhookService {
 		}
 	}
 
-	private async processPayment({
+	public async processPayment({
 		provider,
 		paymentId,
 		paymentData

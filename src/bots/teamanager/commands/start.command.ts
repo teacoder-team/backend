@@ -1,6 +1,6 @@
 import { ConfigService } from '@nestjs/config'
-import { Ctx, Start, Update } from 'nestjs-telegraf'
-import { Context } from 'telegraf'
+import { Ctx, InjectBot, Start, Update } from 'nestjs-telegraf'
+import { Context, Telegraf } from 'telegraf'
 
 import type { AllConfigs } from '@/config/definitions'
 
@@ -11,6 +11,7 @@ export class StartCommand {
 	private readonly OWNER_ID: string
 
 	public constructor(
+		@InjectBot('teamanager') private readonly bot: Telegraf,
 		private readonly configService: ConfigService<AllConfigs>
 	) {
 		this.OWNER_ID = this.configService.get('telegram.ownerId', {
@@ -23,10 +24,12 @@ export class StartCommand {
 		const chatId = ctx.chat.id.toString()
 
 		if (chatId !== this.OWNER_ID) {
-			await ctx.reply(MESSAGES.botUnavailable)
+			await this.bot.telegram.sendMessage(chatId, MESSAGES.botUnavailable)
 			return
 		}
 
-		await ctx.replyWithHTML(MESSAGES.welcomeMessage)
+		await this.bot.telegram.sendMessage(chatId, MESSAGES.welcomeMessage, {
+			parse_mode: 'HTML'
+		})
 	}
 }
