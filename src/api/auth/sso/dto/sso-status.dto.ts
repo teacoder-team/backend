@@ -18,4 +18,10 @@ export class SsoStatusResponse {
 		example: false
 	})
 	public discord: boolean
+
+	@ApiProperty({
+		description: 'Indicates whether the Telegram account is connected',
+		example: false
+	})
+	public telegram: boolean
 }

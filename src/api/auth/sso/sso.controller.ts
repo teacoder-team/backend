@@ -54,6 +54,23 @@ export class SsoController {
 	}
 
 	@ApiOperation({
+		summary: 'Get available SSO providers',
+		description:
+			'Returns a list of available external authentication providers (e.g., Google, GitHub, Discord, Telegram).'
+	})
+	@ApiOkResponse({
+		schema: {
+			type: 'array',
+			items: { type: 'string', example: 'google' }
+		}
+	})
+	@Get('available')
+	@HttpCode(HttpStatus.OK)
+	public async getAvailableMethods() {
+		return await this.ssoService.getAvailableMethods()
+	}
+
+	@ApiOperation({
 		summary: 'Get login URL for external provider',
 		description:
 			'Generates the login URL for the specified external provider (e.g., Google, GitHub).'

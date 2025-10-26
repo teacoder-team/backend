@@ -32,6 +32,10 @@ export class SsoService {
 		private readonly botService: TeamanagerBotService
 	) {}
 
+	public async getAvailableMethods() {
+		return ['google', 'github', 'discord', 'telegram']
+	}
+
 	public async fetchStatus(user: User) {
 		const accounts = await this.prismaService.externalAccount.findMany({
 			where: {
@@ -48,6 +52,9 @@ export class SsoService {
 			),
 			discord: accounts.some(
 				account => account.provider === AccountProvider.DISCORD
+			),
+			telegram: accounts.some(
+				account => account.provider === AccountProvider.TELEGRAM
 			)
 		}
 
