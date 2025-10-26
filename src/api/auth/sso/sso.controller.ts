@@ -1,5 +1,6 @@
 import {
 	BadRequestException,
+	Body,
 	Controller,
 	Delete,
 	Get,
@@ -14,7 +15,7 @@ import {
 import { ConfigService } from '@nestjs/config'
 import { ApiOkResponse, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger'
 import type { User } from '@prisma/generated'
-import { type AllowedProvider, SentinelService } from '@teacoder/sentinel'
+import { AllowedProvider, SentinelService } from '@teacoder/sentinel'
 import type { Response } from 'express'
 
 import { AllConfigs } from '@/config/definitions'
@@ -26,7 +27,12 @@ import {
 } from '@/shared/decorators'
 import { ProviderGuard } from '@/shared/guards'
 
-import { SsoConnectResponse, SsoStatusResponse } from './dto'
+import {
+	SsoConnectResponse,
+	SsoStatusResponse,
+	TelegramAuthRequest,
+	TelegramAuthResponse
+} from './dto'
 import { SsoService } from './sso.service'
 
 @ApiTags('Sso')
@@ -87,14 +93,19 @@ export class SsoController {
 	@Post('login/:provider')
 	@HttpCode(HttpStatus.OK)
 	@UseGuards(ProviderGuard)
-	public async getLoginUrl(@Param('provider') provider: AllowedProvider) {
+	public async getLoginUrl(@Param('provider') provider: string) {
 		const providerInstance = this.sentinelService.findService(provider)
 
 		const state = Buffer.from(JSON.stringify({ action: 'login' })).toString(
 			'base64'
 		)
 
-		return { url: providerInstance.getAuthUrl(state) }
+		return {
+			url:
+				provider === 'telegram'
+					? this.ssoService.getTelegramAuthUrl()
+					: providerInstance.getAuthUrl(state)
+		}
 	}
 
 	@ApiOperation({
@@ -116,7 +127,7 @@ export class SsoController {
 	@HttpCode(HttpStatus.OK)
 	@UseGuards(ProviderGuard)
 	public async getConnectUrl(
-		@Param('provider') provider: AllowedProvider,
+		@Param('provider') provider: string,
 		@Authorized() user: User
 	) {
 		const providerInstance = this.sentinelService.findService(provider)
@@ -125,7 +136,12 @@ export class SsoController {
 			JSON.stringify({ action: 'connect', userId: user.id })
 		).toString('base64')
 
-		return { url: providerInstance.getAuthUrl(state) }
+		return {
+			url:
+				provider === 'telegram'
+					? this.ssoService.getTelegramAuthUrl()
+					: providerInstance.getAuthUrl(state)
+		}
 	}
 
 	@ApiOperation({
@@ -214,6 +230,34 @@ export class SsoController {
 				)
 			}
 		}
+	}
+
+	@ApiOperation({
+		summary: 'Telegram OAuth Callback',
+		description:
+			'Handles the callback from Telegram login. Validates the Telegram data and creates a session for the user.'
+	})
+	@ApiOkResponse({
+		type: TelegramAuthResponse
+	})
+	@Post('callback/telegram')
+	@HttpCode(HttpStatus.OK)
+	public async telegramCallback(
+		@Body() dto: TelegramAuthRequest,
+		@ClientIp() ip: string,
+		@UserAgent() userAgent: string
+	) {
+		const isValid = this.ssoService.validateTelegramUser(dto)
+
+		if (!isValid) throw new BadRequestException('Invalid Telegram data')
+
+		const session = await this.ssoService.loginWithTelegram(
+			dto,
+			ip,
+			userAgent
+		)
+
+		return session
 	}
 
 	@ApiOperation({

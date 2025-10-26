@@ -140,8 +140,6 @@ export class UsersController {
 		)
 		file: Express.Multer.File
 	) {
-		console.log(file)
-
 		if (!file) throw new BadRequestException('Файл не загружен')
 
 		return this.usersService.changeAvatar(user, file)

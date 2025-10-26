@@ -3,21 +3,28 @@ import {
 	Injectable,
 	NotFoundException
 } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
 import {
 	AccountProvider,
 	EmailVerificationStatus,
 	type User
 } from '@prisma/generated'
 import { AllowedProvider, SentinelService } from '@teacoder/sentinel'
-import { randomBytes } from 'crypto'
+import { createHash, createHmac, randomBytes } from 'crypto'
 
 import { TeamanagerBotService } from '@/bots/teamanager/teamanager.bot.service'
+import { AllConfigs } from '@/config/definitions'
 import { PrismaService } from '@/infra/prisma/prisma.service'
 import { RedisService } from '@/infra/redis/redis.service'
 import { slugify } from '@/shared/utils'
 
+import { TelegramAuthRequest } from './dto'
+
 @Injectable()
 export class SsoService {
+	private readonly TELEGRAM_BOT_ID: string
+	private readonly TELEGRAM_BOT_TOKEN: string
+
 	private readonly providerMap: Record<AllowedProvider, AccountProvider> = {
 		google: AccountProvider.GOOGLE,
 		github: AccountProvider.GITHUB,
@@ -28,9 +35,16 @@ export class SsoService {
 	public constructor(
 		private readonly prismaService: PrismaService,
 		private readonly redisService: RedisService,
+		private readonly configService: ConfigService<AllConfigs>,
 		private readonly sentinelService: SentinelService,
 		private readonly botService: TeamanagerBotService
-	) {}
+	) {
+		this.TELEGRAM_BOT_TOKEN = this.configService.get(
+			'telegram.teacoderToken',
+			{ infer: true }
+		)
+		this.TELEGRAM_BOT_ID = this.TELEGRAM_BOT_TOKEN.split(':')[0]
+	}
 
 	public async getAvailableMethods() {
 		return ['google', 'github', 'discord', 'telegram']
@@ -220,6 +234,98 @@ export class SsoService {
 		}
 
 		return session
+	}
+
+	public getTelegramAuthUrl() {
+		const url = new URL('https://oauth.telegram.org/auth')
+
+		url.searchParams.append('bot_id', this.TELEGRAM_BOT_ID)
+		url.searchParams.append('origin', 'https://teacoder.ru')
+		url.searchParams.append('embed', '1')
+		url.searchParams.append('request_access', 'write')
+		url.searchParams.append(
+			'return_to',
+			'https://teacoder.ru/auth/telegram-oauth-finish'
+		)
+
+		return url.href
+	}
+
+	public async loginWithTelegram(
+		dto: TelegramAuthRequest,
+		ip: string,
+		userAgent: string
+	) {
+		const { id, first_name, username, photo_url } = dto
+
+		let account = await this.prismaService.externalAccount.findUnique({
+			where: {
+				providerAccountId: id.toString()
+			},
+			include: {
+				user: true
+			}
+		})
+
+		let user: User | null = account?.user ?? null
+		let isNewUser = false
+
+		if (!user) {
+			user = await this.prismaService.user.create({
+				data: {
+					displayName: first_name,
+					username: username
+						? `${randomBytes(16).toString('hex')}_${username}`
+						: randomBytes(16).toString('hex'),
+					avatar: photo_url,
+					externalAccounts: {
+						create: {
+							provider: AccountProvider.TELEGRAM,
+							providerAccountId: id.toString()
+						}
+					}
+				}
+			})
+			isNewUser = true
+		}
+
+		const session = await this.redisService.createSession(
+			user,
+			ip,
+			userAgent
+		)
+
+		if (isNewUser) await this.botService.sendNewUser(user, session)
+
+		return session
+	}
+
+	public validateTelegramUser(dto: TelegramAuthRequest): boolean {
+		const hash = dto.hash
+
+		if (!hash) return false
+
+		const now = Math.floor(Date.now() / 1000)
+		const maxAge = 15 * 60
+
+		if (Math.abs(now - dto.auth_date) > maxAge) return false
+
+		const dataCheckArr = Object.keys(dto)
+			.filter(k => k !== 'hash')
+			.sort()
+			.map(k => `${k}=${dto[k]}`)
+
+		const dataCheckString = dataCheckArr.join('\n')
+
+		const secretKey = createHash('sha256')
+			.update(this.TELEGRAM_BOT_TOKEN)
+			.digest()
+
+		const hmac = createHmac('sha256', secretKey)
+			.update(dataCheckString)
+			.digest('hex')
+
+		return hmac === hash
 	}
 
 	public async unlink(provider: AllowedProvider, user: User) {

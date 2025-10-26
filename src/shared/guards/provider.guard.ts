@@ -4,6 +4,7 @@ import {
 	Injectable,
 	NotFoundException
 } from '@nestjs/common'
+import { AccountProvider } from '@prisma/generated'
 import { SentinelService } from '@teacoder/sentinel'
 import type { Request } from 'express'
 
@@ -13,13 +14,25 @@ export class ProviderGuard implements CanActivate {
 
 	public canActivate(context: ExecutionContext) {
 		const request = context.switchToHttp().getRequest<Request>()
+		const provider =
+			request.params.provider.toUpperCase() as keyof typeof AccountProvider
 
-		const provider = request.params.provider
-
-		const providerInstance = this.sentinelService.findService(provider)
-
-		if (!providerInstance)
+		if (!(provider in AccountProvider))
 			throw new NotFoundException('Провайдер не найден')
+
+		const providerEnum = AccountProvider[provider]
+
+		if (providerEnum !== AccountProvider.TELEGRAM) {
+			const providerInstance = this.sentinelService.findService(
+				providerEnum.toLowerCase()
+			)
+
+			if (!providerInstance) {
+				throw new NotFoundException(
+					'Провайдер не найден в SentinelService'
+				)
+			}
+		}
 
 		return true
 	}
