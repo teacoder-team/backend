@@ -103,7 +103,7 @@ export class SsoController {
 		return {
 			url:
 				provider === 'telegram'
-					? this.ssoService.getTelegramAuthUrl()
+					? this.ssoService.getTelegramAuthUrl('login')
 					: providerInstance.getAuthUrl(state)
 		}
 	}
@@ -139,7 +139,7 @@ export class SsoController {
 		return {
 			url:
 				provider === 'telegram'
-					? this.ssoService.getTelegramAuthUrl()
+					? this.ssoService.getTelegramAuthUrl('connect')
 					: providerInstance.getAuthUrl(state)
 		}
 	}
@@ -190,8 +190,6 @@ export class SsoController {
 		const parsedState = state
 			? JSON.parse(Buffer.from(state, 'base64').toString('utf-8'))
 			: null
-
-		let result
 
 		try {
 			if (parsedState.action === 'connect' && parsedState.userId) {
@@ -251,13 +249,26 @@ export class SsoController {
 
 		if (!isValid) throw new BadRequestException('Invalid Telegram data')
 
-		const session = await this.ssoService.loginWithTelegram(
-			dto,
-			ip,
-			userAgent
-		)
+		return await this.ssoService.loginWithTelegram(dto, ip, userAgent)
+	}
 
-		return session
+	@ApiOperation({
+		summary: 'Telegram Connect Callback',
+		description:
+			'Handles Telegram OAuth result and links Telegram account to the current user.'
+	})
+	@Authorization()
+	@Post('telegram/connect-callback')
+	@HttpCode(HttpStatus.OK)
+	public async telegramConnectCallback(
+		@Body() dto: TelegramAuthRequest,
+		@Authorized() user: User
+	) {
+		const isValid = this.ssoService.validateTelegramUser(dto)
+
+		if (!isValid) throw new BadRequestException('Invalid Telegram data')
+
+		return this.ssoService.connectWithTelegram(dto, user)
 	}
 
 	@ApiOperation({

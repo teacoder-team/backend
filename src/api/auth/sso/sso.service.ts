@@ -1,5 +1,5 @@
 import {
-	BadRequestException,
+	ConflictException,
 	Injectable,
 	NotFoundException
 } from '@nestjs/common'
@@ -25,10 +25,11 @@ export class SsoService {
 	private readonly TELEGRAM_BOT_ID: string
 	private readonly TELEGRAM_BOT_TOKEN: string
 
-	private readonly providerMap: Record<AllowedProvider, AccountProvider> = {
+	private readonly providerMap: Record<string, AccountProvider> = {
 		google: AccountProvider.GOOGLE,
 		github: AccountProvider.GITHUB,
 		discord: AccountProvider.DISCORD,
+		telegram: AccountProvider.TELEGRAM,
 		yandex: AccountProvider.YANDEX
 	}
 
@@ -85,15 +86,14 @@ export class SsoService {
 			.getUserByCode(code)
 		const providerEnum = this.providerMap[provider]
 
-		const existingAccount =
-			await this.prismaService.externalAccount.findUnique({
-				where: {
-					providerAccountId: external.id
-				}
-			})
+		const existing = await this.prismaService.externalAccount.findUnique({
+			where: {
+				providerAccountId: external.id
+			}
+		})
 
-		if (existingAccount) {
-			throw new BadRequestException(
+		if (existing) {
+			throw new ConflictException(
 				'Этот аккаунт уже привязан к другому пользователю'
 			)
 		}
@@ -109,7 +109,7 @@ export class SsoService {
 			})
 
 		if (sameEmailAccount) {
-			throw new BadRequestException(
+			throw new ConflictException(
 				`Аккаунт с этой почтой уже привязан через ${provider}`
 			)
 		}
@@ -236,7 +236,7 @@ export class SsoService {
 		return session
 	}
 
-	public getTelegramAuthUrl() {
+	public getTelegramAuthUrl(action: 'login' | 'connect') {
 		const url = new URL('https://oauth.telegram.org/auth')
 
 		url.searchParams.append('bot_id', this.TELEGRAM_BOT_ID)
@@ -245,7 +245,9 @@ export class SsoService {
 		url.searchParams.append('request_access', 'write')
 		url.searchParams.append(
 			'return_to',
-			'https://teacoder.ru/auth/telegram-oauth-finish'
+			action === 'connect'
+				? 'https://teacoder.ru/account/connections'
+				: 'https://teacoder.ru/auth/telegram-oauth-finish'
 		)
 
 		return url.href
@@ -298,6 +300,33 @@ export class SsoService {
 		if (isNewUser) await this.botService.sendNewUser(user, session)
 
 		return session
+	}
+
+	public async connectWithTelegram(dto: TelegramAuthRequest, user: User) {
+		const { id } = dto
+
+		const existing = await this.prismaService.externalAccount.findUnique({
+			where: {
+				providerAccountId: id.toString()
+			}
+		})
+
+		if (existing)
+			throw new ConflictException('Этот Telegram аккаунт уже привязан')
+
+		await this.prismaService.externalAccount.create({
+			data: {
+				provider: AccountProvider.TELEGRAM,
+				providerAccountId: id.toString(),
+				user: {
+					connect: {
+						id: user.id
+					}
+				}
+			}
+		})
+
+		return true
 	}
 
 	public validateTelegramUser(dto: TelegramAuthRequest): boolean {
