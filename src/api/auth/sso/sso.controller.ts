@@ -29,6 +29,8 @@ import { ProviderGuard } from '@/shared/guards'
 
 import {
 	SsoConnectResponse,
+	SsoLoginRequest,
+	SsoLoginResponse,
 	SsoStatusResponse,
 	TelegramAuthRequest,
 	TelegramAuthResponse
@@ -88,17 +90,24 @@ export class SsoController {
 		schema: { type: 'string' }
 	})
 	@ApiOkResponse({
-		type: SsoConnectResponse
+		type: SsoLoginResponse
 	})
 	@Post('login/:provider')
 	@HttpCode(HttpStatus.OK)
 	@UseGuards(ProviderGuard)
-	public async getLoginUrl(@Param('provider') provider: string) {
+	public async getLoginUrl(
+		@Param('provider') provider: string,
+		@Body() dto: SsoLoginRequest
+	) {
 		const providerInstance = this.sentinelService.findService(provider)
 
-		const state = Buffer.from(JSON.stringify({ action: 'login' })).toString(
-			'base64'
-		)
+		const state = Buffer.from(
+			JSON.stringify({
+				action: 'login',
+				visitorId: dto.visitorId,
+				requestId: dto.requestId
+			})
+		).toString('base64')
 
 		return {
 			url:
@@ -205,7 +214,11 @@ export class SsoController {
 					provider,
 					code,
 					ip,
-					userAgent
+					userAgent,
+					{
+						visitorId: parsedState.visitorId,
+						requestId: parsedState.requestId
+					}
 				)
 
 				return res.redirect(

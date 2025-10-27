@@ -16,6 +16,7 @@ import { TeamanagerBotService } from '@/bots/teamanager/teamanager.bot.service'
 import { AllConfigs } from '@/config/definitions'
 import { PrismaService } from '@/infra/prisma/prisma.service'
 import { RedisService } from '@/infra/redis/redis.service'
+import { FingerprintService } from '@/libs/fingerprint/fingerprint.service'
 import { slugify } from '@/shared/utils'
 
 import { TelegramAuthRequest } from './dto'
@@ -38,6 +39,7 @@ export class SsoService {
 		private readonly redisService: RedisService,
 		private readonly configService: ConfigService<AllConfigs>,
 		private readonly sentinelService: SentinelService,
+		private readonly fingerprintService: FingerprintService,
 		private readonly botService: TeamanagerBotService
 	) {
 		this.TELEGRAM_BOT_TOKEN = this.configService.get(
@@ -136,7 +138,8 @@ export class SsoService {
 		provider: AllowedProvider,
 		code: string,
 		ip: string,
-		userAgent: string
+		userAgent: string,
+		options?: { visitorId?: string; requestId?: string }
 	) {
 		const external = await this.sentinelService
 			.findService(provider)
@@ -219,11 +222,17 @@ export class SsoService {
 			}
 		}
 
-		const session = await this.redisService.createSession(
-			user,
-			ip,
-			userAgent
+		const visitorHistory = await this.fingerprintService.getVisitorHistory(
+			options?.visitorId
 		)
+
+		const session = await this.redisService.createSession(user, {
+			ip,
+			userAgent,
+			visitorId: options?.visitorId,
+			requestId: options?.requestId,
+			visitorHistory
+		})
 
 		if (isNewUser) {
 			const userSession = await this.redisService.getUserSession(
@@ -258,7 +267,8 @@ export class SsoService {
 		ip: string,
 		userAgent: string
 	) {
-		const { id, first_name, username, photo_url } = dto
+		const { id, first_name, username, photo_url, visitorId, requestId } =
+			dto
 
 		let account = await this.prismaService.externalAccount.findUnique({
 			where: {
@@ -291,11 +301,16 @@ export class SsoService {
 			isNewUser = true
 		}
 
-		const session = await this.redisService.createSession(
-			user,
+		const visitorHistory =
+			await this.fingerprintService.getVisitorHistory(visitorId)
+
+		const session = await this.redisService.createSession(user, {
 			ip,
-			userAgent
-		)
+			userAgent,
+			visitorId,
+			requestId,
+			visitorHistory
+		})
 
 		if (isNewUser) await this.botService.sendNewUser(user, session)
 
@@ -340,7 +355,7 @@ export class SsoService {
 		if (Math.abs(now - dto.auth_date) > maxAge) return false
 
 		const dataCheckArr = Object.keys(dto)
-			.filter(k => k !== 'hash')
+			.filter(k => k !== 'hash' && k !== 'visitorId' && k !== 'requestId')
 			.sort()
 			.map(k => `${k}=${dto[k]}`)
 
