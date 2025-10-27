@@ -5,6 +5,7 @@ import { ApiModule } from './api/api.module'
 import { BotModule } from './bots/bot.module'
 import {
 	appEnv,
+	fingerprintEnv,
 	heleketEnv,
 	hostsEnv,
 	kinescopeEnv,
@@ -31,6 +32,7 @@ import { IS_DEV_ENV } from './shared/utils'
 			isGlobal: true,
 			load: [
 				appEnv,
+				fingerprintEnv,
 				heleketEnv,
 				hostsEnv,
 				kinescopeEnv,

@@ -1,4 +1,5 @@
 export * from './app.env'
+export * from './fingerprint.env'
 export * from './heleket.env'
 export * from './hosts.env'
 export * from './kinescope.env'

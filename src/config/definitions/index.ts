@@ -1,5 +1,6 @@
 export * from './all.configs'
 export * from './app.config'
+export * from './fingerprint.config'
 export * from './heleket.config'
 export * from './hosts.config'
 export * from './kinescope.config'

@@ -1,4 +1,5 @@
 export * from './app.validator'
+export * from './fingerprint.validator'
 export * from './heleket.validator'
 export * from './hosts.validator'
 export * from './kinescope.validator'
