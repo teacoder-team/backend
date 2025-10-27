@@ -16,7 +16,6 @@ import { TeamanagerBotService } from '@/bots/teamanager/teamanager.bot.service'
 import { AllConfigs } from '@/config/definitions'
 import { PrismaService } from '@/infra/prisma/prisma.service'
 import { RedisService } from '@/infra/redis/redis.service'
-import { FingerprintService } from '@/libs/fingerprint/fingerprint.service'
 import { slugify } from '@/shared/utils'
 
 import { TelegramAuthRequest } from './dto'
@@ -39,7 +38,6 @@ export class SsoService {
 		private readonly redisService: RedisService,
 		private readonly configService: ConfigService<AllConfigs>,
 		private readonly sentinelService: SentinelService,
-		private readonly fingerprintService: FingerprintService,
 		private readonly botService: TeamanagerBotService
 	) {
 		this.TELEGRAM_BOT_TOKEN = this.configService.get(
@@ -222,16 +220,11 @@ export class SsoService {
 			}
 		}
 
-		const visitorHistory = await this.fingerprintService.getVisitorHistory(
-			options?.visitorId
-		)
-
 		const session = await this.redisService.createSession(user, {
 			ip,
 			userAgent,
 			visitorId: options?.visitorId,
-			requestId: options?.requestId,
-			visitorHistory
+			requestId: options?.requestId
 		})
 
 		if (isNewUser) {
@@ -301,15 +294,11 @@ export class SsoService {
 			isNewUser = true
 		}
 
-		const visitorHistory =
-			await this.fingerprintService.getVisitorHistory(visitorId)
-
 		const session = await this.redisService.createSession(user, {
 			ip,
 			userAgent,
 			visitorId,
-			requestId,
-			visitorHistory
+			requestId
 		})
 
 		if (isNewUser) await this.botService.sendNewUser(user, session)

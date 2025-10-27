@@ -15,6 +15,7 @@ import { v4 as uuidv4 } from 'uuid'
 
 import { getRedisConfig } from '@/config'
 import type { AllConfigs } from '@/config/definitions'
+import { FingerprintService } from '@/libs/fingerprint/fingerprint.service'
 import type { Session, UserSession } from '@/shared/interfaces'
 
 export interface CreateSessionOptions {
@@ -22,7 +23,6 @@ export interface CreateSessionOptions {
 	userAgent: string
 	visitorId?: string | null
 	requestId?: string | null
-	visitorHistory?: any
 }
 
 @Injectable()
@@ -34,7 +34,8 @@ export class RedisService
 	private parser: UAParser
 
 	public constructor(
-		private readonly configService: ConfigService<AllConfigs>
+		private readonly configService: ConfigService<AllConfigs>,
+		private readonly fingerprintService: FingerprintService
 	) {
 		super(getRedisConfig(configService))
 
@@ -69,13 +70,14 @@ export class RedisService
 	}
 
 	public async createSession(user: User, options: CreateSessionOptions) {
-		const {
-			ip: originalIp,
-			userAgent,
-			visitorId,
-			requestId,
-			visitorHistory
-		} = options
+		const { ip: originalIp, userAgent, visitorId, requestId } = options
+
+		let visitorHistory = null
+
+		if (visitorId && requestId) {
+			visitorHistory =
+				await this.fingerprintService.getVisitorHistory(visitorId)
+		}
 
 		this.parser.setUA(userAgent ?? '')
 		const uaResult = this.parser.getResult()

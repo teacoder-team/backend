@@ -11,7 +11,6 @@ import { randomBytes } from 'crypto'
 import { TeamanagerBotService } from '@/bots/teamanager/teamanager.bot.service'
 import { PrismaService } from '@/infra/prisma/prisma.service'
 import { RedisService } from '@/infra/redis/redis.service'
-import { FingerprintService } from '@/libs/fingerprint/fingerprint.service'
 import { MailService } from '@/libs/mail/mail.service'
 import { slugify } from '@/shared/utils'
 
@@ -28,7 +27,6 @@ export class AccountService {
 	public constructor(
 		private readonly prismaService: PrismaService,
 		private readonly redisService: RedisService,
-		private readonly fingerprintService: FingerprintService,
 		private readonly mailService: MailService,
 		private readonly botService: TeamanagerBotService
 	) {}
@@ -95,15 +93,11 @@ export class AccountService {
 			}
 		})
 
-		const visitorHistory =
-			await this.fingerprintService.getVisitorHistory(visitorId)
-
 		const session = await this.redisService.createSession(user, {
 			ip,
 			userAgent,
 			visitorId: visitorId ?? null,
-			requestId: requestId ?? null,
-			visitorHistory
+			requestId: requestId ?? null
 		})
 
 		const userSession = await this.redisService.getUserSession(session.id)

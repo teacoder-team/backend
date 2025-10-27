@@ -10,7 +10,6 @@ import { verify } from 'argon2'
 
 import { PrismaService } from '@/infra/prisma/prisma.service'
 import { RedisService } from '@/infra/redis/redis.service'
-import { FingerprintService } from '@/libs/fingerprint/fingerprint.service'
 
 import { LoginRequest } from './dto'
 
@@ -18,8 +17,7 @@ import { LoginRequest } from './dto'
 export class SessionService {
 	public constructor(
 		private readonly prismaService: PrismaService,
-		private readonly redisService: RedisService,
-		private readonly fingerprintService: FingerprintService
+		private readonly redisService: RedisService
 	) {}
 
 	public async login(dto: LoginRequest, ip: string, userAgent: string) {
@@ -75,15 +73,11 @@ export class SessionService {
 			return ticket
 		}
 
-		const visitorHistory =
-			await this.fingerprintService.getVisitorHistory(visitorId)
-
 		const session = await this.redisService.createSession(user, {
 			ip,
 			userAgent,
 			visitorId: visitorId ?? null,
-			requestId: requestId ?? null,
-			visitorHistory
+			requestId: requestId ?? null
 		})
 
 		return session
