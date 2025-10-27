@@ -136,7 +136,8 @@ export class SsoService {
 		provider: AllowedProvider,
 		code: string,
 		ip: string,
-		userAgent: string
+		userAgent: string,
+		options?: { visitorId?: string; requestId?: string }
 	) {
 		const external = await this.sentinelService
 			.findService(provider)
@@ -219,11 +220,12 @@ export class SsoService {
 			}
 		}
 
-		const session = await this.redisService.createSession(
-			user,
+		const session = await this.redisService.createSession(user, {
 			ip,
-			userAgent
-		)
+			userAgent,
+			visitorId: options?.visitorId,
+			requestId: options?.requestId
+		})
 
 		if (isNewUser) {
 			const userSession = await this.redisService.getUserSession(
@@ -258,7 +260,8 @@ export class SsoService {
 		ip: string,
 		userAgent: string
 	) {
-		const { id, first_name, username, photo_url } = dto
+		const { id, first_name, username, photo_url, visitorId, requestId } =
+			dto
 
 		let account = await this.prismaService.externalAccount.findUnique({
 			where: {
@@ -291,11 +294,12 @@ export class SsoService {
 			isNewUser = true
 		}
 
-		const session = await this.redisService.createSession(
-			user,
+		const session = await this.redisService.createSession(user, {
 			ip,
-			userAgent
-		)
+			userAgent,
+			visitorId,
+			requestId
+		})
 
 		if (isNewUser) await this.botService.sendNewUser(user, session)
 
@@ -340,7 +344,7 @@ export class SsoService {
 		if (Math.abs(now - dto.auth_date) > maxAge) return false
 
 		const dataCheckArr = Object.keys(dto)
-			.filter(k => k !== 'hash')
+			.filter(k => k !== 'hash' && k !== 'visitorId' && k !== 'requestId')
 			.sort()
 			.map(k => `${k}=${dto[k]}`)
 

@@ -299,11 +299,12 @@ export class MfaService {
 			)
 		}
 
-		const session = await this.redisService.createSession(
-			user,
+		const session = await this.redisService.createSession(user, {
 			ip,
-			userAgent
-		)
+			userAgent,
+			visitorId: ticket.visitorId ?? null,
+			requestId: ticket.requestId ?? null
+		})
 
 		await this.redisService.del(`mfa_tickets:${dto.ticket}`)
 

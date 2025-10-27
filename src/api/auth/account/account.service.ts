@@ -66,7 +66,7 @@ export class AccountService {
 	}
 
 	public async create(dto: CreateUserRequest, ip: string, userAgent: string) {
-		const { name, email, password } = dto
+		const { name, email, password, visitorId, requestId } = dto
 
 		// const { valid } = await validate(email)
 
@@ -93,11 +93,12 @@ export class AccountService {
 			}
 		})
 
-		const session = await this.redisService.createSession(
-			user,
+		const session = await this.redisService.createSession(user, {
 			ip,
-			userAgent
-		)
+			userAgent,
+			visitorId: visitorId ?? null,
+			requestId: requestId ?? null
+		})
 
 		const userSession = await this.redisService.getUserSession(session.id)
 

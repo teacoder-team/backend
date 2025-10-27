@@ -59,6 +59,22 @@ export class TelegramAuthRequest {
 	})
 	@IsString()
 	public hash: string
+
+	@ApiProperty({
+		description: 'Visitor fingerprint ID',
+		example: 'visitor-123456'
+	})
+	@IsOptional()
+	@IsString()
+	public visitorId?: string
+
+	@ApiProperty({
+		description: 'Request ID for fingerprint tracking',
+		example: 'req-987654'
+	})
+	@IsOptional()
+	@IsString()
+	public requestId?: string
 }
 
 export class TelegramAuthResponse extends LoginSessionResponse {}

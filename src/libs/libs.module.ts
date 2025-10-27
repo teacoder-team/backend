@@ -4,6 +4,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config'
 
 import { getBullmqConfig } from '@/config'
 
+import { FingerprintModule } from './fingerprint/fingerprint.module'
 import { HeleketModule } from './heleket/heleket.module'
 import { KinescopeModule } from './kinescope/kinescope.module'
 import { MailModule } from './mail/mail.module'
@@ -20,6 +21,7 @@ import { StorageModule } from './storage/storage.module'
 		MailModule,
 		StorageModule,
 		KinescopeModule,
+		FingerprintModule,
 		RobokassaModule,
 		HeleketModule
 	]

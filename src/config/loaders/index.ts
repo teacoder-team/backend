@@ -1,5 +1,6 @@
 export * from './bullmq.config-loader'
 export * from './cors.config-loader'
+export * from './fingerprint.config-loader'
 export * from './helmet.config-loader'
 export * from './heleket.config-loader'
 export * from './kinescope.config-loader'

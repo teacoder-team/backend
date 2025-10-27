@@ -1,4 +1,5 @@
 import type { AppConfig } from './app.config'
+import type { FingerprintConfig } from './fingerprint.config'
 import type { HeleketConfig } from './heleket.config'
 import type { HostsConfig } from './hosts.config'
 import type { KinescopeConfig } from './kinescope.config'
@@ -15,6 +16,7 @@ import type { YookassaConfig } from './yookassa.config'
 
 export interface AllConfigs {
 	app: AppConfig
+	fingerprint: FingerprintConfig
 	heleket: HeleketConfig
 	hosts: HostsConfig
 	kinescope: KinescopeConfig

@@ -85,12 +85,12 @@ export class PaymentService {
 			// 	icon: YoomoneyIcon,
 			// 	isAvailable: true
 			// },
-			{
-				id: PaymentMethod.CRYPTO,
-				name: 'Криптовалюта',
-				description: 'Оплата с помощью BTC, USDT, TON',
-				isAvailable: true
-			},
+			// {
+			// 	id: PaymentMethod.CRYPTO,
+			// 	name: 'Криптовалюта',
+			// 	description: 'Оплата с помощью BTC, USDT, TON',
+			// 	isAvailable: true
+			// },
 			{
 				id: PaymentMethod.INTERNATIONAL_CARD,
 				name: 'Международные карты',
@@ -105,13 +105,14 @@ export class PaymentService {
 			}
 		]
 
-		return methods.filter(
-			m =>
-				!(
-					m.id === PaymentMethod.CRYPTO &&
-					this.CRYPTO_BLOCKED_COUNTRIES.includes(countryCode)
-				)
-		)
+		// return methods.filter(
+		// 	m =>
+		// 		!(
+		// 			m.id === PaymentMethod.CRYPTO &&
+		// 			this.CRYPTO_BLOCKED_COUNTRIES.includes(countryCode)
+		// 		)
+		// )
+		return methods
 	}
 
 	public async create(dto: InitPaymentRequest, user: User) {

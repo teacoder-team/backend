@@ -17,12 +17,11 @@ import { LoginRequest } from './dto'
 export class SessionService {
 	public constructor(
 		private readonly prismaService: PrismaService,
-		private readonly redisService: RedisService,
-		private readonly configService: ConfigService
+		private readonly redisService: RedisService
 	) {}
 
 	public async login(dto: LoginRequest, ip: string, userAgent: string) {
-		const { email, password } = dto
+		const { email, password, requestId, visitorId } = dto
 
 		const user = await this.prismaService.user.findFirst({
 			where: {
@@ -64,17 +63,22 @@ export class SessionService {
 
 			const ticket = await this.redisService.createMfaTicket(
 				user.id,
-				allowedMethods
+				allowedMethods,
+				{
+					visitorId,
+					requestId
+				}
 			)
 
 			return ticket
 		}
 
-		const session = await this.redisService.createSession(
-			user,
+		const session = await this.redisService.createSession(user, {
 			ip,
-			userAgent
-		)
+			userAgent,
+			visitorId: visitorId ?? null,
+			requestId: requestId ?? null
+		})
 
 		return session
 	}
@@ -123,11 +127,10 @@ export class SessionService {
 			return ticket
 		}
 
-		const session = await this.redisService.createSession(
-			admin,
+		const session = await this.redisService.createSession(admin, {
 			ip,
 			userAgent
-		)
+		})
 
 		return session
 	}
@@ -232,8 +235,8 @@ export class SessionService {
 			return {
 				id: session.id,
 				createdAt: userSession.createdAt,
-				country: userSession.geo.name,
-				city: userSession.geo.capital,
+				country: userSession.geo.country,
+				city: userSession.geo.city,
 				browser: userSession.browser.name,
 				os: userSession.os.name
 			}
