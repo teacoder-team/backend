@@ -85,34 +85,33 @@ export class PaymentService {
 			// 	icon: YoomoneyIcon,
 			// 	isAvailable: true
 			// },
-			// {
-			// 	id: PaymentMethod.CRYPTO,
-			// 	name: 'Криптовалюта',
-			// 	description: 'Оплата с помощью BTC, USDT, TON',
-			// 	isAvailable: true
-			// },
+			{
+				id: PaymentMethod.CRYPTO,
+				name: 'Криптовалюта',
+				description: 'Оплата с помощью BTC, USDT, TON',
+				isAvailable: true
+			},
 			{
 				id: PaymentMethod.INTERNATIONAL_CARD,
 				name: 'Международные карты',
 				description: 'Оплата картой зарубежных банков',
-				isAvailable: false
-			},
-			{
-				id: PaymentMethod.TELEGRAM_STARS,
-				name: 'Telegram Stars',
-				description: 'Оплата подписки через звёзды Telegram',
-				isAvailable: false
+				isAvailable: true
 			}
+			// {
+			// 	id: PaymentMethod.TELEGRAM_STARS,
+			// 	name: 'Telegram Stars',
+			// 	description: 'Оплата подписки через звёзды Telegram',
+			// 	isAvailable: false
+			// }
 		]
 
-		// return methods.filter(
-		// 	m =>
-		// 		!(
-		// 			m.id === PaymentMethod.CRYPTO &&
-		// 			this.CRYPTO_BLOCKED_COUNTRIES.includes(countryCode)
-		// 		)
-		// )
-		return methods
+		return methods.filter(
+			m =>
+				!(
+					m.id === PaymentMethod.CRYPTO &&
+					this.CRYPTO_BLOCKED_COUNTRIES.includes(countryCode)
+				)
+		)
 	}
 
 	public async create(dto: InitPaymentRequest, user: User) {
