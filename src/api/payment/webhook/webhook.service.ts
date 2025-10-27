@@ -226,6 +226,7 @@ export class WebhookService {
 				userId: payment.user.id
 			},
 			update: {
+				startedAt: now,
 				expiresAt,
 				isActive: true
 			},
