@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger'
 import {
 	IsEmail,
 	IsNotEmpty,
+	IsOptional,
 	IsString,
 	MaxLength,
 	MinLength
@@ -51,6 +52,24 @@ export class CreateUserRequest {
 	@IsString({ message: 'Капча должна быть строкой' })
 	@IsNotEmpty({ message: 'Капча обязательна' })
 	public captcha: string
+
+	@ApiProperty({
+		description: 'Fingerprint visitor ID',
+		example: 'g8GhE1JtVZ9xYkLm',
+		required: false
+	})
+	@IsString({ message: 'visitorId должен быть строкой' })
+	@IsOptional()
+	public visitorId?: string
+
+	@ApiProperty({
+		description: 'Fingerprint request ID',
+		example: 'dbe7b3b8-22f4-4b89-9db9-f8e3798a2b1e',
+		required: false
+	})
+	@IsString({ message: 'requestId должен быть строкой' })
+	@IsOptional()
+	public requestId?: string
 }
 
 export class CreateUserResponse extends LoginSessionResponse {}

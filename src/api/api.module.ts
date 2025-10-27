@@ -5,7 +5,12 @@ import { ScheduleModule } from '@nestjs/schedule'
 import { ThrottlerModule } from '@nestjs/throttler'
 import { TurnstileModule } from 'nestjs-cloudflare-captcha'
 
-import { getThrottlerConfig, getTurnstileConfig } from '@/config'
+import {
+	getFingerprintConfig,
+	getThrottlerConfig,
+	getTurnstileConfig
+} from '@/config'
+import { FingerprintModule } from '@/libs/fingerprint/fingerprint.module'
 import { EnhancedThrottlerGuard } from '@/shared/guards'
 
 import { AccountModule } from './auth/account/account.module'
@@ -30,6 +35,11 @@ import { UsersModule } from './users/users.module'
 		TurnstileModule.forRootAsync({
 			imports: [ConfigModule],
 			useFactory: getTurnstileConfig,
+			inject: [ConfigService]
+		}),
+		FingerprintModule.forRootAsync({
+			imports: [ConfigModule],
+			useFactory: getFingerprintConfig,
 			inject: [ConfigService]
 		}),
 		ScheduleModule.forRoot(),

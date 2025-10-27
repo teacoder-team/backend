@@ -13,6 +13,7 @@ import * as QRCode from 'qrcode'
 
 import { PrismaService } from '@/infra/prisma/prisma.service'
 import { RedisService } from '@/infra/redis/redis.service'
+import { FingerprintService } from '@/libs/fingerprint/fingerprint.service'
 
 import { PasskeyService } from '../passkey/passkey.service'
 
@@ -29,6 +30,7 @@ export class MfaService {
 	public constructor(
 		private readonly prismaService: PrismaService,
 		private readonly redisService: RedisService,
+		private readonly fingerprintService: FingerprintService,
 		private readonly passkeyService: PasskeyService
 	) {}
 
@@ -299,11 +301,17 @@ export class MfaService {
 			)
 		}
 
-		const session = await this.redisService.createSession(
-			user,
+		const visitorHistory = ticket.visitorId
+			? await this.fingerprintService.getVisitorHistory(ticket.visitorId)
+			: null
+
+		const session = await this.redisService.createSession(user, {
 			ip,
-			userAgent
-		)
+			userAgent,
+			visitorId: ticket.visitorId ?? null,
+			requestId: ticket.requestId ?? null,
+			visitorHistory
+		})
 
 		await this.redisService.del(`mfa_tickets:${dto.ticket}`)
 

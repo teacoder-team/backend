@@ -1,6 +1,8 @@
-import { HttpService } from '@nestjs/axios'
+import {
+	FingerprintJsServerApiClient,
+	Region
+} from '@fingerprintjs/fingerprintjs-pro-server-api'
 import { BadRequestException, Inject, Injectable, Logger } from '@nestjs/common'
-import { firstValueFrom } from 'rxjs'
 
 import { type FingerprintOptions, FingerprintOptionsSymbol } from './interfaces'
 
@@ -8,35 +10,50 @@ import { type FingerprintOptions, FingerprintOptionsSymbol } from './interfaces'
 export class FingerprintService {
 	private readonly logger = new Logger(FingerprintService.name)
 
-	private readonly API_URL: string
+	private readonly client: FingerprintJsServerApiClient
 
 	public constructor(
 		@Inject(FingerprintOptionsSymbol)
-		private readonly options: FingerprintOptions,
-		private readonly httpService: HttpService
+		private readonly options: FingerprintOptions
 	) {
-		this.API_URL = 'https://api.fpjs.io/'
+		this.client = new FingerprintJsServerApiClient({
+			apiKey: options.apiKey,
+			region: options.region ?? Region.Global
+		})
 	}
 
-	public async getVisitorData(visitorId: string, requestId?: string) {
-		const url = `${this.API_URL}/v1/visitors/${visitorId}`
-
-		const params: Record<string, string> = {
-			api_key: this.options.apiKey
-		}
-
-		if (requestId) params.request_id = requestId
+	public async getEvent(requestId: string) {
+		this.logger.debug(`Fetching event ${requestId} from Fingerprint`)
 
 		try {
-			const { data } = await firstValueFrom(
-				this.httpService.get(url, { params })
-			)
+			const event = await this.client.getEvent(requestId)
 
-			this.logger.debug(`Fingerprint response: ${JSON.stringify(data)}`)
+			this.logger.debug(`Event ${requestId} fetched successfully`)
 
-			return data
+			return event
 		} catch (error) {
-			this.logger.error(`❌ Fingerprint API error: ${error.message}`)
+			this.logger.error(
+				`❌ Failed to get event ${requestId}: ${error.message}`
+			)
+			throw new BadRequestException('Failed to fetch fingerprint event')
+		}
+	}
+
+	public async getVisitorHistory(visitorId: string) {
+		this.logger.debug(`Fetching visitor ${visitorId} history`)
+
+		try {
+			const history = await this.client.getVisits(visitorId, {
+				limit: 10
+			})
+
+			this.logger.debug(`History for ${visitorId} fetched successfully`)
+
+			return history
+		} catch (error) {
+			this.logger.error(
+				`❌ Failed to fetch visitor ${visitorId}: ${error.message}`
+			)
 			throw new BadRequestException('Failed to fetch visitor data')
 		}
 	}

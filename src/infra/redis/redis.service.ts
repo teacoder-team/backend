@@ -7,14 +7,23 @@ import {
 import { ConfigService } from '@nestjs/config'
 import type { User } from '@prisma/generated'
 import { randomBytes } from 'crypto'
-import { lookup } from 'geoip-country'
+import * as geoip from 'geoip-lite'
 import Redis from 'ioredis'
+import { ipToGeolocation } from 'location-from-ip'
 import { UAParser } from 'ua-parser-js'
 import { v4 as uuidv4 } from 'uuid'
 
 import { getRedisConfig } from '@/config'
 import type { AllConfigs } from '@/config/definitions'
 import type { Session, UserSession } from '@/shared/interfaces'
+
+export interface CreateSessionOptions {
+	ip: string
+	userAgent: string
+	visitorId?: string | null
+	requestId?: string | null
+	visitorHistory?: any
+}
 
 @Injectable()
 export class RedisService
@@ -59,10 +68,34 @@ export class RedisService
 		}
 	}
 
-	public async createSession(user: User, ip: string, userAgent: string) {
-		this.parser.setUA(userAgent)
-		const result = this.parser.getResult()
-		const geo = lookup(ip)
+	public async createSession(user: User, options: CreateSessionOptions) {
+		const {
+			ip: originalIp,
+			userAgent,
+			visitorId,
+			requestId,
+			visitorHistory
+		} = options
+
+		this.parser.setUA(userAgent ?? '')
+		const uaResult = this.parser.getResult()
+
+		const visits = Array.isArray(visitorHistory?.visits)
+			? visitorHistory.visits
+			: []
+		const lastVisit = visits.length ? visits[0] : null
+
+		const visitIp = originalIp ?? ''
+		const visitTime = lastVisit?.time || new Date().toISOString()
+		const visitRequestId = lastVisit?.requestId || requestId || null
+		const visitUrl = lastVisit?.url || null
+
+		const incognito =
+			typeof lastVisit?.incognito === 'boolean'
+				? lastVisit.incognito
+				: undefined
+
+		const geo = visitIp ? await ipToGeolocation(visitIp) : null
 
 		const session: Session = {
 			id: uuidv4(),
@@ -70,26 +103,58 @@ export class RedisService
 			userId: user.id
 		}
 
-		await this.del(`sessions:${session.id}`)
-
 		await this.hmset(`sessions:${session.id}`, {
-			id: session.id.toString(),
+			id: session.id,
 			token: session.token,
-			userId: session.userId.toString()
+			userId: session.userId
 		})
 		await this.expire(`sessions:${session.id}`, 7 * 24 * 60 * 60)
 
 		const userSession: UserSession = {
 			id: uuidv4(),
 			createdAt: new Date().toISOString(),
-			ip,
-			geo,
-			ua: result.ua,
-			browser: result.browser,
-			cpu: result.cpu,
-			device: result.device,
-			engine: result.engine,
-			os: result.os,
+			ip: visitIp,
+			geo: geo
+				? {
+						country: geo.country,
+						region: geo.state,
+						city: geo.city,
+						ll: [geo.latitude, geo.longitude],
+						zip: geo.zip,
+						calling_code: geo.calling_code,
+						continent: geo.continent,
+						currency_code: geo.currency_code,
+						timezone: geo.timezone,
+						is_eu_member: geo.is_eu_member
+					}
+				: null,
+			ua: uaResult.ua || null,
+			browser: lastVisit?.browserDetails.browserName
+				? {
+						name: lastVisit?.browserDetails.browserName,
+						version: lastVisit?.browserDetails.browserFullVersion
+					}
+				: uaResult.browser || null,
+			cpu: uaResult.cpu || null,
+			device: uaResult.device || null,
+			engine: uaResult.engine || null,
+			os: lastVisit?.browserDetails.os
+				? {
+						name: lastVisit?.browserDetails.os,
+						version: lastVisit?.browserDetails.osVersion
+					}
+				: uaResult.os || null,
+			fingerprint: visitorId
+				? {
+						visitorId,
+						requestId: visitRequestId
+					}
+				: null,
+			visit: {
+				time: visitTime,
+				url: visitUrl,
+				incognito: incognito ?? null
+			},
 			sessionId: session.id
 		}
 
@@ -99,6 +164,8 @@ export class RedisService
 			'EX',
 			7 * 24 * 60 * 60
 		)
+
+		this.logger.debug(`Created session ${session.id} for user ${user.id}`)
 
 		return session
 	}
@@ -135,11 +202,22 @@ export class RedisService
 		}
 	}
 
-	public async createMfaTicket(userId: string, allowedMethods: string[]) {
+	public async createMfaTicket(
+		userId: string,
+		allowedMethods: string[],
+		options?: {
+			visitorId?: string
+			requestId?: string
+			visitorHistory?: any
+		}
+	) {
 		const data = {
 			ticket: randomBytes(20).toString('hex'),
 			allowedMethods,
-			userId
+			userId,
+			visitorId: options?.visitorId ?? null,
+			requestId: options?.requestId ?? null,
+			visitorHistory: options?.visitorHistory ?? null
 		}
 
 		await this.hset(`mfa_tickets:${data.ticket}`, data)
