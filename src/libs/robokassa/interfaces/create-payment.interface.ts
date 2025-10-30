@@ -1,3 +1,5 @@
+import type { Receipt } from './receipt.interface'
+
 export interface CreatePaymentRequest {
 	invId?: number
 	outSum: number
@@ -13,4 +15,5 @@ export interface CreatePaymentRequest {
 	expirationDate?: string
 	encoding?: string
 	isRecurring?: boolean
+	receipt: Receipt
 }
