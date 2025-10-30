@@ -14,6 +14,12 @@ import { VatCodesEnum } from 'nestjs-yookassa/dist/interfaces/receipt-details.in
 import type { AllConfigs } from '@/config/definitions'
 import { PrismaService } from '@/infra/prisma/prisma.service'
 import { HeleketService } from '@/libs/heleket/heleket.service'
+import {
+	PaymentMethodType,
+	PaymentObjectType,
+	SnoType,
+	TaxType
+} from '@/libs/robokassa/enums'
 import { RobokassaService } from '@/libs/robokassa/robokassa.service'
 
 import { InitPaymentRequest } from './dto'
@@ -158,6 +164,19 @@ export class PaymentService {
 					outSum: this.SUBSCRIPTION_PRICE,
 					description: 'Оплата премиум-подписки на 1 месяц',
 					...(user.email && { email: user.email }),
+					receipt: {
+						sno: SnoType.USN_INCOME,
+						items: [
+							{
+								name: 'Премиум-доступ на 30 дней',
+								quantity: 1,
+								sum: this.SUBSCRIPTION_PRICE,
+								payment_method: PaymentMethodType.FULL_PAYMENT,
+								payment_object: PaymentObjectType.SERVICE,
+								tax: TaxType.NONE
+							}
+						]
+					},
 					shps: {
 						Shp_payment_id: payment.id
 					}

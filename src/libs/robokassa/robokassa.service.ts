@@ -40,10 +40,22 @@ export class RobokassaService {
 			resultUrl,
 			successUrl,
 			failUrl,
-			isRecurring
+			isRecurring,
+			receipt
 		} = data
 
-		let signatureBase = `${login}:${outSum}:${invId}:${password1}`
+		let signatureBase = `${login}:${outSum}:${invId}`
+
+		let encodedReceipt: string | undefined
+
+		if (receipt) {
+			const receiptJson = JSON.stringify(receipt)
+
+			encodedReceipt = encodeURIComponent(receiptJson)
+			signatureBase += `:${receiptJson}`
+		}
+
+		signatureBase += `:${password1}`
 
 		const sortedShpKeys = Object.keys(shps).sort()
 
@@ -75,6 +87,8 @@ export class RobokassaService {
 		if (successUrl) url.searchParams.set('SuccessURL', successUrl)
 		if (failUrl) url.searchParams.set('FailURL', failUrl)
 		if (isRecurring) url.searchParams.set('Recurring', 'true')
+
+		if (encodedReceipt) url.searchParams.set('Receipt', encodedReceipt)
 
 		sortedShpKeys.forEach(key => {
 			url.searchParams.set(key, shps[key])
