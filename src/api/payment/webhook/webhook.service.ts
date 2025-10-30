@@ -195,10 +195,7 @@ export class WebhookService {
 
 		this.logger.log(`Payment ${paymentId} marked as SUCCESS`)
 
-		if (
-			!payment.user.isAutoBilling &&
-			(provider === 'yookassa' || provider === 'robokassa')
-		) {
+		if (!payment.user.isAutoBilling && provider === 'yookassa') {
 			await this.prismaService.user.update({
 				where: {
 					id: payment.user.id
