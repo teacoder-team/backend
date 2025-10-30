@@ -157,8 +157,7 @@ export class PaymentService {
 					invId: payment.invoiceId,
 					outSum: this.SUBSCRIPTION_PRICE,
 					description: 'Оплата премиум-подписки на 1 месяц',
-					email: user.email,
-					isRecurring: true,
+					...(user.email && { email: user.email }),
 					shps: {
 						Shp_payment_id: payment.id
 					}
