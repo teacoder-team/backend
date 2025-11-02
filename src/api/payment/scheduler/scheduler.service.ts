@@ -10,9 +10,9 @@ import {
 import {
 	CurrencyEnum,
 	DeliveryMethodEnum,
+	VatCodesEnum,
 	YookassaService
 } from 'nestjs-yookassa'
-import { VatCodesEnum } from 'nestjs-yookassa/dist/interfaces/receipt-details.interface'
 
 import { PrismaService } from '@/infra/prisma/prisma.service'
 import { HeleketService } from '@/libs/heleket/heleket.service'
@@ -192,7 +192,7 @@ export class SchedulerService {
 				}
 			})
 
-			const result = await this.yookassaService.createPayment({
+			const result = await this.yookassaService.payments.create({
 				amount: {
 					value: payment.amount,
 					currency: CurrencyEnum.RUB
@@ -212,7 +212,7 @@ export class SchedulerService {
 							},
 							description: 'Ежемесячная подписка',
 							quantity: 1,
-							vat_code: VatCodesEnum.ndsNone
+							vat_code: VatCodesEnum.NDS_NONE
 						}
 					]
 				},
@@ -308,7 +308,7 @@ export class SchedulerService {
 		payment: Payment
 	) {
 		try {
-			const invoice = await this.yookassaService.createInvoice({
+			const invoice = await this.yookassaService.invoices.create({
 				payment_data: {
 					amount: {
 						value: payment.amount,
@@ -333,7 +333,7 @@ export class SchedulerService {
 									value: payment.amount,
 									currency: CurrencyEnum.RUB
 								},
-								vat_code: VatCodesEnum.ndsNone
+								vat_code: VatCodesEnum.NDS_NONE
 							}
 						]
 					}

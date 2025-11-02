@@ -58,7 +58,9 @@ export class WebhookService {
 		if (payload.event === 'payment.waiting_for_capture') {
 			this.logger.log(`Capturing payment ${payload.object.id}`)
 
-			return await this.yookassaService.capturePayment(payload.object.id)
+			return await this.yookassaService.payments.capture(
+				payload.object.id
+			)
 		} else if (payload.event === 'payment.succeeded') {
 			this.logger.log(`Payment succeeded: ${payload.object.id}`)
 

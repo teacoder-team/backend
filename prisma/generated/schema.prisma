@@ -447,6 +447,8 @@ enum PaymentProvider {
 enum PaymentMethod {
   BANK_CARD
   SBP
+  T_PAY
+  SBER_PAY
   YOOMONEY
   CRYPTO
   INTERNATIONAL_CARD

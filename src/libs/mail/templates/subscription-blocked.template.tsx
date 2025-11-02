@@ -14,6 +14,8 @@ const baseUrl = process.env['HOSTS_APP']
 const paymentMethodLabels: Record<PaymentMethod, string> = {
 	BANK_CARD: 'Банковская карта',
 	SBP: 'СБП',
+	T_PAY: 'T-Pay',
+	SBER_PAY: 'SberPay',
 	CRYPTO: 'Криптовалюта',
 	INTERNATIONAL_CARD: 'Международная карта',
 	TELEGRAM_STARS: 'Телеграм звёзды',
