@@ -30,7 +30,8 @@ export class WebhookService {
 
 	private readonly paymentTypeMap: Record<string, PaymentMethod> = {
 		bank_card: 'BANK_CARD',
-		sbp: 'SBP'
+		sbp: 'SBP',
+		tinkoff_bank: 'T_PAY'
 	}
 
 	public constructor(
@@ -261,6 +262,20 @@ export class WebhookService {
 	private async savePaymentMethod(userId: string, metadata: any) {
 		const { id, type, title, card, status } = metadata
 
+		let resolvedTitle = title
+
+		const expiryMonth =
+			card?.expiry_month && /^\d+$/.test(card.expiry_month)
+				? parseInt(card.expiry_month)
+				: null
+
+		const expiryYear =
+			card?.expiry_year && /^\d+$/.test(card.expiry_year)
+				? parseInt(card.expiry_year)
+				: null
+
+		if (type === 'tinkoff_bank') resolvedTitle = 'T-Pay'
+
 		this.logger.debug(`Upserting payment method ${id} for user ${userId}`)
 
 		const method = await this.prismaService.userPaymentMethod.upsert({
@@ -268,20 +283,20 @@ export class WebhookService {
 				providerId: id
 			},
 			update: {
-				title,
+				title: resolvedTitle,
 				type: this.paymentTypeMap[type],
 				...(card && {
 					first6: card.first6,
 					last4: card.last4,
 					cardType: card.card_type,
-					expiryMonth: parseInt(card.expiry_month),
-					expiryYear: parseInt(card.expiry_year)
+					expiryMonth,
+					expiryYear
 				}),
 				isActive: status === 'active',
 				metadata
 			},
 			create: {
-				title,
+				title: resolvedTitle,
 				type: this.paymentTypeMap[type],
 				provider: PaymentProvider.YOOKASSA,
 				providerId: id,
@@ -289,8 +304,8 @@ export class WebhookService {
 					first6: card.first6,
 					last4: card.last4,
 					cardType: card.card_type,
-					expiryMonth: parseInt(card.expiry_month),
-					expiryYear: parseInt(card.expiry_year)
+					expiryMonth,
+					expiryYear
 				}),
 				isActive: status === 'active',
 				metadata,

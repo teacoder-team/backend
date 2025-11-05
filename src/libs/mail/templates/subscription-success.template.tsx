@@ -124,6 +124,8 @@ function paymentMethodInfo(method: PaymentMethod) {
 			return { label: 'Банковская карта', logo: `${baseUrl}/payment-logos/bank-card.svg` }
 		case PaymentMethod.SBP:
 			return { label: 'СБП', logo: `${baseUrl}/payment-logos/sbp.svg` }
+		case PaymentMethod.T_PAY:
+			return { label: 'T-Pay', logo: `${baseUrl}/payment-logos/sbp.svg` }
 		case PaymentMethod.CRYPTO:
 			return { label: 'Криптовалюта', logo: `${baseUrl}/payment-logos/crypto.svg` }
 		case PaymentMethod.INTERNATIONAL_CARD:

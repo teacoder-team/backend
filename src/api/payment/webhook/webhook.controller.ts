@@ -35,8 +35,6 @@ export class WebhookController {
 	@Post('yookassa')
 	@HttpCode(HttpStatus.OK)
 	public async yookassa(@Body() payload: any, @Ip() ip: string) {
-		console.log('IP: ', ip)
-
 		this.webhookService.verifyWebhook(ip)
 
 		await this.webhookService.handleYookassa(payload)
@@ -80,8 +78,6 @@ export class WebhookController {
 		@Body() payload: HeleketPaymentWebhookResponse,
 		@Ip() ip: string
 	) {
-		console.log('IP: ', ip)
-
 		this.heleketService.verifyWebhook(ip, payload)
 
 		await this.webhookService.handleCrypto(payload)

@@ -69,7 +69,7 @@
 		"nalog.ru": "^1.0.1",
 		"nestjs-cloudflare-captcha": "^0.0.10",
 		"nestjs-telegraf": "^2.9.1",
-		"nestjs-yookassa": "^2.0.2",
+		"nestjs-yookassa": "^2.0.4",
 		"nodemailer": "^7.0.10",
 		"otpauth": "^9.3.6",
 		"preview-email": "^3.1.0",

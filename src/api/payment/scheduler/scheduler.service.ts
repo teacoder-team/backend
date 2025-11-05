@@ -88,7 +88,7 @@ export class SchedulerService {
 
 					const payment = await this.prismaService.payment.create({
 						data: {
-							amount: 349,
+							amount: lastSuccess.amount,
 							currency: 'RUB',
 							method: lastSuccess.method,
 							invoiceId: this.generateInvoiceId(),
@@ -107,7 +107,8 @@ export class SchedulerService {
 
 					if (
 						lastSuccess.method === PaymentMethod.BANK_CARD ||
-						lastSuccess.method === PaymentMethod.SBP
+						lastSuccess.method === PaymentMethod.SBP ||
+						lastSuccess.method === PaymentMethod.T_PAY
 					) {
 						await this.createYookassaInvoice(sub, user, payment)
 					} else if (lastSuccess.method === PaymentMethod.CRYPTO) {
@@ -153,7 +154,8 @@ export class SchedulerService {
 
 				if (
 					lastSuccess.method === PaymentMethod.BANK_CARD ||
-					lastSuccess.method === PaymentMethod.SBP
+					lastSuccess.method === PaymentMethod.SBP ||
+					lastSuccess.method === PaymentMethod.T_PAY
 				) {
 					await this.handleYookassaRecurring(sub, user, lastSuccess)
 				} else if (
@@ -198,7 +200,7 @@ export class SchedulerService {
 					currency: CurrencyEnum.RUB
 				},
 				capture: true,
-				description: 'Ежемесячная подписка',
+				description: 'Автосписание за премиум-подписку',
 				payment_method_id: lastSuccess.providerPaymentId,
 				receipt: {
 					customer: {
@@ -210,7 +212,7 @@ export class SchedulerService {
 								value: payment.amount,
 								currency: CurrencyEnum.RUB
 							},
-							description: 'Ежемесячная подписка',
+							description: 'Автосписание за премиум-подписку',
 							quantity: 1,
 							vat_code: VatCodesEnum.NDS_NONE
 						}

@@ -84,6 +84,12 @@ export class PaymentService {
 				description: 'Оплата через Систему быстрых платежей',
 				isAvailable: true
 			},
+			{
+				id: PaymentMethod.T_PAY,
+				name: 'T-Pay',
+				description: 'Оплата через приложение Т-Банка',
+				isAvailable: true
+			},
 			// {
 			// 	id: PaymentMethod.YOOMONEY,
 			// 	name: 'ЮMoney',
@@ -159,10 +165,22 @@ export class PaymentService {
 				)
 				break
 			case PaymentMethod.T_PAY:
-				throw new BadRequestException('Unsupported payment provider')
+				providerResponse = await this.yookassaService.payments.create(
+					this.createYookassaPaymentData(
+						payment.id,
+						user,
+						PaymentMethodsEnum.T_BANK
+					)
+				)
 				break
 			case PaymentMethod.SBER_PAY:
-				throw new BadRequestException('Unsupported payment provider')
+				providerResponse = await this.yookassaService.payments.create(
+					this.createYookassaPaymentData(
+						payment.id,
+						user,
+						PaymentMethodsEnum.SBERBANK
+					)
+				)
 				break
 			case PaymentMethod.INTERNATIONAL_CARD:
 				providerResponse = this.robokassaService.createPaymentUrl({
