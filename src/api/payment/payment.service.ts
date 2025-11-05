@@ -4,12 +4,12 @@ import { PaymentMethod, type User } from '@prisma/generated'
 import { lookup } from 'geoip-country'
 import {
 	ConfirmationEnum,
+	type CreatePaymentRequest,
 	CurrencyEnum,
-	type PaymentCreateRequest,
 	PaymentMethodsEnum,
 	YookassaService
 } from 'nestjs-yookassa'
-import { VatCodesEnum } from 'nestjs-yookassa/dist/interfaces/receipt-details.interface'
+import { VatCodesEnum } from 'nestjs-yookassa/dist/modules/receipt/enums'
 
 import type { AllConfigs } from '@/config/definitions'
 import { PrismaService } from '@/infra/prisma/prisma.service'
@@ -84,6 +84,12 @@ export class PaymentService {
 				description: 'Оплата через Систему быстрых платежей',
 				isAvailable: true
 			},
+			{
+				id: PaymentMethod.T_PAY,
+				name: 'T-Pay',
+				description: 'Оплата через приложение Т-Банка',
+				isAvailable: true
+			},
 			// {
 			// 	id: PaymentMethod.YOOMONEY,
 			// 	name: 'ЮMoney',
@@ -141,20 +147,38 @@ export class PaymentService {
 
 		switch (method) {
 			case PaymentMethod.BANK_CARD:
-				providerResponse = await this.yookassaService.createPayment(
+				providerResponse = await this.yookassaService.payments.create(
 					this.createYookassaPaymentData(
 						payment.id,
 						user,
-						PaymentMethodsEnum.bank_card
+						PaymentMethodsEnum.BANK_CARD
 					)
 				)
 				break
 			case PaymentMethod.SBP:
-				providerResponse = await this.yookassaService.createPayment(
+				providerResponse = await this.yookassaService.payments.create(
 					this.createYookassaPaymentData(
 						payment.id,
 						user,
-						PaymentMethodsEnum.sbp
+						PaymentMethodsEnum.SBP
+					)
+				)
+				break
+			case PaymentMethod.T_PAY:
+				providerResponse = await this.yookassaService.payments.create(
+					this.createYookassaPaymentData(
+						payment.id,
+						user,
+						PaymentMethodsEnum.T_BANK
+					)
+				)
+				break
+			case PaymentMethod.SBER_PAY:
+				providerResponse = await this.yookassaService.payments.create(
+					this.createYookassaPaymentData(
+						payment.id,
+						user,
+						PaymentMethodsEnum.SBERBANK
 					)
 				)
 				break
@@ -219,7 +243,7 @@ export class PaymentService {
 		paymentId: string,
 		user: User,
 		paymentMethod: PaymentMethodsEnum
-	): PaymentCreateRequest {
+	): CreatePaymentRequest {
 		return {
 			amount: {
 				value: this.SUBSCRIPTION_PRICE,
@@ -238,7 +262,7 @@ export class PaymentService {
 						},
 						description: 'Премиум-доступ на 30 дней',
 						quantity: 1,
-						vat_code: VatCodesEnum.ndsNone
+						vat_code: VatCodesEnum.NDS_NONE
 					}
 				]
 			},
@@ -247,7 +271,7 @@ export class PaymentService {
 				type: paymentMethod
 			},
 			confirmation: {
-				type: ConfirmationEnum.redirect,
+				type: ConfirmationEnum.REDIRECT,
 				return_url: `${this.HOSTS_APP}/payment/success`
 			},
 			save_payment_method: true,

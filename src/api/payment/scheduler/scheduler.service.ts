@@ -10,9 +10,9 @@ import {
 import {
 	CurrencyEnum,
 	DeliveryMethodEnum,
+	VatCodesEnum,
 	YookassaService
 } from 'nestjs-yookassa'
-import { VatCodesEnum } from 'nestjs-yookassa/dist/interfaces/receipt-details.interface'
 
 import { PrismaService } from '@/infra/prisma/prisma.service'
 import { HeleketService } from '@/libs/heleket/heleket.service'
@@ -88,7 +88,7 @@ export class SchedulerService {
 
 					const payment = await this.prismaService.payment.create({
 						data: {
-							amount: 349,
+							amount: lastSuccess.amount,
 							currency: 'RUB',
 							method: lastSuccess.method,
 							invoiceId: this.generateInvoiceId(),
@@ -107,7 +107,8 @@ export class SchedulerService {
 
 					if (
 						lastSuccess.method === PaymentMethod.BANK_CARD ||
-						lastSuccess.method === PaymentMethod.SBP
+						lastSuccess.method === PaymentMethod.SBP ||
+						lastSuccess.method === PaymentMethod.T_PAY
 					) {
 						await this.createYookassaInvoice(sub, user, payment)
 					} else if (lastSuccess.method === PaymentMethod.CRYPTO) {
@@ -153,7 +154,8 @@ export class SchedulerService {
 
 				if (
 					lastSuccess.method === PaymentMethod.BANK_CARD ||
-					lastSuccess.method === PaymentMethod.SBP
+					lastSuccess.method === PaymentMethod.SBP ||
+					lastSuccess.method === PaymentMethod.T_PAY
 				) {
 					await this.handleYookassaRecurring(sub, user, lastSuccess)
 				} else if (
@@ -192,13 +194,13 @@ export class SchedulerService {
 				}
 			})
 
-			const result = await this.yookassaService.createPayment({
+			const result = await this.yookassaService.payments.create({
 				amount: {
 					value: payment.amount,
 					currency: CurrencyEnum.RUB
 				},
 				capture: true,
-				description: 'Ежемесячная подписка',
+				description: 'Автосписание за премиум-подписку',
 				payment_method_id: lastSuccess.providerPaymentId,
 				receipt: {
 					customer: {
@@ -210,9 +212,9 @@ export class SchedulerService {
 								value: payment.amount,
 								currency: CurrencyEnum.RUB
 							},
-							description: 'Ежемесячная подписка',
+							description: 'Автосписание за премиум-подписку',
 							quantity: 1,
-							vat_code: VatCodesEnum.ndsNone
+							vat_code: VatCodesEnum.NDS_NONE
 						}
 					]
 				},
@@ -308,7 +310,7 @@ export class SchedulerService {
 		payment: Payment
 	) {
 		try {
-			const invoice = await this.yookassaService.createInvoice({
+			const invoice = await this.yookassaService.invoices.create({
 				payment_data: {
 					amount: {
 						value: payment.amount,
@@ -333,7 +335,7 @@ export class SchedulerService {
 									value: payment.amount,
 									currency: CurrencyEnum.RUB
 								},
-								vat_code: VatCodesEnum.ndsNone
+								vat_code: VatCodesEnum.NDS_NONE
 							}
 						]
 					}
