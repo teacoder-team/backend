@@ -10,6 +10,7 @@ import { KinescopeModule } from './kinescope/kinescope.module'
 import { MailModule } from './mail/mail.module'
 import { RobokassaModule } from './robokassa/robokassa.module'
 import { StorageModule } from './storage/storage.module'
+import { ProdamusModule } from './prodamus/prodamus.module';
 
 @Module({
 	imports: [
@@ -23,7 +24,8 @@ import { StorageModule } from './storage/storage.module'
 		KinescopeModule,
 		FingerprintModule,
 		RobokassaModule,
-		HeleketModule
+		HeleketModule,
+		ProdamusModule
 	]
 })
 export class LibsModule {}
