@@ -31,7 +31,8 @@ export class WebhookService {
 	private readonly paymentTypeMap: Record<string, PaymentMethod> = {
 		bank_card: 'BANK_CARD',
 		sbp: 'SBP',
-		tinkoff_bank: 'T_PAY'
+		tinkoff_bank: 'T_PAY',
+		yoo_money: 'YOOMONEY'
 	}
 
 	public constructor(
