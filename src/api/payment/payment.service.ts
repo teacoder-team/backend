@@ -106,13 +106,13 @@ export class PaymentService {
 				name: 'Криптовалюта',
 				description: 'Оплата с помощью BTC, USDT, TON',
 				isAvailable: true
-			},
-			{
-				id: PaymentMethod.INTERNATIONAL_CARD,
-				name: 'Международные карты',
-				description: 'Оплата картой зарубежных банков',
-				isAvailable: true
 			}
+			// {
+			// 	id: PaymentMethod.INTERNATIONAL_CARD,
+			// 	name: 'Международные карты',
+			// 	description: 'Оплата картой зарубежных банков',
+			// 	isAvailable: true
+			// }
 			// {
 			// 	id: PaymentMethod.TELEGRAM_STARS,
 			// 	name: 'Telegram Stars',
