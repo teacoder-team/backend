@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { PaymentMethod } from '@prisma/generated'
-import { IsEnum } from 'class-validator'
+import { IsEmail, IsEnum, IsOptional } from 'class-validator'
 
 export class InitPaymentRequest {
 	@ApiProperty({
@@ -10,6 +10,15 @@ export class InitPaymentRequest {
 	})
 	@IsEnum(PaymentMethod)
 	public method: PaymentMethod
+
+	@ApiProperty({
+		description: 'User email (required if the account does not have one)',
+		example: 'john.doe@example.com',
+		required: false
+	})
+	@IsEmail()
+	@IsOptional()
+	public email?: string
 }
 
 export class InitPaymentResponse {

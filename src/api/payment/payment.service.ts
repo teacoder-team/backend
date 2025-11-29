@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common'
+import {
+	BadRequestException,
+	ConflictException,
+	Injectable
+} from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { PaymentMethod, type User } from '@prisma/generated'
 import { lookup } from 'geoip-country'
@@ -15,12 +19,12 @@ import type { AllConfigs } from '@/config/definitions'
 import { PrismaService } from '@/infra/prisma/prisma.service'
 import { HeleketService } from '@/libs/heleket/heleket.service'
 import {
-	PaymentMethodType,
-	PaymentObjectType,
-	SnoType,
+	PaymentDo,
+	ProductPaymentMethod,
+	ProductPaymentObject,
 	TaxType
-} from '@/libs/robokassa/enums'
-import { RobokassaService } from '@/libs/robokassa/robokassa.service'
+} from '@/libs/prodamus/enums'
+import { ProdamusService } from '@/libs/prodamus/prodamus.service'
 
 import { InitPaymentRequest } from './dto'
 
@@ -37,7 +41,7 @@ export class PaymentService {
 		private readonly prismaService: PrismaService,
 		private readonly configService: ConfigService<AllConfigs>,
 		private readonly yookassaService: YookassaService,
-		private readonly robokassaService: RobokassaService,
+		private readonly prodamusService: ProdamusService,
 		private readonly heleketService: HeleketService
 	) {
 		this.HOSTS_APP = this.configService.get('hosts.app', { infer: true })
@@ -102,13 +106,13 @@ export class PaymentService {
 				name: 'Криптовалюта',
 				description: 'Оплата с помощью BTC, USDT, TON',
 				isAvailable: true
+			},
+			{
+				id: PaymentMethod.INTERNATIONAL_CARD,
+				name: 'Международные карты',
+				description: 'Оплата картой зарубежных банков',
+				isAvailable: true
 			}
-			// {
-			// 	id: PaymentMethod.INTERNATIONAL_CARD,
-			// 	name: 'Международные карты',
-			// 	description: 'Оплата картой зарубежных банков',
-			// 	isAvailable: true
-			// }
 			// {
 			// 	id: PaymentMethod.TELEGRAM_STARS,
 			// 	name: 'Telegram Stars',
@@ -127,7 +131,34 @@ export class PaymentService {
 	}
 
 	public async create(dto: InitPaymentRequest, user: User) {
-		const { method } = dto
+		const { method, email } = dto
+
+		if (!user.email) {
+			if (!email)
+				throw new BadRequestException(
+					'Email is required to proceed with the payment'
+				)
+
+			const emailExists = await this.prismaService.user.findUnique({
+				where: {
+					email
+				}
+			})
+
+			if (emailExists)
+				throw new ConflictException('This email is already in use')
+
+			const updatedUser = await this.prismaService.user.update({
+				where: {
+					id: user.id
+				},
+				data: {
+					email
+				}
+			})
+
+			user = updatedUser
+		}
 
 		const payment = await this.prismaService.payment.create({
 			data: {
@@ -183,30 +214,33 @@ export class PaymentService {
 				)
 				break
 			case PaymentMethod.INTERNATIONAL_CARD:
-				// providerResponse = this.robokassaService.createPaymentUrl({
-				// 	invId: payment.invoiceId,
-				// 	outSum: this.SUBSCRIPTION_PRICE,
-				// 	description: 'Оплата премиум-подписки на 1 месяц',
-				// 	...(user.email && { email: user.email }),
-				// 	receipt: {
-				// 		sno: SnoType.USN_INCOME,
-				// 		items: [
-				// 			{
-				// 				name: 'Премиум-доступ на 30 дней',
-				// 				quantity: 1,
-				// 				sum: this.SUBSCRIPTION_PRICE,
-				// 				payment_method: PaymentMethodType.FULL_PAYMENT,
-				// 				payment_object: PaymentObjectType.SERVICE,
-				// 				tax: TaxType.NONE
-				// 			}
-				// 		]
-				// 	},
-				// 	shps: {
-				// 		Shp_payment_id: payment.id
-				// 	}
-				// })
-				// break
-				throw new BadRequestException('Unsupported payment provider')
+				providerResponse = await this.prodamusService.createPayment({
+					order_id: payment.id,
+					customer_email: user.email,
+					subscription: 1,
+					// customer_extra: '',
+					do: PaymentDo.LINK,
+					urlReturn: 'https://demo.payform.ru/demo-return',
+					urlSuccess: 'https://demo.payform.ru/demo-success',
+					sys: 'getcourse',
+					products: [
+						{
+							name: 'Премиум-доступ на 30 дней',
+							price: this.SUBSCRIPTION_PRICE,
+							quantity: 1,
+							tax: {
+								tax_type: TaxType.NO_VAT
+							},
+							paymentMethod: ProductPaymentMethod.FULL_PREPAYMENT,
+							paymentObject: ProductPaymentObject.SERVICE
+						}
+					],
+					discount_value: this.SUBSCRIPTION_PRICE,
+					link_expired: '2025-11-01 00:00:00',
+					subscription_date_start: '2025-12-01 00:00:00',
+					subscription_limit_autopayments: 10
+				})
+				break
 			case PaymentMethod.CRYPTO:
 				providerResponse = await this.heleketService.createPayment({
 					amount: String(this.SUBSCRIPTION_PRICE),
