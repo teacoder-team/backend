@@ -1,4 +1,20 @@
-import type { Currency, NpdIncome, PaymentDo, ProductType } from '../enums'
+import type {
+	Currency,
+	NpdIncome,
+	PaymentDo,
+	ProductPaymentMethod,
+	ProductPaymentObject,
+	ProductType,
+	TaxType
+} from '../enums'
+
+export interface Tax {
+	/** Тип НДС */
+	tax_type: TaxType
+
+	/** Сумма НДС (необязательно) */
+	tax_sum?: number
+}
 
 /**
  * Товар в заказе
@@ -16,8 +32,17 @@ export interface PaymentProduct {
 	/** SKU товара (необязательно) */
 	sku?: string
 
-	/** Тип товара course | service | goods (необязательно) */
+	/** Тип товара (необязательно, внутренняя логика магазина) */
 	type?: ProductType
+
+	/** Налог (НДС) */
+	tax?: Tax
+
+	/** Тип оплаты по ФФД (способ расчёта) */
+	paymentMethod?: ProductPaymentMethod
+
+	/** Тип предмета расчёта */
+	paymentObject?: ProductPaymentObject
 }
 
 /**

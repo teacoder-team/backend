@@ -17,7 +17,6 @@ import {
 import { PrismaService } from '@/infra/prisma/prisma.service'
 import { HeleketService } from '@/libs/heleket/heleket.service'
 import { MailService } from '@/libs/mail/mail.service'
-import { RobokassaService } from '@/libs/robokassa/robokassa.service'
 
 @Injectable()
 export class SchedulerService {
@@ -27,7 +26,6 @@ export class SchedulerService {
 		private readonly prismaService: PrismaService,
 		private readonly mailService: MailService,
 		private readonly yookassaService: YookassaService,
-		private readonly robokassaService: RobokassaService,
 		private readonly heleketService: HeleketService
 	) {}
 
@@ -269,23 +267,23 @@ export class SchedulerService {
 				}
 			})
 
-			const result = await this.robokassaService.createRecurringPayment({
-				outSum: lastSuccess.amount,
-				description: 'Автопродление подписки',
-				invId: invoiceId,
-				previousInvoiceId: lastSuccess.invoiceId
-			})
+			// const result = await this.robokassaService.createRecurringPayment({
+			// 	outSum: lastSuccess.amount,
+			// 	description: 'Автопродление подписки',
+			// 	invId: invoiceId,
+			// 	previousInvoiceId: lastSuccess.invoiceId
+			// })
 
-			this.logger.log(
-				`Auto-charge (Robokassa) created for user ${user.id}: ${result}`
-			)
+			// this.logger.log(
+			// 	`Auto-charge (Robokassa) created for user ${user.id}: ${result}`
+			// )
 
 			await this.prismaService.payment.update({
 				where: {
 					id: payment.id
 				},
 				data: {
-					metadata: result
+					// metadata: result
 				}
 			})
 

@@ -18,7 +18,6 @@ import { WebhookService } from './webhook.service'
 export class WebhookController {
 	public constructor(
 		private readonly webhookService: WebhookService,
-		private readonly robokassaService: RobokassaService,
 		private readonly heleketService: HeleketService
 	) {}
 
@@ -55,7 +54,7 @@ export class WebhookController {
 	@Post('robokassa')
 	@HttpCode(HttpStatus.OK)
 	public async robokassa(@Body() payload: any, @Ip() ip: string) {
-		this.robokassaService.verifyWebhook(ip, payload)
+		// this.robokassaService.verifyWebhook(ip, payload)
 
 		await this.webhookService.handleRobokassa(payload)
 
