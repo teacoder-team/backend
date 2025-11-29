@@ -1,4 +1,7 @@
 export * from './currency.enum'
 export * from './npd-income.enum'
 export * from './payment-do.enum'
+export * from './prodamus-payment-object.enum'
+export * from './product-payment-method.enum'
 export * from './product-type.enum'
+export * from './tax-type.enum'
