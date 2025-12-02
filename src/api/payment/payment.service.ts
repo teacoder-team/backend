@@ -18,6 +18,7 @@ import { VatCodesEnum } from 'nestjs-yookassa/dist/modules/receipt/enums'
 import type { AllConfigs } from '@/config/definitions'
 import { PrismaService } from '@/infra/prisma/prisma.service'
 import { HeleketService } from '@/libs/heleket/heleket.service'
+import { PaytureService } from '@/libs/payture/payture.service'
 import {
 	PaymentDo,
 	ProductPaymentMethod,
@@ -42,6 +43,7 @@ export class PaymentService {
 		private readonly configService: ConfigService<AllConfigs>,
 		private readonly yookassaService: YookassaService,
 		private readonly prodamusService: ProdamusService,
+		private readonly paytureService: PaytureService,
 		private readonly heleketService: HeleketService
 	) {
 		this.HOSTS_APP = this.configService.get('hosts.app', { infer: true })
@@ -214,32 +216,30 @@ export class PaymentService {
 				)
 				break
 			case PaymentMethod.INTERNATIONAL_CARD:
-				providerResponse = await this.prodamusService.createPayment({
-					order_id: payment.id,
-					customer_email: user.email,
-					subscription: 1,
-					// customer_extra: '',
-					do: PaymentDo.LINK,
-					urlReturn: 'https://demo.payform.ru/demo-return',
-					urlSuccess: 'https://demo.payform.ru/demo-success',
-					sys: 'getcourse',
-					products: [
-						{
-							name: 'Премиум-доступ на 30 дней',
-							price: this.SUBSCRIPTION_PRICE,
-							quantity: 1,
-							tax: {
-								tax_type: TaxType.NO_VAT
-							},
-							paymentMethod: ProductPaymentMethod.FULL_PREPAYMENT,
-							paymentObject: ProductPaymentObject.SERVICE
-						}
-					],
-					discount_value: this.SUBSCRIPTION_PRICE,
-					link_expired: '2025-11-01 00:00:00',
-					subscription_date_start: '2025-12-01 00:00:00',
-					subscription_limit_autopayments: 10
+				const result = await this.paytureService.initPayment({
+					type: 'Pay',
+					orderId: payment.id,
+					amount: this.SUBSCRIPTION_PRICE,
+					total: this.SUBSCRIPTION_PRICE,
+					product: 'Премиум-доступ на 30 дней',
+					description: 'Оплата премиум-подписки на 1 месяц',
+					url: 'https://teacoder.ru/payment/success',
+					cheque: {
+						Positions: [
+							{
+								Quantity: 1,
+								Price: this.SUBSCRIPTION_PRICE,
+								Tax: 2,
+								Text: 'Премиум-доступ на 30 дней'
+							}
+						],
+						CustomerContact: user.email
+					}
 				})
+
+				providerResponse = this.paytureService.getPayUrl(
+					result.SessionId
+				)
 				break
 			case PaymentMethod.CRYPTO:
 				providerResponse = await this.heleketService.createPayment({

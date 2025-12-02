@@ -8,9 +8,10 @@ import { FingerprintModule } from './fingerprint/fingerprint.module'
 import { HeleketModule } from './heleket/heleket.module'
 import { KinescopeModule } from './kinescope/kinescope.module'
 import { MailModule } from './mail/mail.module'
+import { PaytureModule } from './payture/payture.module'
+import { ProdamusModule } from './prodamus/prodamus.module'
 import { RobokassaModule } from './robokassa/robokassa.module'
 import { StorageModule } from './storage/storage.module'
-import { ProdamusModule } from './prodamus/prodamus.module';
 
 @Module({
 	imports: [
@@ -25,7 +26,8 @@ import { ProdamusModule } from './prodamus/prodamus.module';
 		FingerprintModule,
 		RobokassaModule,
 		HeleketModule,
-		ProdamusModule
+		ProdamusModule,
+		PaytureModule
 	]
 })
 export class LibsModule {}

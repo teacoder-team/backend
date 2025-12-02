@@ -4,6 +4,7 @@ import type { HeleketConfig } from './heleket.config'
 import type { HostsConfig } from './hosts.config'
 import type { KinescopeConfig } from './kinescope.config'
 import type { MailerConfig } from './mailer.config'
+import type { PaytureConfig } from './payture.config'
 import type { ProdamusConfig } from './prodamus.config'
 import type { QueueConfig } from './queue.config'
 import type { RedisConfig } from './redis.config'
@@ -22,6 +23,7 @@ export interface AllConfigs {
 	hosts: HostsConfig
 	kinescope: KinescopeConfig
 	mailer: MailerConfig
+	payture: PaytureConfig
 	prodamus: ProdamusConfig
 	queue: QueueConfig
 	redis: RedisConfig
