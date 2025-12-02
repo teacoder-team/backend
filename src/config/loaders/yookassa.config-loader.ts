@@ -11,8 +11,6 @@ export function getYookassaConfig(
 		`http://${process.env.PROXY_HOST}:${process.env.PROXY_PORT}`
 	)
 
-	console.log(agent)
-
 	return {
 		shopId: configService.get('yookassa.shopId', {
 			infer: true
