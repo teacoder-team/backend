@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { PaymentMethod, type User } from '@prisma/generated'
+import { eq, InferSelectModel } from 'drizzle-orm'
 import { lookup } from 'geoip-country'
 import {
 	ConfirmationEnum,
@@ -16,6 +17,8 @@ import {
 import { VatCodesEnum } from 'nestjs-yookassa/dist/modules/receipt/enums'
 
 import type { AllConfigs } from '@/config/definitions'
+import { DatabaseService } from '@/infra/database/database.service'
+import { payments, users } from '@/infra/database/drizzle/schema'
 import { PrismaService } from '@/infra/prisma/prisma.service'
 import { HeleketService } from '@/libs/heleket/heleket.service'
 import { PaytureService } from '@/libs/payture/payture.service'
@@ -39,7 +42,7 @@ export class PaymentService {
 	private readonly CRYPTO_BLOCKED_COUNTRIES: string[]
 
 	public constructor(
-		private readonly prismaService: PrismaService,
+		private readonly database: DatabaseService,
 		private readonly configService: ConfigService<AllConfigs>,
 		private readonly yookassaService: YookassaService,
 		private readonly prodamusService: ProdamusService,
@@ -132,7 +135,10 @@ export class PaymentService {
 		)
 	}
 
-	public async create(dto: InitPaymentRequest, user: User) {
+	public async create(
+		dto: InitPaymentRequest,
+		user: InferSelectModel<typeof users>
+	) {
 		const { method, email } = dto
 
 		if (!user.email) {
@@ -141,40 +147,35 @@ export class PaymentService {
 					'Email is required to proceed with the payment'
 				)
 
-			const emailExists = await this.prismaService.user.findUnique({
-				where: {
-					email
-				}
-			})
+			const [emailExists] = await this.database.db
+				.select()
+				.from(users)
+				.where(eq(users.email, email))
+				.limit(1)
 
 			if (emailExists)
 				throw new ConflictException('This email is already in use')
 
-			const updatedUser = await this.prismaService.user.update({
-				where: {
-					id: user.id
-				},
-				data: {
-					email
-				}
-			})
+			const [updatedUser] = await this.database.db
+				.update(users)
+				.set({ email })
+				.where(eq(users.id, user.id))
+				.returning()
 
 			user = updatedUser
 		}
 
-		const payment = await this.prismaService.payment.create({
-			data: {
-				amount: this.SUBSCRIPTION_PRICE,
+		const [payment] = await this.database.db
+			.insert(payments)
+			.values({
+				amount: String(this.SUBSCRIPTION_PRICE),
+
 				currency: 'RUB',
 				method,
 				invoiceId: this.generateInvoiceId(),
-				user: {
-					connect: {
-						id: user.id
-					}
-				}
-			}
-		})
+				userId: user.id
+			})
+			.returning()
 
 		let providerResponse
 
@@ -256,16 +257,14 @@ export class PaymentService {
 		}
 
 		if (payment.method !== PaymentMethod.INTERNATIONAL_CARD)
-			await this.prismaService.payment.update({
-				where: {
-					id: payment.id
-				},
-				data: {
+			await this.database.db
+				.update(payments)
+				.set({
 					providerPaymentId:
 						providerResponse?.id ?? providerResponse?.uuid,
 					metadata: providerResponse
-				}
-			})
+				})
+				.where(eq(payments.id, payment.id))
 
 		return {
 			url:

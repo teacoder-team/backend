@@ -37,3 +37,6 @@ lerna-debug.log*
 # dotenv environment variable files
 .env*
 !.env.example
+
+temp
+drizzle/meta/

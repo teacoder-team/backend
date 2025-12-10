@@ -7,15 +7,16 @@ import type { AllConfigs } from '../definitions'
 export function getYookassaConfig(
 	configService: ConfigService<AllConfigs>
 ): YookassaModuleOptions {
-	const agent = new HttpsProxyAgent(
-		`http://${process.env.PROXY_HOST}:${process.env.PROXY_PORT}`
-	)
+	const proxyUrl =
+		process.env.PROXY_HOST && process.env.PROXY_PORT
+			? `http://${process.env.PROXY_HOST}:${process.env.PROXY_PORT}`
+			: undefined
 
 	return {
 		shopId: configService.get('yookassa.shopId', {
 			infer: true
 		}),
 		apiKey: configService.get('yookassa.apiKey', { infer: true }),
-		agent
+		proxyUrl
 	}
 }

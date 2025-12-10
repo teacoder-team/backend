@@ -26,6 +26,7 @@ import { CourseModule } from './domains/course/course.module'
 import { InfraModule } from './infra/infra.module'
 import { LibsModule } from './libs/libs.module'
 import { IS_DEV_ENV } from './shared/utils'
+import { CoreModule } from './core/core.module';
 
 @Module({
 	imports: [
@@ -56,7 +57,8 @@ import { IS_DEV_ENV } from './shared/utils'
 		InfraModule,
 		LibsModule,
 		BotModule,
-		CourseModule
+		CourseModule,
+		CoreModule
 	]
 })
 export class AppModule {}
