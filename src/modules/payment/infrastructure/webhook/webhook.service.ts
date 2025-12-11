@@ -1,22 +1,15 @@
-import {
-	BadRequestException,
-	Injectable,
-	Logger,
-	UnauthorizedException
-} from '@nestjs/common'
+import { BadRequestException, Injectable, Logger } from '@nestjs/common'
 import {
 	PaymentMethod,
 	PaymentProvider,
 	PaymentStatus
 } from '@prisma/generated'
-import CidrMatcher from 'cidr-matcher'
 import { addMonths } from 'date-fns'
 import { YookassaService } from 'nestjs-yookassa'
 
 import { TeamanagerBotService } from '@/api/bots/teamanager/teamanager.bot.service'
 import { PrismaService } from '@/infra/prisma/prisma.service'
 import { MailService } from '@/libs/mail/mail.service'
-import { IS_DEV_ENV } from '@/shared/utils'
 
 import { HeleketPaymentWebhookResponse } from './dto/heleket-webhook.dto'
 import { NormalizedCallbackDto } from './dto/normalized-callback.dto'
@@ -26,9 +19,6 @@ import { WebhookValidator } from './webhook.validator'
 @Injectable()
 export class WebhookService {
 	private readonly logger = new Logger(WebhookService.name)
-
-	private readonly ALLOWED_IPS: string[]
-	private readonly matcher: CidrMatcher
 
 	private readonly paymentTypeMap: Record<string, PaymentMethod> = {
 		bank_card: 'BANK_CARD',
@@ -44,19 +34,7 @@ export class WebhookService {
 		private readonly validator: WebhookValidator,
 		private readonly mapper: WebhookMapper,
 		private readonly botService: TeamanagerBotService
-	) {
-		this.ALLOWED_IPS = [
-			'185.71.76.0/27',
-			'185.71.77.0/27',
-			'77.75.153.0/25',
-			'77.75.156.11/32',
-			'77.75.156.35/32',
-			'77.75.154.128/25',
-			'2a02:5180::/32'
-		]
-
-		this.matcher = new CidrMatcher(this.ALLOWED_IPS)
-	}
+	) {}
 
 	public async handleYookassa(payload: any, ip: string) {
 		this.logger.log(`➡️ Incoming YooKassa webhook: ${payload.event}`)

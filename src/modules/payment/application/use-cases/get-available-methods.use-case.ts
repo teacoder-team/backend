@@ -60,17 +60,17 @@ export class GetAvailableMethodsUseCase {
 			// 	isAvailable: true
 			// },
 			{
+				id: PaymentMethod.INTERNATIONAL_CARD,
+				name: 'Международные карты',
+				description: 'Оплата картой зарубежных банков',
+				isAvailable: true
+			},
+			{
 				id: PaymentMethod.CRYPTO,
 				name: 'Криптовалюта',
 				description: 'BTC, TON, USDT',
 				isAvailable: true
 			}
-			// {
-			// 	id: PaymentMethod.INTERNATIONAL_CARD,
-			// 	name: 'Международные карты',
-			// 	description: 'Оплата картой зарубежных банков',
-			// 	isAvailable: true
-			// }
 			// {
 			// 	id: PaymentMethod.TELEGRAM_STARS,
 			// 	name: 'Telegram Stars',

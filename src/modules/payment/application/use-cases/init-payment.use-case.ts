@@ -13,10 +13,6 @@ import { YookassaPort } from '../../infrastructure/providers/yookassa.port'
 
 @Injectable()
 export class InitPaymentUseCase {
-	private readonly BASE_SUBSCRIPTION_PRICE = 349
-
-	private readonly INTERNATIONAL_CARD_FEE_PERCENT = 15
-
 	public constructor(
 		private readonly payments: PaymentRepositoryPort,
 		private readonly receipts: ReceiptRepositoryPort,
@@ -88,16 +84,11 @@ export class InitPaymentUseCase {
 
 	private getPriceForMethod(method: string): number {
 		switch (method) {
-			case 'INTERNATIONAL_CARD': {
-				const fee =
-					this.BASE_SUBSCRIPTION_PRICE *
-					(this.INTERNATIONAL_CARD_FEE_PERCENT / 100)
-
-				return Math.ceil(this.BASE_SUBSCRIPTION_PRICE + fee)
-			}
+			case 'INTERNATIONAL_CARD':
+				return 399
 
 			default:
-				return this.BASE_SUBSCRIPTION_PRICE
+				return 349
 		}
 	}
 }

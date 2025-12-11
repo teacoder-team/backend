@@ -25,6 +25,7 @@ export const payments = pgTable('payments', {
 	providerPaymentId: varchar('provider_payment_id', {
 		length: 255
 	}).default(null),
+	invoiceId: varchar('invoice_id').default(null),
 
 	metadata: jsonb('metadata').default(null),
 
