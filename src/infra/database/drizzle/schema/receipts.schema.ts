@@ -2,6 +2,7 @@ import {
 	jsonb,
 	numeric,
 	pgTable,
+	text,
 	timestamp,
 	uuid,
 	varchar
@@ -10,7 +11,7 @@ import {
 import { payments } from './payments.schema'
 
 export const receipts = pgTable('receipts', {
-	id: uuid('id').primaryKey().defaultRandom(),
+	id: text('id').primaryKey(),
 	paymentId: uuid('payment_id')
 		.notNull()
 		.references(() => payments.id, { onDelete: 'cascade' }),

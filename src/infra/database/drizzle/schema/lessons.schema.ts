@@ -11,7 +11,7 @@ import {
 import { courses } from './courses.schema'
 
 export const lessons = pgTable('lessons', {
-	id: uuid('id').primaryKey().defaultRandom(),
+	id: text('id').primaryKey(),
 
 	title: varchar('title', { length: 255 }).notNull(),
 	slug: varchar('slug', { length: 255 }).notNull().unique(),

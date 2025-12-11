@@ -3,6 +3,7 @@ import {
 	integer,
 	jsonb,
 	pgTable,
+	text,
 	timestamp,
 	uuid,
 	varchar
@@ -12,7 +13,7 @@ import { paymentMethodEnum, paymentProviderEnum } from './enums'
 import { users } from './users.schema'
 
 export const userPaymentMethods = pgTable('user_payment_methods', {
-	id: uuid('id').primaryKey().defaultRandom(),
+	id: text('id').primaryKey(),
 
 	title: varchar('title', { length: 255 }),
 

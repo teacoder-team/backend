@@ -332,6 +332,7 @@ model Payment {
   method PaymentMethod
 
   providerPaymentId String? @map("provider_payment_id")
+  invoiceId         Int?    @map("invoice_id")
 
   metadata Json?
 

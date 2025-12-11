@@ -3,6 +3,7 @@ import {
 	jsonb,
 	numeric,
 	pgTable,
+	text,
 	timestamp,
 	uuid,
 	varchar
@@ -14,7 +15,7 @@ import { userPaymentMethods } from './user-payment-methods.schema'
 import { users } from './users.schema'
 
 export const payments = pgTable('payments', {
-	id: uuid('id').primaryKey().defaultRandom(),
+	id: text('id').primaryKey(),
 
 	amount: numeric('amount').notNull(),
 	currency: varchar('currency', { length: 20 }).notNull(),

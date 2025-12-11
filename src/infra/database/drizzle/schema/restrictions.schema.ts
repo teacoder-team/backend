@@ -1,10 +1,10 @@
-import { pgTable, timestamp, uuid } from 'drizzle-orm/pg-core'
+import { pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core'
 
 import { restrictionReasonEnum, restrictionStatusEnum } from './enums'
 import { users } from './users.schema'
 
 export const restrictions = pgTable('restrictions', {
-	id: uuid('id').primaryKey().defaultRandom(),
+	id: text('id').primaryKey(),
 
 	reason: restrictionReasonEnum('reason').notNull(),
 	until: timestamp('until'),

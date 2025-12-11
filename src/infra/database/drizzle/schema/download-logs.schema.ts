@@ -1,10 +1,10 @@
-import { pgTable, timestamp, uuid, varchar } from 'drizzle-orm/pg-core'
+import { pgTable, text, timestamp, uuid, varchar } from 'drizzle-orm/pg-core'
 
 import { courses } from './courses.schema'
 import { users } from './users.schema'
 
 export const downloadLogs = pgTable('download_logs', {
-	id: uuid('id').primaryKey().defaultRandom(),
+	id: text('id').primaryKey(),
 
 	token: varchar('token', { length: 255 }).notNull(),
 

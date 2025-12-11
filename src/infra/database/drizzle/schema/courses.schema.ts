@@ -9,7 +9,7 @@ import {
 } from 'drizzle-orm/pg-core'
 
 export const courses = pgTable('courses', {
-	id: uuid('id').primaryKey().defaultRandom(),
+	id: text('id').primaryKey(),
 
 	title: varchar('title', { length: 255 }).notNull(),
 	slug: varchar('slug', { length: 255 }).notNull().unique(),
