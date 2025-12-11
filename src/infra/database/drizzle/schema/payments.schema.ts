@@ -22,21 +22,26 @@ export const payments = pgTable('payments', {
 	status: paymentStatusEnum('status').notNull().default('PENDING'),
 	method: paymentMethodEnum('method').notNull(),
 
-	providerPaymentId: varchar('provider_payment_id', { length: 255 }),
-	invoiceId: integer('invoice_id'),
+	providerPaymentId: varchar('provider_payment_id', {
+		length: 255
+	}).default(null),
 
-	metadata: jsonb('metadata'),
+	metadata: jsonb('metadata').default(null),
 
 	userId: uuid('user_id')
 		.notNull()
 		.references(() => users.id, { onDelete: 'cascade' }),
+	paymentMethodId: uuid('payment_method_id')
+		.references(() => userPaymentMethods.id)
+		.default(null),
+	subscriptionId: uuid('subscription_id')
+		.references(() => subscriptions.id)
+		.default(null),
 
-	paymentMethodId: uuid('payment_method_id').references(
-		() => userPaymentMethods.id
-	),
-
-	subscriptionId: uuid('subscription_id').references(() => subscriptions.id),
-
-	createdAt: timestamp('created_at').defaultNow(),
-	updatedAt: timestamp('updated_at').defaultNow()
+	createdAt: timestamp('created_at', { withTimezone: true })
+		.notNull()
+		.defaultNow(),
+	updatedAt: timestamp('updated_at', { withTimezone: true })
+		.notNull()
+		.defaultNow()
 })

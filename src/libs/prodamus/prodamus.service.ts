@@ -4,7 +4,7 @@ import { createHmac } from 'crypto'
 
 import { Currency, PaymentDo } from './enums'
 import { ProdamusOptions, ProdamusOptionsSymbol } from './interfaces'
-import { CreatePaymentRequest } from './interfaces/create-payment-request.interface'
+import type { CreatePaymentRequest } from './interfaces/create-payment-request.interface'
 
 @Injectable()
 export class ProdamusService {
@@ -18,26 +18,75 @@ export class ProdamusService {
 		private readonly options: ProdamusOptions,
 		private readonly httpService: HttpService
 	) {
-		this.BASE_URL = 'https://demo.payform.ru'
+		this.BASE_URL = 'https://teacoder.payform.ru'
 		this.SECRET_KEY = this.options.secretKey
 	}
 
 	public async createPayment(data: CreatePaymentRequest) {
-		if (!data.do) data.do = PaymentDo.PAY
-		if (!data.currency) data.currency = Currency.RUB
+		const payload: CreatePaymentRequest = {
+			...data,
+			do: data.do ?? PaymentDo.PAY,
+			currency: (data.currency ?? Currency.RUB).toLowerCase() as Currency
+		}
 
-		const flatData = this.flattenData(data)
-		const signature = this.generateSignature(flatData)
+		const signature = this.generateSignature(payload)
 
-		const url = this.buildUrl({
-			...flatData,
+		const payloadWithSignature: Record<string, any> = {
+			...payload,
 			signature
-		})
+		}
+
+		const flat = this.flattenData(payloadWithSignature)
+
+		const params = new URLSearchParams()
+		for (const [key, value] of Object.entries(flat)) {
+			params.append(key, String(value))
+		}
+
+		const url = `${this.BASE_URL}/?${params.toString()}`
 
 		this.logger.log(`✅ Prodamus payment link generated`)
 		this.logger.debug(url)
 
 		return { url }
+	}
+
+	private generateSignature(data: Record<string, any>): string {
+		const copy: Record<string, any> = { ...data }
+		delete copy.signature
+
+		const normalized = this.normalizeAndSort(copy)
+
+		let json = JSON.stringify(normalized)
+
+		json = json.replace(/\//g, '\\/')
+
+		this.logger.debug(`Prodamus signature payload JSON: ${json}`)
+
+		return createHmac('sha256', this.SECRET_KEY).update(json).digest('hex')
+	}
+
+	private normalizeAndSort(value: any): any {
+		if (Array.isArray(value)) {
+			return value.map(v => this.normalizeAndSort(v))
+		}
+
+		if (value !== null && typeof value === 'object') {
+			const sortedKeys = Object.keys(value).sort()
+			const result: Record<string, any> = {}
+
+			for (const key of sortedKeys) {
+				const v = value[key]
+				if (v === undefined || v === null) continue
+
+				result[key] = this.normalizeAndSort(v)
+			}
+
+			return result
+		}
+
+		if (value === null || value === undefined) return ''
+		return String(value)
 	}
 
 	private flattenData(
@@ -64,26 +113,5 @@ export class ProdamusService {
 		}
 
 		return result
-	}
-
-	private generateSignature(flat: Record<string, any>): string {
-		const sortedKeys = Object.keys(flat).sort()
-		const signatureString = sortedKeys.map(key => flat[key]).join('')
-
-		this.logger.debug(`Signature string: ${signatureString}`)
-
-		return createHmac('sha256', this.SECRET_KEY)
-			.update(signatureString)
-			.digest('hex')
-	}
-
-	private buildUrl(payload: Record<string, any>): string {
-		const params = new URLSearchParams()
-
-		for (const [key, value] of Object.entries(payload)) {
-			params.append(key, String(value))
-		}
-
-		return `${this.BASE_URL}/?${params.toString()}`
 	}
 }

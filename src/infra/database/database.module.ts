@@ -1,9 +1,10 @@
-import { Module } from '@nestjs/common'
+import { Global, Module } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { Pool } from 'pg'
 
 import { DatabaseService } from './database.service'
 
+@Global()
 @Module({
 	providers: [
 		{
@@ -11,11 +12,11 @@ import { DatabaseService } from './database.service'
 			inject: [ConfigService],
 			useFactory: async (config: ConfigService) => {
 				const pool = new Pool({
-					host: config.get('DB_HOST'),
-					port: Number(config.get('DB_PORT')),
-					user: config.get('DB_USER'),
-					password: config.get('DB_PASSWORD'),
-					database: config.get('DB_NAME'),
+					host: config.get('POSTGRES_HOST'),
+					port: Number(config.get('POSTGRES_PORT')),
+					user: config.get('POSTGRES_USER'),
+					password: config.get('POSTGRES_PASSWORD'),
+					database: config.get('POSTGRES_DATABASE'),
 					ssl:
 						config.get('DB_SSL') === 'true'
 							? { rejectUnauthorized: false }

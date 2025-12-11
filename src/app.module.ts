@@ -2,7 +2,8 @@ import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 
 import { ApiModule } from './api/api.module'
-import { BotModule } from './bots/bot.module'
+import { BotModule } from './api/bots/bot.module'
+import { PaymentHttpModule } from './api/http/payment/payment.http.module'
 import {
 	appEnv,
 	fingerprintEnv,
@@ -10,11 +11,9 @@ import {
 	hostsEnv,
 	kinescopeEnv,
 	mailerEnv,
-	paytureEnv,
 	prodamusEnv,
 	queueEnv,
 	redisEnv,
-	robokassaEnv,
 	sentinelEnv,
 	storageEnv,
 	telegramEnv,
@@ -22,11 +21,13 @@ import {
 	webauthnEnv,
 	yookassaEnv
 } from './config'
-import { CourseModule } from './domains/course/course.module'
 import { InfraModule } from './infra/infra.module'
 import { LibsModule } from './libs/libs.module'
+import { CourseModule } from './modules/course/course.module'
+import { WebhookModule } from './modules/payment/infrastructure/webhook/webhook.module'
+import { PaymentModule } from './modules/payment/payment.module'
+import { SystemModule } from './modules/system/system.module'
 import { IS_DEV_ENV } from './shared/utils'
-import { CoreModule } from './core/core.module';
 
 @Module({
 	imports: [
@@ -40,11 +41,9 @@ import { CoreModule } from './core/core.module';
 				hostsEnv,
 				kinescopeEnv,
 				mailerEnv,
-				paytureEnv,
-				// prodamusEnv,
+				prodamusEnv,
 				queueEnv,
 				redisEnv,
-				// robokassaEnv,
 				sentinelEnv,
 				storageEnv,
 				telegramEnv,
@@ -53,12 +52,15 @@ import { CoreModule } from './core/core.module';
 				yookassaEnv
 			]
 		}),
+		SystemModule,
 		ApiModule,
 		InfraModule,
 		LibsModule,
 		BotModule,
 		CourseModule,
-		CoreModule
+		PaymentModule,
+		PaymentHttpModule,
+		WebhookModule
 	]
 })
 export class AppModule {}

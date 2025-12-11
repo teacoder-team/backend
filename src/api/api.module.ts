@@ -13,17 +13,16 @@ import {
 import { FingerprintModule } from '@/libs/fingerprint/fingerprint.module'
 import { EnhancedThrottlerGuard } from '@/shared/guards'
 
-import { AccountModule } from './auth/account/account.module'
-import { MfaModule } from './auth/mfa/mfa.module'
-import { PasskeyModule } from './auth/passkey/passkey.module'
-import { SessionModule } from './auth/session/session.module'
-import { SsoModule } from './auth/sso/sso.module'
-import { LessonModule } from './lesson/lesson.module'
-import { PaymentModule } from './payment/payment.module'
-import { ProgressModule } from './progress/progress.module'
-import { RestrictionModule } from './restriction/restriction.module'
-import { StatisticsModule } from './statistics/statistics.module'
-import { UsersModule } from './users/users.module'
+import { AccountModule } from './http/auth/account/account.module'
+import { MfaModule } from './http/auth/mfa/mfa.module'
+import { PasskeyModule } from './http/auth/passkey/passkey.module'
+import { SessionModule } from './http/auth/session/session.module'
+import { SsoModule } from './http/auth/sso/sso.module'
+import { LessonModule } from './http/lesson/lesson.module'
+import { ProgressModule } from './http/progress/progress.module'
+import { RestrictionModule } from './http/restriction/restriction.module'
+import { StatisticsModule } from './http/statistics/statistics.module'
+import { UsersModule } from './http/users/users.module'
 
 @Module({
 	imports: [
@@ -52,8 +51,7 @@ import { UsersModule } from './users/users.module'
 		UsersModule,
 		LessonModule,
 		ProgressModule,
-		StatisticsModule,
-		PaymentModule
+		StatisticsModule
 	],
 	providers: [
 		{

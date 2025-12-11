@@ -1,9 +1,9 @@
 import { HttpService } from '@nestjs/axios'
 import { BadRequestException, Inject, Injectable, Logger } from '@nestjs/common'
-import { createHash, timingSafeEqual } from 'crypto'
+import { createHash } from 'crypto'
 import { firstValueFrom } from 'rxjs'
 
-import { HeleketPaymentWebhookResponse } from '@/api/payment/webhook/dto'
+import { HeleketPaymentWebhookResponse } from '@/modules/payment/infrastructure/webhook/dto/heleket-webhook.dto'
 import { type HeleketOptions, HeleketOptionsSymbol } from '@/shared/interfaces'
 
 import type {
