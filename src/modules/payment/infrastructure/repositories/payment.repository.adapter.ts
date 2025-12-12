@@ -30,7 +30,9 @@ export class PaymentRepositoryAdapter implements PaymentRepositoryPort {
 			currency: entity.amount.currency,
 			method: PaymentMethodMap[entity.method.value],
 			status: entity.status.value,
-			metadata: entity.metadata
+			metadata: entity.metadata,
+			createdAt: new Date(),
+			updatedAt: new Date()
 		})
 	}
 
@@ -40,7 +42,8 @@ export class PaymentRepositoryAdapter implements PaymentRepositoryPort {
 			.set({
 				providerPaymentId: entity.providerPaymentId,
 				metadata: entity.metadata,
-				status: entity.status.value
+				status: entity.status.value,
+				updatedAt: new Date()
 			})
 			.where(eq(payments.id, entity.id))
 	}
