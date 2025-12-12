@@ -22,36 +22,39 @@ export class SubscriptionRepositoryAdapter
 			.where(eq(subscriptions.userId, userId))
 			.limit(1)
 
-		let newExpiresAt =
+		let startedAt = existing?.startedAt ?? now
+
+		let baseDate =
 			existing?.expiresAt && existing.expiresAt > now
 				? existing.expiresAt
 				: now
 
-		newExpiresAt = addMonths(newExpiresAt, 1)
+		const newExpiresAt = addMonths(baseDate, 1)
 
 		if (existing) {
-			await this.db.db
+			const [row] = await this.db.db
 				.update(subscriptions)
 				.set({
-					updatedAt: new Date(),
 					expiresAt: newExpiresAt,
-					isActive: true
+					isActive: true,
+					updatedAt: new Date()
 				})
 				.where(eq(subscriptions.userId, userId))
-		} else {
-			await this.db.db.insert(subscriptions).values({
+				.returning()
+
+			return row
+		}
+
+		const [row] = await this.db.db
+			.insert(subscriptions)
+			.values({
 				userId,
-				startedAt: now,
+				startedAt,
 				expiresAt: newExpiresAt,
 				isActive: true
 			})
-		}
+			.returning()
 
-		return {
-			id: existing.id,
-			userId,
-			startedAt: existing.startedAt,
-			expiresAt: newExpiresAt
-		}
+		return row
 	}
 }
