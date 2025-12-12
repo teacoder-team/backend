@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { BadRequestException, Injectable } from '@nestjs/common'
 import { PaymentMethod } from '@prisma/generated'
 import { eq } from 'drizzle-orm'
 
@@ -20,8 +20,19 @@ export class PaymentMethodRepositoryAdapter
 
 	public constructor(private readonly db: DatabaseService) {}
 
-	public async saveOrUpdate(userId: string, metadata: any) {
-		const { id, type, title, card, status } = metadata
+	public async saveOrUpdate(userId: string, paymentMethod: any) {
+		if (!paymentMethod)
+			throw new BadRequestException(
+				'payment_method object is missing in YooKassa webhook'
+			)
+
+		const { id, type, title, card, status } = paymentMethod
+
+		if (!id || !type) {
+			throw new BadRequestException(
+				`Invalid payment_method payload: missing id or type`
+			)
+		}
 
 		const resolvedTitle =
 			type === 'tinkoff_bank' ? 'T-Pay' : title || 'Unknown'
@@ -36,6 +47,14 @@ export class PaymentMethodRepositoryAdapter
 				? Number(card.expiry_year)
 				: null
 
+		const mappedType =
+			this.paymentTypeMap[type] ??
+			(() => {
+				throw new BadRequestException(
+					`Unsupported payment method type: ${type}`
+				)
+			})()
+
 		const existing = await this.db.db
 			.select()
 			.from(userPaymentMethods)
@@ -47,14 +66,15 @@ export class PaymentMethodRepositoryAdapter
 				.update(userPaymentMethods)
 				.set({
 					title: resolvedTitle,
-					type: this.paymentTypeMap[type],
+					type: mappedType,
 					first6: card?.first6 ?? null,
 					last4: card?.last4 ?? null,
 					cardType: card?.card_type ?? null,
 					expiryMonth,
 					expiryYear,
 					isActive: status === 'active',
-					metadata
+					metadata: paymentMethod,
+					updatedAt: new Date()
 				})
 				.where(eq(userPaymentMethods.providerId, id))
 
@@ -68,14 +88,14 @@ export class PaymentMethodRepositoryAdapter
 				userId,
 				providerId: id,
 				title: resolvedTitle,
-				type: this.paymentTypeMap[type],
+				type: mappedType,
 				first6: card?.first6 ?? null,
 				last4: card?.last4 ?? null,
 				cardType: card?.card_type ?? null,
 				expiryMonth,
 				expiryYear,
 				isActive: status === 'active',
-				metadata
+				metadata: paymentMethod
 			})
 			.returning()
 
