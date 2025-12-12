@@ -11,7 +11,7 @@ export class HeleketAdapter implements HeleketPort {
 	public constructor(private readonly heleket: HeleketService) {}
 
 	public async createPayment(payment: PaymentEntity) {
-		return this.heleket.createPayment({
+		const response = await this.heleket.createPayment({
 			order_id: payment.id,
 			amount: payment.amount.value.toString(),
 			currency: payment.amount.currency,
@@ -19,6 +19,12 @@ export class HeleketAdapter implements HeleketPort {
 			url_success: process.env.HOSTS_APP + '/premium',
 			url_callback: process.env.HOSTS_REST + '/webhook/heleket'
 		})
+
+		return {
+			id: response.uuid,
+			url: response.url,
+			raw: response
+		}
 	}
 
 	public verifyWebhook(ip: string, payload: any) {
