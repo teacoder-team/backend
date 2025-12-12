@@ -258,8 +258,8 @@ model DownloadLog {
   course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
   courseId String @map("course_id")
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("download_logs")
 }
