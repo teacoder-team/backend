@@ -43,9 +43,8 @@ export class ProdamusAdapter implements ProdamusPort {
 			available_payment_methods: this.INTERNATIONAL_METHODS.join('|'),
 			urlSuccess: process.env.HOSTS_APP + '/payment/success',
 			urlReturn: process.env.HOSTS_APP + '/premium',
-			urlNotification:
-				'https://60c974a5a569.ngrok-free.app/webhook/prodamus'
-			// urlNotification: process.env.HOSTS_REST + '/webhook/prodamus'
+			urlNotification: process.env.HOSTS_REST + '/webhook/prodamus'
+			// urlNotification: 'https://6ab690fb66ef.ngrok-free.app/webhook/prodamus'
 		})
 
 		return {

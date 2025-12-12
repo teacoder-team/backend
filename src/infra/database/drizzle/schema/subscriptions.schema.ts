@@ -3,7 +3,7 @@ import { boolean, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core'
 import { users } from './users.schema'
 
 export const subscriptions = pgTable('subscriptions', {
-	id: text('id').primaryKey(),
+	id: uuid('id').primaryKey().defaultRandom(),
 
 	startedAt: timestamp('started_at').defaultNow(),
 	expiresAt: timestamp('expires_at'),

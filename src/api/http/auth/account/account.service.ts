@@ -7,8 +7,16 @@ import {
 import { EmailVerificationStatus, type User } from '@prisma/generated'
 import { hash } from 'argon2'
 import { randomBytes } from 'crypto'
+import { eq } from 'drizzle-orm'
 
 import { TeamanagerBotService } from '@/api/bots/teamanager/teamanager.bot.service'
+import { DatabaseService } from '@/infra/database/database.service'
+import {
+	emailVerification,
+	passwordResets,
+	subscriptions,
+	users
+} from '@/infra/database/drizzle/schema'
 import { PrismaService } from '@/infra/prisma/prisma.service'
 import { RedisService } from '@/infra/redis/redis.service'
 import { MailService } from '@/libs/mail/mail.service'
@@ -25,42 +33,44 @@ import {
 @Injectable()
 export class AccountService {
 	public constructor(
-		private readonly prismaService: PrismaService,
+		private readonly databaseService: DatabaseService,
 		private readonly redisService: RedisService,
 		private readonly mailService: MailService,
 		private readonly botService: TeamanagerBotService
 	) {}
 
 	public async getMe(user: User) {
-		const emailVerification =
-			await this.prismaService.emailVerification.findUnique({
-				where: {
-					userId: user.id
-				}
-			})
+		const [emailV] = await this.databaseService.db
+			.select()
+			.from(emailVerification)
+			.where(eq(emailVerification.userId, user.id))
+			.limit(1)
 
-		const subscription = await this.prismaService.subscription.findUnique({
-			where: {
-				userId: user.id
-			}
-		})
+		const [subscription] = await this.databaseService.db
+			.select()
+			.from(subscriptions)
+			.where(eq(subscriptions.userId, user.id))
+			.limit(1)
 
-		const isEmailVerified = emailVerification
-			? emailVerification.status === EmailVerificationStatus.VERIFIED
-			: false
-		const isPremium = !!(
+		const isEmailVerified = emailV?.status === 'VERIFIED'
+		const isPremium =
 			subscription &&
 			subscription.isActive &&
 			(!subscription.expiresAt || subscription.expiresAt > new Date())
-		)
+
+		const [u] = await this.databaseService.db
+			.select()
+			.from(users)
+			.where(eq(users.id, user.id))
+			.limit(1)
 
 		return {
-			id: user.id,
-			displayName: user.displayName,
-			email: user.email,
-			avatar: user.avatar,
+			id: u.id,
+			displayName: u.displayName,
+			email: u.email,
+			avatar: u.avatar,
 			isEmailVerified,
-			isAutoBilling: user.isAutoBilling,
+			isAutoBilling: u.isAutoBilling,
 			isPremium
 		}
 	}
@@ -68,30 +78,27 @@ export class AccountService {
 	public async create(dto: CreateUserRequest, ip: string, userAgent: string) {
 		const { name, email, password, visitorId, requestId } = dto
 
-		// const { valid } = await validate(email)
+		const existing = await this.databaseService.db
+			.select()
+			.from(users)
+			.where(eq(users.email, email))
+			.limit(1)
 
-		// if (!valid) {
-		// 	throw new BadRequestException('Невалидная почта')
-		// }
-
-		const isExists = await this.prismaService.user.findFirst({
-			where: {
-				email
-			}
-		})
-
-		if (isExists) {
+		if (existing.length > 0)
 			throw new ConflictException('Такой пользователь уже существует')
-		}
 
-		const user = await this.prismaService.user.create({
-			data: {
+		const hashed = await hash(password)
+
+		const [user] = await this.databaseService.db
+			.insert(users)
+			.values({
+				id: crypto.randomUUID(),
 				displayName: name,
 				username: slugify(`${email}-${name}`),
 				email,
-				password: await hash(password)
-			}
-		})
+				password: hashed
+			})
+			.returning()
 
 		const session = await this.redisService.createSession(user, {
 			ip,
@@ -108,26 +115,19 @@ export class AccountService {
 	}
 
 	public async sendEmailVerification(user: User) {
-		const emailVerification =
-			await this.prismaService.emailVerification.findUnique({
-				where: {
-					userId: user.id
-				}
-			})
+		const [existing] = await this.databaseService.db
+			.select()
+			.from(emailVerification)
+			.where(eq(emailVerification.userId, user.id))
+			.limit(1)
 
-		if (
-			emailVerification &&
-			emailVerification.status === EmailVerificationStatus.VERIFIED
-		) {
+		if (existing?.status === 'VERIFIED')
 			throw new ConflictException('Эта почта уже подтверждена')
-		}
 
-		if (emailVerification) {
-			await this.prismaService.emailVerification.delete({
-				where: {
-					userId: user.id
-				}
-			})
+		if (existing) {
+			await this.databaseService.db
+				.delete(emailVerification)
+				.where(eq(emailVerification.userId, user.id))
 		}
 
 		const token = randomBytes(64).toString('hex')
@@ -135,24 +135,12 @@ export class AccountService {
 		const expiry = new Date()
 		expiry.setHours(expiry.getHours() + 1)
 
-		await this.prismaService.emailVerification.upsert({
-			where: {
-				token,
-				userId: user.id
-			},
-			update: {
-				token,
-				expiry
-			},
-			create: {
-				token,
-				expiry,
-				user: {
-					connect: {
-						id: user.id
-					}
-				}
-			}
+		await this.databaseService.db.insert(emailVerification).values({
+			id: crypto.randomUUID(),
+			token,
+			expiry,
+			status: 'PENDING',
+			userId: user.id
 		})
 
 		await this.mailService.sendEmailVerification(user, token)
@@ -161,30 +149,23 @@ export class AccountService {
 	}
 
 	public async verifyEmail(token: string) {
-		const emailVerification =
-			await this.prismaService.emailVerification.findUnique({
-				where: {
-					token
-				}
-			})
+		const [ev] = await this.databaseService.db
+			.select()
+			.from(emailVerification)
+			.where(eq(emailVerification.token, token))
+			.limit(1)
 
-		if (!emailVerification) {
-			throw new NotFoundException('Токен не найден')
-		}
-
-		if (new Date() > emailVerification.expiry) {
+		if (!ev) throw new NotFoundException('Токен не найден')
+		if (new Date() > ev.expiry)
 			throw new BadRequestException('Срок действия токена истек')
-		}
 
-		await this.prismaService.emailVerification.update({
-			where: {
-				token
-			},
-			data: {
-				expiry: null,
-				status: EmailVerificationStatus.VERIFIED
-			}
-		})
+		await this.databaseService.db
+			.update(emailVerification)
+			.set({
+				status: 'VERIFIED',
+				expiry: null
+			})
+			.where(eq(emailVerification.token, token))
 
 		return true
 	}
@@ -192,11 +173,11 @@ export class AccountService {
 	public async sendPasswordReset(dto: SendPasswordResetRequest) {
 		const { email } = dto
 
-		const user = await this.prismaService.user.findUnique({
-			where: {
-				email
-			}
-		})
+		const [user] = await this.databaseService.db
+			.select()
+			.from(users)
+			.where(eq(users.email, email))
+			.limit(1)
 
 		if (!user) throw new NotFoundException('Пользователь не найден')
 
@@ -205,20 +186,18 @@ export class AccountService {
 		const expiry = new Date()
 		expiry.setHours(expiry.getHours() + 1)
 
-		await this.prismaService.passwordReset.upsert({
-			where: {
-				userId: user.id
-			},
-			update: {
+		await this.databaseService.db
+			.insert(passwordResets)
+			.values({
+				id: crypto.randomUUID(),
+				userId: user.id,
 				token,
 				expiry
-			},
-			create: {
-				token,
-				expiry,
-				userId: user.id
-			}
-		})
+			})
+			.onConflictDoUpdate({
+				target: passwordResets.userId,
+				set: { token, expiry }
+			})
 
 		await this.mailService.sendPasswordReset(user, token)
 
@@ -228,11 +207,11 @@ export class AccountService {
 	public async passwordReset(dto: PasswordResetRequest) {
 		const { token, password } = dto
 
-		const reset = await this.prismaService.passwordReset.findUnique({
-			where: {
-				token
-			}
-		})
+		const [reset] = await this.databaseService.db
+			.select()
+			.from(passwordResets)
+			.where(eq(passwordResets.token, token))
+			.limit(1)
 
 		if (!reset) {
 			throw new NotFoundException('Токен не найден')
@@ -242,20 +221,14 @@ export class AccountService {
 			throw new BadRequestException('Срок действия токена истек')
 		}
 
-		await this.prismaService.user.update({
-			where: {
-				id: reset.userId
-			},
-			data: {
-				password: await hash(password)
-			}
-		})
+		await this.databaseService.db
+			.update(users)
+			.set({ password: await hash(password) })
+			.where(eq(users.id, reset.userId))
 
-		await this.prismaService.passwordReset.delete({
-			where: {
-				id: reset.id
-			}
-		})
+		await this.databaseService.db
+			.delete(passwordResets)
+			.where(eq(passwordResets.id, reset.id))
 
 		return true
 	}
@@ -263,26 +236,21 @@ export class AccountService {
 	public async changeEmail(user: User, dto: ChangeEmailRequest) {
 		const { email } = dto
 
-		const isExists = await this.prismaService.user.findFirst({
-			where: {
-				email
-			}
-		})
+		const existing = await this.databaseService.db
+			.select()
+			.from(users)
+			.where(eq(users.email, email))
+			.limit(1)
 
-		if (isExists) {
+		if (existing.length > 0)
 			throw new ConflictException(
 				'Эта почта привязана к другому аккаунту'
 			)
-		}
 
-		await this.prismaService.user.update({
-			where: {
-				id: user.id
-			},
-			data: {
-				email
-			}
-		})
+		await this.databaseService.db
+			.update(users)
+			.set({ email })
+			.where(eq(users.id, user.id))
 
 		return true
 	}
@@ -290,20 +258,10 @@ export class AccountService {
 	public async changePassword(user: User, dto: ChangePasswordRequest) {
 		const { newPassword } = dto
 
-		// const isValidPassword = await verify(user.password, currentPassword)
-
-		// if (!isValidPassword) {
-		// 	throw new BadRequestException('Неверный старый пароль')
-		// }
-
-		await this.prismaService.user.update({
-			where: {
-				id: user.id
-			},
-			data: {
-				password: await hash(newPassword)
-			}
-		})
+		await this.databaseService.db
+			.update(users)
+			.set({ password: await hash(newPassword) })
+			.where(eq(users.id, user.id))
 
 		return true
 	}

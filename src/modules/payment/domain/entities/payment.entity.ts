@@ -12,8 +12,10 @@ export class PaymentEntity {
 		public method: PaymentMethodVO,
 		public status: PaymentStatusVO,
 		public providerPaymentId?: string,
+		public paymentMethodId?: string,
 		public metadata?: any,
-		public subscriptionId?: string
+		public subscriptionId?: string,
+		public createdAt?: Date
 	) {}
 
 	public static create(props: {
@@ -26,7 +28,10 @@ export class PaymentEntity {
 			props.userId,
 			props.amount,
 			props.method,
-			PaymentStatusVO.pending()
+			PaymentStatusVO.pending(),
+			undefined,
+			undefined,
+			new Date()
 		)
 	}
 

@@ -10,6 +10,10 @@ import type {
 import { render } from '@react-email/components'
 import { Queue } from 'bullmq'
 
+import { PaymentEntity } from '@/modules/payment/domain/entities/payment.entity'
+import { SubscriptionEntity } from '@/modules/payment/domain/repositories/subscription.repository.port'
+import { UserEntity } from '@/modules/payment/domain/repositories/user.repository.port'
+
 import { EmailVerificationTemplate } from './templates/email-verification.template'
 import { ResetPasswordTemplate } from './templates/reset-password.template'
 import { RestrictionLiftedTemplate } from './templates/restriction-lifted.template'
@@ -49,9 +53,9 @@ export class MailService {
 	}
 
 	public async sendSubscriptionSuccess(
-		user: User,
-		payment: Payment,
-		subscription: Subscription
+		user: UserEntity,
+		payment: PaymentEntity,
+		subscription: SubscriptionEntity
 	) {
 		const html = await render(
 			SubscriptionSuccessTemplate({ user, payment, subscription })

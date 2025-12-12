@@ -13,7 +13,7 @@ import { paymentMethodEnum, paymentProviderEnum } from './enums'
 import { users } from './users.schema'
 
 export const userPaymentMethods = pgTable('user_payment_methods', {
-	id: text('id').primaryKey(),
+	id: uuid('id').primaryKey().defaultRandom(),
 
 	title: varchar('title', { length: 255 }),
 

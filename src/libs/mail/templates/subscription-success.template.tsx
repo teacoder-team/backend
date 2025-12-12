@@ -14,12 +14,16 @@ import {
 	Tailwind,
 	Text
 } from '@react-email/components'
-import { type Payment, type Subscription, type User, PaymentMethod } from '@prisma/generated'
+
+import { UserEntity } from '@/modules/payment/domain/repositories/user.repository.port'
+import { PaymentEntity } from '@/modules/payment/domain/entities/payment.entity'
+import { SubscriptionEntity } from '@/modules/payment/domain/repositories/subscription.repository.port'
+import { PaymentMethod } from '@prisma/generated'
 
 interface SubscriptionSuccessTemplateProps {
-	user: User
-	payment: Payment
-	subscription: Subscription
+	user: UserEntity
+	payment: PaymentEntity
+	subscription: SubscriptionEntity
 }
 
 const baseUrl = process.env['HOSTS_APP']
@@ -32,13 +36,13 @@ export function SubscriptionSuccessTemplate({
 	const logo = `${baseUrl}/touch-icons/512x512.png`
 	const returnUrl = `${baseUrl}/courses`
 
-	const paymentInfo = paymentMethodInfo(payment.method)
+	const paymentInfo = paymentMethodInfo(payment.method.value)
 
 	const infoRows = [
 		{ label: 'Способ оплаты', value: paymentInfo.label },
-		{ label: 'Сумма', value: `${payment.amount} ${payment.currency}` },
-		{ label: 'Начало подписки', value: subscription.startedAt.toLocaleDateString() },
-		{ label: 'Окончание подписки', value: subscription.expiresAt?.toLocaleDateString() ?? '-' }
+		{ label: 'Сумма', value: `${payment.amount.value} ${payment.amount.currency}` },
+		{ label: 'Начало подписки', value: new Date(subscription.startedAt).toLocaleDateString() },
+		{ label: 'Окончание подписки', value: subscription.expiresAt ? new Date(subscription.expiresAt).toLocaleDateString() : '-' }
 	]
 
 	return (
@@ -118,7 +122,7 @@ export function SubscriptionSuccessTemplate({
 	)
 }
 
-function paymentMethodInfo(method: PaymentMethod) {
+function paymentMethodInfo(method: string) {
 	switch (method) {
 		case PaymentMethod.BANK_CARD:
 			return { label: 'Банковская карта', logo: `${baseUrl}/payment-logos/bank-card.svg` }

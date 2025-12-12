@@ -11,7 +11,7 @@ import {
 import { payments } from './payments.schema'
 
 export const receipts = pgTable('receipts', {
-	id: text('id').primaryKey(),
+	id: uuid('id').primaryKey().defaultRandom(),
 	paymentId: uuid('payment_id')
 		.notNull()
 		.references(() => payments.id, { onDelete: 'cascade' }),

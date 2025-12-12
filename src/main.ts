@@ -15,10 +15,14 @@ import {
 	getValidationPipeConfig
 } from './config'
 import type { AllConfigs } from './config/definitions'
-import { setupSwagger } from './shared/utils'
+import { IS_DEV_ENV, setupSwagger } from './shared/utils'
 
 async function bootstrap() {
-	const app = await NestFactory.create<NestExpressApplication>(AppModule)
+	const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+		logger: IS_DEV_ENV
+			? ['error', 'warn', 'log', 'debug', 'verbose']
+			: ['error', 'warn', 'log']
+	})
 
 	const config = app.get(ConfigService<AllConfigs>)
 	const logger = new Logger(AppModule.name)

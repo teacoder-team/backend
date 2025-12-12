@@ -12,7 +12,7 @@ import { accountProviderEnum } from './enums'
 import { users } from './users.schema'
 
 export const externalAccounts = pgTable('external_accounts', {
-	id: text('id').primaryKey(),
+	id: uuid('id').primaryKey().defaultRandom(),
 
 	provider: accountProviderEnum('provider').notNull(),
 	providerAccountId: varchar('provider_account_id', { length: 255 })

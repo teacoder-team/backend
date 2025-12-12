@@ -4,7 +4,7 @@ import { restrictionReasonEnum, restrictionStatusEnum } from './enums'
 import { users } from './users.schema'
 
 export const restrictions = pgTable('restrictions', {
-	id: text('id').primaryKey(),
+	id: uuid('id').primaryKey().defaultRandom(),
 
 	reason: restrictionReasonEnum('reason').notNull(),
 	until: timestamp('until'),

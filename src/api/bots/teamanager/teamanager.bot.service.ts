@@ -11,6 +11,9 @@ import { Telegraf } from 'telegraf'
 
 import type { AllConfigs } from '@/config/definitions'
 import { PrismaService } from '@/infra/prisma/prisma.service'
+import { PaymentEntity } from '@/modules/payment/domain/entities/payment.entity'
+import { SubscriptionEntity } from '@/modules/payment/domain/repositories/subscription.repository.port'
+import { UserEntity } from '@/modules/payment/domain/repositories/user.repository.port'
 
 import { MESSAGES } from '../shared/messages'
 
@@ -41,9 +44,9 @@ export class TeamanagerBotService {
 	}
 
 	public async sendSubscriptionPurchased(
-		user: User,
-		payment: Payment & { paymentMethod?: UserPaymentMethod | null },
-		subscription: Subscription
+		user: UserEntity,
+		payment: PaymentEntity,
+		subscription: SubscriptionEntity
 	) {
 		await this.bot.telegram.sendMessage(
 			this.OWNER_ID,

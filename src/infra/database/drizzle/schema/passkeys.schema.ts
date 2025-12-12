@@ -10,7 +10,7 @@ import {
 import { mfa } from './mfa.schema'
 
 export const passkeys = pgTable('passkeys', {
-	id: text('id').primaryKey(),
+	id: uuid('id').primaryKey().defaultRandom(),
 
 	deviceName: varchar('device_name', { length: 255 }).notNull(),
 	credentialId: varchar('credential_id', { length: 500 }).unique().notNull(),

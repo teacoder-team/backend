@@ -4,7 +4,7 @@ import { totpStatusEnum } from './enums'
 import { users } from './users.schema'
 
 export const totps = pgTable('totps', {
-	id: text('id').primaryKey(),
+	id: uuid('id').primaryKey().defaultRandom(),
 	status: totpStatusEnum('status').default('DISABLED').notNull(),
 	secret: varchar('secret', { length: 255 }),
 	createdAt: timestamp('created_at').defaultNow(),
@@ -12,7 +12,7 @@ export const totps = pgTable('totps', {
 })
 
 export const mfa = pgTable('multi_factor_authentication', {
-	id: text('id').primaryKey(),
+	id: uuid('id').primaryKey().defaultRandom(),
 
 	recoveryCodes: text('recovery_codes').array().notNull().default([]),
 	currentChallenge: varchar('current_challenge', { length: 255 }),

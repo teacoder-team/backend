@@ -4,7 +4,7 @@ import { courses } from './courses.schema'
 import { users } from './users.schema'
 
 export const downloadLogs = pgTable('download_logs', {
-	id: text('id').primaryKey(),
+	id: uuid('id').primaryKey().defaultRandom(),
 
 	token: varchar('token', { length: 255 }).notNull(),
 

@@ -14,7 +14,7 @@ import { users } from './users.schema'
 export const userProgress = pgTable(
 	'user_progress',
 	{
-		id: text('id').primaryKey(),
+		id: uuid('id').primaryKey().defaultRandom(),
 
 		isCompleted: boolean('is_completed').notNull().default(false),
 

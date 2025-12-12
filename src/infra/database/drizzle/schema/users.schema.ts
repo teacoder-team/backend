@@ -11,7 +11,7 @@ import {
 import { userRoleEnum } from './enums'
 
 export const users = pgTable('users', {
-	id: text('id').primaryKey(),
+	id: uuid('id').primaryKey().defaultRandom(),
 
 	email: varchar('email', { length: 255 }).unique(),
 	password: varchar('password', { length: 255 }),

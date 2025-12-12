@@ -74,8 +74,10 @@ export class PaymentRepositoryAdapter implements PaymentRepositoryPort {
 			{ value: row.method },
 			{ value: row.status },
 			row.providerPaymentId,
+			row.paymentMethodId,
 			row.metadata,
-			row.subscriptionId
+			row.subscriptionId,
+			row.createdAt
 		)
 	}
 }
