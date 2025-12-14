@@ -32,6 +32,7 @@ import { PaymentRepositoryAdapter } from './infrastructure/repositories/payment.
 import { ReceiptRepositoryAdapter } from './infrastructure/repositories/receipt.repository.adapter'
 import { SubscriptionRepositoryAdapter } from './infrastructure/repositories/subscription.repository.adapter'
 import { UserRepositoryAdapter } from './infrastructure/repositories/user.repository.adapter'
+import { SchedulerModule } from './infrastructure/scheduler/scheduler.module'
 
 @Module({
 	imports: [
@@ -50,6 +51,7 @@ import { UserRepositoryAdapter } from './infrastructure/repositories/user.reposi
 			useFactory: getHeleketConfig,
 			inject: [ConfigService]
 		}),
+		SchedulerModule,
 		TeamanagerBotModule
 	],
 	providers: [
