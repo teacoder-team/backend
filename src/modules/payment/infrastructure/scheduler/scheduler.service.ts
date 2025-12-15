@@ -29,7 +29,7 @@ export class SchedulerService {
 		private readonly heleketService: HeleketService
 	) {}
 
-	@Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT, {
+	@Cron(CronExpression.EVERY_30_SECONDS, {
 		timeZone: 'Europe/Moscow'
 	})
 	public async handleAutoBilling() {
@@ -155,10 +155,6 @@ export class SchedulerService {
 					lastSuccess.method === PaymentMethod.T_PAY
 				) {
 					await this.handleYookassaRecurring(sub, user, lastSuccess)
-				} else if (
-					lastSuccess.method === PaymentMethod.INTERNATIONAL_CARD
-				) {
-					await this.handleRobokassaRecurring(sub, user, lastSuccess)
 				} else {
 					this.logger.warn(
 						`Skipping recurring for user ${user.id}, unsupported method: ${lastSuccess.method}`
