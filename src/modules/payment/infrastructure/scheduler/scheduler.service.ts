@@ -29,7 +29,7 @@ export class SchedulerService {
 		private readonly heleketService: HeleketService
 	) {}
 
-	@Cron(CronExpression.EVERY_30_SECONDS, {
+	@Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT, {
 		timeZone: 'Europe/Moscow'
 	})
 	public async handleAutoBilling() {
@@ -161,6 +161,11 @@ export class SchedulerService {
 					)
 				}
 			} catch (err) {
+				await this.deactivateSubscription(
+					sub,
+					`Scheduler error: ${err?.message ?? err}`
+				)
+
 				this.logger.error(
 					`Error processing subscription ${sub.id}: ${err?.message ?? err}`
 				)
@@ -230,9 +235,16 @@ export class SchedulerService {
 				`Auto-charge (Yookassa) created for user ${user.id}`
 			)
 		} catch (err) {
+			await this.deactivateSubscription(
+				sub,
+				`Yookassa auto-charge failed: ${err?.message ?? err}`
+			)
+
 			this.logger.error(
 				`Yookassa auto-charge failed for user ${user.id}, subscription ${sub.id}: ${err?.message ?? err}`
 			)
+
+			throw err
 		}
 	}
 
@@ -372,9 +384,16 @@ export class SchedulerService {
 
 			return invoice
 		} catch (err) {
+			await this.deactivateSubscription(
+				sub,
+				`Yookassa invoice error: ${err?.message ?? err}`
+			)
+
 			this.logger.error(
 				`Failed to create Yookassa invoice for user ${user.id}, subscription ${sub.id}: ${err?.message ?? err}`
 			)
+
+			throw err
 		}
 	}
 
@@ -415,10 +434,30 @@ export class SchedulerService {
 
 			return invoice
 		} catch (err) {
+			await this.deactivateSubscription(
+				sub,
+				`Heleket invoice error: ${err?.message ?? err}`
+			)
+
 			this.logger.error(
 				`Failed to create Heleket invoice for user ${user.id}, subscription ${sub.id}: ${err?.message ?? err}`
 			)
+
+			throw err
 		}
+	}
+
+	private async deactivateSubscription(sub: Subscription, reason: string) {
+		await this.prismaService.subscription.update({
+			where: {
+				id: sub.id
+			},
+			data: {
+				isActive: false
+			}
+		})
+
+		this.logger.warn(`Subscription ${sub.id} deactivated: ${reason}`)
 	}
 
 	private generateInvoiceId() {
