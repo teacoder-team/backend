@@ -18589,12 +18589,10 @@ export namespace Prisma {
 
   export type PaymentAvgAggregateOutputType = {
     amount: number | null
-    invoiceId: number | null
   }
 
   export type PaymentSumAggregateOutputType = {
     amount: number | null
-    invoiceId: number | null
   }
 
   export type PaymentMinAggregateOutputType = {
@@ -18604,7 +18602,6 @@ export namespace Prisma {
     status: $Enums.PaymentStatus | null
     method: $Enums.PaymentMethod | null
     providerPaymentId: string | null
-    invoiceId: number | null
     userId: string | null
     paymentMethodId: string | null
     subscriptionId: string | null
@@ -18619,7 +18616,6 @@ export namespace Prisma {
     status: $Enums.PaymentStatus | null
     method: $Enums.PaymentMethod | null
     providerPaymentId: string | null
-    invoiceId: number | null
     userId: string | null
     paymentMethodId: string | null
     subscriptionId: string | null
@@ -18634,7 +18630,6 @@ export namespace Prisma {
     status: number
     method: number
     providerPaymentId: number
-    invoiceId: number
     metadata: number
     userId: number
     paymentMethodId: number
@@ -18647,12 +18642,10 @@ export namespace Prisma {
 
   export type PaymentAvgAggregateInputType = {
     amount?: true
-    invoiceId?: true
   }
 
   export type PaymentSumAggregateInputType = {
     amount?: true
-    invoiceId?: true
   }
 
   export type PaymentMinAggregateInputType = {
@@ -18662,7 +18655,6 @@ export namespace Prisma {
     status?: true
     method?: true
     providerPaymentId?: true
-    invoiceId?: true
     userId?: true
     paymentMethodId?: true
     subscriptionId?: true
@@ -18677,7 +18669,6 @@ export namespace Prisma {
     status?: true
     method?: true
     providerPaymentId?: true
-    invoiceId?: true
     userId?: true
     paymentMethodId?: true
     subscriptionId?: true
@@ -18692,7 +18683,6 @@ export namespace Prisma {
     status?: true
     method?: true
     providerPaymentId?: true
-    invoiceId?: true
     metadata?: true
     userId?: true
     paymentMethodId?: true
@@ -18795,7 +18785,6 @@ export namespace Prisma {
     status: $Enums.PaymentStatus
     method: $Enums.PaymentMethod
     providerPaymentId: string | null
-    invoiceId: number | null
     metadata: JsonValue | null
     userId: string
     paymentMethodId: string | null
@@ -18830,7 +18819,6 @@ export namespace Prisma {
     status?: boolean
     method?: boolean
     providerPaymentId?: boolean
-    invoiceId?: boolean
     metadata?: boolean
     userId?: boolean
     paymentMethodId?: boolean
@@ -18849,7 +18837,6 @@ export namespace Prisma {
     status?: boolean
     method?: boolean
     providerPaymentId?: boolean
-    invoiceId?: boolean
     metadata?: boolean
     userId?: boolean
     paymentMethodId?: boolean
@@ -18869,7 +18856,6 @@ export namespace Prisma {
     status?: boolean
     method?: boolean
     providerPaymentId?: boolean
-    invoiceId?: boolean
     metadata?: boolean
     userId?: boolean
     paymentMethodId?: boolean
@@ -18878,7 +18864,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type PaymentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "amount" | "currency" | "status" | "method" | "providerPaymentId" | "invoiceId" | "metadata" | "userId" | "paymentMethodId" | "subscriptionId" | "createdAt" | "updatedAt", ExtArgs["result"]["payment"]>
+  export type PaymentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "amount" | "currency" | "status" | "method" | "providerPaymentId" | "metadata" | "userId" | "paymentMethodId" | "subscriptionId" | "createdAt" | "updatedAt", ExtArgs["result"]["payment"]>
   export type PaymentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
     paymentMethod?: boolean | Payment$paymentMethodArgs<ExtArgs>
@@ -18904,7 +18890,6 @@ export namespace Prisma {
       status: $Enums.PaymentStatus
       method: $Enums.PaymentMethod
       providerPaymentId: string | null
-      invoiceId: number | null
       metadata: Prisma.JsonValue | null
       userId: string
       paymentMethodId: string | null
@@ -19313,7 +19298,6 @@ export namespace Prisma {
     readonly status: FieldRef<"Payment", 'PaymentStatus'>
     readonly method: FieldRef<"Payment", 'PaymentMethod'>
     readonly providerPaymentId: FieldRef<"Payment", 'String'>
-    readonly invoiceId: FieldRef<"Payment", 'Int'>
     readonly metadata: FieldRef<"Payment", 'Json'>
     readonly userId: FieldRef<"Payment", 'String'>
     readonly paymentMethodId: FieldRef<"Payment", 'String'>
@@ -21131,7 +21115,6 @@ export namespace Prisma {
     status: 'status',
     method: 'method',
     providerPaymentId: 'providerPaymentId',
-    invoiceId: 'invoiceId',
     metadata: 'metadata',
     userId: 'userId',
     paymentMethodId: 'paymentMethodId',
@@ -22550,7 +22533,6 @@ export namespace Prisma {
     status?: EnumPaymentStatusFilter<"Payment"> | $Enums.PaymentStatus
     method?: EnumPaymentMethodFilter<"Payment"> | $Enums.PaymentMethod
     providerPaymentId?: StringNullableFilter<"Payment"> | string | null
-    invoiceId?: IntNullableFilter<"Payment"> | number | null
     metadata?: JsonNullableFilter<"Payment">
     userId?: StringFilter<"Payment"> | string
     paymentMethodId?: StringNullableFilter<"Payment"> | string | null
@@ -22569,7 +22551,6 @@ export namespace Prisma {
     status?: SortOrder
     method?: SortOrder
     providerPaymentId?: SortOrderInput | SortOrder
-    invoiceId?: SortOrderInput | SortOrder
     metadata?: SortOrderInput | SortOrder
     userId?: SortOrder
     paymentMethodId?: SortOrderInput | SortOrder
@@ -22591,7 +22572,6 @@ export namespace Prisma {
     status?: EnumPaymentStatusFilter<"Payment"> | $Enums.PaymentStatus
     method?: EnumPaymentMethodFilter<"Payment"> | $Enums.PaymentMethod
     providerPaymentId?: StringNullableFilter<"Payment"> | string | null
-    invoiceId?: IntNullableFilter<"Payment"> | number | null
     metadata?: JsonNullableFilter<"Payment">
     userId?: StringFilter<"Payment"> | string
     paymentMethodId?: StringNullableFilter<"Payment"> | string | null
@@ -22610,7 +22590,6 @@ export namespace Prisma {
     status?: SortOrder
     method?: SortOrder
     providerPaymentId?: SortOrderInput | SortOrder
-    invoiceId?: SortOrderInput | SortOrder
     metadata?: SortOrderInput | SortOrder
     userId?: SortOrder
     paymentMethodId?: SortOrderInput | SortOrder
@@ -22634,7 +22613,6 @@ export namespace Prisma {
     status?: EnumPaymentStatusWithAggregatesFilter<"Payment"> | $Enums.PaymentStatus
     method?: EnumPaymentMethodWithAggregatesFilter<"Payment"> | $Enums.PaymentMethod
     providerPaymentId?: StringNullableWithAggregatesFilter<"Payment"> | string | null
-    invoiceId?: IntNullableWithAggregatesFilter<"Payment"> | number | null
     metadata?: JsonNullableWithAggregatesFilter<"Payment">
     userId?: StringWithAggregatesFilter<"Payment"> | string
     paymentMethodId?: StringNullableWithAggregatesFilter<"Payment"> | string | null
@@ -23993,7 +23971,6 @@ export namespace Prisma {
     status?: $Enums.PaymentStatus
     method: $Enums.PaymentMethod
     providerPaymentId?: string | null
-    invoiceId?: number | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -24009,7 +23986,6 @@ export namespace Prisma {
     status?: $Enums.PaymentStatus
     method: $Enums.PaymentMethod
     providerPaymentId?: string | null
-    invoiceId?: number | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     userId: string
     paymentMethodId?: string | null
@@ -24025,7 +24001,6 @@ export namespace Prisma {
     status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     method?: EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
     providerPaymentId?: NullableStringFieldUpdateOperationsInput | string | null
-    invoiceId?: NullableIntFieldUpdateOperationsInput | number | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -24041,7 +24016,6 @@ export namespace Prisma {
     status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     method?: EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
     providerPaymentId?: NullableStringFieldUpdateOperationsInput | string | null
-    invoiceId?: NullableIntFieldUpdateOperationsInput | number | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     userId?: StringFieldUpdateOperationsInput | string
     paymentMethodId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -24057,7 +24031,6 @@ export namespace Prisma {
     status?: $Enums.PaymentStatus
     method: $Enums.PaymentMethod
     providerPaymentId?: string | null
-    invoiceId?: number | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     userId: string
     paymentMethodId?: string | null
@@ -24073,7 +24046,6 @@ export namespace Prisma {
     status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     method?: EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
     providerPaymentId?: NullableStringFieldUpdateOperationsInput | string | null
-    invoiceId?: NullableIntFieldUpdateOperationsInput | number | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -24086,7 +24058,6 @@ export namespace Prisma {
     status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     method?: EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
     providerPaymentId?: NullableStringFieldUpdateOperationsInput | string | null
-    invoiceId?: NullableIntFieldUpdateOperationsInput | number | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     userId?: StringFieldUpdateOperationsInput | string
     paymentMethodId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -25271,7 +25242,6 @@ export namespace Prisma {
     status?: SortOrder
     method?: SortOrder
     providerPaymentId?: SortOrder
-    invoiceId?: SortOrder
     metadata?: SortOrder
     userId?: SortOrder
     paymentMethodId?: SortOrder
@@ -25282,7 +25252,6 @@ export namespace Prisma {
 
   export type PaymentAvgOrderByAggregateInput = {
     amount?: SortOrder
-    invoiceId?: SortOrder
   }
 
   export type PaymentMaxOrderByAggregateInput = {
@@ -25292,7 +25261,6 @@ export namespace Prisma {
     status?: SortOrder
     method?: SortOrder
     providerPaymentId?: SortOrder
-    invoiceId?: SortOrder
     userId?: SortOrder
     paymentMethodId?: SortOrder
     subscriptionId?: SortOrder
@@ -25307,7 +25275,6 @@ export namespace Prisma {
     status?: SortOrder
     method?: SortOrder
     providerPaymentId?: SortOrder
-    invoiceId?: SortOrder
     userId?: SortOrder
     paymentMethodId?: SortOrder
     subscriptionId?: SortOrder
@@ -25317,7 +25284,6 @@ export namespace Prisma {
 
   export type PaymentSumOrderByAggregateInput = {
     amount?: SortOrder
-    invoiceId?: SortOrder
   }
 
   export type FloatWithAggregatesFilter<$PrismaModel = never> = {
@@ -27263,7 +27229,6 @@ export namespace Prisma {
     status?: $Enums.PaymentStatus
     method: $Enums.PaymentMethod
     providerPaymentId?: string | null
-    invoiceId?: number | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -27278,7 +27243,6 @@ export namespace Prisma {
     status?: $Enums.PaymentStatus
     method: $Enums.PaymentMethod
     providerPaymentId?: string | null
-    invoiceId?: number | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     paymentMethodId?: string | null
     subscriptionId?: string | null
@@ -27625,7 +27589,6 @@ export namespace Prisma {
     status?: EnumPaymentStatusFilter<"Payment"> | $Enums.PaymentStatus
     method?: EnumPaymentMethodFilter<"Payment"> | $Enums.PaymentMethod
     providerPaymentId?: StringNullableFilter<"Payment"> | string | null
-    invoiceId?: IntNullableFilter<"Payment"> | number | null
     metadata?: JsonNullableFilter<"Payment">
     userId?: StringFilter<"Payment"> | string
     paymentMethodId?: StringNullableFilter<"Payment"> | string | null
@@ -29314,7 +29277,6 @@ export namespace Prisma {
     status?: $Enums.PaymentStatus
     method: $Enums.PaymentMethod
     providerPaymentId?: string | null
-    invoiceId?: number | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -29329,7 +29291,6 @@ export namespace Prisma {
     status?: $Enums.PaymentStatus
     method: $Enums.PaymentMethod
     providerPaymentId?: string | null
-    invoiceId?: number | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     userId: string
     paymentMethodId?: string | null
@@ -29738,7 +29699,6 @@ export namespace Prisma {
     status?: $Enums.PaymentStatus
     method: $Enums.PaymentMethod
     providerPaymentId?: string | null
-    invoiceId?: number | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -29753,7 +29713,6 @@ export namespace Prisma {
     status?: $Enums.PaymentStatus
     method: $Enums.PaymentMethod
     providerPaymentId?: string | null
-    invoiceId?: number | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     userId: string
     subscriptionId?: string | null
@@ -29918,7 +29877,6 @@ export namespace Prisma {
     status?: $Enums.PaymentStatus
     method: $Enums.PaymentMethod
     providerPaymentId?: string | null
-    invoiceId?: number | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     paymentMethodId?: string | null
     subscriptionId?: string | null
@@ -30130,7 +30088,6 @@ export namespace Prisma {
     status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     method?: EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
     providerPaymentId?: NullableStringFieldUpdateOperationsInput | string | null
-    invoiceId?: NullableIntFieldUpdateOperationsInput | number | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -30145,7 +30102,6 @@ export namespace Prisma {
     status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     method?: EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
     providerPaymentId?: NullableStringFieldUpdateOperationsInput | string | null
-    invoiceId?: NullableIntFieldUpdateOperationsInput | number | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     paymentMethodId?: NullableStringFieldUpdateOperationsInput | string | null
     subscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -30160,7 +30116,6 @@ export namespace Prisma {
     status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     method?: EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
     providerPaymentId?: NullableStringFieldUpdateOperationsInput | string | null
-    invoiceId?: NullableIntFieldUpdateOperationsInput | number | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     paymentMethodId?: NullableStringFieldUpdateOperationsInput | string | null
     subscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -30397,7 +30352,6 @@ export namespace Prisma {
     status?: $Enums.PaymentStatus
     method: $Enums.PaymentMethod
     providerPaymentId?: string | null
-    invoiceId?: number | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     userId: string
     paymentMethodId?: string | null
@@ -30412,7 +30366,6 @@ export namespace Prisma {
     status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     method?: EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
     providerPaymentId?: NullableStringFieldUpdateOperationsInput | string | null
-    invoiceId?: NullableIntFieldUpdateOperationsInput | number | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -30427,7 +30380,6 @@ export namespace Prisma {
     status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     method?: EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
     providerPaymentId?: NullableStringFieldUpdateOperationsInput | string | null
-    invoiceId?: NullableIntFieldUpdateOperationsInput | number | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     userId?: StringFieldUpdateOperationsInput | string
     paymentMethodId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -30442,7 +30394,6 @@ export namespace Prisma {
     status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     method?: EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
     providerPaymentId?: NullableStringFieldUpdateOperationsInput | string | null
-    invoiceId?: NullableIntFieldUpdateOperationsInput | number | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     userId?: StringFieldUpdateOperationsInput | string
     paymentMethodId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -30457,7 +30408,6 @@ export namespace Prisma {
     status?: $Enums.PaymentStatus
     method: $Enums.PaymentMethod
     providerPaymentId?: string | null
-    invoiceId?: number | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     userId: string
     subscriptionId?: string | null
@@ -30472,7 +30422,6 @@ export namespace Prisma {
     status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     method?: EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
     providerPaymentId?: NullableStringFieldUpdateOperationsInput | string | null
-    invoiceId?: NullableIntFieldUpdateOperationsInput | number | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -30487,7 +30436,6 @@ export namespace Prisma {
     status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     method?: EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
     providerPaymentId?: NullableStringFieldUpdateOperationsInput | string | null
-    invoiceId?: NullableIntFieldUpdateOperationsInput | number | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     userId?: StringFieldUpdateOperationsInput | string
     subscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -30502,7 +30450,6 @@ export namespace Prisma {
     status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     method?: EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
     providerPaymentId?: NullableStringFieldUpdateOperationsInput | string | null
-    invoiceId?: NullableIntFieldUpdateOperationsInput | number | null
     metadata?: NullableJsonNullValueInput | InputJsonValue
     userId?: StringFieldUpdateOperationsInput | string
     subscriptionId?: NullableStringFieldUpdateOperationsInput | string | null
