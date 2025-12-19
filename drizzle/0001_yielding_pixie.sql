@@ -1,1 +1,0 @@
-ALTER TABLE "payments" DROP COLUMN "invoice_id";

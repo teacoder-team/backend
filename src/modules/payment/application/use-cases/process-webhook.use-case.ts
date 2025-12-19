@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common'
 import { PaymentMethod } from '@prisma/generated'
 
+import { NpdService } from '@/libs/npd/npd.service'
 import { NormalizedCallbackDto } from '@/modules/payment/infrastructure/webhook/dto/normalized-callback.dto'
 
 import { PaymentMethodRepositoryPort } from '../../domain/repositories/payment-method.repository.port'
@@ -19,6 +20,7 @@ export class ProcessWebhookUseCase {
 		private readonly subscriptionRepo: SubscriptionRepositoryPort,
 		private readonly userRepo: UserRepositoryPort,
 		private readonly paymentMethodRepo: PaymentMethodRepositoryPort,
+		private readonly npdService: NpdService,
 		private readonly notifier: PaymentNotifierPort
 	) {}
 
@@ -32,6 +34,11 @@ export class ProcessWebhookUseCase {
 		if (!payment) {
 			this.logger.error(`❌ Payment not found: ${paymentId}`)
 			throw new BadRequestException('Payment not found')
+		}
+
+		if (payment.status.value === 'SUCCESS') {
+			this.logger.warn(`Payment ${paymentId} already processed`)
+			return
 		}
 
 		const user = await this.userRepo.findById(payment.userId)
@@ -53,14 +60,21 @@ export class ProcessWebhookUseCase {
 		let paymentMethodId = null
 
 		if (provider === 'yookassa') {
-			this.logger.log(`Saving payment method for user ${user.id}`)
-
 			const method = await this.paymentMethodRepo.saveOrUpdate(
 				user.id,
 				raw.object.payment_method
 			)
 
 			paymentMethodId = method.id
+
+			try {
+				await this.npdService.createIncome({
+					name: 'Премиум-подписка на 1 месяц',
+					amount: Number(payment.amount.value)
+				})
+			} catch (err) {
+				this.logger.error('NPD income creation failed', err)
+			}
 		}
 
 		payment.markSucceeded(raw)

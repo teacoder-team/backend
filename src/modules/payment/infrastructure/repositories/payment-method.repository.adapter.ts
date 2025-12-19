@@ -27,15 +27,7 @@ export class PaymentMethodRepositoryAdapter
 	) {}
 
 	public async saveOrUpdate(userId: string, paymentMethod: any) {
-		this.logger.debug(
-			`saveOrUpdate called for user=${userId}, provider=YOOKASSA`
-		)
-
 		if (!paymentMethod) {
-			this.logger.error(
-				`payment_method is missing in YooKassa webhook (user=${userId})`
-			)
-
 			throw new BadRequestException(
 				'payment_method object is missing in YooKassa webhook'
 			)
@@ -43,18 +35,20 @@ export class PaymentMethodRepositoryAdapter
 
 		const { id, type, title, card, status } = paymentMethod
 
-		this.logger.debug(
-			`Incoming payment_method: id=${id}, type=${type}, status=${status}`
-		)
-
 		if (!id || !type) {
-			this.logger.error(
-				`Invalid payment_method payload: missing id or type (user=${userId})`
-			)
 			throw new BadRequestException(
-				`Invalid payment_method payload: missing id or type`
+				'Invalid payment_method payload: missing id or type'
 			)
 		}
+
+		const mappedType = this.paymentTypeMap[type]
+
+		if (!mappedType) {
+			throw new BadRequestException(
+				`Unsupported payment method type: ${type}`
+			)
+		}
+
 		const resolvedTitle =
 			type === 'tinkoff_bank' ? 'T-Pay' : title || 'Unknown'
 
@@ -68,57 +62,8 @@ export class PaymentMethodRepositoryAdapter
 				? Number(card.expiry_year)
 				: null
 
-		const mappedType = this.paymentTypeMap[type]
-
-		if (!mappedType) {
-			this.logger.error(
-				`Unsupported payment method type=${type} (providerId=${id}, user=${userId})`
-			)
-			throw new BadRequestException(
-				`Unsupported payment method type: ${type}`
-			)
-		}
-
-		this.logger.debug(
-			`Mapped payment method type: ${type} -> ${mappedType}`
-		)
-
-		const existing = await this.db
-			.select()
-			.from(userPaymentMethods)
-			.where(eq(userPaymentMethods.providerId, id))
-			.limit(1)
-
-		if (existing.length) {
-			this.logger.log(
-				`Updating existing payment method providerId=${id} for user=${userId}`
-			)
-
-			await this.db
-				.update(userPaymentMethods)
-				.set({
-					title: resolvedTitle,
-					type: mappedType,
-					first6: card?.first6 ?? null,
-					last4: card?.last4 ?? null,
-					cardType: card?.card_type ?? null,
-					expiryMonth,
-					expiryYear,
-					isActive: status === 'active',
-					metadata: paymentMethod,
-					updatedAt: new Date()
-				})
-				.where(eq(userPaymentMethods.providerId, id))
-
-			this.logger.debug(
-				`Payment method providerId=${id} updated successfully`
-			)
-
-			return { ...existing[0], title: resolvedTitle }
-		}
-
 		this.logger.log(
-			`Creating new payment method providerId=${id} for user=${userId}`
+			`Upserting payment method providerId=${id} for user=${userId}`
 		)
 
 		const [row] = await this.db
@@ -137,10 +82,25 @@ export class PaymentMethodRepositoryAdapter
 				isActive: status === 'active',
 				metadata: paymentMethod
 			})
+			.onConflictDoUpdate({
+				target: userPaymentMethods.providerId,
+				set: {
+					title: resolvedTitle,
+					type: mappedType,
+					first6: card?.first6 ?? null,
+					last4: card?.last4 ?? null,
+					cardType: card?.card_type ?? null,
+					expiryMonth,
+					expiryYear,
+					isActive: status === 'active',
+					metadata: paymentMethod,
+					updatedAt: new Date()
+				}
+			})
 			.returning()
 
 		this.logger.debug(
-			`Payment method providerId=${id} created successfully for user=${userId}`
+			`Payment method saved: id=${row.id}, providerId=${row.providerId}`
 		)
 
 		return row

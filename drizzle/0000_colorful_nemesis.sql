@@ -128,7 +128,6 @@ CREATE TABLE "payments" (
 	"status" "payment_statuses" DEFAULT 'PENDING' NOT NULL,
 	"method" "payment_methods" NOT NULL,
 	"provider_payment_id" varchar(255) DEFAULT null,
-	"invoice_id" varchar DEFAULT null,
 	"metadata" jsonb DEFAULT 'null'::jsonb,
 	"user_id" uuid NOT NULL,
 	"payment_method_id" uuid DEFAULT null,
