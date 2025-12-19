@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common'
+import { Inject, Injectable, Logger } from '@nestjs/common'
 import { Cron, CronExpression } from '@nestjs/schedule'
 import {
 	Payment,
@@ -7,6 +7,8 @@ import {
 	Subscription,
 	User
 } from '@prisma/generated'
+import { and, desc, eq, lte, not } from 'drizzle-orm'
+import { NodePgDatabase } from 'drizzle-orm/node-postgres'
 import {
 	CurrencyEnum,
 	DeliveryMethodEnum,
@@ -14,6 +16,8 @@ import {
 	YookassaService
 } from 'nestjs-yookassa'
 
+import { DRIZZLE_DB } from '@/infra/database/drizzle/drizzle.provider'
+import { payments, subscriptions, users } from '@/infra/database/drizzle/schema'
 import { PrismaService } from '@/infra/prisma/prisma.service'
 import { HeleketService } from '@/libs/heleket/heleket.service'
 import { MailService } from '@/libs/mail/mail.service'
@@ -23,7 +27,8 @@ export class SchedulerService {
 	private readonly logger = new Logger(SchedulerService.name)
 
 	public constructor(
-		private readonly prismaService: PrismaService,
+		@Inject(DRIZZLE_DB)
+		private readonly db: NodePgDatabase,
 		private readonly mailService: MailService,
 		private readonly yookassaService: YookassaService,
 		private readonly heleketService: HeleketService
@@ -39,68 +44,53 @@ export class SchedulerService {
 			`Start processing expired subscriptions at ${now.toISOString()}`
 		)
 
-		const subscriptions = await this.prismaService.subscription.findMany({
-			where: {
-				expiresAt: {
-					lte: now
-				},
-				isActive: true
-			},
-			include: {
-				user: true
-			}
-		})
+		const expiredSubs = await this.db
+			.select({
+				subscription: subscriptions,
+				user: users
+			})
+			.from(subscriptions)
+			.innerJoin(users, eq(users.id, subscriptions.userId))
+			.where(
+				and(
+					lte(subscriptions.expiresAt, now),
+					eq(subscriptions.isActive, true)
+				)
+			)
 
 		this.logger.log(
-			`Found ${subscriptions.length} expired active subscriptions`
+			`Found ${expiredSubs.length} expired active subscriptions`
 		)
 
-		for (const sub of subscriptions) {
+		for (const { subscription: sub, user } of expiredSubs) {
 			try {
-				const user = sub.user
-
 				if (!user.isAutoBilling) {
-					await this.prismaService.subscription.update({
-						where: {
-							id: sub.id
-						},
-						data: {
-							isActive: false
-						}
-					})
+					await this.deactivateSubscription(
+						sub.id,
+						'auto-billing disabled'
+					)
 
 					this.logger.log(
 						`Subscription ${sub.id} deactivated (auto-billing disabled) for user ${user.id}`
 					)
 
-					const lastSuccess =
-						await this.prismaService.payment.findFirst({
-							where: {
-								userId: user.id,
-								status: PaymentStatus.SUCCESS
-							},
-							orderBy: {
-								createdAt: 'desc'
-							}
-						})
+					const [lastSuccess] = await this.db
+						.select()
+						.from(payments)
+						.where(
+							and(
+								eq(payments.userId, user.id),
+								eq(payments.status, PaymentStatus.SUCCESS)
+							)
+						)
+						.orderBy(desc(payments.createdAt))
+						.limit(1)
 
-					const payment = await this.prismaService.payment.create({
-						data: {
-							amount: lastSuccess.amount,
-							currency: 'RUB',
-							method: lastSuccess.method,
-							subscription: {
-								connect: {
-									id: sub.id
-								}
-							},
-							user: {
-								connect: {
-									id: user.id
-								}
-							}
-						}
-					})
+					const payment = await this.createPayment(
+						user.id,
+						sub.id,
+						lastSuccess
+					)
 
 					if (
 						lastSuccess.method === PaymentMethod.BANK_CARD ||
@@ -115,32 +105,28 @@ export class SchedulerService {
 					continue
 				}
 
-				const lastSuccess = await this.prismaService.payment.findFirst({
-					where: {
-						userId: user.id,
-						status: PaymentStatus.SUCCESS,
-						method: {
-							not: PaymentMethod.CRYPTO
-						}
-					},
-					orderBy: {
-						createdAt: 'desc'
-					}
-				})
+				const [lastSuccess] = await this.db
+					.select()
+					.from(payments)
+					.where(
+						and(
+							eq(payments.userId, user.id),
+							eq(payments.status, PaymentStatus.SUCCESS),
+							not(eq(payments.method, PaymentMethod.CRYPTO))
+						)
+					)
+					.orderBy(desc(payments.createdAt))
+					.limit(1)
 
 				if (!lastSuccess) {
 					this.logger.warn(
 						`No successful payment for user ${user.id}`
 					)
 
-					await this.prismaService.subscription.update({
-						where: {
-							id: sub.id
-						},
-						data: {
-							isActive: false
-						}
-					})
+					await this.deactivateSubscription(
+						sub.id,
+						'no successful payment'
+					)
 
 					continue
 				}
@@ -162,7 +148,7 @@ export class SchedulerService {
 				}
 			} catch (err) {
 				await this.deactivateSubscription(
-					sub,
+					sub.id,
 					`Scheduler error: ${err?.message ?? err}`
 				)
 
@@ -176,25 +162,20 @@ export class SchedulerService {
 	}
 
 	private async handleYookassaRecurring(
-		sub: Subscription,
-		user: User,
-		lastSuccess: Payment
+		sub: typeof subscriptions.$inferSelect,
+		user: typeof users.$inferSelect,
+		lastSuccess: typeof payments.$inferSelect
 	) {
 		try {
-			const payment = await this.prismaService.payment.create({
-				data: {
-					amount: lastSuccess.amount,
-					currency: 'RUB',
-					method: lastSuccess.method,
-					providerPaymentId: lastSuccess.providerPaymentId,
-					user: { connect: { id: user.id } },
-					subscription: { connect: { id: sub.id } }
-				}
-			})
+			const payment = await this.createPayment(
+				user.id,
+				sub.id,
+				lastSuccess
+			)
 
 			const result = await this.yookassaService.payments.create({
 				amount: {
-					value: payment.amount,
+					value: Number(payment.amount),
 					currency: CurrencyEnum.RUB
 				},
 				capture: true,
@@ -207,7 +188,7 @@ export class SchedulerService {
 					items: [
 						{
 							amount: {
-								value: payment.amount,
+								value: Number(payment.amount),
 								currency: CurrencyEnum.RUB
 							},
 							description: 'Автосписание за премиум-подписку',
@@ -221,22 +202,20 @@ export class SchedulerService {
 				}
 			})
 
-			await this.prismaService.payment.update({
-				where: {
-					id: payment.id
-				},
-				data: {
+			await this.db
+				.update(payments)
+				.set({
 					providerPaymentId: result.id,
 					metadata: JSON.stringify(result)
-				}
-			})
+				})
+				.where(eq(payments.id, payment.id))
 
 			this.logger.log(
 				`Auto-charge (Yookassa) created for user ${user.id}`
 			)
 		} catch (err) {
 			await this.deactivateSubscription(
-				sub,
+				sub.id,
 				`Yookassa auto-charge failed: ${err?.message ?? err}`
 			)
 
@@ -248,77 +227,16 @@ export class SchedulerService {
 		}
 	}
 
-	private async handleRobokassaRecurring(
-		sub: Subscription,
-		user: User,
-		lastSuccess: Payment
-	) {
-		try {
-			const invoiceId = this.generateInvoiceId()
-
-			const payment = await this.prismaService.payment.create({
-				data: {
-					amount: lastSuccess.amount,
-					currency: 'RUB',
-					method: PaymentMethod.INTERNATIONAL_CARD,
-					user: {
-						connect: {
-							id: user.id
-						}
-					},
-					subscription: {
-						connect: {
-							id: sub.id
-						}
-					}
-				}
-			})
-
-			// const result = await this.robokassaService.createRecurringPayment({
-			// 	outSum: lastSuccess.amount,
-			// 	description: 'Автопродление подписки',
-			// 	invId: invoiceId,
-			// 	previousInvoiceId: lastSuccess.invoiceId
-			// })
-
-			// this.logger.log(
-			// 	`Auto-charge (Robokassa) created for user ${user.id}: ${result}`
-			// )
-
-			await this.prismaService.payment.update({
-				where: {
-					id: payment.id
-				},
-				data: {
-					// metadata: result
-				}
-			})
-
-			await this.prismaService.subscription.update({
-				where: {
-					id: sub.id
-				},
-				data: {
-					expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
-				}
-			})
-		} catch (err) {
-			this.logger.error(
-				`Robokassa auto-charge failed for user ${user.id}, subscription ${sub.id}: ${err?.message ?? err}`
-			)
-		}
-	}
-
 	private async createYookassaInvoice(
-		sub: Subscription,
-		user: User,
-		payment: Payment
+		sub: typeof subscriptions.$inferSelect,
+		user: typeof users.$inferSelect,
+		payment: typeof payments.$inferSelect
 	) {
 		try {
 			const invoice = await this.yookassaService.invoices.create({
 				payment_data: {
 					amount: {
-						value: payment.amount,
+						value: Number(payment.amount),
 						currency: CurrencyEnum.RUB
 					},
 					description:
@@ -337,7 +255,7 @@ export class SchedulerService {
 									'Продление премиум-подписки на 1 месяц',
 								quantity: 1,
 								amount: {
-									value: payment.amount,
+									value: Number(payment.amount),
 									currency: CurrencyEnum.RUB
 								},
 								vat_code: VatCodesEnum.NDS_NONE
@@ -349,7 +267,7 @@ export class SchedulerService {
 					{
 						description: 'Продление премиум-подписки на 1 месяц',
 						price: {
-							value: payment.amount,
+							value: Number(payment.amount),
 							currency: CurrencyEnum.RUB
 						},
 						quantity: 1
@@ -363,14 +281,10 @@ export class SchedulerService {
 				).toISOString()
 			})
 
-			await this.prismaService.payment.update({
-				where: {
-					id: payment.id
-				},
-				data: {
-					metadata: JSON.stringify(invoice)
-				}
-			})
+			await this.db
+				.update(payments)
+				.set({ metadata: JSON.stringify(invoice) })
+				.where(eq(payments.id, payment.id))
 
 			await this.mailService.sendSubscriptionBlockedEmail(
 				user,
@@ -385,7 +299,7 @@ export class SchedulerService {
 			return invoice
 		} catch (err) {
 			await this.deactivateSubscription(
-				sub,
+				sub.id,
 				`Yookassa invoice error: ${err?.message ?? err}`
 			)
 
@@ -398,9 +312,9 @@ export class SchedulerService {
 	}
 
 	private async createHeleketInvoice(
-		sub: Subscription,
-		user: User,
-		payment: Payment
+		sub: typeof subscriptions.$inferSelect,
+		user: typeof users.$inferSelect,
+		payment: typeof payments.$inferSelect
 	) {
 		try {
 			const invoice = await this.heleketService.createPayment({
@@ -423,19 +337,15 @@ export class SchedulerService {
 				`Heleket invoice created for user ${user.id} (subscription ${sub.id}): ${invoice.url}`
 			)
 
-			await this.prismaService.payment.update({
-				where: {
-					id: payment.id
-				},
-				data: {
-					metadata: JSON.stringify(invoice)
-				}
-			})
+			await this.db
+				.update(payments)
+				.set({ metadata: JSON.stringify(invoice) })
+				.where(eq(payments.id, payment.id))
 
 			return invoice
 		} catch (err) {
 			await this.deactivateSubscription(
-				sub,
+				sub.id,
 				`Heleket invoice error: ${err?.message ?? err}`
 			)
 
@@ -447,25 +357,32 @@ export class SchedulerService {
 		}
 	}
 
-	private async deactivateSubscription(sub: Subscription, reason: string) {
-		await this.prismaService.subscription.update({
-			where: {
-				id: sub.id
-			},
-			data: {
-				isActive: false
-			}
-		})
+	private async createPayment(
+		userId: string,
+		subscriptionId: string,
+		lastSuccess: any
+	) {
+		const [payment] = await this.db
+			.insert(payments)
+			.values({
+				userId,
+				subscriptionId,
+				amount: lastSuccess.amount,
+				currency: 'RUB',
+				method: lastSuccess.method,
+				providerPaymentId: lastSuccess.providerPaymentId
+			})
+			.returning()
 
-		this.logger.warn(`Subscription ${sub.id} deactivated: ${reason}`)
+		return payment
 	}
 
-	private generateInvoiceId() {
-		const digits = 8
+	private async deactivateSubscription(subId: string, reason: string) {
+		await this.db
+			.update(subscriptions)
+			.set({ isActive: false })
+			.where(eq(subscriptions.id, subId))
 
-		const min = Math.pow(10, digits - 1)
-		const max = Math.pow(10, digits) - 1
-
-		return Math.floor(Math.random() * (max - min + 1)) + min
+		this.logger.warn(`Subscription ${subId} deactivated: ${reason}`)
 	}
 }

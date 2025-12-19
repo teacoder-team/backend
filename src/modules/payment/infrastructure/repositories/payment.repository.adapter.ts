@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { desc, eq } from 'drizzle-orm'
+import { NodePgDatabase } from 'drizzle-orm/node-postgres'
 
-import { DatabaseService } from '@/infra/database/database.service'
+import { DRIZZLE_DB } from '@/infra/database/drizzle/drizzle.provider'
 import { payments } from '@/infra/database/drizzle/schema'
 
 import { PaymentEntity } from '../../domain/entities/payment.entity'
@@ -20,10 +21,12 @@ const PaymentMethodMap = {
 
 @Injectable()
 export class PaymentRepositoryAdapter implements PaymentRepositoryPort {
-	public constructor(private readonly db: DatabaseService) {}
+	public constructor(
+		@Inject(DRIZZLE_DB) private readonly db: NodePgDatabase
+	) {}
 
 	public async save(entity: PaymentEntity) {
-		await this.db.db.insert(payments).values({
+		await this.db.insert(payments).values({
 			id: entity.id,
 			userId: entity.userId,
 			amount: entity.amount.value.toString(),
@@ -37,7 +40,7 @@ export class PaymentRepositoryAdapter implements PaymentRepositoryPort {
 	}
 
 	public async update(entity: PaymentEntity) {
-		await this.db.db
+		await this.db
 			.update(payments)
 			.set({
 				providerPaymentId: entity.providerPaymentId,
@@ -49,7 +52,7 @@ export class PaymentRepositoryAdapter implements PaymentRepositoryPort {
 	}
 
 	public async findById(id: string) {
-		const [row] = await this.db.db
+		const [row] = await this.db
 			.select()
 			.from(payments)
 			.where(eq(payments.id, id))
@@ -59,7 +62,7 @@ export class PaymentRepositoryAdapter implements PaymentRepositoryPort {
 	}
 
 	public async findLastSuccess(userId: string) {
-		const [row] = await this.db.db
+		const [row] = await this.db
 			.select()
 			.from(payments)
 			.where(eq(payments.userId, userId))

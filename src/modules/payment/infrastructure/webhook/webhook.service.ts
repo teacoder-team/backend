@@ -38,7 +38,7 @@ export class WebhookService {
 			await this.yookassaService.payments.capture(payload.object.id)
 		}
 
-		const normalized = this.mapper.fromYooKassa(payload)
+		const normalized = this.mapper.fromYookassa(payload)
 		await this.processWebhookUseCase.execute(normalized)
 	}
 

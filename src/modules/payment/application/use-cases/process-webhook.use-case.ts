@@ -39,11 +39,12 @@ export class ProcessWebhookUseCase {
 		if (!user) throw new BadRequestException('User not found')
 
 		if (!isSuccess) {
+			payment.markFailed()
+
 			this.logger.warn(
 				`⚠️ Payment ${paymentId} FAILED via ${provider}, marking as FAILED`
 			)
 
-			payment.markFailed()
 			await this.paymentRepo.update(payment)
 
 			return
@@ -56,7 +57,7 @@ export class ProcessWebhookUseCase {
 
 			const method = await this.paymentMethodRepo.saveOrUpdate(
 				user.id,
-				raw.payment_method
+				raw.object.payment_method
 			)
 
 			paymentMethodId = method.id

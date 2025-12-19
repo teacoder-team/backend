@@ -2,10 +2,11 @@ import React from 'react'
 
 import { Body, Button, Container, Font, Head, Heading, Html, Img, Preview, Section, Tailwind, Text } from '@react-email/components'
 import { Payment, PaymentMethod, User } from '@prisma/generated'
+import { payments } from '@/infra/database/drizzle/schema'
 
 interface SubscriptionBlockedTemplateProps {
 	user: User
-	payment: Payment
+	payment: typeof payments.$inferSelect
 	payUrl: string
 }
 

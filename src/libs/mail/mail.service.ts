@@ -10,6 +10,7 @@ import type {
 import { render } from '@react-email/components'
 import { Queue } from 'bullmq'
 
+import { payments } from '@/infra/database/drizzle/schema'
 import { PaymentEntity } from '@/modules/payment/domain/entities/payment.entity'
 import { SubscriptionEntity } from '@/modules/payment/domain/repositories/subscription.repository.port'
 import { UserEntity } from '@/modules/payment/domain/repositories/user.repository.port'
@@ -76,7 +77,7 @@ export class MailService {
 
 	public async sendSubscriptionBlockedEmail(
 		user: User,
-		payment: Payment,
+		payment: typeof payments.$inferSelect,
 		payUrl: string
 	) {
 		const html = await render(

@@ -1,7 +1,10 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { addMonths } from 'date-fns'
+import { eq } from 'drizzle-orm'
+import { NodePgDatabase } from 'drizzle-orm/node-postgres'
 
-import { PrismaService } from '@/infra/prisma/prisma.service'
+import { DRIZZLE_DB } from '@/infra/database/drizzle/drizzle.provider'
+import { subscriptions } from '@/infra/database/drizzle/schema'
 
 import { SubscriptionRepositoryPort } from '../../domain/repositories/subscription.repository.port'
 
@@ -9,46 +12,53 @@ import { SubscriptionRepositoryPort } from '../../domain/repositories/subscripti
 export class SubscriptionRepositoryAdapter
 	implements SubscriptionRepositoryPort
 {
-	public constructor(private readonly prisma: PrismaService) {}
+	public constructor(
+		@Inject(DRIZZLE_DB)
+		private readonly db: NodePgDatabase
+	) {}
 
 	public async extendSubscription(userId: string) {
 		const now = new Date()
 
-		const existing = await this.prisma.subscription.findUnique({
-			where: { userId }
-		})
+		return this.db.transaction(async tx => {
+			const [existing] = await tx
+				.select()
+				.from(subscriptions)
+				.where(eq(subscriptions.userId, userId))
+				.limit(1)
 
-		let startedAt = existing?.startedAt ?? now
+			const baseDate =
+				existing?.expiresAt && existing.expiresAt > now
+					? existing.expiresAt
+					: now
 
-		let baseDate =
-			existing?.expiresAt && existing.expiresAt > now
-				? existing.expiresAt
-				: now
+			const newExpiresAt = addMonths(baseDate, 1)
 
-		const newExpiresAt = addMonths(baseDate, 1)
+			if (existing) {
+				const [updated] = await tx
+					.update(subscriptions)
+					.set({
+						expiresAt: newExpiresAt,
+						isActive: true,
+						updatedAt: new Date()
+					})
+					.where(eq(subscriptions.userId, userId))
+					.returning()
 
-		if (existing) {
-			const updated = await this.prisma.subscription.update({
-				where: { userId },
-				data: {
-					expiresAt: newExpiresAt,
-					isActive: true,
-					updatedAt: new Date()
-				}
-			})
-
-			return updated
-		}
-
-		const created = await this.prisma.subscription.create({
-			data: {
-				userId,
-				startedAt,
-				expiresAt: newExpiresAt,
-				isActive: true
+				return updated
 			}
-		})
 
-		return created
+			const [created] = await tx
+				.insert(subscriptions)
+				.values({
+					userId,
+					startedAt: now,
+					expiresAt: newExpiresAt,
+					isActive: true
+				})
+				.returning()
+
+			return created
+		})
 	}
 }

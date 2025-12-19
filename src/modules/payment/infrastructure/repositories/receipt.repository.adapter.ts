@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { eq } from 'drizzle-orm'
+import { NodePgDatabase } from 'drizzle-orm/node-postgres'
 
-import { DatabaseService } from '@/infra/database/database.service'
+import { DRIZZLE_DB } from '@/infra/database/drizzle/drizzle.provider'
 import { receipts } from '@/infra/database/drizzle/schema'
 
 import { ReceiptEntity } from '../../domain/entities/receipt.entity'
@@ -10,10 +11,12 @@ import { MoneyVO } from '../../domain/value-objects/money.vo'
 
 @Injectable()
 export class ReceiptRepositoryAdapter implements ReceiptRepositoryPort {
-	public constructor(private readonly db: DatabaseService) {}
+	public constructor(
+		@Inject(DRIZZLE_DB) private readonly db: NodePgDatabase
+	) {}
 
 	public async save(receipt: ReceiptEntity) {
-		await this.db.db.insert(receipts).values({
+		await this.db.insert(receipts).values({
 			id: receipt.id,
 			paymentId: receipt.paymentId,
 			status: receipt.status,
@@ -26,7 +29,7 @@ export class ReceiptRepositoryAdapter implements ReceiptRepositoryPort {
 	}
 
 	public async update(receipt: ReceiptEntity) {
-		await this.db.db
+		await this.db
 			.update(receipts)
 			.set({
 				status: receipt.status,
@@ -38,7 +41,7 @@ export class ReceiptRepositoryAdapter implements ReceiptRepositoryPort {
 	}
 
 	public async findByPaymentId(paymentId: string) {
-		const [row] = await this.db.db
+		const [row] = await this.db
 			.select()
 			.from(receipts)
 			.where(eq(receipts.paymentId, paymentId))

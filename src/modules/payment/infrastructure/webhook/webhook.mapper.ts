@@ -7,7 +7,7 @@ import { NormalizedCallbackDto } from './dto/normalized-callback.dto'
 export class WebhookMapper {
 	private readonly logger = new Logger(WebhookMapper.name)
 
-	public fromYooKassa(payload: any): NormalizedCallbackDto {
+	public fromYookassa(payload: any): NormalizedCallbackDto {
 		this.logger.debug(`Mapping YooKassa webhook: ${payload?.event}`)
 
 		const result: NormalizedCallbackDto = {
