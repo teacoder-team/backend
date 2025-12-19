@@ -46,6 +46,8 @@ export class PaymentRepositoryAdapter implements PaymentRepositoryPort {
 				providerPaymentId: entity.providerPaymentId,
 				metadata: entity.metadata,
 				status: entity.status.value,
+				paymentMethodId: entity.paymentMethodId,
+				subscriptionId: entity.subscriptionId,
 				updatedAt: new Date()
 			})
 			.where(eq(payments.id, entity.id))

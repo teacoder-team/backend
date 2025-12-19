@@ -86,6 +86,9 @@ export class ProcessWebhookUseCase {
 			user.id
 		)
 
+		payment.subscriptionId = subscription.id
+		await this.paymentRepo.update(payment)
+
 		this.logger.log(
 			`Subscription updated for user ${user.id}, expires ${subscription.expiresAt.toISOString()}`
 		)

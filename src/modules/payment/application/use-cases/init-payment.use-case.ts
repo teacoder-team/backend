@@ -88,7 +88,7 @@ export class InitPaymentUseCase {
 				return 399
 
 			default:
-				return 1
+				return 349
 		}
 	}
 }

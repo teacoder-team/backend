@@ -36,6 +36,8 @@ export class WebhookService {
 		if (payload.event === 'payment.waiting_for_capture') {
 			this.logger.log(`Capturing YooKassa payment ${payload.object.id}`)
 			await this.yookassaService.payments.capture(payload.object.id)
+
+			return
 		}
 
 		const normalized = this.mapper.fromYookassa(payload)
