@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { addMonths } from 'date-fns'
-import { eq } from 'drizzle-orm'
+import { sql } from 'drizzle-orm'
 import { NodePgDatabase } from 'drizzle-orm/node-postgres'
 
 import { DRIZZLE_DB } from '@/infra/database/drizzle/drizzle.provider'
@@ -20,45 +20,30 @@ export class SubscriptionRepositoryAdapter
 	public async extendSubscription(userId: string) {
 		const now = new Date()
 
-		return this.db.transaction(async tx => {
-			const [existing] = await tx
-				.select()
-				.from(subscriptions)
-				.where(eq(subscriptions.userId, userId))
-				.limit(1)
+		const [row] = await this.db
+			.insert(subscriptions)
+			.values({
+				userId,
+				startedAt: now,
+				expiresAt: addMonths(now, 1),
+				isActive: true
+			})
+			.onConflictDoUpdate({
+				target: subscriptions.userId,
+				set: {
+					expiresAt: sql`
+						CASE
+							WHEN ${subscriptions.expiresAt} > now()
+								THEN ${subscriptions.expiresAt} + interval '1 month'
+							ELSE now() + interval '1 month'
+						END
+					`,
+					isActive: true,
+					updatedAt: new Date()
+				}
+			})
+			.returning()
 
-			const baseDate =
-				existing?.expiresAt && existing.expiresAt > now
-					? existing.expiresAt
-					: now
-
-			const newExpiresAt = addMonths(baseDate, 1)
-
-			if (existing) {
-				const [updated] = await tx
-					.update(subscriptions)
-					.set({
-						expiresAt: newExpiresAt,
-						isActive: true,
-						updatedAt: new Date()
-					})
-					.where(eq(subscriptions.userId, userId))
-					.returning()
-
-				return updated
-			}
-
-			const [created] = await tx
-				.insert(subscriptions)
-				.values({
-					userId,
-					startedAt: now,
-					expiresAt: newExpiresAt,
-					isActive: true
-				})
-				.returning()
-
-			return created
-		})
+		return row
 	}
 }
