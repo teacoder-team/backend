@@ -60,12 +60,19 @@ export class ProcessWebhookUseCase {
 		let paymentMethodId = null
 
 		if (provider === 'yookassa') {
-			const method = await this.paymentMethodRepo.saveOrUpdate(
-				user.id,
-				raw.object.payment_method
-			)
+			try {
+				const method = await this.paymentMethodRepo.saveOrUpdate(
+					user.id,
+					raw.object.payment_method
+				)
 
-			paymentMethodId = method.id
+				paymentMethodId = method.id
+			} catch (err) {
+				this.logger.error(
+					`Failed to save payment method for user=${user.id}, payment=${payment.id}`,
+					err
+				)
+			}
 
 			try {
 				await this.npdService.createIncome({
@@ -73,7 +80,10 @@ export class ProcessWebhookUseCase {
 					amount: Number(payment.amount.value)
 				})
 			} catch (err) {
-				this.logger.error('NPD income creation failed', err)
+				this.logger.error(
+					`NPD income creation failed for payment=${payment.id}`,
+					err
+				)
 			}
 		}
 
