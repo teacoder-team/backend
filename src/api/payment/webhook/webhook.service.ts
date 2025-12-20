@@ -17,16 +17,14 @@ import { TeamanagerBotService } from '@/bots/teamanager/teamanager.bot.service'
 import { PrismaService } from '@/infra/prisma/prisma.service'
 import { HeleketPaymentStatus } from '@/libs/heleket/enums'
 import { MailService } from '@/libs/mail/mail.service'
-import { IS_DEV_ENV } from '@/shared/utils'
+import { NpdService } from '@/libs/npd/npd.service'
 
 import { HeleketPaymentWebhookResponse } from './dto'
+import { WebhookValidator } from './webhook.validator'
 
 @Injectable()
 export class WebhookService {
 	private readonly logger = new Logger(WebhookService.name)
-
-	private readonly ALLOWED_IPS: string[]
-	private readonly matcher: CidrMatcher
 
 	private readonly paymentTypeMap: Record<string, PaymentMethod> = {
 		bank_card: 'BANK_CARD',
@@ -38,24 +36,15 @@ export class WebhookService {
 	public constructor(
 		private readonly prismaService: PrismaService,
 		private readonly yookassaService: YookassaService,
+		private readonly validator: WebhookValidator,
+		private readonly npdService: NpdService,
 		private readonly mailService: MailService,
 		private readonly botService: TeamanagerBotService
-	) {
-		this.ALLOWED_IPS = [
-			'185.71.76.0/27',
-			'185.71.77.0/27',
-			'77.75.153.0/25',
-			'77.75.156.11/32',
-			'77.75.156.35/32',
-			'77.75.154.128/25',
-			'2a02:5180::/32'
-		]
+	) {}
 
-		this.matcher = new CidrMatcher(this.ALLOWED_IPS)
-	}
-
-	public async handleYookassa(payload: any) {
-		this.logger.log(`Received YooKassa webhook: ${payload.event}`)
+	public async handleYookassa(payload: any, ip: string) {
+		this.logger.log(`Incoming YooKassa webhook: ${payload.event}`)
+		this.validator.validateYooKassa(ip)
 
 		if (payload.event === 'payment.waiting_for_capture') {
 			this.logger.log(`Capturing payment ${payload.object.id}`)
@@ -69,7 +58,7 @@ export class WebhookService {
 			return await this.processPayment({
 				provider: 'yookassa',
 				paymentId: payload.object.metadata.payment_id,
-				paymentData: payload.object
+				raw: payload.object
 			})
 		} else if (payload.event === 'payment.canceled') {
 			this.logger.warn(`Payment canceled: ${payload.object.id}`)
@@ -85,33 +74,30 @@ export class WebhookService {
 		}
 	}
 
-	public verifyWebhook(ip: string) {
-		if (IS_DEV_ENV) {
-			this.logger.debug(`Skipping IP verification in dev mode`)
-			return
-		}
+	public async handleProdamus(payload: any, signature: string) {
+		this.logger.log(
+			`Incoming Prodamus webhook for order ${payload.order_num}`
+		)
 
-		if (!this.matcher.contains(ip)) {
-			this.logger.warn(`Unauthorized IP: ${ip}`)
-
-			throw new UnauthorizedException(`Invalid IP: ${ip}`)
-		}
-	}
-
-	public async handleRobokassa(payload: any) {
-		console.log('ROBOKASSA WEBHOOK: ', payload)
+		this.validator.validateProdamus(
+			payload,
+			signature,
+			process.env.PRODAMUS_SECRET_KEY!
+		)
 
 		return await this.processPayment({
-			provider: 'robokassa',
-			paymentId: payload.Shp_payment_id,
-			paymentData: payload
+			provider: 'prodamus',
+			paymentId: payload.order_num,
+			raw: payload
 		})
 	}
 
-	public async handleCrypto(payload: HeleketPaymentWebhookResponse) {
-		this.logger.log(
-			`Received Heleket webhook: ${payload.uuid}, status=${payload.status}`
-		)
+	public async handleCrypto(
+		payload: HeleketPaymentWebhookResponse,
+		ip: string
+	) {
+		this.logger.log(`Incoming Heleket webhook: ${payload.uuid}`)
+		this.validator.validateHeleket(ip)
 
 		if (
 			payload.status === HeleketPaymentStatus.PAID ||
@@ -124,7 +110,7 @@ export class WebhookService {
 			return await this.processPayment({
 				provider: 'crypto',
 				paymentId: payload.order_id,
-				paymentData: payload
+				raw: payload
 			})
 		} else if (payload.status === 'fail') {
 			this.logger.warn(`Crypto payment failed: ${payload.order_id}`)
@@ -143,11 +129,11 @@ export class WebhookService {
 	public async processPayment({
 		provider,
 		paymentId,
-		paymentData
+		raw
 	}: {
-		provider: 'yookassa' | 'robokassa' | 'crypto'
+		provider: 'yookassa' | 'prodamus' | 'crypto'
 		paymentId: string
-		paymentData: any
+		raw: any
 	}) {
 		this.logger.log(`Processing payment: ${paymentId} [${provider}]`)
 
@@ -176,7 +162,7 @@ export class WebhookService {
 
 			const method = await this.savePaymentMethod(
 				payment.user.id,
-				paymentData.payment_method
+				raw.payment_method
 			)
 
 			paymentMethodId = method.id
@@ -189,10 +175,10 @@ export class WebhookService {
 			data: {
 				status: PaymentStatus.SUCCESS,
 				...(provider === 'crypto' && {
-					currency: paymentData.payer_currency,
-					amount: parseFloat(paymentData.payer_amount)
+					currency: raw.payer_currency,
+					amount: parseFloat(raw.payer_amount)
 				}),
-				metadata: paymentData,
+				metadata: raw,
 				...(paymentMethodId && { paymentMethodId })
 			}
 		})
@@ -213,6 +199,9 @@ export class WebhookService {
 				`Auto-billing enabled for user ${payment.user.id} (provider: ${provider})`
 			)
 		}
+
+		if (provider === 'yookassa')
+			await this.createNpdReceiptSafe(payment, raw)
 
 		const now = new Date()
 
@@ -321,5 +310,56 @@ export class WebhookService {
 		this.logger.log(`Payment method ${method.id} saved for user ${userId}`)
 
 		return method
+	}
+
+	private async createNpdReceiptSafe(payment: any, raw: any) {
+		try {
+			const receipt = await this.npdService.createIncome({
+				name: 'Премиум-доступ на 30 дней',
+				amount: payment.amount
+			})
+
+			await this.prismaService.receipt.create({
+				data: {
+					paymentId: payment.id,
+					status: 'SUCCESS',
+					amount: payment.amount,
+					items: [
+						{
+							name: 'Премиум-доступ на 30 дней',
+							price: payment.amount,
+							quantity: 1
+						}
+					],
+					raw: receipt,
+					fiscalProviderId: receipt.receiptUuid
+				}
+			})
+
+			this.logger.log(
+				`NPD receipt created for payment ${payment.id}: ${receipt.receiptUuid}`
+			)
+		} catch (error: any) {
+			this.logger.error(
+				`Failed to create NPD receipt for payment ${payment.id}`,
+				error?.message
+			)
+
+			await this.prismaService.receipt.create({
+				data: {
+					paymentId: payment.id,
+					status: 'FAILED',
+					amount: payment.amount,
+					items: [
+						{
+							name: 'Премиум-доступ на 30 дней',
+							price: payment.amount,
+							quantity: 1
+						}
+					],
+					errorMessage: error?.message ?? 'NPD error'
+				}
+			})
+		}
 	}
 }

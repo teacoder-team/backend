@@ -5,7 +5,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("POSTGRES_URI")
+  url      = env("DATABASE_URI")
 }
 
 model User {
@@ -30,8 +30,6 @@ model User {
   externalAccounts ExternalAccount[]
   userProgress     UserProgress[]
   downloadLogs     DownloadLog[]
-
-  comments Comment[]
 
   mfa          MultiFactorAuthentication?
   restrictions Restriction[]
@@ -258,49 +256,10 @@ model DownloadLog {
   course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
   courseId String @map("course_id")
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("download_logs")
-}
-
-model Article {
-  id String @id @default(uuid())
-
-  title     String
-  slug      String  @unique
-  thumbnail String?
-
-  content String
-
-  isPublished Boolean @default(false) @map("is_published")
-
-  comments Comment[]
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  @@map("articles")
-}
-
-model Comment {
-  id String @id @default(uuid())
-
-  content String
-
-  edited  Boolean @default(false)
-  deleted Boolean @default(false)
-
-  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  authorId String @map("author_id")
-
-  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
-  articleId String  @map("article_id")
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  @@map("comments")
 }
 
 model Subscription {
@@ -332,9 +291,10 @@ model Payment {
   method PaymentMethod
 
   providerPaymentId String? @map("provider_payment_id")
-  invoiceId         Int?    @map("invoice_id")
 
   metadata Json?
+
+  receipts Receipt[]
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String @map("user_id")
@@ -349,6 +309,27 @@ model Payment {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("payments")
+}
+
+model Receipt {
+  id String @id @default(uuid())
+
+  status ReceiptStatus @default(PENDING)
+
+  amount Decimal
+  items  Json
+  raw    Json?
+
+  fiscalProviderId String? @map("fiscal_provider_id")
+  errorMessage     String? @map("error_message")
+
+  payment   Payment @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+  paymentId String  @map("payment_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("receipts")
 }
 
 model UserPaymentMethod {
@@ -435,6 +416,14 @@ enum PaymentStatus {
   FAILED
 
   @@map("payment_statuses")
+}
+
+enum ReceiptStatus {
+  PENDING
+  SUCCESS
+  FAILED
+
+  @@map("receipt_statuses")
 }
 
 enum PaymentProvider {

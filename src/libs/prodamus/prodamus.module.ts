@@ -13,7 +13,6 @@ export class ProdamusModule {
 	public static forRoot(options: ProdamusOptions): DynamicModule {
 		return {
 			module: ProdamusModule,
-			imports: [HttpModule],
 			providers: [
 				{
 					provide: ProdamusOptionsSymbol,
@@ -29,7 +28,7 @@ export class ProdamusModule {
 	public static forRootAsync(options: ProdamusAsyncOptions): DynamicModule {
 		return {
 			module: ProdamusModule,
-			imports: [HttpModule, ...(options.imports || [])],
+			imports: [...(options.imports || [])],
 			providers: [
 				{
 					provide: ProdamusOptionsSymbol,
