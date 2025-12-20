@@ -42,7 +42,6 @@ export class PaymentService {
 		this.HOSTS_REST = this.configService.get('hosts.rest', { infer: true })
 
 		this.INTERNATIONAL_METHODS = [
-			'AC',
 			'ACkztjp', // весь мир, кроме РФ
 			'ACf', // СНГ, кроме РФ
 			'ACUSDGTL', // USD worldwide (кроме РФ)
