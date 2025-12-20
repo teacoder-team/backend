@@ -200,8 +200,8 @@ export class WebhookService {
 			)
 		}
 
-		if (provider === 'yookassa')
-			await this.createNpdReceiptSafe(payment, raw)
+		// if (provider === 'yookassa')
+		// 	await this.createNpdReceiptSafe(payment, raw)
 
 		const now = new Date()
 
