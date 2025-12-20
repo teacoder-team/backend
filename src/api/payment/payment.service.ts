@@ -271,7 +271,7 @@ export class PaymentService {
 	): CreatePaymentRequest {
 		return {
 			amount: {
-				value: 10,
+				value: 349,
 				currency: CurrencyEnum.RUB
 			},
 			description: 'Оплата премиум-подписки на 1 месяц',
@@ -282,7 +282,7 @@ export class PaymentService {
 				items: [
 					{
 						amount: {
-							value: 10,
+							value: 349,
 							currency: CurrencyEnum.RUB
 						},
 						description: 'Премиум-доступ на 30 дней',
@@ -316,7 +316,7 @@ export class PaymentService {
 				return 399
 
 			default:
-				return 10
+				return 349
 		}
 	}
 

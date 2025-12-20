@@ -44,7 +44,7 @@ export class WebhookService {
 
 	public async handleYookassa(payload: any, ip: string) {
 		this.logger.log(`Incoming YooKassa webhook: ${payload.event}`)
-		this.validator.validateYooKassa(ip)
+		// this.validator.validateYooKassa(ip)
 
 		if (payload.event === 'payment.waiting_for_capture') {
 			this.logger.log(`Capturing payment ${payload.object.id}`)
