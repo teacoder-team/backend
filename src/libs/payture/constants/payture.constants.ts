@@ -1,1 +1,0 @@
-export const PAYTURE_OPTIONS = Symbol('PAYTURE_OPTIONS')

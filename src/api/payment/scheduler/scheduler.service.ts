@@ -89,7 +89,6 @@ export class SchedulerService {
 							amount: lastSuccess.amount,
 							currency: 'RUB',
 							method: lastSuccess.method,
-							invoiceId: this.generateInvoiceId(),
 							subscription: {
 								connect: {
 									id: sub.id

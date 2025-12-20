@@ -18,13 +18,7 @@ import { VatCodesEnum } from 'nestjs-yookassa/dist/modules/receipt/enums'
 import type { AllConfigs } from '@/config/definitions'
 import { PrismaService } from '@/infra/prisma/prisma.service'
 import { HeleketService } from '@/libs/heleket/heleket.service'
-import { PaytureService } from '@/libs/payture/payture.service'
-import {
-	PaymentDo,
-	ProductPaymentMethod,
-	ProductPaymentObject,
-	TaxType
-} from '@/libs/prodamus/enums'
+import { PaymentDo } from '@/libs/prodamus/enums'
 import { ProdamusService } from '@/libs/prodamus/prodamus.service'
 
 import { InitPaymentRequest } from './dto'
@@ -34,8 +28,7 @@ export class PaymentService {
 	private readonly HOSTS_APP: string
 	private readonly HOSTS_REST: string
 
-	private readonly SUBSCRIPTION_PRICE = 349
-
+	private readonly INTERNATIONAL_METHODS: string[]
 	private readonly CRYPTO_BLOCKED_COUNTRIES: string[]
 
 	public constructor(
@@ -43,11 +36,21 @@ export class PaymentService {
 		private readonly configService: ConfigService<AllConfigs>,
 		private readonly yookassaService: YookassaService,
 		private readonly prodamusService: ProdamusService,
-		private readonly paytureService: PaytureService,
 		private readonly heleketService: HeleketService
 	) {
 		this.HOSTS_APP = this.configService.get('hosts.app', { infer: true })
 		this.HOSTS_REST = this.configService.get('hosts.rest', { infer: true })
+
+		this.INTERNATIONAL_METHODS = [
+			'AC',
+			'ACkztjp', // весь мир, кроме РФ
+			'ACf', // СНГ, кроме РФ
+			'ACUSDGTL', // USD worldwide (кроме РФ)
+			'ACEURGTL', // EUR worldwide (кроме РФ)
+			'ACBYNGTL', // Беларусь
+			'ACUSDKB', // USD worldwide
+			'ACEURKB' // EUR worldwide
+		]
 
 		this.CRYPTO_BLOCKED_COUNTRIES = [
 			'RU',
@@ -96,25 +99,18 @@ export class PaymentService {
 				description: 'Оплата через приложение Т-Банка',
 				isAvailable: true
 			},
-			// {
-			// 	id: PaymentMethod.YOOMONEY,
-			// 	name: 'ЮMoney',
-			// 	description: 'Оплата через кошелек ЮMoney',
-			// 	icon: YoomoneyIcon,
-			// 	isAvailable: true
-			// },
+			{
+				id: PaymentMethod.INTERNATIONAL_CARD,
+				name: 'Международные карты',
+				description: 'Оплата картой зарубежных банков',
+				isAvailable: true
+			},
 			{
 				id: PaymentMethod.CRYPTO,
 				name: 'Криптовалюта',
 				description: 'Оплата с помощью BTC, USDT, TON',
 				isAvailable: true
 			}
-			// {
-			// 	id: PaymentMethod.INTERNATIONAL_CARD,
-			// 	name: 'Международные карты',
-			// 	description: 'Оплата картой зарубежных банков',
-			// 	isAvailable: true
-			// }
 			// {
 			// 	id: PaymentMethod.TELEGRAM_STARS,
 			// 	name: 'Telegram Stars',
@@ -164,10 +160,9 @@ export class PaymentService {
 
 		const payment = await this.prismaService.payment.create({
 			data: {
-				amount: this.SUBSCRIPTION_PRICE,
+				amount: this.getPriceForMethod(method),
 				currency: 'RUB',
 				method,
-				invoiceId: this.generateInvoiceId(),
 				user: {
 					connect: {
 						id: user.id
@@ -216,34 +211,29 @@ export class PaymentService {
 				)
 				break
 			case PaymentMethod.INTERNATIONAL_CARD:
-				const result = await this.paytureService.initPayment({
-					type: 'Pay',
-					orderId: payment.id,
-					amount: this.SUBSCRIPTION_PRICE,
-					total: this.SUBSCRIPTION_PRICE,
-					product: 'Премиум-доступ на 30 дней',
-					description: 'Оплата премиум-подписки на 1 месяц',
-					url: 'https://teacoder.ru/payment/success',
-					cheque: {
-						Positions: [
-							{
-								Quantity: 1,
-								Price: this.SUBSCRIPTION_PRICE,
-								Tax: 2,
-								Text: 'Премиум-доступ на 30 дней'
-							}
-						],
-						CustomerContact: user.email
-					}
+				providerResponse = await this.prodamusService.createPayment({
+					sys: 'default',
+					products: [
+						{
+							name: 'Премиум-доступ на 30 дней',
+							price: payment.amount,
+							quantity: 1
+						}
+					],
+					customer_email: user.email,
+					order_id: payment.id,
+					do: PaymentDo.PAY,
+					available_payment_methods:
+						this.INTERNATIONAL_METHODS.join('|'),
+					urlSuccess: process.env.HOSTS_APP + '/payment/success',
+					urlReturn: process.env.HOSTS_APP + '/premium',
+					urlNotification:
+						process.env.HOSTS_REST + '/webhook/prodamus'
 				})
-
-				providerResponse = this.paytureService.getPayUrl(
-					result.SessionId
-				)
 				break
 			case PaymentMethod.CRYPTO:
 				providerResponse = await this.heleketService.createPayment({
-					amount: String(this.SUBSCRIPTION_PRICE),
+					amount: String(this.getPriceForMethod(method)),
 					currency: 'RUB',
 					order_id: payment.id,
 					url_return: `${this.HOSTS_APP}/payment/success`,
@@ -281,7 +271,7 @@ export class PaymentService {
 	): CreatePaymentRequest {
 		return {
 			amount: {
-				value: this.SUBSCRIPTION_PRICE,
+				value: 10,
 				currency: CurrencyEnum.RUB
 			},
 			description: 'Оплата премиум-подписки на 1 месяц',
@@ -292,7 +282,7 @@ export class PaymentService {
 				items: [
 					{
 						amount: {
-							value: this.SUBSCRIPTION_PRICE,
+							value: 10,
 							currency: CurrencyEnum.RUB
 						},
 						description: 'Премиум-доступ на 30 дней',
@@ -320,18 +310,19 @@ export class PaymentService {
 		}
 	}
 
+	private getPriceForMethod(method: PaymentMethod): number {
+		switch (method) {
+			case PaymentMethod.INTERNATIONAL_CARD:
+				return 399
+
+			default:
+				return 10
+		}
+	}
+
 	private getCountryCode(ip: string) {
 		const geo = lookup(ip)
 
 		return geo.country
-	}
-
-	private generateInvoiceId() {
-		const digits = 8
-
-		const min = Math.pow(10, digits - 1)
-		const max = Math.pow(10, digits) - 1
-
-		return Math.floor(Math.random() * (max - min + 1)) + min
 	}
 }

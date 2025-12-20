@@ -4,12 +4,10 @@ import { YookassaModule } from 'nestjs-yookassa'
 
 import {
 	getHeleketConfig,
-	getPaytureConfig,
 	getProdamusConfig,
 	getYookassaConfig
 } from '@/config'
 import { HeleketModule } from '@/libs/heleket/heleket.module'
-import { PaytureModule } from '@/libs/payture/payture.module'
 import { ProdamusModule } from '@/libs/prodamus/prodamus.module'
 
 import { PaymentController } from './payment.controller'
@@ -27,11 +25,6 @@ import { WebhookModule } from './webhook/webhook.module'
 		ProdamusModule.forRootAsync({
 			imports: [ConfigModule],
 			useFactory: getProdamusConfig,
-			inject: [ConfigService]
-		}),
-		PaytureModule.registerAsync({
-			imports: [ConfigModule],
-			useFactory: getPaytureConfig,
 			inject: [ConfigService]
 		}),
 		HeleketModule.forRootAsync({

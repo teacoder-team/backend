@@ -256,28 +256,6 @@ exports.Prisma.DownloadLogScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
-exports.Prisma.ArticleScalarFieldEnum = {
-  id: 'id',
-  title: 'title',
-  slug: 'slug',
-  thumbnail: 'thumbnail',
-  content: 'content',
-  isPublished: 'isPublished',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.CommentScalarFieldEnum = {
-  id: 'id',
-  content: 'content',
-  edited: 'edited',
-  deleted: 'deleted',
-  authorId: 'authorId',
-  articleId: 'articleId',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
 exports.Prisma.SubscriptionScalarFieldEnum = {
   id: 'id',
   startedAt: 'startedAt',
@@ -295,11 +273,23 @@ exports.Prisma.PaymentScalarFieldEnum = {
   status: 'status',
   method: 'method',
   providerPaymentId: 'providerPaymentId',
-  invoiceId: 'invoiceId',
   metadata: 'metadata',
   userId: 'userId',
   paymentMethodId: 'paymentMethodId',
   subscriptionId: 'subscriptionId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ReceiptScalarFieldEnum = {
+  id: 'id',
+  status: 'status',
+  amount: 'amount',
+  items: 'items',
+  raw: 'raw',
+  fiscalProviderId: 'fiscalProviderId',
+  errorMessage: 'errorMessage',
+  paymentId: 'paymentId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -329,6 +319,10 @@ exports.Prisma.SortOrder = {
 
 exports.Prisma.NullableJsonNullValueInput = {
   DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull
+};
+
+exports.Prisma.JsonNullValueInput = {
   JsonNull: Prisma.JsonNull
 };
 
@@ -400,6 +394,12 @@ exports.PaymentMethod = exports.$Enums.PaymentMethod = {
   TELEGRAM_STARS: 'TELEGRAM_STARS'
 };
 
+exports.ReceiptStatus = exports.$Enums.ReceiptStatus = {
+  PENDING: 'PENDING',
+  SUCCESS: 'SUCCESS',
+  FAILED: 'FAILED'
+};
+
 exports.PaymentProvider = exports.$Enums.PaymentProvider = {
   YOOKASSA: 'YOOKASSA',
   ROBOKASSA: 'ROBOKASSA'
@@ -418,10 +418,9 @@ exports.Prisma.ModelName = {
   Lesson: 'Lesson',
   UserProgress: 'UserProgress',
   DownloadLog: 'DownloadLog',
-  Article: 'Article',
-  Comment: 'Comment',
   Subscription: 'Subscription',
   Payment: 'Payment',
+  Receipt: 'Receipt',
   UserPaymentMethod: 'UserPaymentMethod'
 };
 

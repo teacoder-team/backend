@@ -1,6 +1,7 @@
 import {
 	Body,
 	Controller,
+	Headers,
 	HttpCode,
 	HttpStatus,
 	Ip,
@@ -9,7 +10,7 @@ import {
 import { ApiOkResponse, ApiOperation } from '@nestjs/swagger'
 
 import { HeleketService } from '@/libs/heleket/heleket.service'
-import { RobokassaService } from '@/libs/robokassa/robokassa.service'
+import { ProdamusService } from '@/libs/prodamus/prodamus.service'
 
 import { HeleketPaymentWebhookResponse } from './dto'
 import { WebhookService } from './webhook.service'
@@ -34,31 +35,27 @@ export class WebhookController {
 	@Post('yookassa')
 	@HttpCode(HttpStatus.OK)
 	public async yookassa(@Body() payload: any, @Ip() ip: string) {
-		this.webhookService.verifyWebhook(ip)
-
-		await this.webhookService.handleYookassa(payload)
+		await this.webhookService.handleYookassa(payload, ip)
 
 		return { ok: true }
 	}
 
 	@ApiOperation({
-		summary: 'Robokassa Webhook',
-		description: 'Endpoint to receive Robokassa payment notifications'
+		summary: 'Prodamus Webhook',
+		description: 'Endpoint to receive Prodamus payment notifications'
 	})
 	@ApiOkResponse({
 		description: 'Webhook processed successfully',
 		schema: {
-			example: 'OK12345'
+			example: { ok: true }
 		}
 	})
-	@Post('robokassa')
+	@Post('prodamus')
 	@HttpCode(HttpStatus.OK)
-	public async robokassa(@Body() payload: any, @Ip() ip: string) {
-		// this.robokassaService.verifyWebhook(ip, payload)
+	public async prodamus(@Body() payload: any, @Headers('sign') sign: string) {
+		await this.webhookService.handleProdamus(payload, sign)
 
-		await this.webhookService.handleRobokassa(payload)
-
-		return `OK${payload.InvId ?? payload.inv_id}`
+		return { ok: true }
 	}
 
 	@ApiOperation({
@@ -77,9 +74,7 @@ export class WebhookController {
 		@Body() payload: HeleketPaymentWebhookResponse,
 		@Ip() ip: string
 	) {
-		this.heleketService.verifyWebhook(ip, payload)
-
-		await this.webhookService.handleCrypto(payload)
+		await this.webhookService.handleCrypto(payload, ip)
 
 		return { ok: true }
 	}
