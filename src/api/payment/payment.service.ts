@@ -42,7 +42,6 @@ export class PaymentService {
 		this.HOSTS_REST = this.configService.get('hosts.rest', { infer: true })
 
 		this.INTERNATIONAL_METHODS = [
-			'AC',
 			'ACkztjp', // весь мир, кроме РФ
 			'ACf', // СНГ, кроме РФ
 			'ACUSDGTL', // USD worldwide (кроме РФ)
@@ -271,7 +270,7 @@ export class PaymentService {
 	): CreatePaymentRequest {
 		return {
 			amount: {
-				value: 10,
+				value: 449,
 				currency: CurrencyEnum.RUB
 			},
 			description: 'Оплата премиум-подписки на 1 месяц',
@@ -282,7 +281,7 @@ export class PaymentService {
 				items: [
 					{
 						amount: {
-							value: 10,
+							value: 449,
 							currency: CurrencyEnum.RUB
 						},
 						description: 'Премиум-доступ на 30 дней',
@@ -313,10 +312,10 @@ export class PaymentService {
 	private getPriceForMethod(method: PaymentMethod): number {
 		switch (method) {
 			case PaymentMethod.INTERNATIONAL_CARD:
-				return 399
+				return 499
 
 			default:
-				return 10
+				return 449
 		}
 	}
 

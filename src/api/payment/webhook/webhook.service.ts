@@ -44,7 +44,7 @@ export class WebhookService {
 
 	public async handleYookassa(payload: any, ip: string) {
 		this.logger.log(`Incoming YooKassa webhook: ${payload.event}`)
-		this.validator.validateYooKassa(ip)
+		// this.validator.validateYooKassa(ip)
 
 		if (payload.event === 'payment.waiting_for_capture') {
 			this.logger.log(`Capturing payment ${payload.object.id}`)
@@ -200,8 +200,8 @@ export class WebhookService {
 			)
 		}
 
-		if (provider === 'yookassa')
-			await this.createNpdReceiptSafe(payment, raw)
+		// if (provider === 'yookassa')
+		// 	await this.createNpdReceiptSafe(payment, raw)
 
 		const now = new Date()
 
