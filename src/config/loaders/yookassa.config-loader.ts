@@ -10,7 +10,6 @@ export function getYookassaConfig(
 		shopId: configService.get('yookassa.shopId', {
 			infer: true
 		}),
-		apiKey: configService.get('yookassa.apiKey', { infer: true }),
-		proxyUrl: `http://${process.env.PROXY_HOST}:${process.env.PROXY_PORT}`
+		apiKey: configService.get('yookassa.apiKey', { infer: true })
 	}
 }
