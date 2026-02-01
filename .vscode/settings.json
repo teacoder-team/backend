@@ -1,3 +1,35 @@
 {
-	"postman.settings.dotenv-detection-notification-visibility": false
+	"editor.formatOnSave": true,
+	"editor.formatOnPaste": false,
+	"editor.formatOnType": false,
+
+	"editor.tabSize": 4,
+	"editor.insertSpaces": false,
+	"editor.detectIndentation": false,
+
+	"files.eol": "\n",
+	"files.insertFinalNewline": true,
+	"files.trimFinalNewlines": true,
+	"files.trimTrailingWhitespace": true,
+
+	"editor.defaultFormatter": "esbenp.prettier-vscode",
+	"prettier.requireConfig": true,
+
+	"typescript.updateImportsOnFileMove.enabled": "always",
+	"javascript.updateImportsOnFileMove.enabled": "always",
+
+	"files.exclude": {
+		"**/dist": true,
+		"**/coverage": true
+	},
+
+	"search.exclude": {
+		"**/dist": true,
+		"**/node_modules": true
+	},
+
+	"postman.settings.dotenv-detection-notification-visibility": false,
+	"editor.minimap.enabled": false,
+
+	"npm.packageManager": "yarn"
 }
