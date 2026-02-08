@@ -136,7 +136,7 @@ export class ProgressService {
 		})
 
 		return {
-			nextLesson: nextLesson ? nextLesson.slug : null,
+			nextLesson: nextLesson ? nextLesson.id : null,
 			isCompleted: userProgress.isCompleted
 		}
 	}
