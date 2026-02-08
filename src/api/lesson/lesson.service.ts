@@ -15,10 +15,10 @@ export class LessonService {
 		private readonly kinescopeService: KinescopeService
 	) {}
 
-	public async getBySlug(slug: string) {
+	public async getById(id: string) {
 		const lesson = await this.prismaService.lesson.findUnique({
 			where: {
-				slug,
+				id,
 				isPublished: true
 			},
 			include: {
