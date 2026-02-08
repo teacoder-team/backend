@@ -44,6 +44,6 @@ export function getThrottlerConfig(
 		storage: new ThrottlerStorageRedisService(
 			getRedisConfig(configService)
 		),
-		skipIf: context => isDev(configService)
+		skipIf: context => true
 	}
 }
