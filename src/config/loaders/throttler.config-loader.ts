@@ -16,27 +16,27 @@ export function getThrottlerConfig(
 			{
 				name: 'strict',
 				ttl: seconds(30),
-				limit: 20
+				limit: 50
 			},
 			{
 				name: 'moderate',
 				ttl: seconds(120),
-				limit: 100
+				limit: 200
 			},
 			{
 				name: 'relaxed',
 				ttl: seconds(600),
-				limit: 1000
+				limit: 2000
 			},
 			{
 				name: 'burst',
 				ttl: seconds(5),
-				limit: 50
+				limit: 100
 			},
 			{
 				name: 'hourly',
 				ttl: seconds(3600),
-				limit: 5000
+				limit: 10000
 			}
 		],
 		errorMessage:
