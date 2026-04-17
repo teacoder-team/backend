@@ -1,0 +1,35 @@
+{
+	"jsc": {
+		"parser": {
+			"syntax": "typescript",
+			"tsx": true,
+			"decorators": true,
+			"dynamicImport": true
+		},
+		"target": "es2023",
+		"transform": {
+			"decoratorMetadata": true,
+			"legacyDecorator": true,
+			"react": {
+				"runtime": "automatic",
+				"throwIfNamespace": true,
+				"development": false,
+				"useBuiltins": true
+			}
+		},
+		"keepClassNames": true,
+		"baseUrl": "./",
+		"paths": {
+			"@prisma/generated/*": ["prisma/generated/*"],
+			"~/*": ["src/*"],
+			"@/*": ["src/*"]
+		}
+	},
+	"module": {
+		"type": "commonjs",
+		"strict": true,
+		"noInterop": false
+	},
+	"sourceMaps": true,
+	"exclude": ["node_modules", "dist"]
+}
