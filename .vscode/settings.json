@@ -1,35 +1,18 @@
 {
 	"editor.formatOnSave": true,
-	"editor.formatOnPaste": false,
-	"editor.formatOnType": false,
-
-	"editor.tabSize": 4,
-	"editor.insertSpaces": false,
-	"editor.detectIndentation": false,
-
-	"files.eol": "\n",
-	"files.insertFinalNewline": true,
-	"files.trimFinalNewlines": true,
-	"files.trimTrailingWhitespace": true,
-
+	"editor.formatOnPaste": true,
 	"editor.defaultFormatter": "esbenp.prettier-vscode",
+	"files.associations": {
+		"*.ts": "typescript",
+		"*.tsx": "typescriptreact"
+	},
 	"prettier.requireConfig": true,
-
-	"typescript.updateImportsOnFileMove.enabled": "always",
-	"javascript.updateImportsOnFileMove.enabled": "always",
-
-	"files.exclude": {
-		"**/dist": true,
-		"**/coverage": true
+	"prettier.useEditorConfig": true,
+	"tailwindCSS.includeLanguages": {
+		"typescript": "javascript",
+		"typescriptreact": "javascriptreact"
 	},
-
-	"search.exclude": {
-		"**/dist": true,
-		"**/node_modules": true
-	},
-
-	"postman.settings.dotenv-detection-notification-visibility": false,
-	"editor.minimap.enabled": false,
-
-	"npm.packageManager": "yarn"
+	"terminal.integrated.defaultProfile.linux": "bash",
+	"terminal.integrated.defaultProfile.osx": "zsh",
+	"terminal.integrated.defaultProfile.windows": "PowerShell"
 }
