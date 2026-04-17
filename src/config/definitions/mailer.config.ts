@@ -3,4 +3,5 @@ export interface MailerConfig {
 	port: number
 	login: string
 	password: string
+	fromAddress: string
 }

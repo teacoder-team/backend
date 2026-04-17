@@ -27,17 +27,19 @@ import {
 } from '@/shared/decorators'
 import { Authorization } from '@/shared/decorators/auth.decorator'
 
-import { CourseResponse } from '../../application/dto/course.response'
-import { CoursesResponse } from '../../application/dto/courses.response'
-import { CreateCourseRequest } from '../../application/dto/create-course.request'
-import { CreateCourseResponse } from '../../application/dto/create-course.response'
-import { GenerateDownloadLinkResponse } from '../../application/dto/generate-download-link.response'
-import { CourseApplicationService } from '../../application/services/course.application.service'
+import { CourseService } from './course.service'
+import { CourseResponse } from './dto/course.dto'
+import { CoursesResponse } from './dto/courses.dto'
+import {
+	CreateCourseRequest,
+	CreateCourseResponse
+} from './dto/create-course.dto'
+import { GenerateDownloadLinkResponse } from './dto/generate-download-link.dto'
 
 @ApiTags('Course')
 @Controller('courses')
 export class CourseController {
-	public constructor(private readonly app: CourseApplicationService) {}
+	public constructor(private readonly courseService: CourseService) {}
 
 	@ApiOperation({
 		summary: 'Fetch All Courses',
@@ -49,7 +51,7 @@ export class CourseController {
 	@Get()
 	@HttpCode(HttpStatus.OK)
 	public async getAll() {
-		return this.app.getAll()
+		return this.courseService.getAll()
 	}
 
 	@ApiOperation({
@@ -63,7 +65,7 @@ export class CourseController {
 	@Get('popular')
 	@HttpCode(HttpStatus.OK)
 	public async getPopular() {
-		return this.app.getPopular()
+		return this.courseService.getPopular()
 	}
 
 	@ApiOperation({
@@ -76,7 +78,7 @@ export class CourseController {
 	@Get(':slug')
 	@HttpCode(HttpStatus.OK)
 	public async getBySlug(@Param('slug') slug: string) {
-		return this.app.getBySlug(slug)
+		return this.courseService.getBySlug(slug)
 	}
 
 	@ApiOperation({
@@ -89,7 +91,7 @@ export class CourseController {
 	@Get(':id/lessons')
 	@HttpCode(HttpStatus.OK)
 	public async getCourseLessons(@Param('id') id: string) {
-		return this.app.getCourseLessons(id)
+		return this.courseService.getCourseLessons(id)
 	}
 
 	@ApiOperation({
@@ -102,7 +104,7 @@ export class CourseController {
 	@Patch(':id/views')
 	@HttpCode(HttpStatus.NO_CONTENT)
 	public async incrementViews(@Param('id') id: string) {
-		await this.app.incrementViews(id)
+		await this.courseService.incrementViews(id)
 	}
 
 	@ApiOperation({
@@ -120,7 +122,7 @@ export class CourseController {
 		@Param('id') id: string,
 		@Authorized() user: User
 	) {
-		return await this.app.generateDownloadLink(id, user)
+		return await this.courseService.generateDownloadLink(id, user)
 	}
 
 	@ApiOperation({
@@ -140,11 +142,17 @@ export class CourseController {
 		@UserAgent() userAgent: string,
 		@Res() res: Response
 	) {
-		const course = await this.app.resolveDownloadToken(token, ip, userAgent)
+		const course = await this.courseService.resolveDownloadToken(
+			token,
+			ip,
+			userAgent
+		)
 
 		try {
 			const { stream, contentType } =
-				await this.app.fetchAttachmentStream(course.attachment)
+				await this.courseService.fetchAttachmentStream(
+					course.attachment
+				)
 
 			res.setHeader(
 				'Content-Disposition',
@@ -171,6 +179,6 @@ export class CourseController {
 	@Post()
 	@HttpCode(HttpStatus.OK)
 	public async create(@Body() dto: CreateCourseRequest) {
-		return this.app.create(dto)
+		return this.courseService.create(dto)
 	}
 }

@@ -17,7 +17,7 @@ export function getMailerConfig(
 			}
 		},
 		defaults: {
-			from: `"TeaCoder Team" ${configService.get('mailer.login', { infer: true })}`
+			from: `"TeaCoder Team" ${configService.get('mailer.fromAddress', { infer: true })}`
 		}
 	}
 }

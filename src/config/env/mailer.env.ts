@@ -11,6 +11,7 @@ export const mailerEnv = registerAs<MailerConfig>('mailer', () => {
 		host: process.env.MAIL_HOST,
 		port: Number(process.env.MAIL_PORT),
 		login: process.env.MAIL_LOGIN,
-		password: process.env.MAIL_PASSWORD
+		password: process.env.MAIL_PASSWORD,
+		fromAddress: process.env.MAIL_FROM_ADDRESS
 	}
 })

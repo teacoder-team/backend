@@ -18,6 +18,7 @@ import { MfaModule } from './auth/mfa/mfa.module'
 import { PasskeyModule } from './auth/passkey/passkey.module'
 import { SessionModule } from './auth/session/session.module'
 import { SsoModule } from './auth/sso/sso.module'
+import { CourseModule } from './course/course.module'
 import { LessonModule } from './lesson/lesson.module'
 import { PaymentModule } from './payment/payment.module'
 import { ProgressModule } from './progress/progress.module'
@@ -53,7 +54,8 @@ import { UsersModule } from './users/users.module'
 		LessonModule,
 		ProgressModule,
 		StatisticsModule,
-		PaymentModule
+		PaymentModule,
+		CourseModule
 	],
 	providers: [
 		{
