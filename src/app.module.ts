@@ -20,7 +20,6 @@ import {
 	webauthnEnv,
 	yookassaEnv
 } from './config'
-import { CourseModule } from './domains/course/course.module'
 import { InfraModule } from './infra/infra.module'
 import { LibsModule } from './libs/libs.module'
 import { IS_DEV_ENV } from './shared/utils'
@@ -51,8 +50,7 @@ import { IS_DEV_ENV } from './shared/utils'
 		ApiModule,
 		InfraModule,
 		LibsModule,
-		BotModule,
-		CourseModule
+		BotModule
 	]
 })
 export class AppModule {}

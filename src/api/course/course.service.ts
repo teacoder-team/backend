@@ -1,41 +1,37 @@
 import { HttpService } from '@nestjs/axios'
-import { Inject, Injectable, NotFoundException } from '@nestjs/common'
+import { Injectable, NotFoundException } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { User } from '@prisma/generated'
 import { randomBytes } from 'crypto'
 import { firstValueFrom } from 'rxjs'
 
-import type { AllConfigs } from '@/config/definitions'
 import { RedisService } from '@/infra/redis/redis.service'
-import { slugify } from '@/shared/utils/slugify'
+import { slugify } from '@/shared/utils'
 
-import { CourseRepository } from '../../domain/repositories/course.repository.interface'
-import { DownloadLogRepository } from '../../domain/repositories/download-log.repository.interface'
+import { CourseRepository } from './course.repository'
 
 @Injectable()
-export class CourseApplicationService {
+export class CourseService {
 	public constructor(
-		@Inject('CourseRepository')
-		private readonly courseRepo: CourseRepository,
-		@Inject('DownloadLogRepository')
-		private readonly downloadLogRepo: DownloadLogRepository,
+		private readonly courseRepository: CourseRepository,
 		private readonly redisService: RedisService,
-		private readonly configService: ConfigService<AllConfigs>,
+		private readonly configService: ConfigService,
 		private readonly httpService: HttpService
 	) {}
 
 	public async getAll() {
-		return this.courseRepo.findAll({
-			isPublished: true,
+		return this.courseRepository.findAll({
+			where: {
+				isPublished: true
+			},
 			orderBy: {
-				field: 'createdAt',
-				direction: 'desc'
+				createdAt: 'desc'
 			}
 		})
 	}
 
 	public async getPopular() {
-		return this.courseRepo.findPopular(4)
+		return this.courseRepository.findPopular(4)
 	}
 
 	public async getBySlug(slug: string) {
@@ -43,7 +39,7 @@ export class CourseApplicationService {
 
 		if (cached) return JSON.parse(cached)
 
-		const course = await this.courseRepo.findBySlug(slug)
+		const course = await this.courseRepository.findBySlug(slug)
 
 		if (!course || !course.isPublished)
 			throw new NotFoundException('Course not found')
@@ -71,22 +67,22 @@ export class CourseApplicationService {
 	}
 
 	public async getCourseLessons(id: string) {
-		const course = await this.courseRepo.findById(id)
+		const course = await this.courseRepository.findById(id)
 
 		if (!course || !course.isPublished)
 			throw new NotFoundException('Course not found')
 
-		return this.courseRepo.findLessons(course.id)
+		return this.courseRepository.findLessons(course.id)
 	}
 
 	public async incrementViews(id: string) {
-		await this.courseRepo.incrementViews(id)
+		await this.courseRepository.incrementViews(id)
 
 		return true
 	}
 
 	public async generateDownloadLink(id: string, user: User) {
-		const course = await this.courseRepo.findById(id)
+		const course = await this.courseRepository.findById(id)
 
 		if (!course || !course.attachment)
 			throw new NotFoundException('Course not found')
@@ -116,11 +112,11 @@ export class CourseApplicationService {
 
 		const { courseId, userId } = JSON.parse(data)
 
-		const course = await this.courseRepo.findById(courseId)
+		const course = await this.courseRepository.findById(courseId)
 
 		if (!course) throw new NotFoundException('Course not found')
 
-		await this.downloadLogRepo.logDownload({
+		await this.courseRepository.logDownload({
 			token,
 			ip,
 			userAgent,
@@ -155,7 +151,7 @@ export class CourseApplicationService {
 	public async create(request: { title: string }) {
 		const slug = slugify(request.title)
 
-		const created = await this.courseRepo.create({
+		const created = await this.courseRepository.create({
 			title: request.title,
 			slug
 		})
