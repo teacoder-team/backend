@@ -27,7 +27,7 @@ jobs:
                   node-version: 22.19.0
 
             - name: Cache Node modules
-              uses: actions/cache@v3
+              uses: actions/cache@v5
               with:
                   path: ~/.yarn/cache
                   key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock') }}
@@ -60,7 +60,7 @@ jobs:
                   password: ${{ secrets.DOCKERHUB_TOKEN }}
 
             - name: Cache Docker layers
-              uses: actions/cache@v3
+              uses: actions/cache@v5
               with:
                   path: /tmp/.buildx-cache
                   key: ${{ runner.os }}-docker-${{ github.sha }}
