@@ -1,0 +1,25 @@
+version: 2
+updates:
+    - package-ecosystem: 'npm'
+      directory: '/'
+      schedule:
+          interval: 'weekly'
+          day: 'monday'
+      open-pull-requests-limit: 10
+      labels:
+          - 'dependencies'
+          - 'npm'
+      groups:
+          dependencies:
+              patterns:
+                  - '*'
+              exclude-patterns:
+                  - 'generated/*'
+
+    - package-ecosystem: 'github-actions'
+      directory: '/'
+      schedule:
+          interval: 'monthly'
+      labels:
+          - 'dependencies'
+          - 'github-actions'
