@@ -146,14 +146,20 @@ export class PasskeyService {
 			throw new BadRequestException('Verification failed')
 
 		const {
-			credential: { id, publicKey }
+			credential: { id: credentialID, publicKey: credentialPublicKey }
 		} = verification.registrationInfo
+
+		const credentialIdBuf = this.toBuffer(credentialID as any)
+		const publicKeyBuf = this.toBuffer(credentialPublicKey as any)
+
+		const credentialIdB64 = base64url.encode(credentialIdBuf)
+		const publicKeyB64 = base64url.encode(publicKeyBuf)
 
 		await this.prismaService.passkey.create({
 			data: {
 				deviceName,
-				credentialId: id,
-				publicKey: publicKey.toString(),
+				credentialId: credentialIdB64,
+				publicKey: publicKeyB64,
 				userAgent,
 				ip,
 				lastUsedAt: new Date(),
@@ -244,7 +250,9 @@ export class PasskeyService {
 			expectedRPID: this.WEBAUTHN_RP_ID,
 			credential: {
 				id: passkey.credentialId,
-				publicKey: base64url.toBuffer(passkey.publicKey),
+				publicKey: this.toUint8Array(
+					base64url.toBuffer(passkey.publicKey)
+				),
 				counter: passkey.counter ?? 0
 			}
 		})
@@ -324,5 +332,21 @@ export class PasskeyService {
 		})
 
 		return recoveryCodes
+	}
+
+	private toBuffer(data: ArrayBuffer | Uint8Array | string): Buffer {
+		if (typeof data === 'string') return Buffer.from(data)
+
+		if (data instanceof ArrayBuffer)
+			return Buffer.from(new Uint8Array(data))
+		if (data instanceof Uint8Array) return Buffer.from(data)
+
+		return Buffer.from(data as any)
+	}
+
+	private toUint8Array(data: string | Buffer): Uint8Array<ArrayBuffer> {
+		const buf = typeof data === 'string' ? base64url.toBuffer(data) : data
+
+		return new Uint8Array(new ArrayBuffer(buf.length)).map((_, i) => buf[i])
 	}
 }
