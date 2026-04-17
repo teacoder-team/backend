@@ -11,6 +11,14 @@ yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
 
+# Yarn
+.yarn/*
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+.pnp.*
+
 # OS
 .DS_Store
 
