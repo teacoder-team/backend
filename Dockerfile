@@ -6,6 +6,8 @@ FROM base AS builder
 
 WORKDIR /app
 
+ENV YARN_NODE_LINKER=node-modules
+
 COPY package.json yarn.lock ./
 RUN yarn install --immutable
 
@@ -18,9 +20,15 @@ FROM base AS runner
 
 WORKDIR /app
 
+ENV NODE_ENV=production
+ENV YARN_NODE_LINKER=node-modules
+
+COPY package.json yarn.lock ./
+
+RUN chown -R node:node /app
+
 USER node
 
-COPY --chown=node:node package.json yarn.lock ./
 RUN yarn install --immutable
 
 COPY --chown=node:node --from=builder /app/dist ./dist

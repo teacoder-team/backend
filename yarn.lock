@@ -1103,9 +1103,9 @@ __metadata:
   linkType: hard
 
 "@colordx/core@npm:^5.0.3":
-  version: 5.0.3
-  resolution: "@colordx/core@npm:5.0.3"
-  checksum: 10c0/b938d1384acfaa31e6101a54192bb7e05703b940fc24139e38761df6e5498c63bb0bf252fa09afb9a147413c162a75097c685327199c75f1531b535ffb0f8cb6
+  version: 5.1.0
+  resolution: "@colordx/core@npm:5.1.0"
+  checksum: 10c0/3fb058cde3f157d547d58017193a6fffc81b6359428720ed53310f2b1c3a13fabbf0903fd15b3bf9bb4b0bda86324320fa75773b88d8df4a86b6120ec759153a
   languageName: node
   linkType: hard
 
@@ -3465,7 +3465,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@prisma/adapter-pg@npm:^7.7.0":
+"@prisma/adapter-pg@npm:^7.2.0":
   version: 7.7.0
   resolution: "@prisma/adapter-pg@npm:7.7.0"
   dependencies:
@@ -3484,7 +3484,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@prisma/client@npm:^7.7.0":
+"@prisma/client@npm:^7.2.0":
   version: 7.7.0
   resolution: "@prisma/client@npm:7.7.0"
   dependencies:
@@ -6478,8 +6478,8 @@ __metadata:
     "@nestjs/swagger": "npm:^8.0.7"
     "@nestjs/testing": "npm:^11.1.19"
     "@nestjs/throttler": "npm:^6.4.0"
-    "@prisma/adapter-pg": "npm:^7.7.0"
-    "@prisma/client": "npm:^7.7.0"
+    "@prisma/adapter-pg": "npm:^7.2.0"
+    "@prisma/client": "npm:^7.2.0"
     "@react-email/components": "npm:0.0.33"
     "@simplewebauthn/server": "npm:^13.1.2"
     "@swc/cli": "npm:^0.8.1"
@@ -6534,7 +6534,7 @@ __metadata:
     otpauth: "npm:^9.5.0"
     prettier: "npm:^3.8.3"
     preview-email: "npm:^3.1.3"
-    prisma: "npm:^7.7.0"
+    prisma: "npm:^7.2.0"
     pug: "npm:^3.0.3"
     qrcode: "npm:^1.5.4"
     react: "npm:19.2.5"
@@ -13778,7 +13778,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prisma@npm:^7.7.0":
+"prisma@npm:^7.2.0":
   version: 7.7.0
   resolution: "prisma@npm:7.7.0"
   dependencies:
