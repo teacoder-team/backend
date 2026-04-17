@@ -1,7 +1,8 @@
 import { registerAs } from '@nestjs/config'
 
+import { validateEnv } from '@/shared/utils/env'
+
 import type { TelegramConfig } from '../definitions'
-import { validateEnv } from '../utils/validate-env'
 import { TelegramValidator } from '../validators'
 
 export const telegramEnv = registerAs<TelegramConfig>('telegram', () => {

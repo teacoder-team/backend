@@ -1,7 +1,8 @@
 import { registerAs } from '@nestjs/config'
 
+import { validateEnv } from '@/shared/utils/env'
+
 import type { SentinelConfig } from '../definitions'
-import { validateEnv } from '../utils/validate-env'
 import { SentinelValidator } from '../validators'
 
 export const sentinelEnv = registerAs<SentinelConfig>('sentinel', () => {

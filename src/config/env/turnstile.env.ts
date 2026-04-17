@@ -1,7 +1,8 @@
 import { registerAs } from '@nestjs/config'
 
+import { validateEnv } from '@/shared/utils/env'
+
 import type { TurnstileConfig } from '../definitions'
-import { validateEnv } from '../utils/validate-env'
 import { TurnstileValidator } from '../validators'
 
 export const turnstileEnv = registerAs<TurnstileConfig>('turnstile', () => {

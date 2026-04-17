@@ -14,8 +14,9 @@ export class ProviderGuard implements CanActivate {
 
 	public canActivate(context: ExecutionContext) {
 		const request = context.switchToHttp().getRequest<Request>()
-		const provider =
-			request.params.provider.toUpperCase() as keyof typeof AccountProvider
+		const provider = (
+			request.params.provider as string
+		).toUpperCase() as keyof typeof AccountProvider
 
 		if (!(provider in AccountProvider))
 			throw new NotFoundException('Провайдер не найден')

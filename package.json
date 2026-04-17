@@ -23,8 +23,8 @@
 		"test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
 		"test:e2e": "jest --config ./test/jest-e2e.json",
 		"db:push": "prisma db push",
-		"db:studio": "prisma studio",
-		"release": "release-it"
+		"db:generate": "prisma db generate",
+		"db:studio": "prisma studio"
 	},
 	"dependencies": {
 		"@aws-sdk/client-s3": "^3.1031.0",
@@ -41,8 +41,8 @@
 		"@nestjs/schedule": "^6.0.0",
 		"@nestjs/swagger": "^8.0.7",
 		"@nestjs/throttler": "^6.4.0",
-		"@prisma/adapter-pg": "^7.2.0",
-		"@prisma/client": "^7.2.0",
+		"@prisma/adapter-pg": "^7.7.0",
+		"@prisma/client": "^7.7.0",
 		"@react-email/components": "0.0.33",
 		"@simplewebauthn/server": "^13.1.2",
 		"@teacoder/sentinel": "^1.0.4",
@@ -55,6 +55,7 @@
 		"class-transformer": "^0.5.1",
 		"class-validator": "^0.15.1",
 		"date-fns": "^4.1.0",
+		"dotenv": "^17.4.2",
 		"ejs": "^5.0.2",
 		"form-data": "4.0.5",
 		"geoip-country": "^5.0.202604142355",
@@ -75,7 +76,7 @@
 		"nodemailer": "^8.0.5",
 		"otpauth": "^9.5.0",
 		"preview-email": "^3.1.3",
-		"prisma": "^7.2.0",
+		"prisma": "^7.7.0",
 		"pug": "^3.0.3",
 		"qrcode": "^1.5.4",
 		"react": "19.2.5",
