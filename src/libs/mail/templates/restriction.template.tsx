@@ -81,8 +81,8 @@ export function RestrictionTemplate({ user, restriction, violations }: Restricti
 									Срок ограничения
 								</Heading>
 								<Text className='text-gray-700 mt-4'>
-									{isPermanentBan 
-										? 'Ваше ограничение бессрочное.' 
+									{isPermanentBan
+										? 'Ваше ограничение бессрочное.'
 										: `Ваше ограничение действует ${remainingTime}.`
 									}
 								</Text>
@@ -98,7 +98,7 @@ export function RestrictionTemplate({ user, restriction, violations }: Restricti
 									</Text>
 								</Section>
 							)}
-															
+
 							{!isUsernameBan && violations === 1 && (
 								<Section className='mb-8 rounded-lg border border-yellow-100 bg-yellow-50 p-6'>
 									<Heading className='text-xl font-semibold text-yellow-700'>
