@@ -1,4 +1,4 @@
-import { IsInt, IsString, Max, Min } from 'class-validator'
+import { IsEmail, IsInt, IsString, Max, Min } from 'class-validator'
 
 export class MailerValidator {
 	@IsString()
@@ -14,4 +14,7 @@ export class MailerValidator {
 
 	@IsString()
 	public MAIL_PASSWORD: string
+
+	@IsEmail()
+	public MAIL_FROM_ADDRESS: string
 }

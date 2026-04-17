@@ -22,7 +22,7 @@ export class MailProcessor extends WorkerHost {
 			await this.mailService.sendMail(email, subject, html)
 
 			this.logger.log(`📧 Email successfully sent to ${email}`)
-		} catch (error) {
+		} catch (error: any) {
 			this.logger.error(
 				`❌ Error sending email to ${email}: ${error.message}`
 			)
