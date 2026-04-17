@@ -22,10 +22,9 @@ ENV NODE_ENV=production
 
 COPY --chown=nodejs:nodejs package.json yarn.lock ./
 
-RUN yarn install --production
+RUN yarn install --immutable
 
 COPY --chown=nodejs:nodejs --from=builder /app/dist ./dist
 COPY --chown=nodejs:nodejs --from=builder /app/prisma/generated ./prisma/generated
 
 CMD ["node", "dist/main"]
-
