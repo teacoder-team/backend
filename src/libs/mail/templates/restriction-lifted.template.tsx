@@ -63,7 +63,7 @@ export function RestrictionLiftedTemplate({ user, violations }: RestrictionLifte
 							<Text className='mb-6 text-gray-500' style={{ fontFamily: 'Geist, Arial' }}>
 								Привет, {user.displayName}! Мы рады сообщить, что ограничение на ваш аккаунт было снято.
 							</Text>
-							
+
 
 							{violations === 0 && (
 								<Section className='mb-8 rounded-lg border border-yellow-100 bg-yellow-50 p-6'>
@@ -100,7 +100,7 @@ export function RestrictionLiftedTemplate({ user, violations }: RestrictionLifte
 									</Text>
 								</Section>
 							)}
-							
+
 							<Section className='mb-8 rounded-lg border border-green-100 bg-green-50 p-6'>
 								<Heading className='text-xl font-semibold text-green-700'>
 									Что это значит?

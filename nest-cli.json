@@ -7,7 +7,9 @@
 		"builder": {
 			"type": "swc",
 			"options": {
-				"extensions": [".js", ".ts", ".jsx", ".tsx"]
+				"configFile": ".swcrc",
+				"swcrc": true,
+				"extensions": [".ts", ".tsx"]
 			}
 		},
 		"typeCheck": true
