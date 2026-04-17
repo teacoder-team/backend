@@ -1,7 +1,8 @@
 import { registerAs } from '@nestjs/config'
 
+import { validateEnv } from '@/shared/utils/env'
+
 import type { FingerprintConfig } from '../definitions'
-import { validateEnv } from '../utils/validate-env'
 import { FingerprintValidator } from '../validators'
 
 export const fingerprintEnv = registerAs<FingerprintConfig>(

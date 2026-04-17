@@ -1,7 +1,8 @@
 import { registerAs } from '@nestjs/config'
 
+import { validateEnv } from '@/shared/utils/env'
+
 import type { ProdamusConfig } from '../definitions'
-import { validateEnv } from '../utils/validate-env'
 import { ProdamusValidator } from '../validators'
 
 export const prodamusEnv = registerAs<ProdamusConfig>('prodamus', () => {

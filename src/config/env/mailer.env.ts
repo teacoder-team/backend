@@ -1,7 +1,8 @@
 import { registerAs } from '@nestjs/config'
 
+import { validateEnv } from '@/shared/utils/env'
+
 import type { MailerConfig } from '../definitions'
-import { validateEnv } from '../utils/validate-env'
 import { MailerValidator } from '../validators'
 
 export const mailerEnv = registerAs<MailerConfig>('mailer', () => {

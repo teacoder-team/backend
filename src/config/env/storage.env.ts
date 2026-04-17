@@ -1,7 +1,8 @@
 import { registerAs } from '@nestjs/config'
 
+import { validateEnv } from '@/shared/utils/env'
+
 import type { StorageConfig } from '../definitions'
-import { validateEnv } from '../utils/validate-env'
 import { StorageValidator } from '../validators'
 
 export const storageEnv = registerAs<StorageConfig>('storage', () => {

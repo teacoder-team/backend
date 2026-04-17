@@ -1,7 +1,8 @@
 import { registerAs } from '@nestjs/config'
 
+import { validateEnv } from '@/shared/utils/env'
+
 import type { KinescopeConfig } from '../definitions'
-import { validateEnv } from '../utils/validate-env'
 import { KinescopeValidator } from '../validators'
 
 export const kinescopeEnv = registerAs<KinescopeConfig>('kinescope', () => {

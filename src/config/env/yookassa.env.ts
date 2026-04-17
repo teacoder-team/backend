@@ -1,7 +1,8 @@
 import { registerAs } from '@nestjs/config'
 
+import { validateEnv } from '@/shared/utils/env'
+
 import type { YookassaConfig } from '../definitions'
-import { validateEnv } from '../utils/validate-env'
 import { YookassaValidator } from '../validators'
 
 export const yookassaEnv = registerAs<YookassaConfig>('yookassa', () => {

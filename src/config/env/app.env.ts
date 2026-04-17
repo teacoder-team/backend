@@ -1,7 +1,8 @@
 import { registerAs } from '@nestjs/config'
 
+import { validateEnv } from '@/shared/utils/env'
+
 import type { AppConfig } from '../definitions'
-import { validateEnv } from '../utils/validate-env'
 import { AppValidator } from '../validators'
 
 export const appEnv = registerAs<AppConfig>('app', () => {

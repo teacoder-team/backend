@@ -1,7 +1,8 @@
 import { registerAs } from '@nestjs/config'
 
+import { validateEnv } from '@/shared/utils/env'
+
 import type { WebAuthnConfig } from '../definitions'
-import { validateEnv } from '../utils/validate-env'
 import { WebAuthnValidator } from '../validators'
 
 export const webauthnEnv = registerAs<WebAuthnConfig>('webauthn', () => {

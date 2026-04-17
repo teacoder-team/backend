@@ -1,7 +1,8 @@
 import { registerAs } from '@nestjs/config'
 
+import { validateEnv } from '@/shared/utils/env'
+
 import type { HostsConfig } from '../definitions'
-import { validateEnv } from '../utils/validate-env'
 import { HostsValidator } from '../validators'
 
 export const hostsEnv = registerAs<HostsConfig>('hosts', () => {

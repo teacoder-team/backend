@@ -1,7 +1,8 @@
 import { registerAs } from '@nestjs/config'
 
+import { validateEnv } from '@/shared/utils/env'
+
 import type { HeleketConfig } from '../definitions'
-import { validateEnv } from '../utils/validate-env'
 import { HeleketValidator } from '../validators'
 
 export const heleketEnv = registerAs<HeleketConfig>('heleket', () => {

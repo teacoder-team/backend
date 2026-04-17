@@ -1,7 +1,8 @@
 import { registerAs } from '@nestjs/config'
 
+import { validateEnv } from '@/shared/utils/env'
+
 import type { QueueConfig } from '../definitions'
-import { validateEnv } from '../utils/validate-env'
 import { QueueValidator } from '../validators'
 
 export const queueEnv = registerAs<QueueConfig>('queue', () => {

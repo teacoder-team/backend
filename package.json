@@ -23,8 +23,8 @@
 		"test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
 		"test:e2e": "jest --config ./test/jest-e2e.json",
 		"db:push": "prisma db push",
-		"db:studio": "prisma studio",
-		"release": "release-it"
+		"db:generate": "prisma db generate",
+		"db:studio": "prisma studio"
 	},
 	"dependencies": {
 		"@aws-sdk/client-s3": "^3.1031.0",
