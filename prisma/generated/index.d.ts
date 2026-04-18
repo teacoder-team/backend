@@ -111,7 +111,8 @@ export const AccountProvider: {
   GITHUB: 'GITHUB',
   DISCORD: 'DISCORD',
   TELEGRAM: 'TELEGRAM',
-  YANDEX: 'YANDEX'
+  YANDEX: 'YANDEX',
+  GITLAB: 'GITLAB'
 };
 
 export type AccountProvider = (typeof AccountProvider)[keyof typeof AccountProvider]

@@ -21,4 +21,16 @@ export class SentinelValidator {
 
 	@IsString()
 	public DISCORD_CLIENT_SECRET: string
+
+	@IsString()
+	public YANDEX_CLIENT_ID: string
+
+	@IsString()
+	public YANDEX_CLIENT_SECRET: string
+
+	@IsString()
+	public GITLAB_CLIENT_ID: string
+
+	@IsString()
+	public GITLAB_CLIENT_SECRET: string
 }

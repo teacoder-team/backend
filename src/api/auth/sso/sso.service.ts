@@ -30,7 +30,8 @@ export class SsoService {
 		github: AccountProvider.GITHUB,
 		discord: AccountProvider.DISCORD,
 		telegram: AccountProvider.TELEGRAM,
-		yandex: AccountProvider.YANDEX
+		yandex: AccountProvider.YANDEX,
+		gitlab: AccountProvider.GITLAB
 	}
 
 	public constructor(
@@ -70,6 +71,12 @@ export class SsoService {
 			),
 			telegram: accounts.some(
 				account => account.provider === AccountProvider.TELEGRAM
+			),
+			yandex: accounts.some(
+				account => account.provider === AccountProvider.YANDEX
+			),
+			gitlab: accounts.some(
+				account => account.provider === AccountProvider.GITLAB
 			)
 		}
 

@@ -21,6 +21,14 @@ export const sentinelEnv = registerAs<SentinelConfig>('sentinel', () => {
 		discord: {
 			clientId: process.env.DISCORD_CLIENT_ID,
 			clientSecret: process.env.DISCORD_CLIENT_SECRET
+		},
+		yandex: {
+			clientId: process.env.YANDEX_CLIENT_ID,
+			clientSecret: process.env.YANDEX_CLIENT_SECRET
+		},
+		gitlab: {
+			clientId: process.env.GITLAB_CLIENT_ID,
+			clientSecret: process.env.GITLAB_CLIENT_SECRET
 		}
 	}
 })

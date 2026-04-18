@@ -4863,16 +4863,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@teacoder/sentinel@npm:^1.0.4":
-  version: 1.0.4
-  resolution: "@teacoder/sentinel@npm:1.0.4"
+"@teacoder/sentinel@npm:^1.0.6":
+  version: 1.0.6
+  resolution: "@teacoder/sentinel@npm:1.0.6"
   dependencies:
     "@nestjs/common": "npm:^11.1.6"
     "@nestjs/core": "npm:^11.1.6"
     express: "npm:^5.1.0"
     reflect-metadata: "npm:^0.2.2"
     rxjs: "npm:^7.8.2"
-  checksum: 10c0/eb9c135696d00518e731ccadb70fafd60844f594bc1d7ca0ba46a983dffddcb54b0f5e32d935bbe662559b52e42c7018e0091922a444d03cbf086af9b404be75
+  checksum: 10c0/0a0c99844796098bf62b52862cce91ca99d121102ee29fec27142145b53791e81bdf37ea7cc20e42e356af1b54c91eb32922d04b5fcf7f484bd8ae8946d42041
   languageName: node
   linkType: hard
 
@@ -6484,7 +6484,7 @@ __metadata:
     "@simplewebauthn/server": "npm:^13.1.2"
     "@swc/cli": "npm:^0.8.1"
     "@swc/core": "npm:^1.15.26"
-    "@teacoder/sentinel": "npm:^1.0.4"
+    "@teacoder/sentinel": "npm:^1.0.6"
     "@trivago/prettier-plugin-sort-imports": "npm:^6.0.2"
     "@types/ejs": "npm:^3.1.5"
     "@types/express": "npm:^5.0.6"
