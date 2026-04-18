@@ -24,6 +24,7 @@ import { PaymentModule } from './payment/payment.module'
 import { ProgressModule } from './progress/progress.module'
 import { RestrictionModule } from './restriction/restriction.module'
 import { StatisticsModule } from './statistics/statistics.module'
+import { SystemModule } from './system/system.module'
 import { UsersModule } from './users/users.module'
 
 @Module({
@@ -55,7 +56,8 @@ import { UsersModule } from './users/users.module'
 		ProgressModule,
 		StatisticsModule,
 		PaymentModule,
-		CourseModule
+		CourseModule,
+		SystemModule
 	],
 	providers: [
 		{

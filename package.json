@@ -1,5 +1,5 @@
 {
-	"name": "backend",
+	"name": "@teacoder/backend",
 	"version": "1.0.0",
 	"description": "Backend for Teacoder platform",
 	"author": {

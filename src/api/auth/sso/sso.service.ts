@@ -71,13 +71,13 @@ export class SsoService {
 			),
 			telegram: accounts.some(
 				account => account.provider === AccountProvider.TELEGRAM
-			),
-			yandex: accounts.some(
-				account => account.provider === AccountProvider.YANDEX
-			),
-			gitlab: accounts.some(
-				account => account.provider === AccountProvider.GITLAB
 			)
+			// yandex: accounts.some(
+			// 	account => account.provider === AccountProvider.YANDEX
+			// ),
+			// gitlab: accounts.some(
+			// 	account => account.provider === AccountProvider.GITLAB
+			// )
 		}
 
 		return status
