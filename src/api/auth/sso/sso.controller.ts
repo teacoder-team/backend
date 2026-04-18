@@ -64,7 +64,7 @@ export class SsoController {
 	@ApiOperation({
 		summary: 'Get available SSO providers',
 		description:
-			'Returns a list of available external authentication providers (e.g., Google, GitHub, Discord, Telegram).'
+			'Returns a list of available external authentication providers (e.g., Google, GitHub, Discord, Telegram, Yandex, Gitlab).'
 	})
 	@ApiOkResponse({
 		schema: {

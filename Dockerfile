@@ -39,6 +39,6 @@ COPY --chown=node:node --from=builder /app/package.json ./
 COPY --chown=node:node --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
 
-COPY --from=builder /app/prisma/generated ./prisma/generated
+COPY --chown=node:node --from=builder /app/prisma ./prisma
 
 CMD ["node", "dist/main"]

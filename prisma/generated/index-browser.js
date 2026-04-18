@@ -351,7 +351,8 @@ exports.AccountProvider = exports.$Enums.AccountProvider = {
   GITHUB: 'GITHUB',
   DISCORD: 'DISCORD',
   TELEGRAM: 'TELEGRAM',
-  YANDEX: 'YANDEX'
+  YANDEX: 'YANDEX',
+  GITLAB: 'GITLAB'
 };
 
 exports.EmailVerificationStatus = exports.$Enums.EmailVerificationStatus = {

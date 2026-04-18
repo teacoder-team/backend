@@ -8,4 +8,6 @@ export interface SentinelConfig {
 	google: SentinelProviderConfig
 	github: SentinelProviderConfig
 	discord: SentinelProviderConfig
+	yandex: SentinelProviderConfig
+	gitlab: SentinelProviderConfig
 }

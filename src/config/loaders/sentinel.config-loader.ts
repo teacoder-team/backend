@@ -2,8 +2,11 @@ import { ConfigService } from '@nestjs/config'
 import {
 	DiscordProvider,
 	GithubProvider,
+	GitlabProfile,
+	GitlabProvider,
 	GoogleProvider,
-	SentinelOptions
+	SentinelOptions,
+	YandexProvider
 } from '@teacoder/sentinel'
 
 import type { AllConfigs } from '../definitions'
@@ -49,6 +52,30 @@ export function getOAuthConfig(
 					}
 				),
 				scopes: ['identify', 'email']
+			}),
+			new YandexProvider({
+				clientId: configService.get('sentinel.yandex.clientId', {
+					infer: true
+				}),
+				clientSecret: configService.get(
+					'sentinel.yandex.clientSecret',
+					{
+						infer: true
+					}
+				),
+				scopes: ['login:email', 'login:avatar', 'login:info']
+			}),
+			new GitlabProvider({
+				clientId: configService.get('sentinel.gitlab.clientId', {
+					infer: true
+				}),
+				clientSecret: configService.get(
+					'sentinel.gitlab.clientSecret',
+					{
+						infer: true
+					}
+				),
+				scopes: ['openid', 'profile', 'email', 'read_user']
 			})
 		]
 	}
