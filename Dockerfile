@@ -16,6 +16,8 @@ RUN yarn install --immutable
 
 COPY . .
 
+ENV DATABASE_URL="postgresql://postgres:postgres@localhost:5432/teacoder?schema=public"
+
 RUN yarn prisma generate
 RUN yarn build
 
