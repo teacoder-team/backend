@@ -41,7 +41,7 @@ async function bootstrap() {
 	const host = config.get('app.host', { infer: true })
 
 	try {
-		await app.listen(port)
+		await app.listen(port, host)
 
 		logger.log(`🚀 Server is running at: ${host}`)
 		logger.log(`📄 Documentation is available at: ${host}/docs`)
