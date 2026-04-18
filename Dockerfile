@@ -19,7 +19,7 @@ COPY . .
 ENV DATABASE_URL="postgresql://postgres:postgres@localhost:5432/teacoder?schema=public"
 
 RUN yarn prisma generate
-RUN yarn build
+RUN yarn run build
 
 RUN yarn workspaces focus --production
 
@@ -30,6 +30,7 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV YARN_NODE_LINKER=node-modules
 
+RUN corepack enable
 RUN apk add --no-cache libc6-compat openssl
 
 RUN chown -R node:node /app
@@ -37,8 +38,7 @@ USER node
 
 COPY --chown=node:node --from=builder /app/package.json ./
 COPY --chown=node:node --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/dist ./dist
-
+COPY --chown=node:node --from=builder /app/dist ./dist
 COPY --chown=node:node --from=builder /app/prisma ./prisma
 
 CMD ["node", "dist/main"]
