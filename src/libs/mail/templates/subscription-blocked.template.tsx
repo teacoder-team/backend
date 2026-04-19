@@ -54,7 +54,7 @@ export function SubscriptionBlockedTemplate({
 								Здравствуйте, {user.displayName}! Мы временно приостановили вашу подписку, так как автоматические списания были отключены. Чтобы снова получить доступ к материалам и скачивать код, пожалуйста, оплатите выставленный счёт.
 							</Text>
 							<Text className='text-gray-600 mb-6 leading-relaxed text-[15px]' style={{ fontFamily: 'Geist, Arial' }}>
-								Если вам удобнее использовать другой способ оплаты, вы можете выбрать подходящий вариант на нашем сайте. Мы поддерживаем оплату банковской картой, СБП, криптовалютой и международными картами, чтобы вам было максимально удобно.
+								Если вам удобнее использовать другой способ оплаты, вы можете выбрать подходящий вариант на нашем сайте. Мы поддерживаем оплату банковской картой, СБП, криптовалютой и международными картами.
 							</Text>
 							<Section className='rounded-xl bg-red-50 p-6 border border-red-100 mb-6'>
 								<table className='w-full text-sm text-gray-700' style={{ fontFamily: 'Geist, Arial', borderCollapse: 'collapse' }}>
@@ -70,7 +70,7 @@ export function SubscriptionBlockedTemplate({
 										<tr>
 											<td className='py-2.5 text-gray-500 text-left'>Срок действия счёта</td>
 											<td className='py-2.5 text-right font-medium text-gray-900'>
-												{payment.method === PaymentMethod.CRYPTO ? '12 часов' : '3 дня'})
+												{payment.method === PaymentMethod.CRYPTO ? '12 часов' : '3 дня'}
 											</td>
 										</tr>
 									</tbody>
