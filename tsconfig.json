@@ -6,8 +6,8 @@
 		"moduleDetection": "force",
 		"paths": {
 			"@/*": ["./src/*"],
-			"@prisma/generated": ["prisma/generated"],
-			"@prisma/generated/*": ["prisma/generated/*"]
+			"@prisma/generated": ["./prisma/generated"],
+			"@prisma/generated/*": ["./prisma/generated/*"]
 		},
 		"allowImportingTsExtensions": true,
 		"rewriteRelativeImportExtensions": true,

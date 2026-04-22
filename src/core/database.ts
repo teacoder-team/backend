@@ -1,8 +1,8 @@
 import { PrismaClient, Prisma } from '@prisma/generated/client'
 import { PrismaPg } from '@prisma/adapter-pg'
 
-import { env } from '@/lib/config/env'
-import { logger } from '@/lib/logger/pino'
+import { env } from '@/core/config/env'
+import { logger } from '@/core/logger/pino'
 
 const globalForPrisma = globalThis as unknown as {
 	prisma: ReturnType<typeof createPrismaClient> | undefined

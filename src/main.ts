@@ -1,22 +1,38 @@
 import { Elysia } from 'elysia'
 import { swagger } from '@elysiajs/swagger'
 import { node } from '@elysiajs/node'
-import { env } from './lib/config/env'
-import { logger } from './lib/logger/pino'
+import { env } from './core/config/env'
+import { logger } from './core/logger/pino'
+import { accountRouter } from './routers/account'
+import { sessionRouter } from './routers/session'
+import { errorHandler } from './core/errors/handler'
 
 const app = new Elysia({ adapter: node() })
 	.use(
 		swagger({
+			path: '/docs',
 			documentation: {
 				info: {
 					title: 'TeaCoder API',
 					description: 'API for Teacoder educational platform',
 					version: '1.0.0',
+					contact: {
+						name: 'Send email to TeaCoder Support',
+						email: 'support@teacoder.ru',
+						url: 'https://teacoder.ru',
+					},
+					termsOfService: 'https://teacoder.ru/document/terms-of-use',
 				},
 			},
 		}),
 	)
-	.get('/', () => ({ status: 'ok' }))
+	.use(errorHandler)
+	.get('/health', () => ({
+		status: 'up',
+		timestamp: new Date().toISOString(),
+	}))
+	.use(accountRouter)
+	.use(sessionRouter)
 
 app.listen(
 	{
@@ -40,7 +56,7 @@ app.listen(
 				},
 				environment: env.NODE_ENV,
 			},
-			'Elysia server infrastructure initialized',
+			'Server is running and accepting connections',
 		)
 	},
 )
