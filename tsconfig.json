@@ -1,0 +1,23 @@
+{
+	"compilerOptions": {
+		"target": "ESNext",
+		"module": "ESNext",
+		"moduleResolution": "Bundler",
+		"moduleDetection": "force",
+		"paths": {
+			"@/*": ["./src/*"],
+			"@prisma/generated": ["prisma/generated"],
+			"@prisma/generated/*": ["prisma/generated/*"]
+		},
+		"allowImportingTsExtensions": true,
+		"rewriteRelativeImportExtensions": true,
+		"noEmit": true,
+		"strict": true,
+		"skipLibCheck": true,
+		"isolatedModules": true,
+		"esModuleInterop": true,
+		"forceConsistentCasingInFileNames": true,
+		"verbatimModuleSyntax": true
+	},
+	"include": ["src/**/*.ts", "tsdown.config.ts", "prisma/generated/**/*.ts"]
+}
