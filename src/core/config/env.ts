@@ -15,10 +15,6 @@ const envSchema = t.Object({
 	APP_PORT: t.Number({ default: 3000 }),
 	APP_PUBLIC_URL: t.String({ format: 'uri' }),
 
-	DATABASE_URL: t.String(),
-
-	REDIS_URL: t.String(),
-
 	LOG_LEVEL: t.Enum(
 		{
 			trace: 'trace',
@@ -30,6 +26,24 @@ const envSchema = t.Object({
 		},
 		{ default: 'info' },
 	),
+
+	DATABASE_URL: t.String(),
+	REDIS_URL: t.String(),
+
+	SMTP_HOST: t.String(),
+	SMTP_PORT: t.Number({ default: 587 }),
+	SMTP_USERNAME: t.String(),
+	SMTP_PASSWORD: t.String(),
+	SMTP_SECURE: t.Boolean({ default: false }),
+
+	SMTP_FROM_HELLO: t.String({
+		format: 'email',
+		default: 'hello@teacoder.ru',
+	}),
+	SMTP_FROM_NOREPLY: t.String({
+		format: 'email',
+		default: 'no-reply@teacoder.ru',
+	}),
 })
 
 type Env = Static<typeof envSchema>
@@ -37,6 +51,10 @@ type Env = Static<typeof envSchema>
 const _env = {
 	...process.env,
 	APP_PORT: process.env.APP_PORT ? Number(process.env.APP_PORT) : undefined,
+	SMTP_PORT: process.env.SMTP_PORT
+		? Number(process.env.SMTP_PORT)
+		: undefined,
+	SMTP_SECURE: process.env.SMTP_SECURE === 'true',
 }
 
 if (!Value.Check(envSchema, _env)) {

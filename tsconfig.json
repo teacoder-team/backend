@@ -4,6 +4,7 @@
 		"module": "ESNext",
 		"moduleResolution": "Bundler",
 		"moduleDetection": "force",
+		"jsx": "react-jsx",
 		"paths": {
 			"@/*": ["./src/*"],
 			"@prisma/generated": ["./prisma/generated"],
@@ -19,5 +20,10 @@
 		"forceConsistentCasingInFileNames": true,
 		"verbatimModuleSyntax": true
 	},
-	"include": ["src/**/*.ts", "tsdown.config.ts", "prisma/generated/**/*.ts"]
+	"include": [
+		"src/**/*.ts",
+		"tsdown.config.ts",
+		"prisma/generated/**/*.ts",
+		"emails/**/*.tsx"
+	]
 }

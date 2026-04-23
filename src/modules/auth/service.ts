@@ -7,6 +7,9 @@ import { BadRequestError, ConflictError } from '@/core/errors/base'
 import { ErrorCode } from '@/core/errors/codes'
 import { redis } from '@/core/redis'
 import { otpService } from '@/lib/security/otp'
+import VerificationEmail from '../../../emails/templates/VerificationCode'
+import { mailClient } from '@/core/mail/client'
+import { render } from '@react-email/components'
 
 export const authService = {
 	async register(dto: RegisterSchema) {
@@ -34,6 +37,25 @@ export const authService = {
 			'EX',
 			900,
 		)
+
+		await render(VerificationEmail({ code }))
+			.then((html) =>
+				mailClient.send({
+					to: dto.email,
+					subject: `${code} - код подтверждения TeaCoder`,
+					html,
+					sender: 'hello',
+				}),
+			)
+			.catch((err) => {
+				logger.error(
+					{
+						err: err instanceof Error ? err.message : err,
+						email: dto.email,
+					},
+					'failed_to_send_registration_email',
+				)
+			})
 
 		logger.info(
 			{
