@@ -1,27 +1,29 @@
 import { Elysia } from 'elysia'
-import { swagger } from '@elysiajs/swagger'
+import { openapi } from '@elysiajs/openapi'
 import { node } from '@elysiajs/node'
 import { env } from './core/config/env'
 import { logger } from './core/logger/pino'
-import { accountRouter } from './routers/account'
+import { authRouter } from './routers/auth'
 import { sessionRouter } from './routers/session'
 import { errorHandler } from './core/errors/handler'
 
 const app = new Elysia({ adapter: node() })
 	.use(
-		swagger({
+		openapi({
+			provider: 'scalar',
 			path: '/docs',
+			specPath: '/openapi.json',
 			documentation: {
 				info: {
 					title: 'TeaCoder API',
-					description: 'API for Teacoder educational platform',
+					description: 'API for TeaCoder educational platform',
 					version: '1.0.0',
 					contact: {
-						name: 'Send email to TeaCoder Support',
+						name: 'TeaCoder Support',
 						email: 'support@teacoder.ru',
-						url: 'https://teacoder.ru',
 					},
-					termsOfService: 'https://teacoder.ru/document/terms-of-use',
+					termsOfService:
+						'https://teacoder.ru/documents/terms-of-use',
 				},
 			},
 		}),
@@ -31,7 +33,7 @@ const app = new Elysia({ adapter: node() })
 		status: 'up',
 		timestamp: new Date().toISOString(),
 	}))
-	.use(accountRouter)
+	.use(authRouter)
 	.use(sessionRouter)
 
 app.listen(

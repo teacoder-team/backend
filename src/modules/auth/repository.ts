@@ -1,7 +1,7 @@
 import { db } from '@/core/database'
 import type { Prisma, User } from '@prisma/generated/client'
 
-export const accountRepository = {
+export const authRepository = {
 	async findByEmail(email: string): Promise<User | null> {
 		return db.user.findUnique({
 			where: { email },

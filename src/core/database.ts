@@ -26,6 +26,14 @@ export const db = globalForPrisma.prisma ?? createPrismaClient()
 
 if (env.NODE_ENV !== 'production') globalForPrisma.prisma = db as any
 
+db.$connect()
+	.then(() => {
+		logger.info({ context: 'database' }, 'database_connected')
+	})
+	.catch((err) => {
+		logger.error({ context: 'database', err }, 'database_connection_failed')
+	})
+
 db.$on('query', (e: Prisma.QueryEvent) => {
 	logger.debug(
 		{
