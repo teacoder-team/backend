@@ -1,3 +1,5 @@
+import { env } from '@/core/config/env'
+
 const IPV4_REGEX = /^(\d{1,3}\.){3}\d{1,3}$/
 const IPV6_REGEX = /^([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$/
 
@@ -8,11 +10,12 @@ const IP_HEADERS = [
 	'x-client-ip',
 	'x-forwarded-for',
 	'forwarded-for',
-	'x-cluster-client-ip',
 	'forwarded',
 ]
 
 export function getClientIp(headers: Headers): string {
+	if (env.NODE_ENV === 'development') return '104.28.225.185'
+
 	for (const header of IP_HEADERS) {
 		const value = headers.get(header)
 

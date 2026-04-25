@@ -1,12 +1,17 @@
-import { randomInt, timingSafeEqual } from 'node:crypto'
-
 export const otpService = {
 	generateCode(): string {
-		return randomInt(100000, 999999).toString()
+		const array = new Uint32Array(1)
+		crypto.getRandomValues(array)
+
+		return (100000 + (array[0] % 900000)).toString()
 	},
+
 	verify(provided: string, stored: string): boolean {
 		if (provided.length !== stored.length) return false
 
-		return timingSafeEqual(Buffer.from(provided), Buffer.from(stored))
+		return crypto.timingSafeEqual(
+			Buffer.from(provided),
+			Buffer.from(stored),
+		)
 	},
 }

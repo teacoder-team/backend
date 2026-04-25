@@ -13,7 +13,7 @@ export const AuthSchema = {
 		}),
 		password: t.String({
 			minLength: 6,
-			error: 'Password must be at least 8 characters long',
+			error: 'Password is required',
 		}),
 	}),
 	verify: t.Object({
@@ -24,7 +24,18 @@ export const AuthSchema = {
 			error: 'Verification code must be exactly 6 characters',
 		}),
 	}),
+	login: t.Object({
+		email: t.String({
+			format: 'email',
+			error: 'Invalid email format',
+		}),
+		password: t.String({
+			minLength: 6,
+			error: 'Password is required',
+		}),
+	}),
 }
 
 export type RegisterSchema = typeof AuthSchema.register.static
 export type VerifyRegisterSchema = typeof AuthSchema.verify.static
+export type LoginSchema = typeof AuthSchema.login.static

@@ -1,13 +1,15 @@
 import { Elysia } from 'elysia'
 import { openapi } from '@elysiajs/openapi'
-import { node } from '@elysiajs/node'
 import { env } from './core/config/env'
 import { logger } from './core/logger/pino'
 import { authRouter } from './routers/auth'
 import { sessionRouter } from './routers/session'
 import { errorHandler } from './core/errors/handler'
+import { bootstrap } from './core/bootstrap'
 
-const app = new Elysia({ adapter: node() })
+await bootstrap()
+
+const app = new Elysia()
 	.use(
 		openapi({
 			provider: 'scalar',

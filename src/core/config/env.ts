@@ -49,23 +49,23 @@ const envSchema = t.Object({
 type Env = Static<typeof envSchema>
 
 const _env = {
-	...process.env,
-	APP_PORT: process.env.APP_PORT ? Number(process.env.APP_PORT) : undefined,
-	SMTP_PORT: process.env.SMTP_PORT
-		? Number(process.env.SMTP_PORT)
-		: undefined,
-	SMTP_SECURE: process.env.SMTP_SECURE === 'true',
+	...Bun.env,
+	APP_PORT: Bun.env.APP_PORT ? Number(Bun.env.APP_PORT) : undefined,
+	SMTP_PORT: Bun.env.SMTP_PORT ? Number(Bun.env.SMTP_PORT) : undefined,
+	SMTP_SECURE: Bun.env.SMTP_SECURE === 'true',
 }
 
 if (!Value.Check(envSchema, _env)) {
 	const errors = [...Value.Errors(envSchema, _env)]
+
 	console.error('Invalid environment variables:')
 	errors.forEach((err) => {
 		console.error(
 			`  - ${err.path}: ${err.message} (received: ${err.value})`,
 		)
 	})
+
 	process.exit(1)
 }
 
-export const env = _env as Env
+export const env = Value.Cast(envSchema, _env) as Env

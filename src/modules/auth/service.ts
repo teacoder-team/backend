@@ -1,8 +1,11 @@
 import { authRepository } from './repository'
-import type { RegisterSchema, VerifyRegisterSchema } from './schema'
+import type {
+	LoginSchema,
+	RegisterSchema,
+	VerifyRegisterSchema,
+} from './schema'
 import { logger } from '@/core/logger/pino'
-import { randomBytes } from 'node:crypto'
-import { hashPassword } from '@/lib/security/hashing'
+import { hashPassword, verifyPassword } from '@/lib/security/hashing'
 import { BadRequestError, ConflictError } from '@/core/errors/base'
 import { ErrorCode } from '@/core/errors/codes'
 import { redis } from '@/core/redis'
@@ -10,6 +13,8 @@ import { otpService } from '@/lib/security/otp'
 import VerificationEmail from '../../../emails/templates/VerificationCode'
 import { mailClient } from '@/core/mail/client'
 import { render } from '@react-email/components'
+import { sessionService } from '../session/service'
+import { env } from '@/core/config/env'
 
 export const authService = {
 	async register(dto: RegisterSchema) {
@@ -28,7 +33,9 @@ export const authService = {
 		}
 
 		const code = otpService.generateCode()
-		const username = randomBytes(8).toString('hex')
+		const username = Buffer.from(
+			crypto.getRandomValues(new Uint8Array(8)),
+		).toString('hex')
 		const passwordHash = await hashPassword(dto.password)
 
 		await redis.set(
@@ -38,21 +45,18 @@ export const authService = {
 			900,
 		)
 
-		await render(VerificationEmail({ code }))
-			.then((html) =>
-				mailClient.send({
-					to: dto.email,
-					subject: `${code} - код подтверждения TeaCoder`,
-					html,
-					sender: 'hello',
-				}),
-			)
+		const html = await render(VerificationEmail({ code }))
+
+		mailClient
+			.send({
+				to: dto.email,
+				subject: `${code} - код подтверждения TeaCoder`,
+				html,
+				sender: 'hello',
+			})
 			.catch((err) => {
 				logger.error(
-					{
-						err: err instanceof Error ? err.message : err,
-						email: dto.email,
-					},
+					{ err, email: dto.email },
 					'failed_to_send_registration_email',
 				)
 			})
@@ -60,12 +64,15 @@ export const authService = {
 		logger.info(
 			{
 				email: dto.email,
-				code: process.env.NODE_ENV !== 'production' ? code : '******',
+				code: env.NODE_ENV !== 'production' ? code : '******',
 			},
 			'register_initiated',
 		)
 	},
-	async verifyRegister(dto: VerifyRegisterSchema) {
+	async verifyRegister(
+		dto: VerifyRegisterSchema,
+		metadata: { ip: string; ua: string },
+	) {
 		const redisKey = `auth:register:${dto.email.toLowerCase()}`
 		const rawData = await redis.get(redisKey)
 
@@ -101,10 +108,55 @@ export const authService = {
 			username: pendingUser.username,
 		})
 
+		const session = await sessionService.create({
+			userId: user.id,
+			ip: metadata.ip,
+			userAgent: metadata.ua,
+		})
+
 		await redis.del(redisKey)
 
-		logger.info({ userId: user.id }, 'registration_completed')
+		logger.info(
+			{ userId: user.id, sessionId: session.id },
+			'registration_completed',
+		)
 
-		return user
+		return { user, sessionId: session.id }
+	},
+	async login(dto: LoginSchema, metadata: { ip: string; ua: string }) {
+		const user = await authRepository.findByEmail(dto.email)
+
+		if (!user) {
+			throw new BadRequestError(
+				ErrorCode.INVALID_CREDENTIALS,
+				'Invalid email or password',
+			)
+		}
+
+		const isPasswordCorrect = await verifyPassword(
+			dto.password,
+			user.password!,
+		)
+
+		if (!isPasswordCorrect) {
+			logger.warn({ email: dto.email }, 'failed_login_attempt')
+			throw new BadRequestError(
+				ErrorCode.INVALID_CREDENTIALS,
+				'Invalid email or password',
+			)
+		}
+
+		const session = await sessionService.create({
+			userId: user.id,
+			ip: metadata.ip,
+			userAgent: metadata.ua,
+		})
+
+		logger.info(
+			{ userId: user.id, sessionId: session.id },
+			'user_logged_in',
+		)
+
+		return { user, sessionId: session.id }
 	},
 }

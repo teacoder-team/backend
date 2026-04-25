@@ -1,3 +1,4 @@
+import { getClientIp } from '@/lib/utils/ip'
 import { AuthSchema } from '@/modules/auth/schema'
 import { authService } from '@/modules/auth/service'
 import { Elysia } from 'elysia'
@@ -15,10 +16,19 @@ export const authRouter = new Elysia({
 	})
 	.post(
 		'/register/verify',
-		async ({ body }) => {
-			const user = await authService.verifyRegister(body)
+		async ({ body, request }) => {
+			const ip = getClientIp(request.headers)
+			const ua = request.headers.get('User-Agent') ?? 'Unknown'
 
-			return { userId: user.id }
+			const { user, sessionId } = await authService.verifyRegister(body, {
+				ip,
+				ua,
+			})
+
+			return {
+				userId: user.id,
+				sessionId,
+			}
 		},
 		{
 			body: AuthSchema.verify,
@@ -26,6 +36,31 @@ export const authRouter = new Elysia({
 				tags: ['Auth'],
 				summary: 'Verify register',
 				description: 'Confirm and activate your newly created account.',
+			},
+		},
+	)
+	.post(
+		'/login',
+		async ({ body, request }) => {
+			const ip = getClientIp(request.headers)
+			const ua = request.headers.get('User-Agent') ?? 'Unknown'
+
+			const { user, sessionId } = await authService.login(body, {
+				ip,
+				ua,
+			})
+
+			return {
+				userId: user.id,
+				sessionId,
+			}
+		},
+		{
+			body: AuthSchema.login,
+			detail: {
+				tags: ['Auth'],
+				summary: 'Login with email',
+				description: 'Authenticate and start a new session.',
 			},
 		},
 	)

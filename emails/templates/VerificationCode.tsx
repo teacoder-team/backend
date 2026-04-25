@@ -34,7 +34,7 @@ export const VerificationEmail = ({
 					}}
 				/>
 			</Head>
-			<Preview>{code} — Ваш код подтверждения TeaCoder</Preview>
+			<Preview>{code} - Ваш код подтверждения TeaCoder</Preview>
 			<Tailwind>
 				<Body className='bg-[#F3F5F9] py-12'>
 					<Container className='mx-auto max-w-[460px] rounded-2xl bg-[#FBFCFD] p-10 border border-gray-100 text-center'>

@@ -1,0 +1,44 @@
+{
+	"files.exclude": {
+		"**/.git": true,
+		"**/.svn": true,
+		"**/.hg": true,
+		"**/CVS": true,
+		"**/.DS_Store": true,
+		"**/node_modules": true,
+		"**/.yarn": true,
+		"**/dist": true,
+		"**/.pnp.*": true
+	},
+	"search.exclude": {
+		"**/node_modules": true,
+		"**/dist": true,
+		"**/prisma/generated": true,
+		"**/.yarn": true
+	},
+	"terminal.integrated.profiles.windows": {
+		"Bun PowerShell": {
+			"source": "PowerShell",
+			"icon": "terminal-powershell",
+			"color": "terminal.ansiCyan"
+		}
+	},
+	"terminal.integrated.profiles.osx": {
+		"Bun Zsh": {
+			"path": "zsh",
+			"icon": "terminal-bash"
+		}
+	},
+	"terminal.integrated.profiles.linux": {
+		"Bun Bash": {
+			"path": "bash",
+			"icon": "terminal-linux"
+		}
+	},
+	"terminal.integrated.defaultProfile.windows": "Bun PowerShell",
+	"terminal.integrated.defaultProfile.osx": "Bun Zsh",
+	"terminal.integrated.defaultProfile.linux": "Bun Bash",
+
+	"editor.formatOnSave": true,
+	"editor.defaultFormatter": "esbenp.prettier-vscode"
+}

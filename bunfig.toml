@@ -1,0 +1,5 @@
+[dev]
+env = ".env"
+
+[run]
+jsx = "react"
