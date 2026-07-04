@@ -10,17 +10,20 @@ import {
 	Tailwind,
 	Text,
 	Font,
+	Button,
 } from '@react-email/components'
 
-interface VerificationEmailProps {
-	code: string
+interface ResetPasswordEmailProps {
+	resetLink: string
+	username?: string
 }
 
 const baseUrl = 'https://teacoder.ru'
 
-export const VerificationEmail = ({
-	code = '123456',
-}: VerificationEmailProps) => {
+export const ResetPasswordEmail = ({
+	resetLink = 'https://teacoder.ru/reset-password?token=test',
+	username = 'Elon Mask',
+}: ResetPasswordEmailProps) => {
 	return (
 		<Html>
 			<Head>
@@ -33,7 +36,7 @@ export const VerificationEmail = ({
 					}}
 				/>
 			</Head>
-			<Preview>{code} - Ваш код подтверждения TeaCoder</Preview>
+			<Preview>Сброс пароля в TeaCoder</Preview>
 			<Tailwind>
 				<Body className='bg-[#F3F5F9] py-12'>
 					<Container className='mx-auto max-w-[460px] rounded-2xl bg-[#FBFCFD] p-10 border border-gray-100 text-center'>
@@ -48,26 +51,32 @@ export const VerificationEmail = ({
 						</Section>
 
 						<Heading className='font-serif text-3xl font-medium leading-tight text-black mb-4'>
-							Ваш код <br /> подтверждения
+							Сброс пароля
 						</Heading>
 
 						<Text className='text-base leading-relaxed text-[#606369] mb-8 tracking-wide'>
-							Введите этот код в приложении, чтобы завершить
-							регистрацию. Код действителен в течение 15 минут.
+							Привет, {username}! <br />
+							Мы получили запрос на восстановление пароля для
+							Вашего аккаунта. Нажмите на кнопку ниже, чтобы
+							установить новый пароль.
 						</Text>
 
-						<Section className='bg-[#f3f4f6] rounded-xl py-8 px-4 border border-gray-100 mb-8'>
-							<Text className='m-0 text-[36px] font-semibold tracking-[12px] text-gray-900 leading-none'>
-								{code}
-							</Text>
+						<Section className='mb-10'>
+							<Button
+								className='bg-[#2563EB] rounded-xl text-white text-base font-semibold no-underline text-center px-8 py-4'
+								href={resetLink}
+							>
+								Сбросить пароль
+							</Button>
 						</Section>
 
 						<Text className='text-sm leading-relaxed text-gray-400 mb-10 tracking-wide'>
-							Если Вы не запрашивали этот код, просто
+							Ссылка действительна в течение 1 часа. <br />
+							Если Вы не запрашивали сброс пароля, просто
 							проигнорируйте данное письмо.
 						</Text>
 
-						<Section className='border-t border-gray-100'>
+						<Section className='border-t border-gray-100 pt-8'>
 							<Text className='text-[12px] text-gray-400 m-0 font-sans uppercase tracking-wider'>
 								&copy; {new Date().getFullYear()} TeaCoder
 							</Text>
@@ -79,4 +88,4 @@ export const VerificationEmail = ({
 	)
 }
 
-export default VerificationEmail
+export default ResetPasswordEmail

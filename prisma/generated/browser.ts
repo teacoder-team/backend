@@ -23,20 +23,25 @@ export * from './enums.ts';
  */
 export type User = Prisma.UserModel
 /**
- * Model ExternalAccount
+ * Model Profile
  * 
  */
-export type ExternalAccount = Prisma.ExternalAccountModel
+export type Profile = Prisma.ProfileModel
 /**
- * Model EmailVerification
+ * Model Credential
  * 
  */
-export type EmailVerification = Prisma.EmailVerificationModel
+export type Credential = Prisma.CredentialModel
 /**
- * Model PasswordReset
+ * Model PasswordHash
  * 
  */
-export type PasswordReset = Prisma.PasswordResetModel
+export type PasswordHash = Prisma.PasswordHashModel
+/**
+ * Model PasswordResetToken
+ * 
+ */
+export type PasswordResetToken = Prisma.PasswordResetTokenModel
 /**
  * Model MultiFactorAuthentication
  * 

@@ -249,7 +249,7 @@ export type UserProgressCreateInput = {
   isCompleted?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
-  user: Prisma.UserCreateNestedOneWithoutUserProgressInput
+  user: Prisma.UserCreateNestedOneWithoutUserProgressesInput
   lesson: Prisma.LessonCreateNestedOneWithoutUserProgressInput
 }
 
@@ -267,7 +267,7 @@ export type UserProgressUpdateInput = {
   isCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  user?: Prisma.UserUpdateOneRequiredWithoutUserProgressNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutUserProgressesNestedInput
   lesson?: Prisma.LessonUpdateOneRequiredWithoutUserProgressNestedInput
 }
 
@@ -490,7 +490,7 @@ export type UserProgressCreateWithoutLessonInput = {
   isCompleted?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
-  user: Prisma.UserCreateNestedOneWithoutUserProgressInput
+  user: Prisma.UserCreateNestedOneWithoutUserProgressesInput
 }
 
 export type UserProgressUncheckedCreateWithoutLessonInput = {
@@ -572,7 +572,7 @@ export type UserProgressUpdateWithoutLessonInput = {
   isCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  user?: Prisma.UserUpdateOneRequiredWithoutUserProgressNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutUserProgressesNestedInput
 }
 
 export type UserProgressUncheckedUpdateWithoutLessonInput = {

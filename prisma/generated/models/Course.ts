@@ -522,6 +522,10 @@ export type CourseScalarRelationFilter = {
   isNot?: Prisma.CourseWhereInput
 }
 
+export type BoolFieldUpdateOperationsInput = {
+  set?: boolean
+}
+
 export type CourseCreateNestedOneWithoutLessonsInput = {
   create?: Prisma.XOR<Prisma.CourseCreateWithoutLessonsInput, Prisma.CourseUncheckedCreateWithoutLessonsInput>
   connectOrCreate?: Prisma.CourseCreateOrConnectWithoutLessonsInput

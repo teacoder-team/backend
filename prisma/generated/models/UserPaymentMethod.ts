@@ -402,7 +402,7 @@ export type UserPaymentMethodCreateInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
-  user: Prisma.UserCreateNestedOneWithoutPaymentMethodsInput
+  user: Prisma.UserCreateNestedOneWithoutUserPaymentMethodsInput
   payments?: Prisma.PaymentCreateNestedManyWithoutPaymentMethodInput
 }
 
@@ -440,7 +440,7 @@ export type UserPaymentMethodUpdateInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  user?: Prisma.UserUpdateOneRequiredWithoutPaymentMethodsNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutUserPaymentMethodsNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutPaymentMethodNestedInput
 }
 
@@ -655,6 +655,14 @@ export type EnumPaymentProviderFieldUpdateOperationsInput = {
   set?: $Enums.PaymentProvider
 }
 
+export type NullableIntFieldUpdateOperationsInput = {
+  set?: number | null
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
+}
+
 export type UserPaymentMethodCreateWithoutUserInput = {
   id?: string
   title?: string | null
@@ -753,7 +761,7 @@ export type UserPaymentMethodCreateWithoutPaymentsInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
-  user: Prisma.UserCreateNestedOneWithoutPaymentMethodsInput
+  user: Prisma.UserCreateNestedOneWithoutUserPaymentMethodsInput
 }
 
 export type UserPaymentMethodUncheckedCreateWithoutPaymentsInput = {
@@ -805,7 +813,7 @@ export type UserPaymentMethodUpdateWithoutPaymentsInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  user?: Prisma.UserUpdateOneRequiredWithoutPaymentMethodsNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutUserPaymentMethodsNestedInput
 }
 
 export type UserPaymentMethodUncheckedUpdateWithoutPaymentsInput = {

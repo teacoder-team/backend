@@ -1,11 +1,13 @@
 import { logger } from '@/core/logger/pino'
 import { initGeoProvider } from './providers/geo'
+import { initEmailProvider } from './providers/email-check'
 
 export const bootstrap = async () => {
 	const start = Date.now()
 
 	try {
 		await initGeoProvider()
+		await initEmailProvider()
 
 		const duration = Date.now() - start
 		logger.info(

@@ -1,0 +1,16 @@
+services:
+    postgres:
+        image: docker.io/library/postgres:18-alpine
+        container_name: postgres
+        restart: always
+        environment:
+            POSTGRES_USER: teacoder
+            POSTGRES_PASSWORD: 123456
+            POSTGRES_DB: teacoder
+        ports:
+            - '5432:5432'
+        volumes:
+            - pg_data:/var/lib/postgresql
+
+volumes:
+    pg_data:

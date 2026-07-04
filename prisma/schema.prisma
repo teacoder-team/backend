@@ -11,32 +11,20 @@ datasource db {
 model User {
     id String @id @default(uuid())
 
-    email    String? @unique
-    password String?
+    role   UserRole @default(STUDENT)
+    points Int      @default(0)
 
-    username    String @unique
-    displayName String @map("display_name")
-
-    avatar String?
-    points Int     @default(0)
-
-    role UserRole @default(STUDENT)
-
-    isAutoBilling Boolean @default(false) @map("is_auto_billing")
-
-    emailVerification EmailVerification?
-    passwordReset     PasswordReset?
-
-    externalAccounts ExternalAccount[]
-    userProgress     UserProgress[]
-    downloadLogs     DownloadLog[]
+    profile      Profile?
+    credentials  Credential[]
+    subscription Subscription?
 
     mfa          MultiFactorAuthentication?
     restrictions Restriction[]
 
-    subscription   Subscription?
-    paymentMethods UserPaymentMethod[]
-    payments       Payment[]
+    userProgresses     UserProgress[]
+    downloadLogs       DownloadLog[]
+    payments           Payment[]
+    userPaymentMethods UserPaymentMethod[]
 
     createdAt DateTime @default(now()) @map("created_at")
     updatedAt DateTime @updatedAt @map("updated_at")
@@ -44,15 +32,29 @@ model User {
     @@map("users")
 }
 
-model ExternalAccount {
+model Profile {
     id String @id @default(uuid())
 
-    provider          AccountProvider
-    providerAccountId String          @unique @map("provider_account_id")
+    username    String  @unique
+    displayName String  @map("display_name")
+    avatar      String?
 
-    refreshToken String? @map("refresh_token")
-    accessToken  String? @map("access_token")
-    expiry       Int?
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId String @unique @map("user_id")
+
+    @@map("profiles")
+}
+
+model Credential {
+    id String @id @default(uuid())
+
+    provider AuthProvider
+    type     CredentialType
+
+    identifier String
+
+    passwordHash PasswordHash?
+    resetTokens  PasswordResetToken[]
 
     user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId String @map("user_id")
@@ -60,40 +62,33 @@ model ExternalAccount {
     createdAt DateTime @default(now()) @map("created_at")
     updatedAt DateTime @updatedAt @map("updated_at")
 
-    @@unique([userId, provider])
-    @@map("external_accounts")
+    @@unique([provider, identifier])
+    @@index([userId])
+    @@map("credentials")
 }
 
-model EmailVerification {
-    id String @id @default(uuid())
+model PasswordHash {
+    hash      String
+    algorithm String
+    version   Int
 
-    token  String    @unique
-    expiry DateTime?
+    credential   Credential @relation(fields: [credentialId], references: [id], onDelete: Cascade)
+    credentialId String     @id @map("credential_id")
 
-    status EmailVerificationStatus @default(PENDING)
-
-    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId String @unique @map("user_id")
-
-    createdAt DateTime @default(now()) @map("created_at")
-    updatedAt DateTime @updatedAt @map("updated_at")
-
-    @@map("email_verification")
+    @@map("password_hashes")
 }
 
-model PasswordReset {
+model PasswordResetToken {
     id String @id @default(uuid())
 
-    token  String   @unique
-    expiry DateTime
+    token     String              @unique
+    status    PasswordResetStatus @default(PENDING)
+    expiresAt DateTime            @map("expires_at")
 
-    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId String @unique @map("user_id")
+    credential   Credential @relation(fields: [credentialId], references: [id], onDelete: Cascade)
+    credentialId String     @map("credential_id")
 
-    createdAt DateTime @default(now()) @map("created_at")
-    updatedAt DateTime @updatedAt @map("updated_at")
-
-    @@map("password_resets")
+    @@map("password_reset_tokens")
 }
 
 model MultiFactorAuthentication {
@@ -265,10 +260,11 @@ model DownloadLog {
 model Subscription {
     id String @id @default(uuid())
 
+    isActive      Boolean @default(true) @map("is_active")
+    isAutoBilling Boolean @default(false) @map("is_auto_billing")
+
     startedAt DateTime  @default(now()) @map("started_at")
     expiresAt DateTime? @map("expires_at")
-
-    isActive Boolean @default(true) @map("is_active")
 
     user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId String @unique @map("user_id")
@@ -369,7 +365,8 @@ enum UserRole {
     @@map("user_roles")
 }
 
-enum AccountProvider {
+enum AuthProvider {
+    EMAIL
     GOOGLE
     GITHUB
     DISCORD
@@ -380,11 +377,15 @@ enum AccountProvider {
     @@map("account_providers")
 }
 
-enum EmailVerificationStatus {
-    PENDING
-    VERIFIED
+enum CredentialType {
+    PASSWORD
+    OAUTH
+}
 
-    @@map("email_verification_statuses")
+enum PasswordResetStatus {
+    PENDING
+    USED
+    EXPIRED
 }
 
 enum TotpStatus {

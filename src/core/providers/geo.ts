@@ -25,10 +25,7 @@ export const initGeoProvider = async () => {
 			globalForGeo.geoReader = reader
 		}
 
-		logger.info(
-			{ context: 'geo_provider' },
-			'geo_database_initialized_via_bun',
-		)
+		logger.info({ context: 'geo_provider' }, 'geo_database_initialized')
 		return reader
 	} catch (err) {
 		logger.error({ err, context: 'geo_provider' }, 'geo_init_failed')

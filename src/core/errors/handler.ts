@@ -1,7 +1,6 @@
 import { Elysia } from 'elysia'
 import { AppError } from './base'
 import { logger } from '@/core/logger/pino'
-import { ErrorCode } from './codes'
 
 export const errorHandler = (app: Elysia) =>
 	app
@@ -14,11 +13,8 @@ export const errorHandler = (app: Elysia) =>
 			if (code === 'NOT_FOUND') {
 				set.status = 404
 				return {
-					success: false,
-					error: {
-						code: 'NOT_FOUND',
-						message: 'Route not found',
-					},
+					statusCode: 404,
+					message: 'Route not found',
 				}
 			}
 
@@ -27,24 +23,18 @@ export const errorHandler = (app: Elysia) =>
 				set.status = err.statusCode
 
 				return {
-					success: false,
-					error: {
-						code: err.code,
-						message: err.message,
-						details: err.details ?? null,
-					},
+					statusCode: err.statusCode,
+					message: err.message,
+					details: err.details ?? null,
 				}
 			}
 
 			if (code === 'VALIDATION') {
 				set.status = 400
 				return {
-					success: false,
-					error: {
-						code: ErrorCode.VALIDATION_ERROR,
-						message: 'Validation error',
-						details: error.all,
-					},
+					statusCode: 400,
+					message: 'Validation error',
+					details: error.all,
 				}
 			}
 
@@ -52,10 +42,7 @@ export const errorHandler = (app: Elysia) =>
 
 			set.status = 500
 			return {
-				success: false,
-				error: {
-					code: ErrorCode.INTERNAL_SERVER_ERROR,
-					message: 'Internal server error',
-				},
+				statusCode: 500,
+				message: 'Internal server error',
 			}
 		})

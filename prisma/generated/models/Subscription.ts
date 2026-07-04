@@ -26,9 +26,10 @@ export type AggregateSubscription = {
 
 export type SubscriptionMinAggregateOutputType = {
   id: string | null
+  isActive: boolean | null
+  isAutoBilling: boolean | null
   startedAt: Date | null
   expiresAt: Date | null
-  isActive: boolean | null
   userId: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -36,9 +37,10 @@ export type SubscriptionMinAggregateOutputType = {
 
 export type SubscriptionMaxAggregateOutputType = {
   id: string | null
+  isActive: boolean | null
+  isAutoBilling: boolean | null
   startedAt: Date | null
   expiresAt: Date | null
-  isActive: boolean | null
   userId: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -46,9 +48,10 @@ export type SubscriptionMaxAggregateOutputType = {
 
 export type SubscriptionCountAggregateOutputType = {
   id: number
+  isActive: number
+  isAutoBilling: number
   startedAt: number
   expiresAt: number
-  isActive: number
   userId: number
   createdAt: number
   updatedAt: number
@@ -58,9 +61,10 @@ export type SubscriptionCountAggregateOutputType = {
 
 export type SubscriptionMinAggregateInputType = {
   id?: true
+  isActive?: true
+  isAutoBilling?: true
   startedAt?: true
   expiresAt?: true
-  isActive?: true
   userId?: true
   createdAt?: true
   updatedAt?: true
@@ -68,9 +72,10 @@ export type SubscriptionMinAggregateInputType = {
 
 export type SubscriptionMaxAggregateInputType = {
   id?: true
+  isActive?: true
+  isAutoBilling?: true
   startedAt?: true
   expiresAt?: true
-  isActive?: true
   userId?: true
   createdAt?: true
   updatedAt?: true
@@ -78,9 +83,10 @@ export type SubscriptionMaxAggregateInputType = {
 
 export type SubscriptionCountAggregateInputType = {
   id?: true
+  isActive?: true
+  isAutoBilling?: true
   startedAt?: true
   expiresAt?: true
-  isActive?: true
   userId?: true
   createdAt?: true
   updatedAt?: true
@@ -161,9 +167,10 @@ export type SubscriptionGroupByArgs<ExtArgs extends runtime.Types.Extensions.Int
 
 export type SubscriptionGroupByOutputType = {
   id: string
+  isActive: boolean
+  isAutoBilling: boolean
   startedAt: Date
   expiresAt: Date | null
-  isActive: boolean
   userId: string
   createdAt: Date
   updatedAt: Date
@@ -192,9 +199,10 @@ export type SubscriptionWhereInput = {
   OR?: Prisma.SubscriptionWhereInput[]
   NOT?: Prisma.SubscriptionWhereInput | Prisma.SubscriptionWhereInput[]
   id?: Prisma.StringFilter<"Subscription"> | string
+  isActive?: Prisma.BoolFilter<"Subscription"> | boolean
+  isAutoBilling?: Prisma.BoolFilter<"Subscription"> | boolean
   startedAt?: Prisma.DateTimeFilter<"Subscription"> | Date | string
   expiresAt?: Prisma.DateTimeNullableFilter<"Subscription"> | Date | string | null
-  isActive?: Prisma.BoolFilter<"Subscription"> | boolean
   userId?: Prisma.StringFilter<"Subscription"> | string
   createdAt?: Prisma.DateTimeFilter<"Subscription"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Subscription"> | Date | string
@@ -204,9 +212,10 @@ export type SubscriptionWhereInput = {
 
 export type SubscriptionOrderByWithRelationInput = {
   id?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
+  isAutoBilling?: Prisma.SortOrder
   startedAt?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrderInput | Prisma.SortOrder
-  isActive?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -220,9 +229,10 @@ export type SubscriptionWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.SubscriptionWhereInput | Prisma.SubscriptionWhereInput[]
   OR?: Prisma.SubscriptionWhereInput[]
   NOT?: Prisma.SubscriptionWhereInput | Prisma.SubscriptionWhereInput[]
+  isActive?: Prisma.BoolFilter<"Subscription"> | boolean
+  isAutoBilling?: Prisma.BoolFilter<"Subscription"> | boolean
   startedAt?: Prisma.DateTimeFilter<"Subscription"> | Date | string
   expiresAt?: Prisma.DateTimeNullableFilter<"Subscription"> | Date | string | null
-  isActive?: Prisma.BoolFilter<"Subscription"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Subscription"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Subscription"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -231,9 +241,10 @@ export type SubscriptionWhereUniqueInput = Prisma.AtLeast<{
 
 export type SubscriptionOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
+  isAutoBilling?: Prisma.SortOrder
   startedAt?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrderInput | Prisma.SortOrder
-  isActive?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -247,9 +258,10 @@ export type SubscriptionScalarWhereWithAggregatesInput = {
   OR?: Prisma.SubscriptionScalarWhereWithAggregatesInput[]
   NOT?: Prisma.SubscriptionScalarWhereWithAggregatesInput | Prisma.SubscriptionScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Subscription"> | string
+  isActive?: Prisma.BoolWithAggregatesFilter<"Subscription"> | boolean
+  isAutoBilling?: Prisma.BoolWithAggregatesFilter<"Subscription"> | boolean
   startedAt?: Prisma.DateTimeWithAggregatesFilter<"Subscription"> | Date | string
   expiresAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Subscription"> | Date | string | null
-  isActive?: Prisma.BoolWithAggregatesFilter<"Subscription"> | boolean
   userId?: Prisma.StringWithAggregatesFilter<"Subscription"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Subscription"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Subscription"> | Date | string
@@ -257,9 +269,10 @@ export type SubscriptionScalarWhereWithAggregatesInput = {
 
 export type SubscriptionCreateInput = {
   id?: string
+  isActive?: boolean
+  isAutoBilling?: boolean
   startedAt?: Date | string
   expiresAt?: Date | string | null
-  isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutSubscriptionInput
@@ -268,9 +281,10 @@ export type SubscriptionCreateInput = {
 
 export type SubscriptionUncheckedCreateInput = {
   id?: string
+  isActive?: boolean
+  isAutoBilling?: boolean
   startedAt?: Date | string
   expiresAt?: Date | string | null
-  isActive?: boolean
   userId: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -279,9 +293,10 @@ export type SubscriptionUncheckedCreateInput = {
 
 export type SubscriptionUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isAutoBilling?: Prisma.BoolFieldUpdateOperationsInput | boolean
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutSubscriptionNestedInput
@@ -290,9 +305,10 @@ export type SubscriptionUpdateInput = {
 
 export type SubscriptionUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isAutoBilling?: Prisma.BoolFieldUpdateOperationsInput | boolean
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -301,9 +317,10 @@ export type SubscriptionUncheckedUpdateInput = {
 
 export type SubscriptionCreateManyInput = {
   id?: string
+  isActive?: boolean
+  isAutoBilling?: boolean
   startedAt?: Date | string
   expiresAt?: Date | string | null
-  isActive?: boolean
   userId: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -311,18 +328,20 @@ export type SubscriptionCreateManyInput = {
 
 export type SubscriptionUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isAutoBilling?: Prisma.BoolFieldUpdateOperationsInput | boolean
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type SubscriptionUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isAutoBilling?: Prisma.BoolFieldUpdateOperationsInput | boolean
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -335,9 +354,10 @@ export type SubscriptionNullableScalarRelationFilter = {
 
 export type SubscriptionCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
+  isAutoBilling?: Prisma.SortOrder
   startedAt?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrder
-  isActive?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -345,9 +365,10 @@ export type SubscriptionCountOrderByAggregateInput = {
 
 export type SubscriptionMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
+  isAutoBilling?: Prisma.SortOrder
   startedAt?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrder
-  isActive?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -355,9 +376,10 @@ export type SubscriptionMaxOrderByAggregateInput = {
 
 export type SubscriptionMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  isActive?: Prisma.SortOrder
+  isAutoBilling?: Prisma.SortOrder
   startedAt?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrder
-  isActive?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -413,9 +435,10 @@ export type SubscriptionUpdateOneWithoutPaymentsNestedInput = {
 
 export type SubscriptionCreateWithoutUserInput = {
   id?: string
+  isActive?: boolean
+  isAutoBilling?: boolean
   startedAt?: Date | string
   expiresAt?: Date | string | null
-  isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   payments?: Prisma.PaymentCreateNestedManyWithoutSubscriptionInput
@@ -423,9 +446,10 @@ export type SubscriptionCreateWithoutUserInput = {
 
 export type SubscriptionUncheckedCreateWithoutUserInput = {
   id?: string
+  isActive?: boolean
+  isAutoBilling?: boolean
   startedAt?: Date | string
   expiresAt?: Date | string | null
-  isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutSubscriptionInput
@@ -449,9 +473,10 @@ export type SubscriptionUpdateToOneWithWhereWithoutUserInput = {
 
 export type SubscriptionUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isAutoBilling?: Prisma.BoolFieldUpdateOperationsInput | boolean
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   payments?: Prisma.PaymentUpdateManyWithoutSubscriptionNestedInput
@@ -459,9 +484,10 @@ export type SubscriptionUpdateWithoutUserInput = {
 
 export type SubscriptionUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isAutoBilling?: Prisma.BoolFieldUpdateOperationsInput | boolean
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutSubscriptionNestedInput
@@ -469,9 +495,10 @@ export type SubscriptionUncheckedUpdateWithoutUserInput = {
 
 export type SubscriptionCreateWithoutPaymentsInput = {
   id?: string
+  isActive?: boolean
+  isAutoBilling?: boolean
   startedAt?: Date | string
   expiresAt?: Date | string | null
-  isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutSubscriptionInput
@@ -479,9 +506,10 @@ export type SubscriptionCreateWithoutPaymentsInput = {
 
 export type SubscriptionUncheckedCreateWithoutPaymentsInput = {
   id?: string
+  isActive?: boolean
+  isAutoBilling?: boolean
   startedAt?: Date | string
   expiresAt?: Date | string | null
-  isActive?: boolean
   userId: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -505,9 +533,10 @@ export type SubscriptionUpdateToOneWithWhereWithoutPaymentsInput = {
 
 export type SubscriptionUpdateWithoutPaymentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isAutoBilling?: Prisma.BoolFieldUpdateOperationsInput | boolean
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutSubscriptionNestedInput
@@ -515,9 +544,10 @@ export type SubscriptionUpdateWithoutPaymentsInput = {
 
 export type SubscriptionUncheckedUpdateWithoutPaymentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isAutoBilling?: Prisma.BoolFieldUpdateOperationsInput | boolean
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -556,9 +586,10 @@ export type SubscriptionCountOutputTypeCountPaymentsArgs<ExtArgs extends runtime
 
 export type SubscriptionSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  isActive?: boolean
+  isAutoBilling?: boolean
   startedAt?: boolean
   expiresAt?: boolean
-  isActive?: boolean
   userId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -569,9 +600,10 @@ export type SubscriptionSelect<ExtArgs extends runtime.Types.Extensions.Internal
 
 export type SubscriptionSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  isActive?: boolean
+  isAutoBilling?: boolean
   startedAt?: boolean
   expiresAt?: boolean
-  isActive?: boolean
   userId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -580,9 +612,10 @@ export type SubscriptionSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
 
 export type SubscriptionSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  isActive?: boolean
+  isAutoBilling?: boolean
   startedAt?: boolean
   expiresAt?: boolean
-  isActive?: boolean
   userId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -591,15 +624,16 @@ export type SubscriptionSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
 
 export type SubscriptionSelectScalar = {
   id?: boolean
+  isActive?: boolean
+  isAutoBilling?: boolean
   startedAt?: boolean
   expiresAt?: boolean
-  isActive?: boolean
   userId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type SubscriptionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "startedAt" | "expiresAt" | "isActive" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["subscription"]>
+export type SubscriptionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "isActive" | "isAutoBilling" | "startedAt" | "expiresAt" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["subscription"]>
 export type SubscriptionInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   payments?: boolean | Prisma.Subscription$paymentsArgs<ExtArgs>
@@ -620,9 +654,10 @@ export type $SubscriptionPayload<ExtArgs extends runtime.Types.Extensions.Intern
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
+    isActive: boolean
+    isAutoBilling: boolean
     startedAt: Date
     expiresAt: Date | null
-    isActive: boolean
     userId: string
     createdAt: Date
     updatedAt: Date
@@ -1052,9 +1087,10 @@ export interface Prisma__SubscriptionClient<T, Null = never, ExtArgs extends run
  */
 export interface SubscriptionFieldRefs {
   readonly id: Prisma.FieldRef<"Subscription", 'String'>
+  readonly isActive: Prisma.FieldRef<"Subscription", 'Boolean'>
+  readonly isAutoBilling: Prisma.FieldRef<"Subscription", 'Boolean'>
   readonly startedAt: Prisma.FieldRef<"Subscription", 'DateTime'>
   readonly expiresAt: Prisma.FieldRef<"Subscription", 'DateTime'>
-  readonly isActive: Prisma.FieldRef<"Subscription", 'Boolean'>
   readonly userId: Prisma.FieldRef<"Subscription", 'String'>
   readonly createdAt: Prisma.FieldRef<"Subscription", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Subscription", 'DateTime'>

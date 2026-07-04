@@ -2,10 +2,11 @@ import { Elysia } from 'elysia'
 import { openapi } from '@elysiajs/openapi'
 import { env } from './core/config/env'
 import { logger } from './core/logger/pino'
-import { authRouter } from './routers/auth'
-import { sessionRouter } from './routers/session'
 import { errorHandler } from './core/errors/handler'
 import { bootstrap } from './core/bootstrap'
+import { auth } from './modules/auth'
+import { session } from './modules/session'
+import { root } from './modules/root'
 
 await bootstrap()
 
@@ -27,16 +28,24 @@ const app = new Elysia()
 					termsOfService:
 						'https://teacoder.ru/documents/terms-of-use',
 				},
+				components: {
+					securitySchemes: {
+						bearerAuth: {
+							type: 'http',
+							scheme: 'bearer',
+							bearerFormat: 'JWT',
+							description:
+								'Enter your valid active session token to access protected resources.',
+						},
+					},
+				},
 			},
 		}),
 	)
 	.use(errorHandler)
-	.get('/health', () => ({
-		status: 'up',
-		timestamp: new Date().toISOString(),
-	}))
-	.use(authRouter)
-	.use(sessionRouter)
+	.use(root)
+	.use(auth)
+	.use(session)
 
 app.listen(
 	{

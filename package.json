@@ -7,6 +7,7 @@
 		"start": "bun dist/main.js",
 		"email:dev": "email dev --dir ./emails -p 3001",
 		"db:generate": "bunx prisma generate",
+		"db:migrate": "bunx prisma migrate",
 		"db:push": "bunx prisma db push"
 	},
 	"dependencies": {
@@ -16,7 +17,6 @@
 		"@react-email/components": "^1.0.12",
 		"@react-email/render": "^2.0.7",
 		"@sinclair/typebox": "^0.34.49",
-		"argon2": "^0.44.0",
 		"elysia": "^1.4.28",
 		"ioredis": "^5.10.1",
 		"maxmind": "^5.0.6",

@@ -52,9 +52,10 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   User: 'User',
-  ExternalAccount: 'ExternalAccount',
-  EmailVerification: 'EmailVerification',
-  PasswordReset: 'PasswordReset',
+  Profile: 'Profile',
+  Credential: 'Credential',
+  PasswordHash: 'PasswordHash',
+  PasswordResetToken: 'PasswordResetToken',
   MultiFactorAuthentication: 'MultiFactorAuthentication',
   Totp: 'Totp',
   Passkey: 'Passkey',
@@ -87,14 +88,8 @@ export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof
 
 export const UserScalarFieldEnum = {
   id: 'id',
-  email: 'email',
-  password: 'password',
-  username: 'username',
-  displayName: 'displayName',
-  avatar: 'avatar',
-  points: 'points',
   role: 'role',
-  isAutoBilling: 'isAutoBilling',
+  points: 'points',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -102,44 +97,49 @@ export const UserScalarFieldEnum = {
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
 
 
-export const ExternalAccountScalarFieldEnum = {
+export const ProfileScalarFieldEnum = {
+  id: 'id',
+  username: 'username',
+  displayName: 'displayName',
+  avatar: 'avatar',
+  userId: 'userId'
+} as const
+
+export type ProfileScalarFieldEnum = (typeof ProfileScalarFieldEnum)[keyof typeof ProfileScalarFieldEnum]
+
+
+export const CredentialScalarFieldEnum = {
   id: 'id',
   provider: 'provider',
-  providerAccountId: 'providerAccountId',
-  refreshToken: 'refreshToken',
-  accessToken: 'accessToken',
-  expiry: 'expiry',
+  type: 'type',
+  identifier: 'identifier',
   userId: 'userId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
-export type ExternalAccountScalarFieldEnum = (typeof ExternalAccountScalarFieldEnum)[keyof typeof ExternalAccountScalarFieldEnum]
+export type CredentialScalarFieldEnum = (typeof CredentialScalarFieldEnum)[keyof typeof CredentialScalarFieldEnum]
 
 
-export const EmailVerificationScalarFieldEnum = {
+export const PasswordHashScalarFieldEnum = {
+  hash: 'hash',
+  algorithm: 'algorithm',
+  version: 'version',
+  credentialId: 'credentialId'
+} as const
+
+export type PasswordHashScalarFieldEnum = (typeof PasswordHashScalarFieldEnum)[keyof typeof PasswordHashScalarFieldEnum]
+
+
+export const PasswordResetTokenScalarFieldEnum = {
   id: 'id',
   token: 'token',
-  expiry: 'expiry',
   status: 'status',
-  userId: 'userId',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  expiresAt: 'expiresAt',
+  credentialId: 'credentialId'
 } as const
 
-export type EmailVerificationScalarFieldEnum = (typeof EmailVerificationScalarFieldEnum)[keyof typeof EmailVerificationScalarFieldEnum]
-
-
-export const PasswordResetScalarFieldEnum = {
-  id: 'id',
-  token: 'token',
-  expiry: 'expiry',
-  userId: 'userId',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type PasswordResetScalarFieldEnum = (typeof PasswordResetScalarFieldEnum)[keyof typeof PasswordResetScalarFieldEnum]
+export type PasswordResetTokenScalarFieldEnum = (typeof PasswordResetTokenScalarFieldEnum)[keyof typeof PasswordResetTokenScalarFieldEnum]
 
 
 export const MultiFactorAuthenticationScalarFieldEnum = {
@@ -259,9 +259,10 @@ export type DownloadLogScalarFieldEnum = (typeof DownloadLogScalarFieldEnum)[key
 
 export const SubscriptionScalarFieldEnum = {
   id: 'id',
+  isActive: 'isActive',
+  isAutoBilling: 'isAutoBilling',
   startedAt: 'startedAt',
   expiresAt: 'expiresAt',
-  isActive: 'isActive',
   userId: 'userId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'

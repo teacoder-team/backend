@@ -9,9 +9,10 @@
  * 🟢 You can import this file directly.
  */
 export type * from './models/User.ts'
-export type * from './models/ExternalAccount.ts'
-export type * from './models/EmailVerification.ts'
-export type * from './models/PasswordReset.ts'
+export type * from './models/Profile.ts'
+export type * from './models/Credential.ts'
+export type * from './models/PasswordHash.ts'
+export type * from './models/PasswordResetToken.ts'
 export type * from './models/MultiFactorAuthentication.ts'
 export type * from './models/Totp.ts'
 export type * from './models/Passkey.ts'

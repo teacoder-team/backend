@@ -17,7 +17,8 @@ export const UserRole = {
 export type UserRole = (typeof UserRole)[keyof typeof UserRole]
 
 
-export const AccountProvider = {
+export const AuthProvider = {
+  EMAIL: 'EMAIL',
   GOOGLE: 'GOOGLE',
   GITHUB: 'GITHUB',
   DISCORD: 'DISCORD',
@@ -26,15 +27,24 @@ export const AccountProvider = {
   GITLAB: 'GITLAB'
 } as const
 
-export type AccountProvider = (typeof AccountProvider)[keyof typeof AccountProvider]
+export type AuthProvider = (typeof AuthProvider)[keyof typeof AuthProvider]
 
 
-export const EmailVerificationStatus = {
-  PENDING: 'PENDING',
-  VERIFIED: 'VERIFIED'
+export const CredentialType = {
+  PASSWORD: 'PASSWORD',
+  OAUTH: 'OAUTH'
 } as const
 
-export type EmailVerificationStatus = (typeof EmailVerificationStatus)[keyof typeof EmailVerificationStatus]
+export type CredentialType = (typeof CredentialType)[keyof typeof CredentialType]
+
+
+export const PasswordResetStatus = {
+  PENDING: 'PENDING',
+  USED: 'USED',
+  EXPIRED: 'EXPIRED'
+} as const
+
+export type PasswordResetStatus = (typeof PasswordResetStatus)[keyof typeof PasswordResetStatus]
 
 
 export const TotpStatus = {

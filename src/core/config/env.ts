@@ -27,6 +27,23 @@ const envSchema = t.Object({
 		{ default: 'info' },
 	),
 
+	TOKEN_SECRET: t.String({
+		minLength: 32,
+		error: 'TOKEN_SECRET must be at least 32 characters long',
+	}),
+
+	COOKIE_DOMAIN: t.String({ default: 'localhost' }),
+	COOKIE_SECURE: t.Boolean({ default: false }),
+	COOKIE_SAMESITE: t.Enum(
+		{
+			lax: 'lax',
+			strict: 'strict',
+			none: 'none',
+		},
+		{ default: 'lax' },
+	),
+	COOKIE_MAX_AGE: t.Number({ default: 2592000 }),
+
 	DATABASE_URL: t.String(),
 	REDIS_URL: t.String(),
 
@@ -51,6 +68,10 @@ type Env = Static<typeof envSchema>
 const _env = {
 	...Bun.env,
 	APP_PORT: Bun.env.APP_PORT ? Number(Bun.env.APP_PORT) : undefined,
+	COOKIE_MAX_AGE: Bun.env.COOKIE_MAX_AGE
+		? Number(Bun.env.COOKIE_MAX_AGE)
+		: undefined,
+	COOKIE_SECURE: Bun.env.COOKIE_SECURE === 'true',
 	SMTP_PORT: Bun.env.SMTP_PORT ? Number(Bun.env.SMTP_PORT) : undefined,
 	SMTP_SECURE: Bun.env.SMTP_SECURE === 'true',
 }
