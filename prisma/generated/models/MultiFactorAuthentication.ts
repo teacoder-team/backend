@@ -26,7 +26,6 @@ export type AggregateMultiFactorAuthentication = {
 
 export type MultiFactorAuthenticationMinAggregateOutputType = {
   id: string | null
-  currentChallenge: string | null
   totpId: string | null
   userId: string | null
   createdAt: Date | null
@@ -35,7 +34,6 @@ export type MultiFactorAuthenticationMinAggregateOutputType = {
 
 export type MultiFactorAuthenticationMaxAggregateOutputType = {
   id: string | null
-  currentChallenge: string | null
   totpId: string | null
   userId: string | null
   createdAt: Date | null
@@ -45,7 +43,6 @@ export type MultiFactorAuthenticationMaxAggregateOutputType = {
 export type MultiFactorAuthenticationCountAggregateOutputType = {
   id: number
   recoveryCodes: number
-  currentChallenge: number
   totpId: number
   userId: number
   createdAt: number
@@ -56,7 +53,6 @@ export type MultiFactorAuthenticationCountAggregateOutputType = {
 
 export type MultiFactorAuthenticationMinAggregateInputType = {
   id?: true
-  currentChallenge?: true
   totpId?: true
   userId?: true
   createdAt?: true
@@ -65,7 +61,6 @@ export type MultiFactorAuthenticationMinAggregateInputType = {
 
 export type MultiFactorAuthenticationMaxAggregateInputType = {
   id?: true
-  currentChallenge?: true
   totpId?: true
   userId?: true
   createdAt?: true
@@ -75,7 +70,6 @@ export type MultiFactorAuthenticationMaxAggregateInputType = {
 export type MultiFactorAuthenticationCountAggregateInputType = {
   id?: true
   recoveryCodes?: true
-  currentChallenge?: true
   totpId?: true
   userId?: true
   createdAt?: true
@@ -158,7 +152,6 @@ export type MultiFactorAuthenticationGroupByArgs<ExtArgs extends runtime.Types.E
 export type MultiFactorAuthenticationGroupByOutputType = {
   id: string
   recoveryCodes: string[]
-  currentChallenge: string | null
   totpId: string | null
   userId: string
   createdAt: Date
@@ -189,7 +182,6 @@ export type MultiFactorAuthenticationWhereInput = {
   NOT?: Prisma.MultiFactorAuthenticationWhereInput | Prisma.MultiFactorAuthenticationWhereInput[]
   id?: Prisma.StringFilter<"MultiFactorAuthentication"> | string
   recoveryCodes?: Prisma.StringNullableListFilter<"MultiFactorAuthentication">
-  currentChallenge?: Prisma.StringNullableFilter<"MultiFactorAuthentication"> | string | null
   totpId?: Prisma.StringNullableFilter<"MultiFactorAuthentication"> | string | null
   userId?: Prisma.StringFilter<"MultiFactorAuthentication"> | string
   createdAt?: Prisma.DateTimeFilter<"MultiFactorAuthentication"> | Date | string
@@ -202,7 +194,6 @@ export type MultiFactorAuthenticationWhereInput = {
 export type MultiFactorAuthenticationOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   recoveryCodes?: Prisma.SortOrder
-  currentChallenge?: Prisma.SortOrderInput | Prisma.SortOrder
   totpId?: Prisma.SortOrderInput | Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -220,7 +211,6 @@ export type MultiFactorAuthenticationWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.MultiFactorAuthenticationWhereInput[]
   NOT?: Prisma.MultiFactorAuthenticationWhereInput | Prisma.MultiFactorAuthenticationWhereInput[]
   recoveryCodes?: Prisma.StringNullableListFilter<"MultiFactorAuthentication">
-  currentChallenge?: Prisma.StringNullableFilter<"MultiFactorAuthentication"> | string | null
   createdAt?: Prisma.DateTimeFilter<"MultiFactorAuthentication"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"MultiFactorAuthentication"> | Date | string
   passkeys?: Prisma.PasskeyListRelationFilter
@@ -231,7 +221,6 @@ export type MultiFactorAuthenticationWhereUniqueInput = Prisma.AtLeast<{
 export type MultiFactorAuthenticationOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   recoveryCodes?: Prisma.SortOrder
-  currentChallenge?: Prisma.SortOrderInput | Prisma.SortOrder
   totpId?: Prisma.SortOrderInput | Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -247,7 +236,6 @@ export type MultiFactorAuthenticationScalarWhereWithAggregatesInput = {
   NOT?: Prisma.MultiFactorAuthenticationScalarWhereWithAggregatesInput | Prisma.MultiFactorAuthenticationScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"MultiFactorAuthentication"> | string
   recoveryCodes?: Prisma.StringNullableListFilter<"MultiFactorAuthentication">
-  currentChallenge?: Prisma.StringNullableWithAggregatesFilter<"MultiFactorAuthentication"> | string | null
   totpId?: Prisma.StringNullableWithAggregatesFilter<"MultiFactorAuthentication"> | string | null
   userId?: Prisma.StringWithAggregatesFilter<"MultiFactorAuthentication"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"MultiFactorAuthentication"> | Date | string
@@ -257,7 +245,6 @@ export type MultiFactorAuthenticationScalarWhereWithAggregatesInput = {
 export type MultiFactorAuthenticationCreateInput = {
   id?: string
   recoveryCodes?: Prisma.MultiFactorAuthenticationCreaterecoveryCodesInput | string[]
-  currentChallenge?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   passkeys?: Prisma.PasskeyCreateNestedManyWithoutMfaInput
@@ -268,7 +255,6 @@ export type MultiFactorAuthenticationCreateInput = {
 export type MultiFactorAuthenticationUncheckedCreateInput = {
   id?: string
   recoveryCodes?: Prisma.MultiFactorAuthenticationCreaterecoveryCodesInput | string[]
-  currentChallenge?: string | null
   totpId?: string | null
   userId: string
   createdAt?: Date | string
@@ -279,7 +265,6 @@ export type MultiFactorAuthenticationUncheckedCreateInput = {
 export type MultiFactorAuthenticationUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   recoveryCodes?: Prisma.MultiFactorAuthenticationUpdaterecoveryCodesInput | string[]
-  currentChallenge?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   passkeys?: Prisma.PasskeyUpdateManyWithoutMfaNestedInput
@@ -290,7 +275,6 @@ export type MultiFactorAuthenticationUpdateInput = {
 export type MultiFactorAuthenticationUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   recoveryCodes?: Prisma.MultiFactorAuthenticationUpdaterecoveryCodesInput | string[]
-  currentChallenge?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   totpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -301,7 +285,6 @@ export type MultiFactorAuthenticationUncheckedUpdateInput = {
 export type MultiFactorAuthenticationCreateManyInput = {
   id?: string
   recoveryCodes?: Prisma.MultiFactorAuthenticationCreaterecoveryCodesInput | string[]
-  currentChallenge?: string | null
   totpId?: string | null
   userId: string
   createdAt?: Date | string
@@ -311,7 +294,6 @@ export type MultiFactorAuthenticationCreateManyInput = {
 export type MultiFactorAuthenticationUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   recoveryCodes?: Prisma.MultiFactorAuthenticationUpdaterecoveryCodesInput | string[]
-  currentChallenge?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -319,7 +301,6 @@ export type MultiFactorAuthenticationUpdateManyMutationInput = {
 export type MultiFactorAuthenticationUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   recoveryCodes?: Prisma.MultiFactorAuthenticationUpdaterecoveryCodesInput | string[]
-  currentChallenge?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   totpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -342,7 +323,6 @@ export type StringNullableListFilter<$PrismaModel = never> = {
 export type MultiFactorAuthenticationCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   recoveryCodes?: Prisma.SortOrder
-  currentChallenge?: Prisma.SortOrder
   totpId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -351,7 +331,6 @@ export type MultiFactorAuthenticationCountOrderByAggregateInput = {
 
 export type MultiFactorAuthenticationMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  currentChallenge?: Prisma.SortOrder
   totpId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -360,7 +339,6 @@ export type MultiFactorAuthenticationMaxOrderByAggregateInput = {
 
 export type MultiFactorAuthenticationMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  currentChallenge?: Prisma.SortOrder
   totpId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -462,7 +440,6 @@ export type MultiFactorAuthenticationUpdateOneRequiredWithoutPasskeysNestedInput
 export type MultiFactorAuthenticationCreateWithoutUserInput = {
   id?: string
   recoveryCodes?: Prisma.MultiFactorAuthenticationCreaterecoveryCodesInput | string[]
-  currentChallenge?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   passkeys?: Prisma.PasskeyCreateNestedManyWithoutMfaInput
@@ -472,7 +449,6 @@ export type MultiFactorAuthenticationCreateWithoutUserInput = {
 export type MultiFactorAuthenticationUncheckedCreateWithoutUserInput = {
   id?: string
   recoveryCodes?: Prisma.MultiFactorAuthenticationCreaterecoveryCodesInput | string[]
-  currentChallenge?: string | null
   totpId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -498,7 +474,6 @@ export type MultiFactorAuthenticationUpdateToOneWithWhereWithoutUserInput = {
 export type MultiFactorAuthenticationUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   recoveryCodes?: Prisma.MultiFactorAuthenticationUpdaterecoveryCodesInput | string[]
-  currentChallenge?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   passkeys?: Prisma.PasskeyUpdateManyWithoutMfaNestedInput
@@ -508,7 +483,6 @@ export type MultiFactorAuthenticationUpdateWithoutUserInput = {
 export type MultiFactorAuthenticationUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   recoveryCodes?: Prisma.MultiFactorAuthenticationUpdaterecoveryCodesInput | string[]
-  currentChallenge?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   totpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -518,7 +492,6 @@ export type MultiFactorAuthenticationUncheckedUpdateWithoutUserInput = {
 export type MultiFactorAuthenticationCreateWithoutTotpInput = {
   id?: string
   recoveryCodes?: Prisma.MultiFactorAuthenticationCreaterecoveryCodesInput | string[]
-  currentChallenge?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   passkeys?: Prisma.PasskeyCreateNestedManyWithoutMfaInput
@@ -528,7 +501,6 @@ export type MultiFactorAuthenticationCreateWithoutTotpInput = {
 export type MultiFactorAuthenticationUncheckedCreateWithoutTotpInput = {
   id?: string
   recoveryCodes?: Prisma.MultiFactorAuthenticationCreaterecoveryCodesInput | string[]
-  currentChallenge?: string | null
   userId: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -554,7 +526,6 @@ export type MultiFactorAuthenticationUpdateToOneWithWhereWithoutTotpInput = {
 export type MultiFactorAuthenticationUpdateWithoutTotpInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   recoveryCodes?: Prisma.MultiFactorAuthenticationUpdaterecoveryCodesInput | string[]
-  currentChallenge?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   passkeys?: Prisma.PasskeyUpdateManyWithoutMfaNestedInput
@@ -564,7 +535,6 @@ export type MultiFactorAuthenticationUpdateWithoutTotpInput = {
 export type MultiFactorAuthenticationUncheckedUpdateWithoutTotpInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   recoveryCodes?: Prisma.MultiFactorAuthenticationUpdaterecoveryCodesInput | string[]
-  currentChallenge?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -574,7 +544,6 @@ export type MultiFactorAuthenticationUncheckedUpdateWithoutTotpInput = {
 export type MultiFactorAuthenticationCreateWithoutPasskeysInput = {
   id?: string
   recoveryCodes?: Prisma.MultiFactorAuthenticationCreaterecoveryCodesInput | string[]
-  currentChallenge?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   totp?: Prisma.TotpCreateNestedOneWithoutMfaInput
@@ -584,7 +553,6 @@ export type MultiFactorAuthenticationCreateWithoutPasskeysInput = {
 export type MultiFactorAuthenticationUncheckedCreateWithoutPasskeysInput = {
   id?: string
   recoveryCodes?: Prisma.MultiFactorAuthenticationCreaterecoveryCodesInput | string[]
-  currentChallenge?: string | null
   totpId?: string | null
   userId: string
   createdAt?: Date | string
@@ -610,7 +578,6 @@ export type MultiFactorAuthenticationUpdateToOneWithWhereWithoutPasskeysInput = 
 export type MultiFactorAuthenticationUpdateWithoutPasskeysInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   recoveryCodes?: Prisma.MultiFactorAuthenticationUpdaterecoveryCodesInput | string[]
-  currentChallenge?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   totp?: Prisma.TotpUpdateOneWithoutMfaNestedInput
@@ -620,7 +587,6 @@ export type MultiFactorAuthenticationUpdateWithoutPasskeysInput = {
 export type MultiFactorAuthenticationUncheckedUpdateWithoutPasskeysInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   recoveryCodes?: Prisma.MultiFactorAuthenticationUpdaterecoveryCodesInput | string[]
-  currentChallenge?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   totpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -661,7 +627,6 @@ export type MultiFactorAuthenticationCountOutputTypeCountPasskeysArgs<ExtArgs ex
 export type MultiFactorAuthenticationSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   recoveryCodes?: boolean
-  currentChallenge?: boolean
   totpId?: boolean
   userId?: boolean
   createdAt?: boolean
@@ -675,7 +640,6 @@ export type MultiFactorAuthenticationSelect<ExtArgs extends runtime.Types.Extens
 export type MultiFactorAuthenticationSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   recoveryCodes?: boolean
-  currentChallenge?: boolean
   totpId?: boolean
   userId?: boolean
   createdAt?: boolean
@@ -687,7 +651,6 @@ export type MultiFactorAuthenticationSelectCreateManyAndReturn<ExtArgs extends r
 export type MultiFactorAuthenticationSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   recoveryCodes?: boolean
-  currentChallenge?: boolean
   totpId?: boolean
   userId?: boolean
   createdAt?: boolean
@@ -699,14 +662,13 @@ export type MultiFactorAuthenticationSelectUpdateManyAndReturn<ExtArgs extends r
 export type MultiFactorAuthenticationSelectScalar = {
   id?: boolean
   recoveryCodes?: boolean
-  currentChallenge?: boolean
   totpId?: boolean
   userId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type MultiFactorAuthenticationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "recoveryCodes" | "currentChallenge" | "totpId" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["multiFactorAuthentication"]>
+export type MultiFactorAuthenticationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "recoveryCodes" | "totpId" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["multiFactorAuthentication"]>
 export type MultiFactorAuthenticationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   passkeys?: boolean | Prisma.MultiFactorAuthentication$passkeysArgs<ExtArgs>
   totp?: boolean | Prisma.MultiFactorAuthentication$totpArgs<ExtArgs>
@@ -732,7 +694,6 @@ export type $MultiFactorAuthenticationPayload<ExtArgs extends runtime.Types.Exte
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     recoveryCodes: string[]
-    currentChallenge: string | null
     totpId: string | null
     userId: string
     createdAt: Date
@@ -1165,7 +1126,6 @@ export interface Prisma__MultiFactorAuthenticationClient<T, Null = never, ExtArg
 export interface MultiFactorAuthenticationFieldRefs {
   readonly id: Prisma.FieldRef<"MultiFactorAuthentication", 'String'>
   readonly recoveryCodes: Prisma.FieldRef<"MultiFactorAuthentication", 'String[]'>
-  readonly currentChallenge: Prisma.FieldRef<"MultiFactorAuthentication", 'String'>
   readonly totpId: Prisma.FieldRef<"MultiFactorAuthentication", 'String'>
   readonly userId: Prisma.FieldRef<"MultiFactorAuthentication", 'String'>
   readonly createdAt: Prisma.FieldRef<"MultiFactorAuthentication", 'DateTime'>

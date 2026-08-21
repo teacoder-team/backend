@@ -5,10 +5,12 @@
 		"dev": "bun --watch src/main.ts",
 		"build": "bun build ./src/main.ts --outdir ./dist --target bun --minify --sourcemap",
 		"start": "bun dist/main.js",
-		"email:dev": "email dev --dir ./emails -p 3001",
+		"email:dev": "email dev --dir ./src/infra/mail/templates -p 3001",
+		"typecheck": "tsc --noEmit",
 		"db:generate": "bunx prisma generate",
 		"db:migrate": "bunx prisma migrate",
-		"db:push": "bunx prisma db push"
+		"db:push": "bunx prisma db push",
+		"db:deploy": "bunx prisma migrate deploy"
 	},
 	"dependencies": {
 		"@elysiajs/openapi": "^1.4.14",
@@ -17,6 +19,7 @@
 		"@react-email/components": "^1.0.12",
 		"@react-email/render": "^2.0.7",
 		"@sinclair/typebox": "^0.34.49",
+		"bullmq": "^5.79.2",
 		"elysia": "^1.4.28",
 		"ioredis": "^5.10.1",
 		"maxmind": "^5.0.6",

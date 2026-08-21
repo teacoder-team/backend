@@ -516,16 +516,6 @@ export type UserPaymentMethodUncheckedUpdateManyInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type UserPaymentMethodListRelationFilter = {
-  every?: Prisma.UserPaymentMethodWhereInput
-  some?: Prisma.UserPaymentMethodWhereInput
-  none?: Prisma.UserPaymentMethodWhereInput
-}
-
-export type UserPaymentMethodOrderByRelationAggregateInput = {
-  _count?: Prisma.SortOrder
-}
-
 export type UserPaymentMethodNullableScalarRelationFilter = {
   is?: Prisma.UserPaymentMethodWhereInput | null
   isNot?: Prisma.UserPaymentMethodWhereInput | null
@@ -593,6 +583,44 @@ export type UserPaymentMethodSumOrderByAggregateInput = {
   expiryYear?: Prisma.SortOrder
 }
 
+export type UserPaymentMethodListRelationFilter = {
+  every?: Prisma.UserPaymentMethodWhereInput
+  some?: Prisma.UserPaymentMethodWhereInput
+  none?: Prisma.UserPaymentMethodWhereInput
+}
+
+export type UserPaymentMethodOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
+}
+
+export type UserPaymentMethodCreateNestedOneWithoutPaymentsInput = {
+  create?: Prisma.XOR<Prisma.UserPaymentMethodCreateWithoutPaymentsInput, Prisma.UserPaymentMethodUncheckedCreateWithoutPaymentsInput>
+  connectOrCreate?: Prisma.UserPaymentMethodCreateOrConnectWithoutPaymentsInput
+  connect?: Prisma.UserPaymentMethodWhereUniqueInput
+}
+
+export type UserPaymentMethodUpdateOneWithoutPaymentsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserPaymentMethodCreateWithoutPaymentsInput, Prisma.UserPaymentMethodUncheckedCreateWithoutPaymentsInput>
+  connectOrCreate?: Prisma.UserPaymentMethodCreateOrConnectWithoutPaymentsInput
+  upsert?: Prisma.UserPaymentMethodUpsertWithoutPaymentsInput
+  disconnect?: Prisma.UserPaymentMethodWhereInput | boolean
+  delete?: Prisma.UserPaymentMethodWhereInput | boolean
+  connect?: Prisma.UserPaymentMethodWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserPaymentMethodUpdateToOneWithWhereWithoutPaymentsInput, Prisma.UserPaymentMethodUpdateWithoutPaymentsInput>, Prisma.UserPaymentMethodUncheckedUpdateWithoutPaymentsInput>
+}
+
+export type EnumPaymentProviderFieldUpdateOperationsInput = {
+  set?: $Enums.PaymentProvider
+}
+
+export type NullableIntFieldUpdateOperationsInput = {
+  set?: number | null
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
+}
+
 export type UserPaymentMethodCreateNestedManyWithoutUserInput = {
   create?: Prisma.XOR<Prisma.UserPaymentMethodCreateWithoutUserInput, Prisma.UserPaymentMethodUncheckedCreateWithoutUserInput> | Prisma.UserPaymentMethodCreateWithoutUserInput[] | Prisma.UserPaymentMethodUncheckedCreateWithoutUserInput[]
   connectOrCreate?: Prisma.UserPaymentMethodCreateOrConnectWithoutUserInput | Prisma.UserPaymentMethodCreateOrConnectWithoutUserInput[]
@@ -633,117 +661,6 @@ export type UserPaymentMethodUncheckedUpdateManyWithoutUserNestedInput = {
   update?: Prisma.UserPaymentMethodUpdateWithWhereUniqueWithoutUserInput | Prisma.UserPaymentMethodUpdateWithWhereUniqueWithoutUserInput[]
   updateMany?: Prisma.UserPaymentMethodUpdateManyWithWhereWithoutUserInput | Prisma.UserPaymentMethodUpdateManyWithWhereWithoutUserInput[]
   deleteMany?: Prisma.UserPaymentMethodScalarWhereInput | Prisma.UserPaymentMethodScalarWhereInput[]
-}
-
-export type UserPaymentMethodCreateNestedOneWithoutPaymentsInput = {
-  create?: Prisma.XOR<Prisma.UserPaymentMethodCreateWithoutPaymentsInput, Prisma.UserPaymentMethodUncheckedCreateWithoutPaymentsInput>
-  connectOrCreate?: Prisma.UserPaymentMethodCreateOrConnectWithoutPaymentsInput
-  connect?: Prisma.UserPaymentMethodWhereUniqueInput
-}
-
-export type UserPaymentMethodUpdateOneWithoutPaymentsNestedInput = {
-  create?: Prisma.XOR<Prisma.UserPaymentMethodCreateWithoutPaymentsInput, Prisma.UserPaymentMethodUncheckedCreateWithoutPaymentsInput>
-  connectOrCreate?: Prisma.UserPaymentMethodCreateOrConnectWithoutPaymentsInput
-  upsert?: Prisma.UserPaymentMethodUpsertWithoutPaymentsInput
-  disconnect?: Prisma.UserPaymentMethodWhereInput | boolean
-  delete?: Prisma.UserPaymentMethodWhereInput | boolean
-  connect?: Prisma.UserPaymentMethodWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.UserPaymentMethodUpdateToOneWithWhereWithoutPaymentsInput, Prisma.UserPaymentMethodUpdateWithoutPaymentsInput>, Prisma.UserPaymentMethodUncheckedUpdateWithoutPaymentsInput>
-}
-
-export type EnumPaymentProviderFieldUpdateOperationsInput = {
-  set?: $Enums.PaymentProvider
-}
-
-export type NullableIntFieldUpdateOperationsInput = {
-  set?: number | null
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
-}
-
-export type UserPaymentMethodCreateWithoutUserInput = {
-  id?: string
-  title?: string | null
-  type: $Enums.PaymentMethod
-  provider: $Enums.PaymentProvider
-  providerId: string
-  last4?: string | null
-  first6?: string | null
-  expiryMonth?: number | null
-  expiryYear?: number | null
-  cardType?: string | null
-  isActive?: boolean
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  payments?: Prisma.PaymentCreateNestedManyWithoutPaymentMethodInput
-}
-
-export type UserPaymentMethodUncheckedCreateWithoutUserInput = {
-  id?: string
-  title?: string | null
-  type: $Enums.PaymentMethod
-  provider: $Enums.PaymentProvider
-  providerId: string
-  last4?: string | null
-  first6?: string | null
-  expiryMonth?: number | null
-  expiryYear?: number | null
-  cardType?: string | null
-  isActive?: boolean
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutPaymentMethodInput
-}
-
-export type UserPaymentMethodCreateOrConnectWithoutUserInput = {
-  where: Prisma.UserPaymentMethodWhereUniqueInput
-  create: Prisma.XOR<Prisma.UserPaymentMethodCreateWithoutUserInput, Prisma.UserPaymentMethodUncheckedCreateWithoutUserInput>
-}
-
-export type UserPaymentMethodCreateManyUserInputEnvelope = {
-  data: Prisma.UserPaymentMethodCreateManyUserInput | Prisma.UserPaymentMethodCreateManyUserInput[]
-  skipDuplicates?: boolean
-}
-
-export type UserPaymentMethodUpsertWithWhereUniqueWithoutUserInput = {
-  where: Prisma.UserPaymentMethodWhereUniqueInput
-  update: Prisma.XOR<Prisma.UserPaymentMethodUpdateWithoutUserInput, Prisma.UserPaymentMethodUncheckedUpdateWithoutUserInput>
-  create: Prisma.XOR<Prisma.UserPaymentMethodCreateWithoutUserInput, Prisma.UserPaymentMethodUncheckedCreateWithoutUserInput>
-}
-
-export type UserPaymentMethodUpdateWithWhereUniqueWithoutUserInput = {
-  where: Prisma.UserPaymentMethodWhereUniqueInput
-  data: Prisma.XOR<Prisma.UserPaymentMethodUpdateWithoutUserInput, Prisma.UserPaymentMethodUncheckedUpdateWithoutUserInput>
-}
-
-export type UserPaymentMethodUpdateManyWithWhereWithoutUserInput = {
-  where: Prisma.UserPaymentMethodScalarWhereInput
-  data: Prisma.XOR<Prisma.UserPaymentMethodUpdateManyMutationInput, Prisma.UserPaymentMethodUncheckedUpdateManyWithoutUserInput>
-}
-
-export type UserPaymentMethodScalarWhereInput = {
-  AND?: Prisma.UserPaymentMethodScalarWhereInput | Prisma.UserPaymentMethodScalarWhereInput[]
-  OR?: Prisma.UserPaymentMethodScalarWhereInput[]
-  NOT?: Prisma.UserPaymentMethodScalarWhereInput | Prisma.UserPaymentMethodScalarWhereInput[]
-  id?: Prisma.StringFilter<"UserPaymentMethod"> | string
-  title?: Prisma.StringNullableFilter<"UserPaymentMethod"> | string | null
-  type?: Prisma.EnumPaymentMethodFilter<"UserPaymentMethod"> | $Enums.PaymentMethod
-  provider?: Prisma.EnumPaymentProviderFilter<"UserPaymentMethod"> | $Enums.PaymentProvider
-  providerId?: Prisma.StringFilter<"UserPaymentMethod"> | string
-  last4?: Prisma.StringNullableFilter<"UserPaymentMethod"> | string | null
-  first6?: Prisma.StringNullableFilter<"UserPaymentMethod"> | string | null
-  expiryMonth?: Prisma.IntNullableFilter<"UserPaymentMethod"> | number | null
-  expiryYear?: Prisma.IntNullableFilter<"UserPaymentMethod"> | number | null
-  cardType?: Prisma.StringNullableFilter<"UserPaymentMethod"> | string | null
-  isActive?: Prisma.BoolFilter<"UserPaymentMethod"> | boolean
-  metadata?: Prisma.JsonNullableFilter<"UserPaymentMethod">
-  userId?: Prisma.StringFilter<"UserPaymentMethod"> | string
-  createdAt?: Prisma.DateTimeFilter<"UserPaymentMethod"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"UserPaymentMethod"> | Date | string
 }
 
 export type UserPaymentMethodCreateWithoutPaymentsInput = {
@@ -832,6 +749,89 @@ export type UserPaymentMethodUncheckedUpdateWithoutPaymentsInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type UserPaymentMethodCreateWithoutUserInput = {
+  id?: string
+  title?: string | null
+  type: $Enums.PaymentMethod
+  provider: $Enums.PaymentProvider
+  providerId: string
+  last4?: string | null
+  first6?: string | null
+  expiryMonth?: number | null
+  expiryYear?: number | null
+  cardType?: string | null
+  isActive?: boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  payments?: Prisma.PaymentCreateNestedManyWithoutPaymentMethodInput
+}
+
+export type UserPaymentMethodUncheckedCreateWithoutUserInput = {
+  id?: string
+  title?: string | null
+  type: $Enums.PaymentMethod
+  provider: $Enums.PaymentProvider
+  providerId: string
+  last4?: string | null
+  first6?: string | null
+  expiryMonth?: number | null
+  expiryYear?: number | null
+  cardType?: string | null
+  isActive?: boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutPaymentMethodInput
+}
+
+export type UserPaymentMethodCreateOrConnectWithoutUserInput = {
+  where: Prisma.UserPaymentMethodWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserPaymentMethodCreateWithoutUserInput, Prisma.UserPaymentMethodUncheckedCreateWithoutUserInput>
+}
+
+export type UserPaymentMethodCreateManyUserInputEnvelope = {
+  data: Prisma.UserPaymentMethodCreateManyUserInput | Prisma.UserPaymentMethodCreateManyUserInput[]
+  skipDuplicates?: boolean
+}
+
+export type UserPaymentMethodUpsertWithWhereUniqueWithoutUserInput = {
+  where: Prisma.UserPaymentMethodWhereUniqueInput
+  update: Prisma.XOR<Prisma.UserPaymentMethodUpdateWithoutUserInput, Prisma.UserPaymentMethodUncheckedUpdateWithoutUserInput>
+  create: Prisma.XOR<Prisma.UserPaymentMethodCreateWithoutUserInput, Prisma.UserPaymentMethodUncheckedCreateWithoutUserInput>
+}
+
+export type UserPaymentMethodUpdateWithWhereUniqueWithoutUserInput = {
+  where: Prisma.UserPaymentMethodWhereUniqueInput
+  data: Prisma.XOR<Prisma.UserPaymentMethodUpdateWithoutUserInput, Prisma.UserPaymentMethodUncheckedUpdateWithoutUserInput>
+}
+
+export type UserPaymentMethodUpdateManyWithWhereWithoutUserInput = {
+  where: Prisma.UserPaymentMethodScalarWhereInput
+  data: Prisma.XOR<Prisma.UserPaymentMethodUpdateManyMutationInput, Prisma.UserPaymentMethodUncheckedUpdateManyWithoutUserInput>
+}
+
+export type UserPaymentMethodScalarWhereInput = {
+  AND?: Prisma.UserPaymentMethodScalarWhereInput | Prisma.UserPaymentMethodScalarWhereInput[]
+  OR?: Prisma.UserPaymentMethodScalarWhereInput[]
+  NOT?: Prisma.UserPaymentMethodScalarWhereInput | Prisma.UserPaymentMethodScalarWhereInput[]
+  id?: Prisma.StringFilter<"UserPaymentMethod"> | string
+  title?: Prisma.StringNullableFilter<"UserPaymentMethod"> | string | null
+  type?: Prisma.EnumPaymentMethodFilter<"UserPaymentMethod"> | $Enums.PaymentMethod
+  provider?: Prisma.EnumPaymentProviderFilter<"UserPaymentMethod"> | $Enums.PaymentProvider
+  providerId?: Prisma.StringFilter<"UserPaymentMethod"> | string
+  last4?: Prisma.StringNullableFilter<"UserPaymentMethod"> | string | null
+  first6?: Prisma.StringNullableFilter<"UserPaymentMethod"> | string | null
+  expiryMonth?: Prisma.IntNullableFilter<"UserPaymentMethod"> | number | null
+  expiryYear?: Prisma.IntNullableFilter<"UserPaymentMethod"> | number | null
+  cardType?: Prisma.StringNullableFilter<"UserPaymentMethod"> | string | null
+  isActive?: Prisma.BoolFilter<"UserPaymentMethod"> | boolean
+  metadata?: Prisma.JsonNullableFilter<"UserPaymentMethod">
+  userId?: Prisma.StringFilter<"UserPaymentMethod"> | string
+  createdAt?: Prisma.DateTimeFilter<"UserPaymentMethod"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"UserPaymentMethod"> | Date | string
 }
 
 export type UserPaymentMethodCreateManyUserInput = {

@@ -1,197 +1,158 @@
-import { findByEmail, exists, createAuthUser } from './repository'
+import { randomBytes } from 'node:crypto'
+
+import { isProduction } from '@/config/env'
+import { isDisposableEmail } from '@/infra/datasets/disposable-emails'
+import { logger } from '@/infra/logger'
+import { redis } from '@/infra/redis'
+import { createSession, revokeSession } from '@/modules/session/service'
+import { normalizeEmail } from '@/shared/email'
+import {
+	BadRequestError,
+	ConflictError,
+	ErrorCode,
+	UnauthorizedError,
+} from '@/shared/errors'
+import { hashPassword, verifyPassword } from '@/shared/security/hash'
+import { generateOtpCode, verifyOtpCode } from '@/shared/security/otp'
+import { signToken } from '@/shared/security/token'
+import { enqueueVerificationCode } from './jobs'
 import type { LoginInput, RegisterInput, VerifyRegisterInput } from './model'
-import { logger } from '@/core/logger/pino'
-import { hashPassword, verifyPassword } from '@/lib/security/hashing'
-import { BadRequestError, ConflictError } from '@/core/errors/base'
-import { ErrorCode } from '@/core/errors/codes'
-import { redis } from '@/core/redis'
-import VerificationEmail from '../../../emails/templates/VerificationCode'
-import { mailClient } from '@/core/mail/client'
-import { render } from '@react-email/components'
-import { env } from '@/core/config/env'
-import { isDisposableEmail } from '@/core/providers/email-check'
-import { generateOtpCode, verifyOtpCode } from '@/lib/security/otp'
-import { createSession } from '@/lib/security/session'
-import { signToken } from '@/lib/security/token'
+import { createUser, emailExists, findCredentialByEmail } from './repository'
 
-export async function register(dto: RegisterInput) {
-	try {
-		const isDisposable = isDisposableEmail(dto.email)
+const PENDING_TTL = 15 * 60
+const USERNAME_BYTES = 8
 
-		if (isDisposable) {
-			logger.warn(
-				{ email: dto.email, reason: 'disposable' },
-				'registration_blocked_by_safety_check',
-			)
-
-			throw new BadRequestError(
-				'Temporary email addresses are not allowed',
-			)
-		}
-
-		const isEmailTaken = await exists(dto.email)
-
-		if (isEmailTaken) {
-			logger.warn(
-				{ email: dto.email },
-				'attempt_to_register_existing_email',
-			)
-			throw new ConflictError('User already exists')
-		}
-
-		const code = generateOtpCode()
-		const username = Buffer.from(
-			crypto.getRandomValues(new Uint8Array(8)),
-		).toString('hex')
-		const passwordHash = await hashPassword(dto.password)
-
-		await redis.set(
-			`auth:register:${dto.email.toLowerCase()}`,
-			JSON.stringify({ ...dto, passwordHash, code, username }),
-			'EX',
-			900,
-		)
-
-		// const html = await render(VerificationEmail({ code }))
-
-		// await mailClient
-		// 	.send({
-		// 		to: dto.email,
-		// 		subject: `${code} - код подтверждения TeaCoder`,
-		// 		html,
-		// 		sender: 'hello',
-		// 	})
-		// 	.catch((err) => {
-		// 		logger.error(
-		// 			{ err, email: dto.email },
-		// 			'failed_to_send_registration_email',
-		// 		)
-		// 	})
-
-		logger.info(
-			{
-				email: dto.email,
-				code: env.NODE_ENV !== 'production' ? code : '******',
-			},
-			'register_initiated',
-		)
-	} catch (err) {
-		logger.error({ err }, 'register failed')
-		throw err
-	}
+interface PendingRegistration {
+	email: string
+	displayName: string
+	username: string
+	passwordHash: string
+	code: string
 }
 
-export async function verifyRegister(
-	dto: VerifyRegisterInput,
-	metadata: { ip: string; ua: string },
-) {
-	try {
-		const redisKey = `auth:register:${dto.email.toLowerCase()}`
-		const rawData = await redis.get(redisKey)
+const pendingKey = (email: string) => `auth:pending:${email}`
+const generateUsername = () => randomBytes(USERNAME_BYTES).toString('hex')
 
-		if (!rawData) {
-			logger.warn(
-				{ email: dto.email },
-				'registration_expired_or_not_found',
-			)
-			throw new BadRequestError(
-				ErrorCode.VERIFICATION_CODE_EXPIRED,
-				'Verification code expired or session not found',
-			)
-		}
-
-		const pendingUser = JSON.parse(rawData)
-		const isCodeValid = verifyOtpCode(dto.code, pendingUser.code)
-
-		if (!isCodeValid) {
-			logger.warn(
-				{ email: dto.email, attempt: dto.code },
-				'invalid_registration_code',
-			)
-			throw new BadRequestError(
-				ErrorCode.VERIFICATION_CODE_INVALID,
-				'Invalid verification code',
-			)
-		}
-
-		const user = await createAuthUser({
-			email: pendingUser.email,
-			passwordHash: pendingUser.passwordHash,
-			displayName: pendingUser.name,
-			username: pendingUser.username,
-		})
-
-		const session = await createSession({
-			userId: user.id,
-			ip: metadata.ip,
-			userAgent: metadata.ua,
-		})
-
-		const token = signToken({
-			sid: session.id,
-			sub: user.id,
-		})
-
-		await redis.del(redisKey)
-
-		logger.info(
-			{ userId: user.id, sessionId: session.id },
-			'registration_completed',
-		)
-
-		return { user, token }
-	} catch (err) {
-		logger.error({ err }, 'verifyRegister failed')
-		throw err
-	}
+export interface RequestOrigin {
+	ip: string
+	userAgent: string
 }
 
-export async function login(
-	dto: LoginInput,
-	metadata: { ip: string; ua: string },
-) {
-	try {
-		const credential = await findByEmail(dto.email)
+const issueSession = async (userId: string, origin: RequestOrigin) => {
+	const session = await createSession({ userId, ...origin })
 
-		if (!credential || !credential.passwordHash) {
-			throw new BadRequestError(
-				ErrorCode.INVALID_CREDENTIALS,
-				'Invalid email or password',
-			)
-		}
-
-		const isPasswordCorrect = await verifyPassword(
-			dto.password,
-			credential.passwordHash.hash,
-		)
-
-		if (!isPasswordCorrect) {
-			logger.warn({ email: dto.email }, 'failed_login_attempt')
-			throw new BadRequestError(
-				ErrorCode.INVALID_CREDENTIALS,
-				'Invalid email or password',
-			)
-		}
-
-		const session = await createSession({
-			userId: credential.user.id,
-			ip: metadata.ip,
-			userAgent: metadata.ua,
-		})
-
-		const token = signToken({
-			sid: session.id,
-			sub: credential.user.id,
-		})
-
-		logger.info(
-			{ userId: credential.user.id, sessionId: session.id },
-			'user_logged_in',
-		)
-
-		return { user: credential.user, token }
-	} catch (err) {
-		logger.error({ err }, 'login failed')
-		throw err
-	}
+	return signToken({ sid: session.id, sub: userId })
 }
+
+export const register = async (input: RegisterInput) => {
+	const email = normalizeEmail(input.email)
+
+	if (await isDisposableEmail(email)) {
+		throw new BadRequestError(
+			'Temporary email addresses are not allowed',
+			ErrorCode.DISPOSABLE_EMAIL,
+		)
+	}
+
+	if (await emailExists(email)) {
+		throw new ConflictError(
+			'User already exists',
+			ErrorCode.EMAIL_ALREADY_EXISTS,
+		)
+	}
+
+	const code = generateOtpCode()
+
+	const pending: PendingRegistration = {
+		email,
+		displayName: input.name,
+		username: generateUsername(),
+		passwordHash: await hashPassword(input.password),
+		code,
+	}
+
+	await redis.set(
+		pendingKey(email),
+		JSON.stringify(pending),
+		'EX',
+		PENDING_TTL,
+	)
+
+	await enqueueVerificationCode({ email, code })
+
+	logger.info(
+		{ email, code: isProduction ? undefined : code },
+		'registration_started',
+	)
+}
+
+export const verifyRegister = async (
+	input: VerifyRegisterInput,
+	origin: RequestOrigin,
+) => {
+	const email = normalizeEmail(input.email)
+	const raw = await redis.get(pendingKey(email))
+
+	if (!raw) {
+		throw new BadRequestError(
+			'Verification code expired or registration not found',
+			ErrorCode.VERIFICATION_CODE_EXPIRED,
+		)
+	}
+
+	const pending = JSON.parse(raw) as PendingRegistration
+
+	if (!verifyOtpCode(input.code, pending.code)) {
+		throw new BadRequestError(
+			'Invalid verification code',
+			ErrorCode.VERIFICATION_CODE_INVALID,
+		)
+	}
+
+	const user = await createUser({
+		email: pending.email,
+		passwordHash: pending.passwordHash,
+		displayName: pending.displayName,
+		username: pending.username,
+	})
+
+	await redis.del(pendingKey(email))
+
+	logger.info({ userId: user.id }, 'registration_completed')
+
+	return { user, token: await issueSession(user.id, origin) }
+}
+
+export const login = async (input: LoginInput, origin: RequestOrigin) => {
+	const email = normalizeEmail(input.email)
+	const credential = await findCredentialByEmail(email)
+
+	if (!credential?.passwordHash)
+		throw new UnauthorizedError(
+			'Invalid email or password',
+			ErrorCode.INVALID_CREDENTIALS,
+		)
+
+	const isCorrect = await verifyPassword(
+		input.password,
+		credential.passwordHash.hash,
+	)
+
+	if (!isCorrect) {
+		logger.warn({ email }, 'failed_login_attempt')
+
+		throw new UnauthorizedError(
+			'Invalid email or password',
+			ErrorCode.INVALID_CREDENTIALS,
+		)
+	}
+
+	const { user } = credential
+
+	logger.info({ userId: user.id }, 'user_logged_in')
+
+	return { user, token: await issueSession(user.id, origin) }
+}
+
+export const logout = (userId: string, sessionId: string) =>
+	revokeSession(userId, sessionId)

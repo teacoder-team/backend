@@ -1,54 +1,45 @@
-import { db } from '@/core/database'
 import {
 	AuthProvider,
 	CredentialType,
 	UserRole,
 } from '@prisma/generated/client'
 
-export async function findByEmail(email: string) {
-	return db.credential.findUnique({
+import { db } from '@/infra/db'
+
+const PASSWORD_ALGORITHM = 'argon2'
+const PASSWORD_VERSION = 1
+
+/** Callers pass an already normalized address - see `normalizeEmail`. */
+export const findCredentialByEmail = (email: string) =>
+	db.credential.findUnique({
 		where: {
 			provider_identifier: {
 				provider: AuthProvider.EMAIL,
-				identifier: email.toLowerCase(),
+				identifier: email,
 			},
 		},
-		include: {
-			user: true,
-			passwordHash: true,
-		},
-	})
-}
-
-export async function exists(email: string): Promise<boolean> {
-	const count = await db.credential.count({
-		where: {
-			provider: AuthProvider.EMAIL,
-			identifier: email.toLowerCase(),
-		},
+		include: { user: true, passwordHash: true },
 	})
 
-	return count > 0
-}
+export const emailExists = async (email: string) =>
+	(await db.credential.count({
+		where: { provider: AuthProvider.EMAIL, identifier: email },
+	})) > 0
 
-export async function createAuthUser(data: {
+export interface CreateUserInput {
 	email: string
 	passwordHash: string
 	displayName: string
 	username: string
-}) {
-	return db.$transaction(async (tx) => {
+}
+
+export const createUser = (input: CreateUserInput) =>
+	db.$transaction(async (tx) => {
 		const user = await tx.user.create({
 			data: {
+				username: input.username,
+				displayName: input.displayName,
 				role: UserRole.STUDENT,
-			},
-		})
-
-		await tx.profile.create({
-			data: {
-				userId: user.id,
-				username: data.username,
-				displayName: data.displayName,
 			},
 		})
 
@@ -57,19 +48,18 @@ export async function createAuthUser(data: {
 				userId: user.id,
 				provider: AuthProvider.EMAIL,
 				type: CredentialType.PASSWORD,
-				identifier: data.email.toLowerCase(),
+				identifier: input.email,
 			},
 		})
 
 		await tx.passwordHash.create({
 			data: {
 				credentialId: credential.id,
-				hash: data.passwordHash,
-				algorithm: 'argon2',
-				version: 1,
+				hash: input.passwordHash,
+				algorithm: PASSWORD_ALGORITHM,
+				version: PASSWORD_VERSION,
 			},
 		})
 
 		return user
 	})
-}

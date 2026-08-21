@@ -1,0 +1,141 @@
+model Subscription {
+    id String @id @default(uuid())
+
+    isActive      Boolean @default(true) @map("is_active")
+    isAutoBilling Boolean @default(false) @map("is_auto_billing")
+
+    startedAt DateTime  @default(now()) @map("started_at")
+    expiresAt DateTime? @map("expires_at")
+
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId String @unique @map("user_id")
+
+    payments Payment[]
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@index([isActive, expiresAt], map: "ix_subscriptions_is_active_expires_at")
+    @@map("subscriptions")
+}
+
+model Payment {
+    id String @id @default(uuid())
+
+    amount   Float
+    currency String
+
+    status PaymentStatus @default(PENDING)
+    method PaymentMethod
+
+    providerPaymentId String? @map("provider_payment_id")
+
+    metadata Json?
+
+    receipts Receipt[]
+
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId String @map("user_id")
+
+    paymentMethod   UserPaymentMethod? @relation(fields: [paymentMethodId], references: [id])
+    paymentMethodId String?            @map("payment_method_id")
+
+    subscription   Subscription? @relation(fields: [subscriptionId], references: [id])
+    subscriptionId String?       @map("subscription_id")
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@index([status, createdAt(sort: Desc)], map: "ix_payments_status_created_at")
+    @@index([subscriptionId], map: "ix_payments_subscription_id")
+    @@map("payments")
+}
+
+model Receipt {
+    id String @id @default(uuid())
+
+    status ReceiptStatus @default(PENDING)
+
+    amount Decimal
+    items  Json
+    raw    Json?
+
+    fiscalProviderId String? @map("fiscal_provider_id")
+    errorMessage     String? @map("error_message")
+
+    payment   Payment @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+    paymentId String  @map("payment_id")
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@index([paymentId], map: "ix_receipts_payment_id")
+    @@map("receipts")
+}
+
+model UserPaymentMethod {
+    id String @id @default(uuid())
+
+    title String?
+
+    type       PaymentMethod
+    provider   PaymentProvider
+    providerId String          @unique @map("provider_id")
+
+    last4       String?
+    first6      String?
+    expiryMonth Int?    @map("expiry_month")
+    expiryYear  Int?    @map("expiry_year")
+    cardType    String? @map("card_type")
+
+    isActive Boolean @default(true) @map("is_active")
+
+    metadata Json?
+
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId String @map("user_id")
+
+    payments Payment[]
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@index([userId, isActive], map: "ix_user_payment_methods_user_id_is_active")
+    @@map("user_payment_methods")
+}
+
+enum PaymentStatus {
+    PENDING
+    SUCCESS
+    FAILED
+
+    @@map("payment_statuses")
+}
+
+enum ReceiptStatus {
+    PENDING
+    SUCCESS
+    FAILED
+
+    @@map("receipt_statuses")
+}
+
+enum PaymentProvider {
+    YOOKASSA
+    ROBOKASSA
+
+    @@map("payment_providers")
+}
+
+enum PaymentMethod {
+    BANK_CARD
+    SBP
+    T_PAY
+    SBER_PAY
+    YOOMONEY
+    CRYPTO
+    INTERNATIONAL_CARD
+    TELEGRAM_STARS
+
+    @@map("payment_methods")
+}

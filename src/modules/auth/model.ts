@@ -14,7 +14,7 @@ export const RegisterPayload = t.Object({
 	}),
 	password: t.String({
 		minLength: 6,
-		error: 'Password is required',
+		error: 'Password must be at least 6 characters',
 		examples: ['securepassword123'],
 	}),
 })
@@ -22,6 +22,7 @@ export const RegisterPayload = t.Object({
 export const VerifyRegisterPayload = t.Object({
 	email: t.String({
 		format: 'email',
+		error: 'Invalid email format',
 		examples: ['torvalds.l@teacoder.com'],
 	}),
 	code: t.String({
@@ -45,7 +46,7 @@ export const LoginPayload = t.Object({
 	}),
 })
 
-export const RegisterResponse = t.Object({
+export const MessageResponse = t.Object({
 	message: t.String({
 		description: 'Status message indicating the next step.',
 		examples: ['Verification code sent to email'],

@@ -347,48 +347,6 @@ export type UserProgressMinOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
 }
 
-export type UserProgressCreateNestedManyWithoutUserInput = {
-  create?: Prisma.XOR<Prisma.UserProgressCreateWithoutUserInput, Prisma.UserProgressUncheckedCreateWithoutUserInput> | Prisma.UserProgressCreateWithoutUserInput[] | Prisma.UserProgressUncheckedCreateWithoutUserInput[]
-  connectOrCreate?: Prisma.UserProgressCreateOrConnectWithoutUserInput | Prisma.UserProgressCreateOrConnectWithoutUserInput[]
-  createMany?: Prisma.UserProgressCreateManyUserInputEnvelope
-  connect?: Prisma.UserProgressWhereUniqueInput | Prisma.UserProgressWhereUniqueInput[]
-}
-
-export type UserProgressUncheckedCreateNestedManyWithoutUserInput = {
-  create?: Prisma.XOR<Prisma.UserProgressCreateWithoutUserInput, Prisma.UserProgressUncheckedCreateWithoutUserInput> | Prisma.UserProgressCreateWithoutUserInput[] | Prisma.UserProgressUncheckedCreateWithoutUserInput[]
-  connectOrCreate?: Prisma.UserProgressCreateOrConnectWithoutUserInput | Prisma.UserProgressCreateOrConnectWithoutUserInput[]
-  createMany?: Prisma.UserProgressCreateManyUserInputEnvelope
-  connect?: Prisma.UserProgressWhereUniqueInput | Prisma.UserProgressWhereUniqueInput[]
-}
-
-export type UserProgressUpdateManyWithoutUserNestedInput = {
-  create?: Prisma.XOR<Prisma.UserProgressCreateWithoutUserInput, Prisma.UserProgressUncheckedCreateWithoutUserInput> | Prisma.UserProgressCreateWithoutUserInput[] | Prisma.UserProgressUncheckedCreateWithoutUserInput[]
-  connectOrCreate?: Prisma.UserProgressCreateOrConnectWithoutUserInput | Prisma.UserProgressCreateOrConnectWithoutUserInput[]
-  upsert?: Prisma.UserProgressUpsertWithWhereUniqueWithoutUserInput | Prisma.UserProgressUpsertWithWhereUniqueWithoutUserInput[]
-  createMany?: Prisma.UserProgressCreateManyUserInputEnvelope
-  set?: Prisma.UserProgressWhereUniqueInput | Prisma.UserProgressWhereUniqueInput[]
-  disconnect?: Prisma.UserProgressWhereUniqueInput | Prisma.UserProgressWhereUniqueInput[]
-  delete?: Prisma.UserProgressWhereUniqueInput | Prisma.UserProgressWhereUniqueInput[]
-  connect?: Prisma.UserProgressWhereUniqueInput | Prisma.UserProgressWhereUniqueInput[]
-  update?: Prisma.UserProgressUpdateWithWhereUniqueWithoutUserInput | Prisma.UserProgressUpdateWithWhereUniqueWithoutUserInput[]
-  updateMany?: Prisma.UserProgressUpdateManyWithWhereWithoutUserInput | Prisma.UserProgressUpdateManyWithWhereWithoutUserInput[]
-  deleteMany?: Prisma.UserProgressScalarWhereInput | Prisma.UserProgressScalarWhereInput[]
-}
-
-export type UserProgressUncheckedUpdateManyWithoutUserNestedInput = {
-  create?: Prisma.XOR<Prisma.UserProgressCreateWithoutUserInput, Prisma.UserProgressUncheckedCreateWithoutUserInput> | Prisma.UserProgressCreateWithoutUserInput[] | Prisma.UserProgressUncheckedCreateWithoutUserInput[]
-  connectOrCreate?: Prisma.UserProgressCreateOrConnectWithoutUserInput | Prisma.UserProgressCreateOrConnectWithoutUserInput[]
-  upsert?: Prisma.UserProgressUpsertWithWhereUniqueWithoutUserInput | Prisma.UserProgressUpsertWithWhereUniqueWithoutUserInput[]
-  createMany?: Prisma.UserProgressCreateManyUserInputEnvelope
-  set?: Prisma.UserProgressWhereUniqueInput | Prisma.UserProgressWhereUniqueInput[]
-  disconnect?: Prisma.UserProgressWhereUniqueInput | Prisma.UserProgressWhereUniqueInput[]
-  delete?: Prisma.UserProgressWhereUniqueInput | Prisma.UserProgressWhereUniqueInput[]
-  connect?: Prisma.UserProgressWhereUniqueInput | Prisma.UserProgressWhereUniqueInput[]
-  update?: Prisma.UserProgressUpdateWithWhereUniqueWithoutUserInput | Prisma.UserProgressUpdateWithWhereUniqueWithoutUserInput[]
-  updateMany?: Prisma.UserProgressUpdateManyWithWhereWithoutUserInput | Prisma.UserProgressUpdateManyWithWhereWithoutUserInput[]
-  deleteMany?: Prisma.UserProgressScalarWhereInput | Prisma.UserProgressScalarWhereInput[]
-}
-
 export type UserProgressCreateNestedManyWithoutLessonInput = {
   create?: Prisma.XOR<Prisma.UserProgressCreateWithoutLessonInput, Prisma.UserProgressUncheckedCreateWithoutLessonInput> | Prisma.UserProgressCreateWithoutLessonInput[] | Prisma.UserProgressUncheckedCreateWithoutLessonInput[]
   connectOrCreate?: Prisma.UserProgressCreateOrConnectWithoutLessonInput | Prisma.UserProgressCreateOrConnectWithoutLessonInput[]
@@ -431,58 +389,46 @@ export type UserProgressUncheckedUpdateManyWithoutLessonNestedInput = {
   deleteMany?: Prisma.UserProgressScalarWhereInput | Prisma.UserProgressScalarWhereInput[]
 }
 
-export type UserProgressCreateWithoutUserInput = {
-  id?: string
-  isCompleted?: boolean
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  lesson: Prisma.LessonCreateNestedOneWithoutUserProgressInput
+export type UserProgressCreateNestedManyWithoutUserInput = {
+  create?: Prisma.XOR<Prisma.UserProgressCreateWithoutUserInput, Prisma.UserProgressUncheckedCreateWithoutUserInput> | Prisma.UserProgressCreateWithoutUserInput[] | Prisma.UserProgressUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.UserProgressCreateOrConnectWithoutUserInput | Prisma.UserProgressCreateOrConnectWithoutUserInput[]
+  createMany?: Prisma.UserProgressCreateManyUserInputEnvelope
+  connect?: Prisma.UserProgressWhereUniqueInput | Prisma.UserProgressWhereUniqueInput[]
 }
 
-export type UserProgressUncheckedCreateWithoutUserInput = {
-  id?: string
-  isCompleted?: boolean
-  lessonId: string
-  createdAt?: Date | string
-  updatedAt?: Date | string
+export type UserProgressUncheckedCreateNestedManyWithoutUserInput = {
+  create?: Prisma.XOR<Prisma.UserProgressCreateWithoutUserInput, Prisma.UserProgressUncheckedCreateWithoutUserInput> | Prisma.UserProgressCreateWithoutUserInput[] | Prisma.UserProgressUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.UserProgressCreateOrConnectWithoutUserInput | Prisma.UserProgressCreateOrConnectWithoutUserInput[]
+  createMany?: Prisma.UserProgressCreateManyUserInputEnvelope
+  connect?: Prisma.UserProgressWhereUniqueInput | Prisma.UserProgressWhereUniqueInput[]
 }
 
-export type UserProgressCreateOrConnectWithoutUserInput = {
-  where: Prisma.UserProgressWhereUniqueInput
-  create: Prisma.XOR<Prisma.UserProgressCreateWithoutUserInput, Prisma.UserProgressUncheckedCreateWithoutUserInput>
+export type UserProgressUpdateManyWithoutUserNestedInput = {
+  create?: Prisma.XOR<Prisma.UserProgressCreateWithoutUserInput, Prisma.UserProgressUncheckedCreateWithoutUserInput> | Prisma.UserProgressCreateWithoutUserInput[] | Prisma.UserProgressUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.UserProgressCreateOrConnectWithoutUserInput | Prisma.UserProgressCreateOrConnectWithoutUserInput[]
+  upsert?: Prisma.UserProgressUpsertWithWhereUniqueWithoutUserInput | Prisma.UserProgressUpsertWithWhereUniqueWithoutUserInput[]
+  createMany?: Prisma.UserProgressCreateManyUserInputEnvelope
+  set?: Prisma.UserProgressWhereUniqueInput | Prisma.UserProgressWhereUniqueInput[]
+  disconnect?: Prisma.UserProgressWhereUniqueInput | Prisma.UserProgressWhereUniqueInput[]
+  delete?: Prisma.UserProgressWhereUniqueInput | Prisma.UserProgressWhereUniqueInput[]
+  connect?: Prisma.UserProgressWhereUniqueInput | Prisma.UserProgressWhereUniqueInput[]
+  update?: Prisma.UserProgressUpdateWithWhereUniqueWithoutUserInput | Prisma.UserProgressUpdateWithWhereUniqueWithoutUserInput[]
+  updateMany?: Prisma.UserProgressUpdateManyWithWhereWithoutUserInput | Prisma.UserProgressUpdateManyWithWhereWithoutUserInput[]
+  deleteMany?: Prisma.UserProgressScalarWhereInput | Prisma.UserProgressScalarWhereInput[]
 }
 
-export type UserProgressCreateManyUserInputEnvelope = {
-  data: Prisma.UserProgressCreateManyUserInput | Prisma.UserProgressCreateManyUserInput[]
-  skipDuplicates?: boolean
-}
-
-export type UserProgressUpsertWithWhereUniqueWithoutUserInput = {
-  where: Prisma.UserProgressWhereUniqueInput
-  update: Prisma.XOR<Prisma.UserProgressUpdateWithoutUserInput, Prisma.UserProgressUncheckedUpdateWithoutUserInput>
-  create: Prisma.XOR<Prisma.UserProgressCreateWithoutUserInput, Prisma.UserProgressUncheckedCreateWithoutUserInput>
-}
-
-export type UserProgressUpdateWithWhereUniqueWithoutUserInput = {
-  where: Prisma.UserProgressWhereUniqueInput
-  data: Prisma.XOR<Prisma.UserProgressUpdateWithoutUserInput, Prisma.UserProgressUncheckedUpdateWithoutUserInput>
-}
-
-export type UserProgressUpdateManyWithWhereWithoutUserInput = {
-  where: Prisma.UserProgressScalarWhereInput
-  data: Prisma.XOR<Prisma.UserProgressUpdateManyMutationInput, Prisma.UserProgressUncheckedUpdateManyWithoutUserInput>
-}
-
-export type UserProgressScalarWhereInput = {
-  AND?: Prisma.UserProgressScalarWhereInput | Prisma.UserProgressScalarWhereInput[]
-  OR?: Prisma.UserProgressScalarWhereInput[]
-  NOT?: Prisma.UserProgressScalarWhereInput | Prisma.UserProgressScalarWhereInput[]
-  id?: Prisma.StringFilter<"UserProgress"> | string
-  isCompleted?: Prisma.BoolFilter<"UserProgress"> | boolean
-  userId?: Prisma.StringFilter<"UserProgress"> | string
-  lessonId?: Prisma.StringFilter<"UserProgress"> | string
-  createdAt?: Prisma.DateTimeFilter<"UserProgress"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"UserProgress"> | Date | string
+export type UserProgressUncheckedUpdateManyWithoutUserNestedInput = {
+  create?: Prisma.XOR<Prisma.UserProgressCreateWithoutUserInput, Prisma.UserProgressUncheckedCreateWithoutUserInput> | Prisma.UserProgressCreateWithoutUserInput[] | Prisma.UserProgressUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.UserProgressCreateOrConnectWithoutUserInput | Prisma.UserProgressCreateOrConnectWithoutUserInput[]
+  upsert?: Prisma.UserProgressUpsertWithWhereUniqueWithoutUserInput | Prisma.UserProgressUpsertWithWhereUniqueWithoutUserInput[]
+  createMany?: Prisma.UserProgressCreateManyUserInputEnvelope
+  set?: Prisma.UserProgressWhereUniqueInput | Prisma.UserProgressWhereUniqueInput[]
+  disconnect?: Prisma.UserProgressWhereUniqueInput | Prisma.UserProgressWhereUniqueInput[]
+  delete?: Prisma.UserProgressWhereUniqueInput | Prisma.UserProgressWhereUniqueInput[]
+  connect?: Prisma.UserProgressWhereUniqueInput | Prisma.UserProgressWhereUniqueInput[]
+  update?: Prisma.UserProgressUpdateWithWhereUniqueWithoutUserInput | Prisma.UserProgressUpdateWithWhereUniqueWithoutUserInput[]
+  updateMany?: Prisma.UserProgressUpdateManyWithWhereWithoutUserInput | Prisma.UserProgressUpdateManyWithWhereWithoutUserInput[]
+  deleteMany?: Prisma.UserProgressScalarWhereInput | Prisma.UserProgressScalarWhereInput[]
 }
 
 export type UserProgressCreateWithoutLessonInput = {
@@ -527,7 +473,27 @@ export type UserProgressUpdateManyWithWhereWithoutLessonInput = {
   data: Prisma.XOR<Prisma.UserProgressUpdateManyMutationInput, Prisma.UserProgressUncheckedUpdateManyWithoutLessonInput>
 }
 
-export type UserProgressCreateManyUserInput = {
+export type UserProgressScalarWhereInput = {
+  AND?: Prisma.UserProgressScalarWhereInput | Prisma.UserProgressScalarWhereInput[]
+  OR?: Prisma.UserProgressScalarWhereInput[]
+  NOT?: Prisma.UserProgressScalarWhereInput | Prisma.UserProgressScalarWhereInput[]
+  id?: Prisma.StringFilter<"UserProgress"> | string
+  isCompleted?: Prisma.BoolFilter<"UserProgress"> | boolean
+  userId?: Prisma.StringFilter<"UserProgress"> | string
+  lessonId?: Prisma.StringFilter<"UserProgress"> | string
+  createdAt?: Prisma.DateTimeFilter<"UserProgress"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"UserProgress"> | Date | string
+}
+
+export type UserProgressCreateWithoutUserInput = {
+  id?: string
+  isCompleted?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  lesson: Prisma.LessonCreateNestedOneWithoutUserProgressInput
+}
+
+export type UserProgressUncheckedCreateWithoutUserInput = {
   id?: string
   isCompleted?: boolean
   lessonId: string
@@ -535,28 +501,30 @@ export type UserProgressCreateManyUserInput = {
   updatedAt?: Date | string
 }
 
-export type UserProgressUpdateWithoutUserInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  isCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  lesson?: Prisma.LessonUpdateOneRequiredWithoutUserProgressNestedInput
+export type UserProgressCreateOrConnectWithoutUserInput = {
+  where: Prisma.UserProgressWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserProgressCreateWithoutUserInput, Prisma.UserProgressUncheckedCreateWithoutUserInput>
 }
 
-export type UserProgressUncheckedUpdateWithoutUserInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  isCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  lessonId?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+export type UserProgressCreateManyUserInputEnvelope = {
+  data: Prisma.UserProgressCreateManyUserInput | Prisma.UserProgressCreateManyUserInput[]
+  skipDuplicates?: boolean
 }
 
-export type UserProgressUncheckedUpdateManyWithoutUserInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  isCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  lessonId?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+export type UserProgressUpsertWithWhereUniqueWithoutUserInput = {
+  where: Prisma.UserProgressWhereUniqueInput
+  update: Prisma.XOR<Prisma.UserProgressUpdateWithoutUserInput, Prisma.UserProgressUncheckedUpdateWithoutUserInput>
+  create: Prisma.XOR<Prisma.UserProgressCreateWithoutUserInput, Prisma.UserProgressUncheckedCreateWithoutUserInput>
+}
+
+export type UserProgressUpdateWithWhereUniqueWithoutUserInput = {
+  where: Prisma.UserProgressWhereUniqueInput
+  data: Prisma.XOR<Prisma.UserProgressUpdateWithoutUserInput, Prisma.UserProgressUncheckedUpdateWithoutUserInput>
+}
+
+export type UserProgressUpdateManyWithWhereWithoutUserInput = {
+  where: Prisma.UserProgressScalarWhereInput
+  data: Prisma.XOR<Prisma.UserProgressUpdateManyMutationInput, Prisma.UserProgressUncheckedUpdateManyWithoutUserInput>
 }
 
 export type UserProgressCreateManyLessonInput = {
@@ -587,6 +555,38 @@ export type UserProgressUncheckedUpdateManyWithoutLessonInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   isCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   userId?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type UserProgressCreateManyUserInput = {
+  id?: string
+  isCompleted?: boolean
+  lessonId: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type UserProgressUpdateWithoutUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  isCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lesson?: Prisma.LessonUpdateOneRequiredWithoutUserProgressNestedInput
+}
+
+export type UserProgressUncheckedUpdateWithoutUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  isCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lessonId?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type UserProgressUncheckedUpdateManyWithoutUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  isCompleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lessonId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }

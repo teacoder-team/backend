@@ -407,48 +407,6 @@ export type DownloadLogMinOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
 }
 
-export type DownloadLogCreateNestedManyWithoutUserInput = {
-  create?: Prisma.XOR<Prisma.DownloadLogCreateWithoutUserInput, Prisma.DownloadLogUncheckedCreateWithoutUserInput> | Prisma.DownloadLogCreateWithoutUserInput[] | Prisma.DownloadLogUncheckedCreateWithoutUserInput[]
-  connectOrCreate?: Prisma.DownloadLogCreateOrConnectWithoutUserInput | Prisma.DownloadLogCreateOrConnectWithoutUserInput[]
-  createMany?: Prisma.DownloadLogCreateManyUserInputEnvelope
-  connect?: Prisma.DownloadLogWhereUniqueInput | Prisma.DownloadLogWhereUniqueInput[]
-}
-
-export type DownloadLogUncheckedCreateNestedManyWithoutUserInput = {
-  create?: Prisma.XOR<Prisma.DownloadLogCreateWithoutUserInput, Prisma.DownloadLogUncheckedCreateWithoutUserInput> | Prisma.DownloadLogCreateWithoutUserInput[] | Prisma.DownloadLogUncheckedCreateWithoutUserInput[]
-  connectOrCreate?: Prisma.DownloadLogCreateOrConnectWithoutUserInput | Prisma.DownloadLogCreateOrConnectWithoutUserInput[]
-  createMany?: Prisma.DownloadLogCreateManyUserInputEnvelope
-  connect?: Prisma.DownloadLogWhereUniqueInput | Prisma.DownloadLogWhereUniqueInput[]
-}
-
-export type DownloadLogUpdateManyWithoutUserNestedInput = {
-  create?: Prisma.XOR<Prisma.DownloadLogCreateWithoutUserInput, Prisma.DownloadLogUncheckedCreateWithoutUserInput> | Prisma.DownloadLogCreateWithoutUserInput[] | Prisma.DownloadLogUncheckedCreateWithoutUserInput[]
-  connectOrCreate?: Prisma.DownloadLogCreateOrConnectWithoutUserInput | Prisma.DownloadLogCreateOrConnectWithoutUserInput[]
-  upsert?: Prisma.DownloadLogUpsertWithWhereUniqueWithoutUserInput | Prisma.DownloadLogUpsertWithWhereUniqueWithoutUserInput[]
-  createMany?: Prisma.DownloadLogCreateManyUserInputEnvelope
-  set?: Prisma.DownloadLogWhereUniqueInput | Prisma.DownloadLogWhereUniqueInput[]
-  disconnect?: Prisma.DownloadLogWhereUniqueInput | Prisma.DownloadLogWhereUniqueInput[]
-  delete?: Prisma.DownloadLogWhereUniqueInput | Prisma.DownloadLogWhereUniqueInput[]
-  connect?: Prisma.DownloadLogWhereUniqueInput | Prisma.DownloadLogWhereUniqueInput[]
-  update?: Prisma.DownloadLogUpdateWithWhereUniqueWithoutUserInput | Prisma.DownloadLogUpdateWithWhereUniqueWithoutUserInput[]
-  updateMany?: Prisma.DownloadLogUpdateManyWithWhereWithoutUserInput | Prisma.DownloadLogUpdateManyWithWhereWithoutUserInput[]
-  deleteMany?: Prisma.DownloadLogScalarWhereInput | Prisma.DownloadLogScalarWhereInput[]
-}
-
-export type DownloadLogUncheckedUpdateManyWithoutUserNestedInput = {
-  create?: Prisma.XOR<Prisma.DownloadLogCreateWithoutUserInput, Prisma.DownloadLogUncheckedCreateWithoutUserInput> | Prisma.DownloadLogCreateWithoutUserInput[] | Prisma.DownloadLogUncheckedCreateWithoutUserInput[]
-  connectOrCreate?: Prisma.DownloadLogCreateOrConnectWithoutUserInput | Prisma.DownloadLogCreateOrConnectWithoutUserInput[]
-  upsert?: Prisma.DownloadLogUpsertWithWhereUniqueWithoutUserInput | Prisma.DownloadLogUpsertWithWhereUniqueWithoutUserInput[]
-  createMany?: Prisma.DownloadLogCreateManyUserInputEnvelope
-  set?: Prisma.DownloadLogWhereUniqueInput | Prisma.DownloadLogWhereUniqueInput[]
-  disconnect?: Prisma.DownloadLogWhereUniqueInput | Prisma.DownloadLogWhereUniqueInput[]
-  delete?: Prisma.DownloadLogWhereUniqueInput | Prisma.DownloadLogWhereUniqueInput[]
-  connect?: Prisma.DownloadLogWhereUniqueInput | Prisma.DownloadLogWhereUniqueInput[]
-  update?: Prisma.DownloadLogUpdateWithWhereUniqueWithoutUserInput | Prisma.DownloadLogUpdateWithWhereUniqueWithoutUserInput[]
-  updateMany?: Prisma.DownloadLogUpdateManyWithWhereWithoutUserInput | Prisma.DownloadLogUpdateManyWithWhereWithoutUserInput[]
-  deleteMany?: Prisma.DownloadLogScalarWhereInput | Prisma.DownloadLogScalarWhereInput[]
-}
-
 export type DownloadLogCreateNestedManyWithoutCourseInput = {
   create?: Prisma.XOR<Prisma.DownloadLogCreateWithoutCourseInput, Prisma.DownloadLogUncheckedCreateWithoutCourseInput> | Prisma.DownloadLogCreateWithoutCourseInput[] | Prisma.DownloadLogUncheckedCreateWithoutCourseInput[]
   connectOrCreate?: Prisma.DownloadLogCreateOrConnectWithoutCourseInput | Prisma.DownloadLogCreateOrConnectWithoutCourseInput[]
@@ -491,67 +449,46 @@ export type DownloadLogUncheckedUpdateManyWithoutCourseNestedInput = {
   deleteMany?: Prisma.DownloadLogScalarWhereInput | Prisma.DownloadLogScalarWhereInput[]
 }
 
-export type DownloadLogCreateWithoutUserInput = {
-  id?: string
-  token: string
-  ip?: string | null
-  userAgent?: string | null
-  downloadedAt?: Date | string
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  course: Prisma.CourseCreateNestedOneWithoutDownloadLogsInput
+export type DownloadLogCreateNestedManyWithoutUserInput = {
+  create?: Prisma.XOR<Prisma.DownloadLogCreateWithoutUserInput, Prisma.DownloadLogUncheckedCreateWithoutUserInput> | Prisma.DownloadLogCreateWithoutUserInput[] | Prisma.DownloadLogUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.DownloadLogCreateOrConnectWithoutUserInput | Prisma.DownloadLogCreateOrConnectWithoutUserInput[]
+  createMany?: Prisma.DownloadLogCreateManyUserInputEnvelope
+  connect?: Prisma.DownloadLogWhereUniqueInput | Prisma.DownloadLogWhereUniqueInput[]
 }
 
-export type DownloadLogUncheckedCreateWithoutUserInput = {
-  id?: string
-  token: string
-  ip?: string | null
-  userAgent?: string | null
-  downloadedAt?: Date | string
-  courseId: string
-  createdAt?: Date | string
-  updatedAt?: Date | string
+export type DownloadLogUncheckedCreateNestedManyWithoutUserInput = {
+  create?: Prisma.XOR<Prisma.DownloadLogCreateWithoutUserInput, Prisma.DownloadLogUncheckedCreateWithoutUserInput> | Prisma.DownloadLogCreateWithoutUserInput[] | Prisma.DownloadLogUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.DownloadLogCreateOrConnectWithoutUserInput | Prisma.DownloadLogCreateOrConnectWithoutUserInput[]
+  createMany?: Prisma.DownloadLogCreateManyUserInputEnvelope
+  connect?: Prisma.DownloadLogWhereUniqueInput | Prisma.DownloadLogWhereUniqueInput[]
 }
 
-export type DownloadLogCreateOrConnectWithoutUserInput = {
-  where: Prisma.DownloadLogWhereUniqueInput
-  create: Prisma.XOR<Prisma.DownloadLogCreateWithoutUserInput, Prisma.DownloadLogUncheckedCreateWithoutUserInput>
+export type DownloadLogUpdateManyWithoutUserNestedInput = {
+  create?: Prisma.XOR<Prisma.DownloadLogCreateWithoutUserInput, Prisma.DownloadLogUncheckedCreateWithoutUserInput> | Prisma.DownloadLogCreateWithoutUserInput[] | Prisma.DownloadLogUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.DownloadLogCreateOrConnectWithoutUserInput | Prisma.DownloadLogCreateOrConnectWithoutUserInput[]
+  upsert?: Prisma.DownloadLogUpsertWithWhereUniqueWithoutUserInput | Prisma.DownloadLogUpsertWithWhereUniqueWithoutUserInput[]
+  createMany?: Prisma.DownloadLogCreateManyUserInputEnvelope
+  set?: Prisma.DownloadLogWhereUniqueInput | Prisma.DownloadLogWhereUniqueInput[]
+  disconnect?: Prisma.DownloadLogWhereUniqueInput | Prisma.DownloadLogWhereUniqueInput[]
+  delete?: Prisma.DownloadLogWhereUniqueInput | Prisma.DownloadLogWhereUniqueInput[]
+  connect?: Prisma.DownloadLogWhereUniqueInput | Prisma.DownloadLogWhereUniqueInput[]
+  update?: Prisma.DownloadLogUpdateWithWhereUniqueWithoutUserInput | Prisma.DownloadLogUpdateWithWhereUniqueWithoutUserInput[]
+  updateMany?: Prisma.DownloadLogUpdateManyWithWhereWithoutUserInput | Prisma.DownloadLogUpdateManyWithWhereWithoutUserInput[]
+  deleteMany?: Prisma.DownloadLogScalarWhereInput | Prisma.DownloadLogScalarWhereInput[]
 }
 
-export type DownloadLogCreateManyUserInputEnvelope = {
-  data: Prisma.DownloadLogCreateManyUserInput | Prisma.DownloadLogCreateManyUserInput[]
-  skipDuplicates?: boolean
-}
-
-export type DownloadLogUpsertWithWhereUniqueWithoutUserInput = {
-  where: Prisma.DownloadLogWhereUniqueInput
-  update: Prisma.XOR<Prisma.DownloadLogUpdateWithoutUserInput, Prisma.DownloadLogUncheckedUpdateWithoutUserInput>
-  create: Prisma.XOR<Prisma.DownloadLogCreateWithoutUserInput, Prisma.DownloadLogUncheckedCreateWithoutUserInput>
-}
-
-export type DownloadLogUpdateWithWhereUniqueWithoutUserInput = {
-  where: Prisma.DownloadLogWhereUniqueInput
-  data: Prisma.XOR<Prisma.DownloadLogUpdateWithoutUserInput, Prisma.DownloadLogUncheckedUpdateWithoutUserInput>
-}
-
-export type DownloadLogUpdateManyWithWhereWithoutUserInput = {
-  where: Prisma.DownloadLogScalarWhereInput
-  data: Prisma.XOR<Prisma.DownloadLogUpdateManyMutationInput, Prisma.DownloadLogUncheckedUpdateManyWithoutUserInput>
-}
-
-export type DownloadLogScalarWhereInput = {
-  AND?: Prisma.DownloadLogScalarWhereInput | Prisma.DownloadLogScalarWhereInput[]
-  OR?: Prisma.DownloadLogScalarWhereInput[]
-  NOT?: Prisma.DownloadLogScalarWhereInput | Prisma.DownloadLogScalarWhereInput[]
-  id?: Prisma.StringFilter<"DownloadLog"> | string
-  token?: Prisma.StringFilter<"DownloadLog"> | string
-  ip?: Prisma.StringNullableFilter<"DownloadLog"> | string | null
-  userAgent?: Prisma.StringNullableFilter<"DownloadLog"> | string | null
-  downloadedAt?: Prisma.DateTimeFilter<"DownloadLog"> | Date | string
-  userId?: Prisma.StringFilter<"DownloadLog"> | string
-  courseId?: Prisma.StringFilter<"DownloadLog"> | string
-  createdAt?: Prisma.DateTimeFilter<"DownloadLog"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"DownloadLog"> | Date | string
+export type DownloadLogUncheckedUpdateManyWithoutUserNestedInput = {
+  create?: Prisma.XOR<Prisma.DownloadLogCreateWithoutUserInput, Prisma.DownloadLogUncheckedCreateWithoutUserInput> | Prisma.DownloadLogCreateWithoutUserInput[] | Prisma.DownloadLogUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.DownloadLogCreateOrConnectWithoutUserInput | Prisma.DownloadLogCreateOrConnectWithoutUserInput[]
+  upsert?: Prisma.DownloadLogUpsertWithWhereUniqueWithoutUserInput | Prisma.DownloadLogUpsertWithWhereUniqueWithoutUserInput[]
+  createMany?: Prisma.DownloadLogCreateManyUserInputEnvelope
+  set?: Prisma.DownloadLogWhereUniqueInput | Prisma.DownloadLogWhereUniqueInput[]
+  disconnect?: Prisma.DownloadLogWhereUniqueInput | Prisma.DownloadLogWhereUniqueInput[]
+  delete?: Prisma.DownloadLogWhereUniqueInput | Prisma.DownloadLogWhereUniqueInput[]
+  connect?: Prisma.DownloadLogWhereUniqueInput | Prisma.DownloadLogWhereUniqueInput[]
+  update?: Prisma.DownloadLogUpdateWithWhereUniqueWithoutUserInput | Prisma.DownloadLogUpdateWithWhereUniqueWithoutUserInput[]
+  updateMany?: Prisma.DownloadLogUpdateManyWithWhereWithoutUserInput | Prisma.DownloadLogUpdateManyWithWhereWithoutUserInput[]
+  deleteMany?: Prisma.DownloadLogScalarWhereInput | Prisma.DownloadLogScalarWhereInput[]
 }
 
 export type DownloadLogCreateWithoutCourseInput = {
@@ -602,7 +539,33 @@ export type DownloadLogUpdateManyWithWhereWithoutCourseInput = {
   data: Prisma.XOR<Prisma.DownloadLogUpdateManyMutationInput, Prisma.DownloadLogUncheckedUpdateManyWithoutCourseInput>
 }
 
-export type DownloadLogCreateManyUserInput = {
+export type DownloadLogScalarWhereInput = {
+  AND?: Prisma.DownloadLogScalarWhereInput | Prisma.DownloadLogScalarWhereInput[]
+  OR?: Prisma.DownloadLogScalarWhereInput[]
+  NOT?: Prisma.DownloadLogScalarWhereInput | Prisma.DownloadLogScalarWhereInput[]
+  id?: Prisma.StringFilter<"DownloadLog"> | string
+  token?: Prisma.StringFilter<"DownloadLog"> | string
+  ip?: Prisma.StringNullableFilter<"DownloadLog"> | string | null
+  userAgent?: Prisma.StringNullableFilter<"DownloadLog"> | string | null
+  downloadedAt?: Prisma.DateTimeFilter<"DownloadLog"> | Date | string
+  userId?: Prisma.StringFilter<"DownloadLog"> | string
+  courseId?: Prisma.StringFilter<"DownloadLog"> | string
+  createdAt?: Prisma.DateTimeFilter<"DownloadLog"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"DownloadLog"> | Date | string
+}
+
+export type DownloadLogCreateWithoutUserInput = {
+  id?: string
+  token: string
+  ip?: string | null
+  userAgent?: string | null
+  downloadedAt?: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  course: Prisma.CourseCreateNestedOneWithoutDownloadLogsInput
+}
+
+export type DownloadLogUncheckedCreateWithoutUserInput = {
   id?: string
   token: string
   ip?: string | null
@@ -613,37 +576,30 @@ export type DownloadLogCreateManyUserInput = {
   updatedAt?: Date | string
 }
 
-export type DownloadLogUpdateWithoutUserInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  token?: Prisma.StringFieldUpdateOperationsInput | string
-  ip?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  userAgent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  downloadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  course?: Prisma.CourseUpdateOneRequiredWithoutDownloadLogsNestedInput
+export type DownloadLogCreateOrConnectWithoutUserInput = {
+  where: Prisma.DownloadLogWhereUniqueInput
+  create: Prisma.XOR<Prisma.DownloadLogCreateWithoutUserInput, Prisma.DownloadLogUncheckedCreateWithoutUserInput>
 }
 
-export type DownloadLogUncheckedUpdateWithoutUserInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  token?: Prisma.StringFieldUpdateOperationsInput | string
-  ip?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  userAgent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  downloadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  courseId?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+export type DownloadLogCreateManyUserInputEnvelope = {
+  data: Prisma.DownloadLogCreateManyUserInput | Prisma.DownloadLogCreateManyUserInput[]
+  skipDuplicates?: boolean
 }
 
-export type DownloadLogUncheckedUpdateManyWithoutUserInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  token?: Prisma.StringFieldUpdateOperationsInput | string
-  ip?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  userAgent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  downloadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  courseId?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+export type DownloadLogUpsertWithWhereUniqueWithoutUserInput = {
+  where: Prisma.DownloadLogWhereUniqueInput
+  update: Prisma.XOR<Prisma.DownloadLogUpdateWithoutUserInput, Prisma.DownloadLogUncheckedUpdateWithoutUserInput>
+  create: Prisma.XOR<Prisma.DownloadLogCreateWithoutUserInput, Prisma.DownloadLogUncheckedCreateWithoutUserInput>
+}
+
+export type DownloadLogUpdateWithWhereUniqueWithoutUserInput = {
+  where: Prisma.DownloadLogWhereUniqueInput
+  data: Prisma.XOR<Prisma.DownloadLogUpdateWithoutUserInput, Prisma.DownloadLogUncheckedUpdateWithoutUserInput>
+}
+
+export type DownloadLogUpdateManyWithWhereWithoutUserInput = {
+  where: Prisma.DownloadLogScalarWhereInput
+  data: Prisma.XOR<Prisma.DownloadLogUpdateManyMutationInput, Prisma.DownloadLogUncheckedUpdateManyWithoutUserInput>
 }
 
 export type DownloadLogCreateManyCourseInput = {
@@ -686,6 +642,50 @@ export type DownloadLogUncheckedUpdateManyWithoutCourseInput = {
   userAgent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   downloadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type DownloadLogCreateManyUserInput = {
+  id?: string
+  token: string
+  ip?: string | null
+  userAgent?: string | null
+  downloadedAt?: Date | string
+  courseId: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type DownloadLogUpdateWithoutUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  token?: Prisma.StringFieldUpdateOperationsInput | string
+  ip?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userAgent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  downloadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  course?: Prisma.CourseUpdateOneRequiredWithoutDownloadLogsNestedInput
+}
+
+export type DownloadLogUncheckedUpdateWithoutUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  token?: Prisma.StringFieldUpdateOperationsInput | string
+  ip?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userAgent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  downloadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  courseId?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type DownloadLogUncheckedUpdateManyWithoutUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  token?: Prisma.StringFieldUpdateOperationsInput | string
+  ip?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userAgent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  downloadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  courseId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }

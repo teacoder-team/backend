@@ -51,23 +51,22 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
+  Subscription: 'Subscription',
+  Payment: 'Payment',
+  Receipt: 'Receipt',
+  UserPaymentMethod: 'UserPaymentMethod',
+  Course: 'Course',
+  Lesson: 'Lesson',
+  UserProgress: 'UserProgress',
+  DownloadLog: 'DownloadLog',
   User: 'User',
-  Profile: 'Profile',
   Credential: 'Credential',
   PasswordHash: 'PasswordHash',
   PasswordResetToken: 'PasswordResetToken',
   MultiFactorAuthentication: 'MultiFactorAuthentication',
   Totp: 'Totp',
   Passkey: 'Passkey',
-  Restriction: 'Restriction',
-  Course: 'Course',
-  Lesson: 'Lesson',
-  UserProgress: 'UserProgress',
-  DownloadLog: 'DownloadLog',
-  Subscription: 'Subscription',
-  Payment: 'Payment',
-  Receipt: 'Receipt',
-  UserPaymentMethod: 'UserPaymentMethod'
+  Restriction: 'Restriction'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -84,177 +83,6 @@ export const TransactionIsolationLevel = runtime.makeStrictEnum({
 } as const)
 
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
-
-
-export const UserScalarFieldEnum = {
-  id: 'id',
-  role: 'role',
-  points: 'points',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
-
-
-export const ProfileScalarFieldEnum = {
-  id: 'id',
-  username: 'username',
-  displayName: 'displayName',
-  avatar: 'avatar',
-  userId: 'userId'
-} as const
-
-export type ProfileScalarFieldEnum = (typeof ProfileScalarFieldEnum)[keyof typeof ProfileScalarFieldEnum]
-
-
-export const CredentialScalarFieldEnum = {
-  id: 'id',
-  provider: 'provider',
-  type: 'type',
-  identifier: 'identifier',
-  userId: 'userId',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type CredentialScalarFieldEnum = (typeof CredentialScalarFieldEnum)[keyof typeof CredentialScalarFieldEnum]
-
-
-export const PasswordHashScalarFieldEnum = {
-  hash: 'hash',
-  algorithm: 'algorithm',
-  version: 'version',
-  credentialId: 'credentialId'
-} as const
-
-export type PasswordHashScalarFieldEnum = (typeof PasswordHashScalarFieldEnum)[keyof typeof PasswordHashScalarFieldEnum]
-
-
-export const PasswordResetTokenScalarFieldEnum = {
-  id: 'id',
-  token: 'token',
-  status: 'status',
-  expiresAt: 'expiresAt',
-  credentialId: 'credentialId'
-} as const
-
-export type PasswordResetTokenScalarFieldEnum = (typeof PasswordResetTokenScalarFieldEnum)[keyof typeof PasswordResetTokenScalarFieldEnum]
-
-
-export const MultiFactorAuthenticationScalarFieldEnum = {
-  id: 'id',
-  recoveryCodes: 'recoveryCodes',
-  currentChallenge: 'currentChallenge',
-  totpId: 'totpId',
-  userId: 'userId',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type MultiFactorAuthenticationScalarFieldEnum = (typeof MultiFactorAuthenticationScalarFieldEnum)[keyof typeof MultiFactorAuthenticationScalarFieldEnum]
-
-
-export const TotpScalarFieldEnum = {
-  id: 'id',
-  status: 'status',
-  secret: 'secret',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type TotpScalarFieldEnum = (typeof TotpScalarFieldEnum)[keyof typeof TotpScalarFieldEnum]
-
-
-export const PasskeyScalarFieldEnum = {
-  id: 'id',
-  deviceName: 'deviceName',
-  credentialId: 'credentialId',
-  publicKey: 'publicKey',
-  counter: 'counter',
-  transports: 'transports',
-  lastUsedAt: 'lastUsedAt',
-  ip: 'ip',
-  userAgent: 'userAgent',
-  mfaId: 'mfaId',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type PasskeyScalarFieldEnum = (typeof PasskeyScalarFieldEnum)[keyof typeof PasskeyScalarFieldEnum]
-
-
-export const RestrictionScalarFieldEnum = {
-  id: 'id',
-  reason: 'reason',
-  until: 'until',
-  status: 'status',
-  userId: 'userId',
-  createdAt: 'createdAt'
-} as const
-
-export type RestrictionScalarFieldEnum = (typeof RestrictionScalarFieldEnum)[keyof typeof RestrictionScalarFieldEnum]
-
-
-export const CourseScalarFieldEnum = {
-  id: 'id',
-  title: 'title',
-  slug: 'slug',
-  shortDescription: 'shortDescription',
-  fullDescription: 'fullDescription',
-  thumbnail: 'thumbnail',
-  youtubeUrl: 'youtubeUrl',
-  attachment: 'attachment',
-  isPublished: 'isPublished',
-  views: 'views',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type CourseScalarFieldEnum = (typeof CourseScalarFieldEnum)[keyof typeof CourseScalarFieldEnum]
-
-
-export const LessonScalarFieldEnum = {
-  id: 'id',
-  title: 'title',
-  slug: 'slug',
-  description: 'description',
-  position: 'position',
-  kinescopeId: 'kinescopeId',
-  isPublished: 'isPublished',
-  courseId: 'courseId',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type LessonScalarFieldEnum = (typeof LessonScalarFieldEnum)[keyof typeof LessonScalarFieldEnum]
-
-
-export const UserProgressScalarFieldEnum = {
-  id: 'id',
-  isCompleted: 'isCompleted',
-  userId: 'userId',
-  lessonId: 'lessonId',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type UserProgressScalarFieldEnum = (typeof UserProgressScalarFieldEnum)[keyof typeof UserProgressScalarFieldEnum]
-
-
-export const DownloadLogScalarFieldEnum = {
-  id: 'id',
-  token: 'token',
-  ip: 'ip',
-  userAgent: 'userAgent',
-  downloadedAt: 'downloadedAt',
-  userId: 'userId',
-  courseId: 'courseId',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type DownloadLogScalarFieldEnum = (typeof DownloadLogScalarFieldEnum)[keyof typeof DownloadLogScalarFieldEnum]
 
 
 export const SubscriptionScalarFieldEnum = {
@@ -324,6 +152,168 @@ export const UserPaymentMethodScalarFieldEnum = {
 } as const
 
 export type UserPaymentMethodScalarFieldEnum = (typeof UserPaymentMethodScalarFieldEnum)[keyof typeof UserPaymentMethodScalarFieldEnum]
+
+
+export const CourseScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  slug: 'slug',
+  shortDescription: 'shortDescription',
+  fullDescription: 'fullDescription',
+  thumbnail: 'thumbnail',
+  youtubeUrl: 'youtubeUrl',
+  attachment: 'attachment',
+  isPublished: 'isPublished',
+  views: 'views',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CourseScalarFieldEnum = (typeof CourseScalarFieldEnum)[keyof typeof CourseScalarFieldEnum]
+
+
+export const LessonScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  slug: 'slug',
+  description: 'description',
+  position: 'position',
+  kinescopeId: 'kinescopeId',
+  isPublished: 'isPublished',
+  courseId: 'courseId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type LessonScalarFieldEnum = (typeof LessonScalarFieldEnum)[keyof typeof LessonScalarFieldEnum]
+
+
+export const UserProgressScalarFieldEnum = {
+  id: 'id',
+  isCompleted: 'isCompleted',
+  userId: 'userId',
+  lessonId: 'lessonId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type UserProgressScalarFieldEnum = (typeof UserProgressScalarFieldEnum)[keyof typeof UserProgressScalarFieldEnum]
+
+
+export const DownloadLogScalarFieldEnum = {
+  id: 'id',
+  token: 'token',
+  ip: 'ip',
+  userAgent: 'userAgent',
+  downloadedAt: 'downloadedAt',
+  userId: 'userId',
+  courseId: 'courseId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type DownloadLogScalarFieldEnum = (typeof DownloadLogScalarFieldEnum)[keyof typeof DownloadLogScalarFieldEnum]
+
+
+export const UserScalarFieldEnum = {
+  id: 'id',
+  username: 'username',
+  displayName: 'displayName',
+  avatar: 'avatar',
+  role: 'role',
+  points: 'points',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const CredentialScalarFieldEnum = {
+  id: 'id',
+  provider: 'provider',
+  type: 'type',
+  identifier: 'identifier',
+  userId: 'userId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CredentialScalarFieldEnum = (typeof CredentialScalarFieldEnum)[keyof typeof CredentialScalarFieldEnum]
+
+
+export const PasswordHashScalarFieldEnum = {
+  hash: 'hash',
+  algorithm: 'algorithm',
+  version: 'version',
+  credentialId: 'credentialId'
+} as const
+
+export type PasswordHashScalarFieldEnum = (typeof PasswordHashScalarFieldEnum)[keyof typeof PasswordHashScalarFieldEnum]
+
+
+export const PasswordResetTokenScalarFieldEnum = {
+  id: 'id',
+  token: 'token',
+  status: 'status',
+  expiresAt: 'expiresAt',
+  credentialId: 'credentialId'
+} as const
+
+export type PasswordResetTokenScalarFieldEnum = (typeof PasswordResetTokenScalarFieldEnum)[keyof typeof PasswordResetTokenScalarFieldEnum]
+
+
+export const MultiFactorAuthenticationScalarFieldEnum = {
+  id: 'id',
+  recoveryCodes: 'recoveryCodes',
+  totpId: 'totpId',
+  userId: 'userId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type MultiFactorAuthenticationScalarFieldEnum = (typeof MultiFactorAuthenticationScalarFieldEnum)[keyof typeof MultiFactorAuthenticationScalarFieldEnum]
+
+
+export const TotpScalarFieldEnum = {
+  id: 'id',
+  status: 'status',
+  secret: 'secret',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TotpScalarFieldEnum = (typeof TotpScalarFieldEnum)[keyof typeof TotpScalarFieldEnum]
+
+
+export const PasskeyScalarFieldEnum = {
+  id: 'id',
+  deviceName: 'deviceName',
+  credentialId: 'credentialId',
+  publicKey: 'publicKey',
+  counter: 'counter',
+  transports: 'transports',
+  lastUsedAt: 'lastUsedAt',
+  ip: 'ip',
+  userAgent: 'userAgent',
+  mfaId: 'mfaId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PasskeyScalarFieldEnum = (typeof PasskeyScalarFieldEnum)[keyof typeof PasskeyScalarFieldEnum]
+
+
+export const RestrictionScalarFieldEnum = {
+  id: 'id',
+  reason: 'reason',
+  until: 'until',
+  status: 'status',
+  userId: 'userId',
+  createdAt: 'createdAt'
+} as const
+
+export type RestrictionScalarFieldEnum = (typeof RestrictionScalarFieldEnum)[keyof typeof RestrictionScalarFieldEnum]
 
 
 export const SortOrder = {

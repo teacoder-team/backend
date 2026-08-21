@@ -1,24 +1,26 @@
-import { getClientIp } from '@/lib/utils/ip'
 import { Elysia } from 'elysia'
-import { login, register, verifyRegister } from './service'
+
+import { authCookie } from '@/plugins/auth-cookie'
+import { authGuard } from '@/plugins/auth-guard'
+import { requestContext } from '@/plugins/request-context'
 import {
 	AuthResponse,
 	LoginPayload,
+	MessageResponse,
 	RegisterPayload,
-	RegisterResponse,
 	VerifyRegisterPayload,
 } from './model'
-import { env } from '@/core/config/env'
+import { login, logout, register, verifyRegister } from './service'
 
-export const auth = new Elysia({
-	prefix: '/auth',
-	tags: ['Auth'],
-})
+export const auth = new Elysia({ prefix: '/auth', tags: ['Auth'] })
+	.use(requestContext)
+	.use(authCookie)
+	.use(authGuard)
 	.model({
 		RegisterPayload,
 		VerifyRegisterPayload,
 		LoginPayload,
-		RegisterResponse,
+		MessageResponse,
 		AuthResponse,
 	})
 	.post(
@@ -30,31 +32,19 @@ export const auth = new Elysia({
 		},
 		{
 			body: 'RegisterPayload',
-			response: 'RegisterResponse',
+			response: 'MessageResponse',
 			detail: {
 				summary: 'Initialize register',
-				description:
-					'Start the process of creating a new user account.',
+				description: 'Start the process of creating a new user account.',
 			},
 		},
 	)
 	.post(
 		'/verify',
-		async ({ body, request, cookie }) => {
-			const ip = getClientIp(request.headers)
-			const ua = request.headers.get('User-Agent') ?? 'Unknown'
+		async ({ body, ip, userAgent, authCookie }) => {
+			const { user, token } = await verifyRegister(body, { ip, userAgent })
 
-			const { user, token } = await verifyRegister(body, { ip, ua })
-
-			cookie.tc_token.set({
-				value: token,
-				httpOnly: true,
-				maxAge: env.COOKIE_MAX_AGE,
-				secure: env.COOKIE_SECURE,
-				domain: env.COOKIE_DOMAIN,
-				path: '/',
-				sameSite: env.COOKIE_SAMESITE,
-			})
+			authCookie.set(token)
 
 			return { id: user.id }
 		},
@@ -69,21 +59,10 @@ export const auth = new Elysia({
 	)
 	.post(
 		'/login',
-		async ({ body, request, cookie }) => {
-			const ip = getClientIp(request.headers)
-			const ua = request.headers.get('User-Agent') ?? 'Unknown'
+		async ({ body, ip, userAgent, authCookie }) => {
+			const { user, token } = await login(body, { ip, userAgent })
 
-			const { user, token } = await login(body, { ip, ua })
-
-			cookie.tc_token.set({
-				value: token,
-				httpOnly: true,
-				maxAge: env.COOKIE_MAX_AGE,
-				secure: env.COOKIE_SECURE,
-				domain: env.COOKIE_DOMAIN,
-				path: '/',
-				sameSite: env.COOKIE_SAMESITE,
-			})
+			authCookie.set(token)
 
 			return { id: user.id }
 		},
@@ -93,6 +72,25 @@ export const auth = new Elysia({
 			detail: {
 				summary: 'Login with email',
 				description: 'Authenticate and start a new session.',
+			},
+		},
+	)
+	.post(
+		'/logout',
+		async ({ session, authCookie }) => {
+			await logout(session.userId, session.id)
+
+			authCookie.clear()
+
+			return { message: 'Signed out' }
+		},
+		{
+			auth: true,
+			response: 'MessageResponse',
+			detail: {
+				summary: 'Logout',
+				description: 'Terminate the current session and clear the cookie.',
+				security: [{ bearerAuth: [] }],
 			},
 		},
 	)

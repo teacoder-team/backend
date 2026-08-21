@@ -18,15 +18,50 @@ export { Prisma }
 export * as $Enums from './enums.ts'
 export * from './enums.ts';
 /**
+ * Model Subscription
+ * 
+ */
+export type Subscription = Prisma.SubscriptionModel
+/**
+ * Model Payment
+ * 
+ */
+export type Payment = Prisma.PaymentModel
+/**
+ * Model Receipt
+ * 
+ */
+export type Receipt = Prisma.ReceiptModel
+/**
+ * Model UserPaymentMethod
+ * 
+ */
+export type UserPaymentMethod = Prisma.UserPaymentMethodModel
+/**
+ * Model Course
+ * 
+ */
+export type Course = Prisma.CourseModel
+/**
+ * Model Lesson
+ * 
+ */
+export type Lesson = Prisma.LessonModel
+/**
+ * Model UserProgress
+ * 
+ */
+export type UserProgress = Prisma.UserProgressModel
+/**
+ * Model DownloadLog
+ * 
+ */
+export type DownloadLog = Prisma.DownloadLogModel
+/**
  * Model User
  * 
  */
 export type User = Prisma.UserModel
-/**
- * Model Profile
- * 
- */
-export type Profile = Prisma.ProfileModel
 /**
  * Model Credential
  * 
@@ -62,43 +97,3 @@ export type Passkey = Prisma.PasskeyModel
  * 
  */
 export type Restriction = Prisma.RestrictionModel
-/**
- * Model Course
- * 
- */
-export type Course = Prisma.CourseModel
-/**
- * Model Lesson
- * 
- */
-export type Lesson = Prisma.LessonModel
-/**
- * Model UserProgress
- * 
- */
-export type UserProgress = Prisma.UserProgressModel
-/**
- * Model DownloadLog
- * 
- */
-export type DownloadLog = Prisma.DownloadLogModel
-/**
- * Model Subscription
- * 
- */
-export type Subscription = Prisma.SubscriptionModel
-/**
- * Model Payment
- * 
- */
-export type Payment = Prisma.PaymentModel
-/**
- * Model Receipt
- * 
- */
-export type Receipt = Prisma.ReceiptModel
-/**
- * Model UserPaymentMethod
- * 
- */
-export type UserPaymentMethod = Prisma.UserPaymentMethodModel
