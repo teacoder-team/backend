@@ -336,16 +336,6 @@ export type CredentialUncheckedUpdateManyInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type CredentialListRelationFilter = {
-  every?: Prisma.CredentialWhereInput
-  some?: Prisma.CredentialWhereInput
-  none?: Prisma.CredentialWhereInput
-}
-
-export type CredentialOrderByRelationAggregateInput = {
-  _count?: Prisma.SortOrder
-}
-
 export type CredentialProviderIdentifierCompoundUniqueInput = {
   provider: $Enums.AuthProvider
   identifier: string
@@ -384,6 +374,60 @@ export type CredentialMinOrderByAggregateInput = {
 export type CredentialScalarRelationFilter = {
   is?: Prisma.CredentialWhereInput
   isNot?: Prisma.CredentialWhereInput
+}
+
+export type CredentialListRelationFilter = {
+  every?: Prisma.CredentialWhereInput
+  some?: Prisma.CredentialWhereInput
+  none?: Prisma.CredentialWhereInput
+}
+
+export type CredentialOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
+}
+
+export type StringFieldUpdateOperationsInput = {
+  set?: string
+}
+
+export type EnumAuthProviderFieldUpdateOperationsInput = {
+  set?: $Enums.AuthProvider
+}
+
+export type EnumCredentialTypeFieldUpdateOperationsInput = {
+  set?: $Enums.CredentialType
+}
+
+export type DateTimeFieldUpdateOperationsInput = {
+  set?: Date | string
+}
+
+export type CredentialCreateNestedOneWithoutPasswordHashInput = {
+  create?: Prisma.XOR<Prisma.CredentialCreateWithoutPasswordHashInput, Prisma.CredentialUncheckedCreateWithoutPasswordHashInput>
+  connectOrCreate?: Prisma.CredentialCreateOrConnectWithoutPasswordHashInput
+  connect?: Prisma.CredentialWhereUniqueInput
+}
+
+export type CredentialUpdateOneRequiredWithoutPasswordHashNestedInput = {
+  create?: Prisma.XOR<Prisma.CredentialCreateWithoutPasswordHashInput, Prisma.CredentialUncheckedCreateWithoutPasswordHashInput>
+  connectOrCreate?: Prisma.CredentialCreateOrConnectWithoutPasswordHashInput
+  upsert?: Prisma.CredentialUpsertWithoutPasswordHashInput
+  connect?: Prisma.CredentialWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.CredentialUpdateToOneWithWhereWithoutPasswordHashInput, Prisma.CredentialUpdateWithoutPasswordHashInput>, Prisma.CredentialUncheckedUpdateWithoutPasswordHashInput>
+}
+
+export type CredentialCreateNestedOneWithoutResetTokensInput = {
+  create?: Prisma.XOR<Prisma.CredentialCreateWithoutResetTokensInput, Prisma.CredentialUncheckedCreateWithoutResetTokensInput>
+  connectOrCreate?: Prisma.CredentialCreateOrConnectWithoutResetTokensInput
+  connect?: Prisma.CredentialWhereUniqueInput
+}
+
+export type CredentialUpdateOneRequiredWithoutResetTokensNestedInput = {
+  create?: Prisma.XOR<Prisma.CredentialCreateWithoutResetTokensInput, Prisma.CredentialUncheckedCreateWithoutResetTokensInput>
+  connectOrCreate?: Prisma.CredentialCreateOrConnectWithoutResetTokensInput
+  upsert?: Prisma.CredentialUpsertWithoutResetTokensInput
+  connect?: Prisma.CredentialWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.CredentialUpdateToOneWithWhereWithoutResetTokensInput, Prisma.CredentialUpdateWithoutResetTokensInput>, Prisma.CredentialUncheckedUpdateWithoutResetTokensInput>
 }
 
 export type CredentialCreateNestedManyWithoutUserInput = {
@@ -426,103 +470,6 @@ export type CredentialUncheckedUpdateManyWithoutUserNestedInput = {
   update?: Prisma.CredentialUpdateWithWhereUniqueWithoutUserInput | Prisma.CredentialUpdateWithWhereUniqueWithoutUserInput[]
   updateMany?: Prisma.CredentialUpdateManyWithWhereWithoutUserInput | Prisma.CredentialUpdateManyWithWhereWithoutUserInput[]
   deleteMany?: Prisma.CredentialScalarWhereInput | Prisma.CredentialScalarWhereInput[]
-}
-
-export type EnumAuthProviderFieldUpdateOperationsInput = {
-  set?: $Enums.AuthProvider
-}
-
-export type EnumCredentialTypeFieldUpdateOperationsInput = {
-  set?: $Enums.CredentialType
-}
-
-export type CredentialCreateNestedOneWithoutPasswordHashInput = {
-  create?: Prisma.XOR<Prisma.CredentialCreateWithoutPasswordHashInput, Prisma.CredentialUncheckedCreateWithoutPasswordHashInput>
-  connectOrCreate?: Prisma.CredentialCreateOrConnectWithoutPasswordHashInput
-  connect?: Prisma.CredentialWhereUniqueInput
-}
-
-export type CredentialUpdateOneRequiredWithoutPasswordHashNestedInput = {
-  create?: Prisma.XOR<Prisma.CredentialCreateWithoutPasswordHashInput, Prisma.CredentialUncheckedCreateWithoutPasswordHashInput>
-  connectOrCreate?: Prisma.CredentialCreateOrConnectWithoutPasswordHashInput
-  upsert?: Prisma.CredentialUpsertWithoutPasswordHashInput
-  connect?: Prisma.CredentialWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.CredentialUpdateToOneWithWhereWithoutPasswordHashInput, Prisma.CredentialUpdateWithoutPasswordHashInput>, Prisma.CredentialUncheckedUpdateWithoutPasswordHashInput>
-}
-
-export type CredentialCreateNestedOneWithoutResetTokensInput = {
-  create?: Prisma.XOR<Prisma.CredentialCreateWithoutResetTokensInput, Prisma.CredentialUncheckedCreateWithoutResetTokensInput>
-  connectOrCreate?: Prisma.CredentialCreateOrConnectWithoutResetTokensInput
-  connect?: Prisma.CredentialWhereUniqueInput
-}
-
-export type CredentialUpdateOneRequiredWithoutResetTokensNestedInput = {
-  create?: Prisma.XOR<Prisma.CredentialCreateWithoutResetTokensInput, Prisma.CredentialUncheckedCreateWithoutResetTokensInput>
-  connectOrCreate?: Prisma.CredentialCreateOrConnectWithoutResetTokensInput
-  upsert?: Prisma.CredentialUpsertWithoutResetTokensInput
-  connect?: Prisma.CredentialWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.CredentialUpdateToOneWithWhereWithoutResetTokensInput, Prisma.CredentialUpdateWithoutResetTokensInput>, Prisma.CredentialUncheckedUpdateWithoutResetTokensInput>
-}
-
-export type CredentialCreateWithoutUserInput = {
-  id?: string
-  provider: $Enums.AuthProvider
-  type: $Enums.CredentialType
-  identifier: string
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  passwordHash?: Prisma.PasswordHashCreateNestedOneWithoutCredentialInput
-  resetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutCredentialInput
-}
-
-export type CredentialUncheckedCreateWithoutUserInput = {
-  id?: string
-  provider: $Enums.AuthProvider
-  type: $Enums.CredentialType
-  identifier: string
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  passwordHash?: Prisma.PasswordHashUncheckedCreateNestedOneWithoutCredentialInput
-  resetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutCredentialInput
-}
-
-export type CredentialCreateOrConnectWithoutUserInput = {
-  where: Prisma.CredentialWhereUniqueInput
-  create: Prisma.XOR<Prisma.CredentialCreateWithoutUserInput, Prisma.CredentialUncheckedCreateWithoutUserInput>
-}
-
-export type CredentialCreateManyUserInputEnvelope = {
-  data: Prisma.CredentialCreateManyUserInput | Prisma.CredentialCreateManyUserInput[]
-  skipDuplicates?: boolean
-}
-
-export type CredentialUpsertWithWhereUniqueWithoutUserInput = {
-  where: Prisma.CredentialWhereUniqueInput
-  update: Prisma.XOR<Prisma.CredentialUpdateWithoutUserInput, Prisma.CredentialUncheckedUpdateWithoutUserInput>
-  create: Prisma.XOR<Prisma.CredentialCreateWithoutUserInput, Prisma.CredentialUncheckedCreateWithoutUserInput>
-}
-
-export type CredentialUpdateWithWhereUniqueWithoutUserInput = {
-  where: Prisma.CredentialWhereUniqueInput
-  data: Prisma.XOR<Prisma.CredentialUpdateWithoutUserInput, Prisma.CredentialUncheckedUpdateWithoutUserInput>
-}
-
-export type CredentialUpdateManyWithWhereWithoutUserInput = {
-  where: Prisma.CredentialScalarWhereInput
-  data: Prisma.XOR<Prisma.CredentialUpdateManyMutationInput, Prisma.CredentialUncheckedUpdateManyWithoutUserInput>
-}
-
-export type CredentialScalarWhereInput = {
-  AND?: Prisma.CredentialScalarWhereInput | Prisma.CredentialScalarWhereInput[]
-  OR?: Prisma.CredentialScalarWhereInput[]
-  NOT?: Prisma.CredentialScalarWhereInput | Prisma.CredentialScalarWhereInput[]
-  id?: Prisma.StringFilter<"Credential"> | string
-  provider?: Prisma.EnumAuthProviderFilter<"Credential"> | $Enums.AuthProvider
-  type?: Prisma.EnumCredentialTypeFilter<"Credential"> | $Enums.CredentialType
-  identifier?: Prisma.StringFilter<"Credential"> | string
-  userId?: Prisma.StringFilter<"Credential"> | string
-  createdAt?: Prisma.DateTimeFilter<"Credential"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"Credential"> | Date | string
 }
 
 export type CredentialCreateWithoutPasswordHashInput = {
@@ -643,6 +590,67 @@ export type CredentialUncheckedUpdateWithoutResetTokensInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   passwordHash?: Prisma.PasswordHashUncheckedUpdateOneWithoutCredentialNestedInput
+}
+
+export type CredentialCreateWithoutUserInput = {
+  id?: string
+  provider: $Enums.AuthProvider
+  type: $Enums.CredentialType
+  identifier: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  passwordHash?: Prisma.PasswordHashCreateNestedOneWithoutCredentialInput
+  resetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutCredentialInput
+}
+
+export type CredentialUncheckedCreateWithoutUserInput = {
+  id?: string
+  provider: $Enums.AuthProvider
+  type: $Enums.CredentialType
+  identifier: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  passwordHash?: Prisma.PasswordHashUncheckedCreateNestedOneWithoutCredentialInput
+  resetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutCredentialInput
+}
+
+export type CredentialCreateOrConnectWithoutUserInput = {
+  where: Prisma.CredentialWhereUniqueInput
+  create: Prisma.XOR<Prisma.CredentialCreateWithoutUserInput, Prisma.CredentialUncheckedCreateWithoutUserInput>
+}
+
+export type CredentialCreateManyUserInputEnvelope = {
+  data: Prisma.CredentialCreateManyUserInput | Prisma.CredentialCreateManyUserInput[]
+  skipDuplicates?: boolean
+}
+
+export type CredentialUpsertWithWhereUniqueWithoutUserInput = {
+  where: Prisma.CredentialWhereUniqueInput
+  update: Prisma.XOR<Prisma.CredentialUpdateWithoutUserInput, Prisma.CredentialUncheckedUpdateWithoutUserInput>
+  create: Prisma.XOR<Prisma.CredentialCreateWithoutUserInput, Prisma.CredentialUncheckedCreateWithoutUserInput>
+}
+
+export type CredentialUpdateWithWhereUniqueWithoutUserInput = {
+  where: Prisma.CredentialWhereUniqueInput
+  data: Prisma.XOR<Prisma.CredentialUpdateWithoutUserInput, Prisma.CredentialUncheckedUpdateWithoutUserInput>
+}
+
+export type CredentialUpdateManyWithWhereWithoutUserInput = {
+  where: Prisma.CredentialScalarWhereInput
+  data: Prisma.XOR<Prisma.CredentialUpdateManyMutationInput, Prisma.CredentialUncheckedUpdateManyWithoutUserInput>
+}
+
+export type CredentialScalarWhereInput = {
+  AND?: Prisma.CredentialScalarWhereInput | Prisma.CredentialScalarWhereInput[]
+  OR?: Prisma.CredentialScalarWhereInput[]
+  NOT?: Prisma.CredentialScalarWhereInput | Prisma.CredentialScalarWhereInput[]
+  id?: Prisma.StringFilter<"Credential"> | string
+  provider?: Prisma.EnumAuthProviderFilter<"Credential"> | $Enums.AuthProvider
+  type?: Prisma.EnumCredentialTypeFilter<"Credential"> | $Enums.CredentialType
+  identifier?: Prisma.StringFilter<"Credential"> | string
+  userId?: Prisma.StringFilter<"Credential"> | string
+  createdAt?: Prisma.DateTimeFilter<"Credential"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Credential"> | Date | string
 }
 
 export type CredentialCreateManyUserInput = {

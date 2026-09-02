@@ -347,6 +347,11 @@ export type SubscriptionUncheckedUpdateManyInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
+export type SubscriptionNullableScalarRelationFilter = {
+  is?: Prisma.SubscriptionWhereInput | null
+  isNot?: Prisma.SubscriptionWhereInput | null
+}
+
 export type SubscriptionCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
@@ -378,27 +383,6 @@ export type SubscriptionMinOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-}
-
-export type SubscriptionNullableScalarRelationFilter = {
-  is?: Prisma.SubscriptionWhereInput | null
-  isNot?: Prisma.SubscriptionWhereInput | null
-}
-
-export type StringFieldUpdateOperationsInput = {
-  set?: string
-}
-
-export type BoolFieldUpdateOperationsInput = {
-  set?: boolean
-}
-
-export type DateTimeFieldUpdateOperationsInput = {
-  set?: Date | string
-}
-
-export type NullableDateTimeFieldUpdateOperationsInput = {
-  set?: Date | string | null
 }
 
 export type SubscriptionCreateNestedOneWithoutPaymentsInput = {

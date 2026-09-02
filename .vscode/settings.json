@@ -27,5 +27,6 @@
 	},
 	"terminal.integrated.defaultProfile.windows": "Bun PowerShell",
 	"terminal.integrated.defaultProfile.osx": "Bun Zsh",
-	"terminal.integrated.defaultProfile.linux": "Bun Bash"
+	"terminal.integrated.defaultProfile.linux": "Bun Bash",
+	"postman.settings.dotenv-detection-notification-visibility": false
 }

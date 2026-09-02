@@ -1,0 +1,41 @@
+model UserProgress {
+    id String @id @default(uuid())
+
+    isCompleted Boolean @default(false) @map("is_completed")
+
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId String @map("user_id")
+
+    lesson   Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+    lessonId String @map("lesson_id")
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@unique([userId, lessonId], map: "uq_user_progress_user_id_lesson_id")
+    @@index([userId, isCompleted], map: "ix_user_progress_user_id_is_completed")
+    @@map("user_progress")
+}
+
+model DownloadLog {
+    id String @id @default(uuid())
+
+    token String
+
+    ip        String?
+    userAgent String? @map("user_agent")
+
+    downloadedAt DateTime @default(now()) @map("downloaded_at")
+
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId String @map("user_id")
+
+    course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+    courseId String @map("course_id")
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@index([courseId, downloadedAt(sort: Desc)], map: "ix_download_logs_course_id_downloaded_at")
+    @@map("download_logs")
+}

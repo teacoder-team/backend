@@ -9,54 +9,6 @@
 * 🟢 You can import this file directly.
 */
 
-export const PaymentStatus = {
-  PENDING: 'PENDING',
-  SUCCESS: 'SUCCESS',
-  FAILED: 'FAILED'
-} as const
-
-export type PaymentStatus = (typeof PaymentStatus)[keyof typeof PaymentStatus]
-
-
-export const ReceiptStatus = {
-  PENDING: 'PENDING',
-  SUCCESS: 'SUCCESS',
-  FAILED: 'FAILED'
-} as const
-
-export type ReceiptStatus = (typeof ReceiptStatus)[keyof typeof ReceiptStatus]
-
-
-export const PaymentProvider = {
-  YOOKASSA: 'YOOKASSA',
-  ROBOKASSA: 'ROBOKASSA'
-} as const
-
-export type PaymentProvider = (typeof PaymentProvider)[keyof typeof PaymentProvider]
-
-
-export const PaymentMethod = {
-  BANK_CARD: 'BANK_CARD',
-  SBP: 'SBP',
-  T_PAY: 'T_PAY',
-  SBER_PAY: 'SBER_PAY',
-  YOOMONEY: 'YOOMONEY',
-  CRYPTO: 'CRYPTO',
-  INTERNATIONAL_CARD: 'INTERNATIONAL_CARD',
-  TELEGRAM_STARS: 'TELEGRAM_STARS'
-} as const
-
-export type PaymentMethod = (typeof PaymentMethod)[keyof typeof PaymentMethod]
-
-
-export const UserRole = {
-  STUDENT: 'STUDENT',
-  ADMIN: 'ADMIN'
-} as const
-
-export type UserRole = (typeof UserRole)[keyof typeof UserRole]
-
-
 export const AuthProvider = {
   EMAIL: 'EMAIL',
   GOOGLE: 'GOOGLE',
@@ -112,3 +64,51 @@ export const RestrictionStatus = {
 } as const
 
 export type RestrictionStatus = (typeof RestrictionStatus)[keyof typeof RestrictionStatus]
+
+
+export const PaymentStatus = {
+  PENDING: 'PENDING',
+  SUCCESS: 'SUCCESS',
+  FAILED: 'FAILED'
+} as const
+
+export type PaymentStatus = (typeof PaymentStatus)[keyof typeof PaymentStatus]
+
+
+export const ReceiptStatus = {
+  PENDING: 'PENDING',
+  SUCCESS: 'SUCCESS',
+  FAILED: 'FAILED'
+} as const
+
+export type ReceiptStatus = (typeof ReceiptStatus)[keyof typeof ReceiptStatus]
+
+
+export const PaymentProvider = {
+  YOOKASSA: 'YOOKASSA',
+  ROBOKASSA: 'ROBOKASSA'
+} as const
+
+export type PaymentProvider = (typeof PaymentProvider)[keyof typeof PaymentProvider]
+
+
+export const PaymentMethod = {
+  BANK_CARD: 'BANK_CARD',
+  SBP: 'SBP',
+  T_PAY: 'T_PAY',
+  SBER_PAY: 'SBER_PAY',
+  YOOMONEY: 'YOOMONEY',
+  CRYPTO: 'CRYPTO',
+  INTERNATIONAL_CARD: 'INTERNATIONAL_CARD',
+  TELEGRAM_STARS: 'TELEGRAM_STARS'
+} as const
+
+export type PaymentMethod = (typeof PaymentMethod)[keyof typeof PaymentMethod]
+
+
+export const UserRole = {
+  STUDENT: 'STUDENT',
+  ADMIN: 'ADMIN'
+} as const
+
+export type UserRole = (typeof UserRole)[keyof typeof UserRole]

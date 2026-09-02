@@ -9,13 +9,10 @@ import { QUEUE, queues } from '@/infra/queue/queues'
 import { startWorker } from '@/infra/queue/runner'
 import { connectRedis, disconnectRedis } from '@/infra/redis'
 import { emailJobs } from '@/modules/auth/jobs'
+import { maintenanceJobs, scheduleMaintenance } from '@/modules/session/jobs'
 
 let workers: Worker[] = []
 
-/**
- * Everything the process needs before it may accept traffic. A failure here is
- * fatal on purpose: a half-initialized instance serves wrong answers quietly.
- */
 export const bootstrap = async () => {
 	const startedAt = performance.now()
 
@@ -27,7 +24,12 @@ export const bootstrap = async () => {
 			warmDisposableEmails(),
 		])
 
-		workers = [startWorker(QUEUE.EMAIL, emailJobs)]
+		workers = [
+			startWorker(QUEUE.EMAIL, emailJobs),
+			startWorker(QUEUE.MAINTENANCE, maintenanceJobs),
+		]
+
+		await scheduleMaintenance()
 
 		verifyMailTransport().catch((err) => {
 			logger.error({ context: 'mail', err }, 'smtp_verification_failed')

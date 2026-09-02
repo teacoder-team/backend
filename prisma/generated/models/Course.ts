@@ -522,12 +522,12 @@ export type CourseScalarRelationFilter = {
   isNot?: Prisma.CourseWhereInput
 }
 
-export type IntFieldUpdateOperationsInput = {
-  set?: number
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
+export type NullableStringFieldUpdateOperationsInput = {
+  set?: string | null
+}
+
+export type BoolFieldUpdateOperationsInput = {
+  set?: boolean
 }
 
 export type CourseCreateNestedOneWithoutLessonsInput = {

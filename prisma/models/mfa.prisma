@@ -1,0 +1,64 @@
+model MultiFactorAuthentication {
+    id String @id @default(uuid())
+
+    recoveryCodes String[] @default([]) @map("recovery_codes")
+
+    passkeys Passkey[]
+
+    totp   Totp?   @relation(fields: [totpId], references: [id], onDelete: Cascade)
+    totpId String? @unique @map("totp_id")
+
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId String @unique @map("user_id")
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@map("multi_factor_authentication")
+}
+
+model Totp {
+    id String @id @default(uuid())
+
+    status TotpStatus @default(DISABLED)
+    secret String?
+
+    mfa MultiFactorAuthentication?
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@map("totps")
+}
+
+model Passkey {
+    id String @id @default(uuid())
+
+    deviceName String @map("device_name")
+
+    credentialId String   @unique @map("credential_id")
+    publicKey    String   @map("public_key")
+    counter      Int      @default(0)
+    transports   String[]
+
+    lastUsedAt DateTime? @map("last_used_at")
+
+    ip        String
+    userAgent String @map("user_agent")
+
+    mfa   MultiFactorAuthentication @relation(fields: [mfaId], references: [id], onDelete: Cascade)
+    mfaId String                    @map("mfa_id")
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@map("passkeys")
+}
+
+enum TotpStatus {
+    DISABLED
+    PENDING
+    ENABLED
+
+    @@map("totp_statuses")
+}

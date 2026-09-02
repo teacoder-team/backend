@@ -459,16 +459,6 @@ export type PaymentUncheckedUpdateManyInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type PaymentListRelationFilter = {
-  every?: Prisma.PaymentWhereInput
-  some?: Prisma.PaymentWhereInput
-  none?: Prisma.PaymentWhereInput
-}
-
-export type PaymentOrderByRelationAggregateInput = {
-  _count?: Prisma.SortOrder
-}
-
 export type PaymentCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   amount?: Prisma.SortOrder
@@ -525,46 +515,14 @@ export type PaymentScalarRelationFilter = {
   isNot?: Prisma.PaymentWhereInput
 }
 
-export type PaymentCreateNestedManyWithoutSubscriptionInput = {
-  create?: Prisma.XOR<Prisma.PaymentCreateWithoutSubscriptionInput, Prisma.PaymentUncheckedCreateWithoutSubscriptionInput> | Prisma.PaymentCreateWithoutSubscriptionInput[] | Prisma.PaymentUncheckedCreateWithoutSubscriptionInput[]
-  connectOrCreate?: Prisma.PaymentCreateOrConnectWithoutSubscriptionInput | Prisma.PaymentCreateOrConnectWithoutSubscriptionInput[]
-  createMany?: Prisma.PaymentCreateManySubscriptionInputEnvelope
-  connect?: Prisma.PaymentWhereUniqueInput | Prisma.PaymentWhereUniqueInput[]
+export type PaymentListRelationFilter = {
+  every?: Prisma.PaymentWhereInput
+  some?: Prisma.PaymentWhereInput
+  none?: Prisma.PaymentWhereInput
 }
 
-export type PaymentUncheckedCreateNestedManyWithoutSubscriptionInput = {
-  create?: Prisma.XOR<Prisma.PaymentCreateWithoutSubscriptionInput, Prisma.PaymentUncheckedCreateWithoutSubscriptionInput> | Prisma.PaymentCreateWithoutSubscriptionInput[] | Prisma.PaymentUncheckedCreateWithoutSubscriptionInput[]
-  connectOrCreate?: Prisma.PaymentCreateOrConnectWithoutSubscriptionInput | Prisma.PaymentCreateOrConnectWithoutSubscriptionInput[]
-  createMany?: Prisma.PaymentCreateManySubscriptionInputEnvelope
-  connect?: Prisma.PaymentWhereUniqueInput | Prisma.PaymentWhereUniqueInput[]
-}
-
-export type PaymentUpdateManyWithoutSubscriptionNestedInput = {
-  create?: Prisma.XOR<Prisma.PaymentCreateWithoutSubscriptionInput, Prisma.PaymentUncheckedCreateWithoutSubscriptionInput> | Prisma.PaymentCreateWithoutSubscriptionInput[] | Prisma.PaymentUncheckedCreateWithoutSubscriptionInput[]
-  connectOrCreate?: Prisma.PaymentCreateOrConnectWithoutSubscriptionInput | Prisma.PaymentCreateOrConnectWithoutSubscriptionInput[]
-  upsert?: Prisma.PaymentUpsertWithWhereUniqueWithoutSubscriptionInput | Prisma.PaymentUpsertWithWhereUniqueWithoutSubscriptionInput[]
-  createMany?: Prisma.PaymentCreateManySubscriptionInputEnvelope
-  set?: Prisma.PaymentWhereUniqueInput | Prisma.PaymentWhereUniqueInput[]
-  disconnect?: Prisma.PaymentWhereUniqueInput | Prisma.PaymentWhereUniqueInput[]
-  delete?: Prisma.PaymentWhereUniqueInput | Prisma.PaymentWhereUniqueInput[]
-  connect?: Prisma.PaymentWhereUniqueInput | Prisma.PaymentWhereUniqueInput[]
-  update?: Prisma.PaymentUpdateWithWhereUniqueWithoutSubscriptionInput | Prisma.PaymentUpdateWithWhereUniqueWithoutSubscriptionInput[]
-  updateMany?: Prisma.PaymentUpdateManyWithWhereWithoutSubscriptionInput | Prisma.PaymentUpdateManyWithWhereWithoutSubscriptionInput[]
-  deleteMany?: Prisma.PaymentScalarWhereInput | Prisma.PaymentScalarWhereInput[]
-}
-
-export type PaymentUncheckedUpdateManyWithoutSubscriptionNestedInput = {
-  create?: Prisma.XOR<Prisma.PaymentCreateWithoutSubscriptionInput, Prisma.PaymentUncheckedCreateWithoutSubscriptionInput> | Prisma.PaymentCreateWithoutSubscriptionInput[] | Prisma.PaymentUncheckedCreateWithoutSubscriptionInput[]
-  connectOrCreate?: Prisma.PaymentCreateOrConnectWithoutSubscriptionInput | Prisma.PaymentCreateOrConnectWithoutSubscriptionInput[]
-  upsert?: Prisma.PaymentUpsertWithWhereUniqueWithoutSubscriptionInput | Prisma.PaymentUpsertWithWhereUniqueWithoutSubscriptionInput[]
-  createMany?: Prisma.PaymentCreateManySubscriptionInputEnvelope
-  set?: Prisma.PaymentWhereUniqueInput | Prisma.PaymentWhereUniqueInput[]
-  disconnect?: Prisma.PaymentWhereUniqueInput | Prisma.PaymentWhereUniqueInput[]
-  delete?: Prisma.PaymentWhereUniqueInput | Prisma.PaymentWhereUniqueInput[]
-  connect?: Prisma.PaymentWhereUniqueInput | Prisma.PaymentWhereUniqueInput[]
-  update?: Prisma.PaymentUpdateWithWhereUniqueWithoutSubscriptionInput | Prisma.PaymentUpdateWithWhereUniqueWithoutSubscriptionInput[]
-  updateMany?: Prisma.PaymentUpdateManyWithWhereWithoutSubscriptionInput | Prisma.PaymentUpdateManyWithWhereWithoutSubscriptionInput[]
-  deleteMany?: Prisma.PaymentScalarWhereInput | Prisma.PaymentScalarWhereInput[]
+export type PaymentOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
 }
 
 export type FloatFieldUpdateOperationsInput = {
@@ -581,10 +539,6 @@ export type EnumPaymentStatusFieldUpdateOperationsInput = {
 
 export type EnumPaymentMethodFieldUpdateOperationsInput = {
   set?: $Enums.PaymentMethod
-}
-
-export type NullableStringFieldUpdateOperationsInput = {
-  set?: string | null
 }
 
 export type PaymentCreateNestedOneWithoutReceiptsInput = {
@@ -643,6 +597,48 @@ export type PaymentUncheckedUpdateManyWithoutPaymentMethodNestedInput = {
   deleteMany?: Prisma.PaymentScalarWhereInput | Prisma.PaymentScalarWhereInput[]
 }
 
+export type PaymentCreateNestedManyWithoutSubscriptionInput = {
+  create?: Prisma.XOR<Prisma.PaymentCreateWithoutSubscriptionInput, Prisma.PaymentUncheckedCreateWithoutSubscriptionInput> | Prisma.PaymentCreateWithoutSubscriptionInput[] | Prisma.PaymentUncheckedCreateWithoutSubscriptionInput[]
+  connectOrCreate?: Prisma.PaymentCreateOrConnectWithoutSubscriptionInput | Prisma.PaymentCreateOrConnectWithoutSubscriptionInput[]
+  createMany?: Prisma.PaymentCreateManySubscriptionInputEnvelope
+  connect?: Prisma.PaymentWhereUniqueInput | Prisma.PaymentWhereUniqueInput[]
+}
+
+export type PaymentUncheckedCreateNestedManyWithoutSubscriptionInput = {
+  create?: Prisma.XOR<Prisma.PaymentCreateWithoutSubscriptionInput, Prisma.PaymentUncheckedCreateWithoutSubscriptionInput> | Prisma.PaymentCreateWithoutSubscriptionInput[] | Prisma.PaymentUncheckedCreateWithoutSubscriptionInput[]
+  connectOrCreate?: Prisma.PaymentCreateOrConnectWithoutSubscriptionInput | Prisma.PaymentCreateOrConnectWithoutSubscriptionInput[]
+  createMany?: Prisma.PaymentCreateManySubscriptionInputEnvelope
+  connect?: Prisma.PaymentWhereUniqueInput | Prisma.PaymentWhereUniqueInput[]
+}
+
+export type PaymentUpdateManyWithoutSubscriptionNestedInput = {
+  create?: Prisma.XOR<Prisma.PaymentCreateWithoutSubscriptionInput, Prisma.PaymentUncheckedCreateWithoutSubscriptionInput> | Prisma.PaymentCreateWithoutSubscriptionInput[] | Prisma.PaymentUncheckedCreateWithoutSubscriptionInput[]
+  connectOrCreate?: Prisma.PaymentCreateOrConnectWithoutSubscriptionInput | Prisma.PaymentCreateOrConnectWithoutSubscriptionInput[]
+  upsert?: Prisma.PaymentUpsertWithWhereUniqueWithoutSubscriptionInput | Prisma.PaymentUpsertWithWhereUniqueWithoutSubscriptionInput[]
+  createMany?: Prisma.PaymentCreateManySubscriptionInputEnvelope
+  set?: Prisma.PaymentWhereUniqueInput | Prisma.PaymentWhereUniqueInput[]
+  disconnect?: Prisma.PaymentWhereUniqueInput | Prisma.PaymentWhereUniqueInput[]
+  delete?: Prisma.PaymentWhereUniqueInput | Prisma.PaymentWhereUniqueInput[]
+  connect?: Prisma.PaymentWhereUniqueInput | Prisma.PaymentWhereUniqueInput[]
+  update?: Prisma.PaymentUpdateWithWhereUniqueWithoutSubscriptionInput | Prisma.PaymentUpdateWithWhereUniqueWithoutSubscriptionInput[]
+  updateMany?: Prisma.PaymentUpdateManyWithWhereWithoutSubscriptionInput | Prisma.PaymentUpdateManyWithWhereWithoutSubscriptionInput[]
+  deleteMany?: Prisma.PaymentScalarWhereInput | Prisma.PaymentScalarWhereInput[]
+}
+
+export type PaymentUncheckedUpdateManyWithoutSubscriptionNestedInput = {
+  create?: Prisma.XOR<Prisma.PaymentCreateWithoutSubscriptionInput, Prisma.PaymentUncheckedCreateWithoutSubscriptionInput> | Prisma.PaymentCreateWithoutSubscriptionInput[] | Prisma.PaymentUncheckedCreateWithoutSubscriptionInput[]
+  connectOrCreate?: Prisma.PaymentCreateOrConnectWithoutSubscriptionInput | Prisma.PaymentCreateOrConnectWithoutSubscriptionInput[]
+  upsert?: Prisma.PaymentUpsertWithWhereUniqueWithoutSubscriptionInput | Prisma.PaymentUpsertWithWhereUniqueWithoutSubscriptionInput[]
+  createMany?: Prisma.PaymentCreateManySubscriptionInputEnvelope
+  set?: Prisma.PaymentWhereUniqueInput | Prisma.PaymentWhereUniqueInput[]
+  disconnect?: Prisma.PaymentWhereUniqueInput | Prisma.PaymentWhereUniqueInput[]
+  delete?: Prisma.PaymentWhereUniqueInput | Prisma.PaymentWhereUniqueInput[]
+  connect?: Prisma.PaymentWhereUniqueInput | Prisma.PaymentWhereUniqueInput[]
+  update?: Prisma.PaymentUpdateWithWhereUniqueWithoutSubscriptionInput | Prisma.PaymentUpdateWithWhereUniqueWithoutSubscriptionInput[]
+  updateMany?: Prisma.PaymentUpdateManyWithWhereWithoutSubscriptionInput | Prisma.PaymentUpdateManyWithWhereWithoutSubscriptionInput[]
+  deleteMany?: Prisma.PaymentScalarWhereInput | Prisma.PaymentScalarWhereInput[]
+}
+
 export type PaymentCreateNestedManyWithoutUserInput = {
   create?: Prisma.XOR<Prisma.PaymentCreateWithoutUserInput, Prisma.PaymentUncheckedCreateWithoutUserInput> | Prisma.PaymentCreateWithoutUserInput[] | Prisma.PaymentUncheckedCreateWithoutUserInput[]
   connectOrCreate?: Prisma.PaymentCreateOrConnectWithoutUserInput | Prisma.PaymentCreateOrConnectWithoutUserInput[]
@@ -683,80 +679,6 @@ export type PaymentUncheckedUpdateManyWithoutUserNestedInput = {
   update?: Prisma.PaymentUpdateWithWhereUniqueWithoutUserInput | Prisma.PaymentUpdateWithWhereUniqueWithoutUserInput[]
   updateMany?: Prisma.PaymentUpdateManyWithWhereWithoutUserInput | Prisma.PaymentUpdateManyWithWhereWithoutUserInput[]
   deleteMany?: Prisma.PaymentScalarWhereInput | Prisma.PaymentScalarWhereInput[]
-}
-
-export type PaymentCreateWithoutSubscriptionInput = {
-  id?: string
-  amount: number
-  currency: string
-  status?: $Enums.PaymentStatus
-  method: $Enums.PaymentMethod
-  providerPaymentId?: string | null
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  receipts?: Prisma.ReceiptCreateNestedManyWithoutPaymentInput
-  user: Prisma.UserCreateNestedOneWithoutPaymentsInput
-  paymentMethod?: Prisma.UserPaymentMethodCreateNestedOneWithoutPaymentsInput
-}
-
-export type PaymentUncheckedCreateWithoutSubscriptionInput = {
-  id?: string
-  amount: number
-  currency: string
-  status?: $Enums.PaymentStatus
-  method: $Enums.PaymentMethod
-  providerPaymentId?: string | null
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  userId: string
-  paymentMethodId?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  receipts?: Prisma.ReceiptUncheckedCreateNestedManyWithoutPaymentInput
-}
-
-export type PaymentCreateOrConnectWithoutSubscriptionInput = {
-  where: Prisma.PaymentWhereUniqueInput
-  create: Prisma.XOR<Prisma.PaymentCreateWithoutSubscriptionInput, Prisma.PaymentUncheckedCreateWithoutSubscriptionInput>
-}
-
-export type PaymentCreateManySubscriptionInputEnvelope = {
-  data: Prisma.PaymentCreateManySubscriptionInput | Prisma.PaymentCreateManySubscriptionInput[]
-  skipDuplicates?: boolean
-}
-
-export type PaymentUpsertWithWhereUniqueWithoutSubscriptionInput = {
-  where: Prisma.PaymentWhereUniqueInput
-  update: Prisma.XOR<Prisma.PaymentUpdateWithoutSubscriptionInput, Prisma.PaymentUncheckedUpdateWithoutSubscriptionInput>
-  create: Prisma.XOR<Prisma.PaymentCreateWithoutSubscriptionInput, Prisma.PaymentUncheckedCreateWithoutSubscriptionInput>
-}
-
-export type PaymentUpdateWithWhereUniqueWithoutSubscriptionInput = {
-  where: Prisma.PaymentWhereUniqueInput
-  data: Prisma.XOR<Prisma.PaymentUpdateWithoutSubscriptionInput, Prisma.PaymentUncheckedUpdateWithoutSubscriptionInput>
-}
-
-export type PaymentUpdateManyWithWhereWithoutSubscriptionInput = {
-  where: Prisma.PaymentScalarWhereInput
-  data: Prisma.XOR<Prisma.PaymentUpdateManyMutationInput, Prisma.PaymentUncheckedUpdateManyWithoutSubscriptionInput>
-}
-
-export type PaymentScalarWhereInput = {
-  AND?: Prisma.PaymentScalarWhereInput | Prisma.PaymentScalarWhereInput[]
-  OR?: Prisma.PaymentScalarWhereInput[]
-  NOT?: Prisma.PaymentScalarWhereInput | Prisma.PaymentScalarWhereInput[]
-  id?: Prisma.StringFilter<"Payment"> | string
-  amount?: Prisma.FloatFilter<"Payment"> | number
-  currency?: Prisma.StringFilter<"Payment"> | string
-  status?: Prisma.EnumPaymentStatusFilter<"Payment"> | $Enums.PaymentStatus
-  method?: Prisma.EnumPaymentMethodFilter<"Payment"> | $Enums.PaymentMethod
-  providerPaymentId?: Prisma.StringNullableFilter<"Payment"> | string | null
-  metadata?: Prisma.JsonNullableFilter<"Payment">
-  userId?: Prisma.StringFilter<"Payment"> | string
-  paymentMethodId?: Prisma.StringNullableFilter<"Payment"> | string | null
-  subscriptionId?: Prisma.StringNullableFilter<"Payment"> | string | null
-  createdAt?: Prisma.DateTimeFilter<"Payment"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"Payment"> | Date | string
 }
 
 export type PaymentCreateWithoutReceiptsInput = {
@@ -891,6 +813,80 @@ export type PaymentUpdateManyWithWhereWithoutPaymentMethodInput = {
   data: Prisma.XOR<Prisma.PaymentUpdateManyMutationInput, Prisma.PaymentUncheckedUpdateManyWithoutPaymentMethodInput>
 }
 
+export type PaymentScalarWhereInput = {
+  AND?: Prisma.PaymentScalarWhereInput | Prisma.PaymentScalarWhereInput[]
+  OR?: Prisma.PaymentScalarWhereInput[]
+  NOT?: Prisma.PaymentScalarWhereInput | Prisma.PaymentScalarWhereInput[]
+  id?: Prisma.StringFilter<"Payment"> | string
+  amount?: Prisma.FloatFilter<"Payment"> | number
+  currency?: Prisma.StringFilter<"Payment"> | string
+  status?: Prisma.EnumPaymentStatusFilter<"Payment"> | $Enums.PaymentStatus
+  method?: Prisma.EnumPaymentMethodFilter<"Payment"> | $Enums.PaymentMethod
+  providerPaymentId?: Prisma.StringNullableFilter<"Payment"> | string | null
+  metadata?: Prisma.JsonNullableFilter<"Payment">
+  userId?: Prisma.StringFilter<"Payment"> | string
+  paymentMethodId?: Prisma.StringNullableFilter<"Payment"> | string | null
+  subscriptionId?: Prisma.StringNullableFilter<"Payment"> | string | null
+  createdAt?: Prisma.DateTimeFilter<"Payment"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Payment"> | Date | string
+}
+
+export type PaymentCreateWithoutSubscriptionInput = {
+  id?: string
+  amount: number
+  currency: string
+  status?: $Enums.PaymentStatus
+  method: $Enums.PaymentMethod
+  providerPaymentId?: string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  receipts?: Prisma.ReceiptCreateNestedManyWithoutPaymentInput
+  user: Prisma.UserCreateNestedOneWithoutPaymentsInput
+  paymentMethod?: Prisma.UserPaymentMethodCreateNestedOneWithoutPaymentsInput
+}
+
+export type PaymentUncheckedCreateWithoutSubscriptionInput = {
+  id?: string
+  amount: number
+  currency: string
+  status?: $Enums.PaymentStatus
+  method: $Enums.PaymentMethod
+  providerPaymentId?: string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  userId: string
+  paymentMethodId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  receipts?: Prisma.ReceiptUncheckedCreateNestedManyWithoutPaymentInput
+}
+
+export type PaymentCreateOrConnectWithoutSubscriptionInput = {
+  where: Prisma.PaymentWhereUniqueInput
+  create: Prisma.XOR<Prisma.PaymentCreateWithoutSubscriptionInput, Prisma.PaymentUncheckedCreateWithoutSubscriptionInput>
+}
+
+export type PaymentCreateManySubscriptionInputEnvelope = {
+  data: Prisma.PaymentCreateManySubscriptionInput | Prisma.PaymentCreateManySubscriptionInput[]
+  skipDuplicates?: boolean
+}
+
+export type PaymentUpsertWithWhereUniqueWithoutSubscriptionInput = {
+  where: Prisma.PaymentWhereUniqueInput
+  update: Prisma.XOR<Prisma.PaymentUpdateWithoutSubscriptionInput, Prisma.PaymentUncheckedUpdateWithoutSubscriptionInput>
+  create: Prisma.XOR<Prisma.PaymentCreateWithoutSubscriptionInput, Prisma.PaymentUncheckedCreateWithoutSubscriptionInput>
+}
+
+export type PaymentUpdateWithWhereUniqueWithoutSubscriptionInput = {
+  where: Prisma.PaymentWhereUniqueInput
+  data: Prisma.XOR<Prisma.PaymentUpdateWithoutSubscriptionInput, Prisma.PaymentUncheckedUpdateWithoutSubscriptionInput>
+}
+
+export type PaymentUpdateManyWithWhereWithoutSubscriptionInput = {
+  where: Prisma.PaymentScalarWhereInput
+  data: Prisma.XOR<Prisma.PaymentUpdateManyMutationInput, Prisma.PaymentUncheckedUpdateManyWithoutSubscriptionInput>
+}
+
 export type PaymentCreateWithoutUserInput = {
   id?: string
   amount: number
@@ -947,64 +943,6 @@ export type PaymentUpdateManyWithWhereWithoutUserInput = {
   data: Prisma.XOR<Prisma.PaymentUpdateManyMutationInput, Prisma.PaymentUncheckedUpdateManyWithoutUserInput>
 }
 
-export type PaymentCreateManySubscriptionInput = {
-  id?: string
-  amount: number
-  currency: string
-  status?: $Enums.PaymentStatus
-  method: $Enums.PaymentMethod
-  providerPaymentId?: string | null
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  userId: string
-  paymentMethodId?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-}
-
-export type PaymentUpdateWithoutSubscriptionInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  amount?: Prisma.FloatFieldUpdateOperationsInput | number
-  currency?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
-  method?: Prisma.EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
-  providerPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  receipts?: Prisma.ReceiptUpdateManyWithoutPaymentNestedInput
-  user?: Prisma.UserUpdateOneRequiredWithoutPaymentsNestedInput
-  paymentMethod?: Prisma.UserPaymentMethodUpdateOneWithoutPaymentsNestedInput
-}
-
-export type PaymentUncheckedUpdateWithoutSubscriptionInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  amount?: Prisma.FloatFieldUpdateOperationsInput | number
-  currency?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
-  method?: Prisma.EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
-  providerPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
-  paymentMethodId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  receipts?: Prisma.ReceiptUncheckedUpdateManyWithoutPaymentNestedInput
-}
-
-export type PaymentUncheckedUpdateManyWithoutSubscriptionInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  amount?: Prisma.FloatFieldUpdateOperationsInput | number
-  currency?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
-  method?: Prisma.EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
-  providerPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
-  paymentMethodId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-}
-
 export type PaymentCreateManyPaymentMethodInput = {
   id?: string
   amount: number
@@ -1059,6 +997,64 @@ export type PaymentUncheckedUpdateManyWithoutPaymentMethodInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   subscriptionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type PaymentCreateManySubscriptionInput = {
+  id?: string
+  amount: number
+  currency: string
+  status?: $Enums.PaymentStatus
+  method: $Enums.PaymentMethod
+  providerPaymentId?: string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  userId: string
+  paymentMethodId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type PaymentUpdateWithoutSubscriptionInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  amount?: Prisma.FloatFieldUpdateOperationsInput | number
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+  method?: Prisma.EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
+  providerPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  receipts?: Prisma.ReceiptUpdateManyWithoutPaymentNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutPaymentsNestedInput
+  paymentMethod?: Prisma.UserPaymentMethodUpdateOneWithoutPaymentsNestedInput
+}
+
+export type PaymentUncheckedUpdateWithoutSubscriptionInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  amount?: Prisma.FloatFieldUpdateOperationsInput | number
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+  method?: Prisma.EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
+  providerPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  paymentMethodId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  receipts?: Prisma.ReceiptUncheckedUpdateManyWithoutPaymentNestedInput
+}
+
+export type PaymentUncheckedUpdateManyWithoutSubscriptionInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  amount?: Prisma.FloatFieldUpdateOperationsInput | number
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+  method?: Prisma.EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
+  providerPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  paymentMethodId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }

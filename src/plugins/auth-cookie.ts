@@ -13,7 +13,6 @@ const COOKIE_OPTIONS = {
 	maxAge: env.SESSION_TTL,
 } as const
 
-/** One definition of the session cookie, shared by every route that sets it. */
 export const authCookie = new Elysia({ name: 'auth-cookie' }).derive(
 	{ as: 'global' },
 	({ cookie }) => ({

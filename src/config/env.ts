@@ -1,5 +1,20 @@
-import { Type as t, type Static } from '@sinclair/typebox'
+import { FormatRegistry, Type as t, type Static } from '@sinclair/typebox'
 import { Value } from '@sinclair/typebox/value'
+
+/**
+ * TypeBox only knows the formats that were registered with it. Elysia
+ * registers its own set, but config is the bottom layer and must not depend
+ * on anything above it having been imported first.
+ */
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+if (!FormatRegistry.Has('email')) {
+	FormatRegistry.Set('email', (value) => EMAIL_PATTERN.test(value))
+}
+
+if (!FormatRegistry.Has('uri')) {
+	FormatRegistry.Set('uri', (value) => URL.canParse(value))
+}
 
 const envSchema = t.Object({
 	NODE_ENV: t.Union(
@@ -38,6 +53,7 @@ const envSchema = t.Object({
 		{ default: 'lax' },
 	),
 	SESSION_TTL: t.Number({ default: 60 * 60 * 24 * 30 }),
+	SESSION_CACHE_TTL: t.Number({ default: 15 * 60 }),
 
 	DATABASE_URL: t.String(),
 	REDIS_URL: t.String(),

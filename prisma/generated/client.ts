@@ -31,8 +31,8 @@ export * from "./enums.ts"
  * const prisma = new PrismaClient({
  *   adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL })
  * })
- * // Fetch zero or more Subscriptions
- * const subscriptions = await prisma.subscription.findMany()
+ * // Fetch zero or more Credentials
+ * const credentials = await prisma.credential.findMany()
  * ```
  * 
  * Read more in our [docs](https://pris.ly/d/client).
@@ -41,51 +41,6 @@ export const PrismaClient = $Class.getPrismaClientClass()
 export type PrismaClient<LogOpts extends Prisma.LogLevel = never, OmitOpts extends Prisma.PrismaClientOptions["omit"] = Prisma.PrismaClientOptions["omit"], ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = $Class.PrismaClient<LogOpts, OmitOpts, ExtArgs>
 export { Prisma }
 
-/**
- * Model Subscription
- * 
- */
-export type Subscription = Prisma.SubscriptionModel
-/**
- * Model Payment
- * 
- */
-export type Payment = Prisma.PaymentModel
-/**
- * Model Receipt
- * 
- */
-export type Receipt = Prisma.ReceiptModel
-/**
- * Model UserPaymentMethod
- * 
- */
-export type UserPaymentMethod = Prisma.UserPaymentMethodModel
-/**
- * Model Course
- * 
- */
-export type Course = Prisma.CourseModel
-/**
- * Model Lesson
- * 
- */
-export type Lesson = Prisma.LessonModel
-/**
- * Model UserProgress
- * 
- */
-export type UserProgress = Prisma.UserProgressModel
-/**
- * Model DownloadLog
- * 
- */
-export type DownloadLog = Prisma.DownloadLogModel
-/**
- * Model User
- * 
- */
-export type User = Prisma.UserModel
 /**
  * Model Credential
  * 
@@ -101,6 +56,16 @@ export type PasswordHash = Prisma.PasswordHashModel
  * 
  */
 export type PasswordResetToken = Prisma.PasswordResetTokenModel
+/**
+ * Model Course
+ * 
+ */
+export type Course = Prisma.CourseModel
+/**
+ * Model Lesson
+ * 
+ */
+export type Lesson = Prisma.LessonModel
 /**
  * Model MultiFactorAuthentication
  * 
@@ -121,3 +86,44 @@ export type Passkey = Prisma.PasskeyModel
  * 
  */
 export type Restriction = Prisma.RestrictionModel
+/**
+ * Model Payment
+ * 
+ */
+export type Payment = Prisma.PaymentModel
+/**
+ * Model Receipt
+ * 
+ */
+export type Receipt = Prisma.ReceiptModel
+/**
+ * Model UserPaymentMethod
+ * 
+ */
+export type UserPaymentMethod = Prisma.UserPaymentMethodModel
+/**
+ * Model UserProgress
+ * 
+ */
+export type UserProgress = Prisma.UserProgressModel
+/**
+ * Model DownloadLog
+ * 
+ */
+export type DownloadLog = Prisma.DownloadLogModel
+/**
+ * Model Session
+ * Authenticated sessions. This table is the source of truth: Redis only
+ * caches rows for the hot lookup on every authenticated request.
+ */
+export type Session = Prisma.SessionModel
+/**
+ * Model Subscription
+ * 
+ */
+export type Subscription = Prisma.SubscriptionModel
+/**
+ * Model User
+ * 
+ */
+export type User = Prisma.UserModel

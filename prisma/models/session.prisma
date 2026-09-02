@@ -1,0 +1,25 @@
+model Session {
+    id String @id @default(uuid())
+
+    ip        String
+    userAgent String @map("user_agent")
+
+    country String?
+    city    String?
+    browser String?
+    os      String?
+    device  String?
+
+    lastSeenAt DateTime  @default(now()) @map("last_seen_at")
+    expiresAt  DateTime  @map("expires_at")
+    revokedAt  DateTime? @map("revoked_at")
+
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId String @map("user_id")
+
+    createdAt DateTime @default(now()) @map("created_at")
+
+    @@index([userId, revokedAt, expiresAt], map: "ix_sessions_user_id_revoked_at_expires_at")
+    @@index([expiresAt], map: "ix_sessions_expires_at")
+    @@map("sessions")
+}

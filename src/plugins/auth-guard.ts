@@ -1,6 +1,6 @@
 import { Elysia } from 'elysia'
 
-import { findSession } from '@/modules/session/repository'
+import { resolveSession } from '@/modules/session/service'
 import { ErrorCode, UnauthorizedError } from '@/shared/errors'
 import { verifyToken } from '@/shared/security/token'
 import { SESSION_COOKIE } from './auth-cookie'
@@ -34,7 +34,7 @@ export const authGuard = new Elysia({ name: 'auth-guard' }).macro({
 			if (!token) throw new UnauthorizedError('Authentication required')
 
 			const payload = verifyToken(token)
-			const session = await findSession(payload.sid)
+			const session = await resolveSession(payload.sid)
 
 			if (!session || session.userId !== payload.sub) {
 				throw new UnauthorizedError(

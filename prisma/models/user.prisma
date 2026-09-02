@@ -8,16 +8,18 @@ model User {
     role   UserRole @default(STUDENT)
     points Int      @default(0)
 
-    credentials  Credential[]
-    subscription Subscription?
+    credentials Credential[]
+    sessions    Session[]
 
     mfa          MultiFactorAuthentication?
     restrictions Restriction[]
 
-    userProgresses     UserProgress[]
-    downloadLogs       DownloadLog[]
+    subscription       Subscription?
     payments           Payment[]
     userPaymentMethods UserPaymentMethod[]
+
+    userProgresses UserProgress[]
+    downloadLogs   DownloadLog[]
 
     createdAt DateTime @default(now()) @map("created_at")
     updatedAt DateTime @updatedAt @map("updated_at")
@@ -25,177 +27,9 @@ model User {
     @@map("users")
 }
 
-model Credential {
-    id String @id @default(uuid())
-
-    provider AuthProvider
-    type     CredentialType
-
-    identifier String
-
-    passwordHash PasswordHash?
-    resetTokens  PasswordResetToken[]
-
-    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId String @map("user_id")
-
-    createdAt DateTime @default(now()) @map("created_at")
-    updatedAt DateTime @updatedAt @map("updated_at")
-
-    @@unique([provider, identifier], map: "uq_credentials_provider_identifier")
-    @@index([userId], map: "ix_credentials_user_id")
-    @@map("credentials")
-}
-
-model PasswordHash {
-    hash      String
-    algorithm String
-    version   Int
-
-    credential   Credential @relation(fields: [credentialId], references: [id], onDelete: Cascade)
-    credentialId String     @id @map("credential_id")
-
-    @@map("password_hashes")
-}
-
-model PasswordResetToken {
-    id String @id @default(uuid())
-
-    token     String              @unique
-    status    PasswordResetStatus @default(PENDING)
-    expiresAt DateTime            @map("expires_at")
-
-    credential   Credential @relation(fields: [credentialId], references: [id], onDelete: Cascade)
-    credentialId String     @map("credential_id")
-
-    @@index([status, expiresAt], map: "ix_password_reset_tokens_status_expires_at")
-    @@map("password_reset_tokens")
-}
-
-model MultiFactorAuthentication {
-    id String @id @default(uuid())
-
-    recoveryCodes String[] @default([]) @map("recovery_codes")
-
-    passkeys Passkey[]
-
-    totp   Totp?   @relation(fields: [totpId], references: [id], onDelete: Cascade)
-    totpId String? @unique @map("totp_id")
-
-    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId String @unique @map("user_id")
-
-    createdAt DateTime @default(now()) @map("created_at")
-    updatedAt DateTime @updatedAt @map("updated_at")
-
-    @@map("multi_factor_authentication")
-}
-
-model Totp {
-    id String @id @default(uuid())
-
-    status TotpStatus @default(DISABLED)
-    secret String?
-
-    mfa MultiFactorAuthentication?
-
-    createdAt DateTime @default(now()) @map("created_at")
-    updatedAt DateTime @updatedAt @map("updated_at")
-
-    @@map("totps")
-}
-
-model Passkey {
-    id String @id @default(uuid())
-
-    deviceName String @map("device_name")
-
-    credentialId String   @unique @map("credential_id")
-    publicKey    String   @map("public_key")
-    counter      Int      @default(0)
-    transports   String[]
-
-    lastUsedAt DateTime? @map("last_used_at")
-
-    ip        String
-    userAgent String @map("user_agent")
-
-    mfa   MultiFactorAuthentication @relation(fields: [mfaId], references: [id], onDelete: Cascade)
-    mfaId String                    @map("mfa_id")
-
-    createdAt DateTime @default(now()) @map("created_at")
-    updatedAt DateTime @updatedAt @map("updated_at")
-
-    @@map("passkeys")
-}
-
-model Restriction {
-    id String @id @default(uuid())
-
-    reason RestrictionReason
-    until  DateTime?
-
-    status RestrictionStatus @default(ACTIVE)
-
-    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId String @map("user_id")
-
-    createdAt DateTime @default(now()) @map("created_at")
-
-    @@index([userId, status], map: "ix_restrictions_user_id_status")
-    @@map("restrictions")
-}
-
 enum UserRole {
     STUDENT
     ADMIN
 
     @@map("user_roles")
-}
-
-enum AuthProvider {
-    EMAIL
-    GOOGLE
-    GITHUB
-    DISCORD
-    TELEGRAM
-    YANDEX
-    GITLAB
-
-    @@map("account_providers")
-}
-
-enum CredentialType {
-    PASSWORD
-    OAUTH
-}
-
-enum PasswordResetStatus {
-    PENDING
-    USED
-    EXPIRED
-}
-
-enum TotpStatus {
-    DISABLED
-    PENDING
-    ENABLED
-
-    @@map("totp_statuses")
-}
-
-enum RestrictionReason {
-    INAPPROPRIATE_USERNAME
-    SPAM
-    OFFENSIVE_BEHAVIOR
-
-    @@map("restriction_reasons")
-}
-
-enum RestrictionStatus {
-    ACTIVE
-    EXPIRED
-    CANCELED
-
-    @@map("restriction_statuses")
 }

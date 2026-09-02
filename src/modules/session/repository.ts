@@ -1,81 +1,80 @@
-import { env } from '@/config/env'
-import { redis } from '@/infra/redis'
+import type { Prisma, Session } from '@prisma/generated/client'
 
-export interface StoredSession {
-	id: string
+import { db } from '@/infra/db'
+
+/**
+ * PostgreSQL is the source of truth for sessions. Nothing in here knows about
+ * the cache — see `./cache.ts` for the read path used on every request.
+ */
+
+/** A session that has neither been revoked nor reached its expiry. */
+const active = (now: Date): Prisma.SessionWhereInput => ({
+	revokedAt: null,
+	expiresAt: { gt: now },
+})
+
+export interface NewSession {
 	userId: string
 	ip: string
-	country: string
-	city: string
-	browser: string
-	os: string
-	device: string
-	createdAt: string
+	userAgent: string
+	country: string | null
+	city: string | null
+	browser: string | null
+	os: string | null
+	device: string | null
+	expiresAt: Date
 }
 
-const sessionKey = (sessionId: string) => `session:${sessionId}`
-const userIndexKey = (userId: string) => `session:user:${userId}`
+export const insertSession = (data: NewSession): Promise<Session> =>
+	db.session.create({ data })
 
-export const saveSession = async (session: StoredSession) => {
-	await redis
-		.multi()
-		.set(
-			sessionKey(session.id),
-			JSON.stringify(session),
-			'EX',
-			env.SESSION_TTL,
-		)
-		.sadd(userIndexKey(session.userId), session.id)
-		.expire(userIndexKey(session.userId), env.SESSION_TTL)
-		.exec()
-}
+export const findActiveSession = (sessionId: string) =>
+	db.session.findFirst({ where: { id: sessionId, ...active(new Date()) } })
 
-export const findSession = async (
-	sessionId: string,
-): Promise<StoredSession | null> => {
-	const raw = await redis.get(sessionKey(sessionId))
-
-	return raw ? (JSON.parse(raw) as StoredSession) : null
-}
-
-export const listSessions = async (
-	userId: string,
-): Promise<StoredSession[]> => {
-	const ids = await redis.smembers(userIndexKey(userId))
-	if (!ids.length) return []
-
-	const records = await redis.mget(ids.map(sessionKey))
-
-	const sessions: StoredSession[] = []
-	const expired: string[] = []
-
-	records.forEach((raw, index) => {
-		if (raw) sessions.push(JSON.parse(raw) as StoredSession)
-		else expired.push(ids[index] as string)
+export const listActiveSessions = (userId: string) =>
+	db.session.findMany({
+		where: { userId, ...active(new Date()) },
+		orderBy: { lastSeenAt: 'desc' },
 	})
 
-	// Session keys expire on their own; the index would keep their ids forever.
-	// Session keys expire on their own; the index would keep their ids forever.
-	if (expired.length) await redis.srem(userIndexKey(userId), ...expired)
+export const listActiveSessionIds = async (userId: string) => {
+	const sessions = await db.session.findMany({
+		where: { userId, ...active(new Date()) },
+		select: { id: true },
+	})
 
-	return sessions
+	return sessions.map(({ id }) => id)
 }
 
-export const deleteSession = async (userId: string, sessionId: string) => {
-	const result = await redis
-		.multi()
-		.del(sessionKey(sessionId))
-		.srem(userIndexKey(userId), sessionId)
-		.exec()
+/** Scoped by `userId` so one user can never revoke another user's session. */
+export const revokeSessionById = async (userId: string, sessionId: string) => {
+	const { count } = await db.session.updateMany({
+		where: { id: sessionId, userId, ...active(new Date()) },
+		data: { revokedAt: new Date() },
+	})
 
-	return Number(result?.[0]?.[1] ?? 0) > 0
+	return count
 }
 
-export const deleteAllSessions = async (userId: string) => {
-	const ids = await redis.smembers(userIndexKey(userId))
-	if (!ids.length) return 0
+export const revokeSessionsByUser = async (userId: string) => {
+	const { count } = await db.session.updateMany({
+		where: { userId, ...active(new Date()) },
+		data: { revokedAt: new Date() },
+	})
 
-	await redis.del(...ids.map(sessionKey), userIndexKey(userId))
+	return count
+}
 
-	return ids.length
+export const touchSession = (sessionId: string, lastSeenAt: Date) =>
+	db.session.update({ where: { id: sessionId }, data: { lastSeenAt } })
+
+/** Rows are kept past their expiry for a while so the user can audit history. */
+export const deleteSessionsDeadBefore = async (cutoff: Date) => {
+	const { count } = await db.session.deleteMany({
+		where: {
+			OR: [{ expiresAt: { lt: cutoff } }, { revokedAt: { lt: cutoff } }],
+		},
+	})
+
+	return count
 }

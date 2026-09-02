@@ -307,11 +307,6 @@ export type MultiFactorAuthenticationUncheckedUpdateManyInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type MultiFactorAuthenticationNullableScalarRelationFilter = {
-  is?: Prisma.MultiFactorAuthenticationWhereInput | null
-  isNot?: Prisma.MultiFactorAuthenticationWhereInput | null
-}
-
 export type StringNullableListFilter<$PrismaModel = never> = {
   equals?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel> | null
   has?: string | Prisma.StringFieldRefInput<$PrismaModel> | null
@@ -345,41 +340,14 @@ export type MultiFactorAuthenticationMinOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
 }
 
+export type MultiFactorAuthenticationNullableScalarRelationFilter = {
+  is?: Prisma.MultiFactorAuthenticationWhereInput | null
+  isNot?: Prisma.MultiFactorAuthenticationWhereInput | null
+}
+
 export type MultiFactorAuthenticationScalarRelationFilter = {
   is?: Prisma.MultiFactorAuthenticationWhereInput
   isNot?: Prisma.MultiFactorAuthenticationWhereInput
-}
-
-export type MultiFactorAuthenticationCreateNestedOneWithoutUserInput = {
-  create?: Prisma.XOR<Prisma.MultiFactorAuthenticationCreateWithoutUserInput, Prisma.MultiFactorAuthenticationUncheckedCreateWithoutUserInput>
-  connectOrCreate?: Prisma.MultiFactorAuthenticationCreateOrConnectWithoutUserInput
-  connect?: Prisma.MultiFactorAuthenticationWhereUniqueInput
-}
-
-export type MultiFactorAuthenticationUncheckedCreateNestedOneWithoutUserInput = {
-  create?: Prisma.XOR<Prisma.MultiFactorAuthenticationCreateWithoutUserInput, Prisma.MultiFactorAuthenticationUncheckedCreateWithoutUserInput>
-  connectOrCreate?: Prisma.MultiFactorAuthenticationCreateOrConnectWithoutUserInput
-  connect?: Prisma.MultiFactorAuthenticationWhereUniqueInput
-}
-
-export type MultiFactorAuthenticationUpdateOneWithoutUserNestedInput = {
-  create?: Prisma.XOR<Prisma.MultiFactorAuthenticationCreateWithoutUserInput, Prisma.MultiFactorAuthenticationUncheckedCreateWithoutUserInput>
-  connectOrCreate?: Prisma.MultiFactorAuthenticationCreateOrConnectWithoutUserInput
-  upsert?: Prisma.MultiFactorAuthenticationUpsertWithoutUserInput
-  disconnect?: Prisma.MultiFactorAuthenticationWhereInput | boolean
-  delete?: Prisma.MultiFactorAuthenticationWhereInput | boolean
-  connect?: Prisma.MultiFactorAuthenticationWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.MultiFactorAuthenticationUpdateToOneWithWhereWithoutUserInput, Prisma.MultiFactorAuthenticationUpdateWithoutUserInput>, Prisma.MultiFactorAuthenticationUncheckedUpdateWithoutUserInput>
-}
-
-export type MultiFactorAuthenticationUncheckedUpdateOneWithoutUserNestedInput = {
-  create?: Prisma.XOR<Prisma.MultiFactorAuthenticationCreateWithoutUserInput, Prisma.MultiFactorAuthenticationUncheckedCreateWithoutUserInput>
-  connectOrCreate?: Prisma.MultiFactorAuthenticationCreateOrConnectWithoutUserInput
-  upsert?: Prisma.MultiFactorAuthenticationUpsertWithoutUserInput
-  disconnect?: Prisma.MultiFactorAuthenticationWhereInput | boolean
-  delete?: Prisma.MultiFactorAuthenticationWhereInput | boolean
-  connect?: Prisma.MultiFactorAuthenticationWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.MultiFactorAuthenticationUpdateToOneWithWhereWithoutUserInput, Prisma.MultiFactorAuthenticationUpdateWithoutUserInput>, Prisma.MultiFactorAuthenticationUncheckedUpdateWithoutUserInput>
 }
 
 export type MultiFactorAuthenticationCreaterecoveryCodesInput = {
@@ -437,56 +405,36 @@ export type MultiFactorAuthenticationUpdateOneRequiredWithoutPasskeysNestedInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.MultiFactorAuthenticationUpdateToOneWithWhereWithoutPasskeysInput, Prisma.MultiFactorAuthenticationUpdateWithoutPasskeysInput>, Prisma.MultiFactorAuthenticationUncheckedUpdateWithoutPasskeysInput>
 }
 
-export type MultiFactorAuthenticationCreateWithoutUserInput = {
-  id?: string
-  recoveryCodes?: Prisma.MultiFactorAuthenticationCreaterecoveryCodesInput | string[]
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  passkeys?: Prisma.PasskeyCreateNestedManyWithoutMfaInput
-  totp?: Prisma.TotpCreateNestedOneWithoutMfaInput
+export type MultiFactorAuthenticationCreateNestedOneWithoutUserInput = {
+  create?: Prisma.XOR<Prisma.MultiFactorAuthenticationCreateWithoutUserInput, Prisma.MultiFactorAuthenticationUncheckedCreateWithoutUserInput>
+  connectOrCreate?: Prisma.MultiFactorAuthenticationCreateOrConnectWithoutUserInput
+  connect?: Prisma.MultiFactorAuthenticationWhereUniqueInput
 }
 
-export type MultiFactorAuthenticationUncheckedCreateWithoutUserInput = {
-  id?: string
-  recoveryCodes?: Prisma.MultiFactorAuthenticationCreaterecoveryCodesInput | string[]
-  totpId?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  passkeys?: Prisma.PasskeyUncheckedCreateNestedManyWithoutMfaInput
+export type MultiFactorAuthenticationUncheckedCreateNestedOneWithoutUserInput = {
+  create?: Prisma.XOR<Prisma.MultiFactorAuthenticationCreateWithoutUserInput, Prisma.MultiFactorAuthenticationUncheckedCreateWithoutUserInput>
+  connectOrCreate?: Prisma.MultiFactorAuthenticationCreateOrConnectWithoutUserInput
+  connect?: Prisma.MultiFactorAuthenticationWhereUniqueInput
 }
 
-export type MultiFactorAuthenticationCreateOrConnectWithoutUserInput = {
-  where: Prisma.MultiFactorAuthenticationWhereUniqueInput
-  create: Prisma.XOR<Prisma.MultiFactorAuthenticationCreateWithoutUserInput, Prisma.MultiFactorAuthenticationUncheckedCreateWithoutUserInput>
+export type MultiFactorAuthenticationUpdateOneWithoutUserNestedInput = {
+  create?: Prisma.XOR<Prisma.MultiFactorAuthenticationCreateWithoutUserInput, Prisma.MultiFactorAuthenticationUncheckedCreateWithoutUserInput>
+  connectOrCreate?: Prisma.MultiFactorAuthenticationCreateOrConnectWithoutUserInput
+  upsert?: Prisma.MultiFactorAuthenticationUpsertWithoutUserInput
+  disconnect?: Prisma.MultiFactorAuthenticationWhereInput | boolean
+  delete?: Prisma.MultiFactorAuthenticationWhereInput | boolean
+  connect?: Prisma.MultiFactorAuthenticationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.MultiFactorAuthenticationUpdateToOneWithWhereWithoutUserInput, Prisma.MultiFactorAuthenticationUpdateWithoutUserInput>, Prisma.MultiFactorAuthenticationUncheckedUpdateWithoutUserInput>
 }
 
-export type MultiFactorAuthenticationUpsertWithoutUserInput = {
-  update: Prisma.XOR<Prisma.MultiFactorAuthenticationUpdateWithoutUserInput, Prisma.MultiFactorAuthenticationUncheckedUpdateWithoutUserInput>
-  create: Prisma.XOR<Prisma.MultiFactorAuthenticationCreateWithoutUserInput, Prisma.MultiFactorAuthenticationUncheckedCreateWithoutUserInput>
-  where?: Prisma.MultiFactorAuthenticationWhereInput
-}
-
-export type MultiFactorAuthenticationUpdateToOneWithWhereWithoutUserInput = {
-  where?: Prisma.MultiFactorAuthenticationWhereInput
-  data: Prisma.XOR<Prisma.MultiFactorAuthenticationUpdateWithoutUserInput, Prisma.MultiFactorAuthenticationUncheckedUpdateWithoutUserInput>
-}
-
-export type MultiFactorAuthenticationUpdateWithoutUserInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  recoveryCodes?: Prisma.MultiFactorAuthenticationUpdaterecoveryCodesInput | string[]
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  passkeys?: Prisma.PasskeyUpdateManyWithoutMfaNestedInput
-  totp?: Prisma.TotpUpdateOneWithoutMfaNestedInput
-}
-
-export type MultiFactorAuthenticationUncheckedUpdateWithoutUserInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  recoveryCodes?: Prisma.MultiFactorAuthenticationUpdaterecoveryCodesInput | string[]
-  totpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  passkeys?: Prisma.PasskeyUncheckedUpdateManyWithoutMfaNestedInput
+export type MultiFactorAuthenticationUncheckedUpdateOneWithoutUserNestedInput = {
+  create?: Prisma.XOR<Prisma.MultiFactorAuthenticationCreateWithoutUserInput, Prisma.MultiFactorAuthenticationUncheckedCreateWithoutUserInput>
+  connectOrCreate?: Prisma.MultiFactorAuthenticationCreateOrConnectWithoutUserInput
+  upsert?: Prisma.MultiFactorAuthenticationUpsertWithoutUserInput
+  disconnect?: Prisma.MultiFactorAuthenticationWhereInput | boolean
+  delete?: Prisma.MultiFactorAuthenticationWhereInput | boolean
+  connect?: Prisma.MultiFactorAuthenticationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.MultiFactorAuthenticationUpdateToOneWithWhereWithoutUserInput, Prisma.MultiFactorAuthenticationUpdateWithoutUserInput>, Prisma.MultiFactorAuthenticationUncheckedUpdateWithoutUserInput>
 }
 
 export type MultiFactorAuthenticationCreateWithoutTotpInput = {
@@ -591,6 +539,58 @@ export type MultiFactorAuthenticationUncheckedUpdateWithoutPasskeysInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type MultiFactorAuthenticationCreateWithoutUserInput = {
+  id?: string
+  recoveryCodes?: Prisma.MultiFactorAuthenticationCreaterecoveryCodesInput | string[]
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  passkeys?: Prisma.PasskeyCreateNestedManyWithoutMfaInput
+  totp?: Prisma.TotpCreateNestedOneWithoutMfaInput
+}
+
+export type MultiFactorAuthenticationUncheckedCreateWithoutUserInput = {
+  id?: string
+  recoveryCodes?: Prisma.MultiFactorAuthenticationCreaterecoveryCodesInput | string[]
+  totpId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  passkeys?: Prisma.PasskeyUncheckedCreateNestedManyWithoutMfaInput
+}
+
+export type MultiFactorAuthenticationCreateOrConnectWithoutUserInput = {
+  where: Prisma.MultiFactorAuthenticationWhereUniqueInput
+  create: Prisma.XOR<Prisma.MultiFactorAuthenticationCreateWithoutUserInput, Prisma.MultiFactorAuthenticationUncheckedCreateWithoutUserInput>
+}
+
+export type MultiFactorAuthenticationUpsertWithoutUserInput = {
+  update: Prisma.XOR<Prisma.MultiFactorAuthenticationUpdateWithoutUserInput, Prisma.MultiFactorAuthenticationUncheckedUpdateWithoutUserInput>
+  create: Prisma.XOR<Prisma.MultiFactorAuthenticationCreateWithoutUserInput, Prisma.MultiFactorAuthenticationUncheckedCreateWithoutUserInput>
+  where?: Prisma.MultiFactorAuthenticationWhereInput
+}
+
+export type MultiFactorAuthenticationUpdateToOneWithWhereWithoutUserInput = {
+  where?: Prisma.MultiFactorAuthenticationWhereInput
+  data: Prisma.XOR<Prisma.MultiFactorAuthenticationUpdateWithoutUserInput, Prisma.MultiFactorAuthenticationUncheckedUpdateWithoutUserInput>
+}
+
+export type MultiFactorAuthenticationUpdateWithoutUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  recoveryCodes?: Prisma.MultiFactorAuthenticationUpdaterecoveryCodesInput | string[]
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  passkeys?: Prisma.PasskeyUpdateManyWithoutMfaNestedInput
+  totp?: Prisma.TotpUpdateOneWithoutMfaNestedInput
+}
+
+export type MultiFactorAuthenticationUncheckedUpdateWithoutUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  recoveryCodes?: Prisma.MultiFactorAuthenticationUpdaterecoveryCodesInput | string[]
+  totpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  passkeys?: Prisma.PasskeyUncheckedUpdateManyWithoutMfaNestedInput
 }
 
 

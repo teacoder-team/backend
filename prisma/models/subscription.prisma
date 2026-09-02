@@ -1,0 +1,20 @@
+model Subscription {
+    id String @id @default(uuid())
+
+    isActive      Boolean @default(true) @map("is_active")
+    isAutoBilling Boolean @default(false) @map("is_auto_billing")
+
+    startedAt DateTime  @default(now()) @map("started_at")
+    expiresAt DateTime? @map("expires_at")
+
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId String @unique @map("user_id")
+
+    payments Payment[]
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@index([isActive, expiresAt], map: "ix_subscriptions_is_active_expires_at")
+    @@map("subscriptions")
+}

@@ -302,16 +302,6 @@ export type RestrictionUncheckedUpdateManyInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type RestrictionListRelationFilter = {
-  every?: Prisma.RestrictionWhereInput
-  some?: Prisma.RestrictionWhereInput
-  none?: Prisma.RestrictionWhereInput
-}
-
-export type RestrictionOrderByRelationAggregateInput = {
-  _count?: Prisma.SortOrder
-}
-
 export type RestrictionCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   reason?: Prisma.SortOrder
@@ -337,6 +327,24 @@ export type RestrictionMinOrderByAggregateInput = {
   status?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+}
+
+export type RestrictionListRelationFilter = {
+  every?: Prisma.RestrictionWhereInput
+  some?: Prisma.RestrictionWhereInput
+  none?: Prisma.RestrictionWhereInput
+}
+
+export type RestrictionOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
+}
+
+export type EnumRestrictionReasonFieldUpdateOperationsInput = {
+  set?: $Enums.RestrictionReason
+}
+
+export type EnumRestrictionStatusFieldUpdateOperationsInput = {
+  set?: $Enums.RestrictionStatus
 }
 
 export type RestrictionCreateNestedManyWithoutUserInput = {
@@ -379,14 +387,6 @@ export type RestrictionUncheckedUpdateManyWithoutUserNestedInput = {
   update?: Prisma.RestrictionUpdateWithWhereUniqueWithoutUserInput | Prisma.RestrictionUpdateWithWhereUniqueWithoutUserInput[]
   updateMany?: Prisma.RestrictionUpdateManyWithWhereWithoutUserInput | Prisma.RestrictionUpdateManyWithWhereWithoutUserInput[]
   deleteMany?: Prisma.RestrictionScalarWhereInput | Prisma.RestrictionScalarWhereInput[]
-}
-
-export type EnumRestrictionReasonFieldUpdateOperationsInput = {
-  set?: $Enums.RestrictionReason
-}
-
-export type EnumRestrictionStatusFieldUpdateOperationsInput = {
-  set?: $Enums.RestrictionStatus
 }
 
 export type RestrictionCreateWithoutUserInput = {

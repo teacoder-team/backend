@@ -4,6 +4,7 @@ import { queueConnection } from './connection'
 
 export const QUEUE = {
 	EMAIL: 'email',
+	MAINTENANCE: 'maintenance',
 } as const
 
 export type QueueName = (typeof QUEUE)[keyof typeof QUEUE]
@@ -20,4 +21,9 @@ export const emailQueue = new Queue(QUEUE.EMAIL, {
 	defaultJobOptions,
 })
 
-export const queues = [emailQueue]
+export const maintenanceQueue = new Queue(QUEUE.MAINTENANCE, {
+	connection: queueConnection,
+	defaultJobOptions,
+})
+
+export const queues = [emailQueue, maintenanceQueue]
