@@ -1,5 +1,6 @@
 import { Elysia } from 'elysia'
 
+import { extendLogContext } from '@/infra/logger'
 import { resolveSession } from '@/modules/session/service'
 import { ErrorCode, UnauthorizedError } from '@/shared/errors'
 import { verifyToken } from '@/shared/security/token'
@@ -42,6 +43,8 @@ export const authGuard = new Elysia({ name: 'auth-guard' }).macro({
 					ErrorCode.SESSION_EXPIRED,
 				)
 			}
+
+			extendLogContext({ userId: session.userId })
 
 			return { session }
 		},

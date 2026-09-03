@@ -7,6 +7,10 @@ model Payment {
     status PaymentStatus @default(PENDING)
     method PaymentMethod
 
+    /// Which integration handled it - without this `providerPaymentId` is
+    /// ambiguous and a webhook cannot be traced back to its payment.
+    provider PaymentProvider
+
     providerPaymentId String? @map("provider_payment_id")
 
     metadata Json?
@@ -27,6 +31,7 @@ model Payment {
 
     @@index([status, createdAt(sort: Desc)], map: "ix_payments_status_created_at")
     @@index([subscriptionId], map: "ix_payments_subscription_id")
+    @@index([provider, providerPaymentId], map: "ix_payments_provider_provider_payment_id")
     @@map("payments")
 }
 
@@ -102,6 +107,7 @@ enum ReceiptStatus {
 enum PaymentProvider {
     YOOKASSA
     ROBOKASSA
+    CRYPTO_BOT
 
     @@map("payment_providers")
 }

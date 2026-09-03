@@ -1,6 +1,7 @@
 import { Elysia } from 'elysia'
 
 import { authGuard } from '@/plugins/auth-guard'
+import { ok } from '@/shared/api'
 import { RevokeResponse, SessionListResponse, SessionParams } from './model'
 import { getUserSessions, revokeAllSessions, revokeSession } from './service'
 
@@ -8,16 +9,21 @@ export const session = new Elysia({ prefix: '/sessions', tags: ['Sessions'] })
 	.use(authGuard)
 	.model({ SessionListResponse, RevokeResponse, SessionParams })
 	.guard({ auth: true, detail: { security: [{ bearerAuth: [] }] } })
-	.get('/', ({ session }) => getUserSessions(session.userId, session.id), {
-		response: 'SessionListResponse',
-		detail: {
-			summary: 'List active sessions',
-			description: 'Every device currently signed in to this account.',
+	.get(
+		'/',
+		async ({ session }) => ok(await getUserSessions(session.userId, session.id)),
+		{
+			response: 'SessionListResponse',
+			detail: {
+				summary: 'List active sessions',
+				description: 'Every device currently signed in to this account.',
+			},
 		},
-	})
+	)
 	.delete(
 		'/:id',
-		({ session, params }) => revokeSession(session.userId, params.id),
+		async ({ session, params }) =>
+			ok(await revokeSession(session.userId, params.id)),
 		{
 			params: 'SessionParams',
 			response: 'RevokeResponse',
@@ -27,7 +33,7 @@ export const session = new Elysia({ prefix: '/sessions', tags: ['Sessions'] })
 			},
 		},
 	)
-	.delete('/', ({ session }) => revokeAllSessions(session.userId), {
+	.delete('/', async ({ session }) => ok(await revokeAllSessions(session.userId)), {
 		response: 'RevokeResponse',
 		detail: {
 			summary: 'Revoke all sessions',

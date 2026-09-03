@@ -1,13 +1,15 @@
 import { t } from 'elysia'
 
-export const RootResponse = t.Object({
+import { ApiResponse } from '@/shared/api'
+
+const RootResult = t.Object({
 	message: t.String({
 		description: 'A friendly welcome message.',
 		examples: ["What's up motherfuckers! 🤘"],
 	}),
 })
 
-export const HealthResponse = t.Object({
+const HealthResult = t.Object({
 	status: t.Union([t.Literal('operational'), t.Literal('degraded')], {
 		description: 'Overall state of this instance.',
 	}),
@@ -18,3 +20,6 @@ export const HealthResponse = t.Object({
 		examples: ['2026-07-04T14:16:54.000Z'],
 	}),
 })
+
+export const RootResponse = ApiResponse(RootResult)
+export const HealthResponse = ApiResponse(HealthResult)

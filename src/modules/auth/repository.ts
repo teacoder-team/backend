@@ -21,6 +21,16 @@ export const findCredentialByEmail = (email: string) =>
 		include: { user: true, passwordHash: true },
 	})
 
+/** The address the account signs in with, when it has one. */
+export const findUserEmail = async (userId: string) => {
+	const credential = await db.credential.findFirst({
+		where: { userId, provider: AuthProvider.EMAIL },
+		select: { identifier: true },
+	})
+
+	return credential?.identifier ?? null
+}
+
 export const emailExists = async (email: string) =>
 	(await db.credential.count({
 		where: { provider: AuthProvider.EMAIL, identifier: email },

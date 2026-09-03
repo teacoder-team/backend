@@ -10,11 +10,6 @@ export type JobHandlers<Jobs extends Record<string, unknown>> = {
 	[Name in keyof Jobs]: (payload: Jobs[Name]) => Promise<void>
 }
 
-/**
- * The queue layer stays domain-agnostic: it routes a job to the handler
- * registered under its name and owns nothing else. Handlers live next to the
- * module whose work they do.
- */
 export const startWorker = <Jobs extends Record<string, unknown>>(
 	queue: QueueName,
 	handlers: JobHandlers<Jobs>,

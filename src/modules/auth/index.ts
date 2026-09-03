@@ -3,6 +3,7 @@ import { Elysia } from 'elysia'
 import { authCookie } from '@/plugins/auth-cookie'
 import { authGuard } from '@/plugins/auth-guard'
 import { requestContext } from '@/plugins/request-context'
+import { ok } from '@/shared/api'
 import {
 	AuthResponse,
 	LoginPayload,
@@ -28,7 +29,7 @@ export const auth = new Elysia({ prefix: '/auth', tags: ['Auth'] })
 		async ({ body }) => {
 			await register(body)
 
-			return { message: 'Verification code sent to email' }
+			return ok({ message: 'Verification code sent to email' })
 		},
 		{
 			body: 'RegisterPayload',
@@ -46,7 +47,7 @@ export const auth = new Elysia({ prefix: '/auth', tags: ['Auth'] })
 
 			authCookie.set(token)
 
-			return { id: user.id }
+			return ok({ id: user.id })
 		},
 		{
 			body: 'VerifyRegisterPayload',
@@ -64,7 +65,7 @@ export const auth = new Elysia({ prefix: '/auth', tags: ['Auth'] })
 
 			authCookie.set(token)
 
-			return { id: user.id }
+			return ok({ id: user.id })
 		},
 		{
 			body: 'LoginPayload',
@@ -82,7 +83,7 @@ export const auth = new Elysia({ prefix: '/auth', tags: ['Auth'] })
 
 			authCookie.clear()
 
-			return { message: 'Signed out' }
+			return ok({ message: 'Signed out' })
 		},
 		{
 			auth: true,

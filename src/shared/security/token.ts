@@ -37,7 +37,6 @@ export const verifyToken = (token: string): TokenPayload => {
 			throw new Error('Malformed token structure')
 		}
 
-		// Throws on a length mismatch, which `catch` turns into a 401 anyway.
 		const isValid = timingSafeEqual(
 			Buffer.from(signature, 'hex'),
 			Buffer.from(sign(encodedPayload), 'hex'),

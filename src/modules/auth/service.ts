@@ -2,7 +2,7 @@ import { randomBytes } from 'node:crypto'
 
 import { isProduction } from '@/config/env'
 import { isDisposableEmail } from '@/infra/datasets/disposable-emails'
-import { logger } from '@/infra/logger'
+import { extendLogContext } from '@/infra/logger'
 import { redis } from '@/infra/redis'
 import { createSession, revokeSession } from '@/modules/session/service'
 import { normalizeEmail } from '@/shared/email'
@@ -80,10 +80,11 @@ export const register = async (input: RegisterInput) => {
 
 	await enqueueVerificationCode({ email, code })
 
-	logger.info(
-		{ email, code: isProduction ? undefined : code },
-		'registration_started',
-	)
+	extendLogContext({
+		event: 'registration_started',
+		email,
+		code: isProduction ? undefined : code,
+	})
 }
 
 export const verifyRegister = async (
@@ -118,7 +119,7 @@ export const verifyRegister = async (
 
 	await redis.del(pendingKey(email))
 
-	logger.info({ userId: user.id }, 'registration_completed')
+	extendLogContext({ event: 'registration_completed', userId: user.id })
 
 	return { user, token: await issueSession(user.id, origin) }
 }
@@ -139,7 +140,7 @@ export const login = async (input: LoginInput, origin: RequestOrigin) => {
 	)
 
 	if (!isCorrect) {
-		logger.warn({ email }, 'failed_login_attempt')
+		extendLogContext({ event: 'failed_login_attempt', email })
 
 		throw new UnauthorizedError(
 			'Invalid email or password',
@@ -149,7 +150,7 @@ export const login = async (input: LoginInput, origin: RequestOrigin) => {
 
 	const { user } = credential
 
-	logger.info({ userId: user.id }, 'user_logged_in')
+	extendLogContext({ event: 'user_logged_in', userId: user.id })
 
 	return { user, token: await issueSession(user.id, origin) }
 }

@@ -2,11 +2,12 @@ import { Elysia } from 'elysia'
 
 import { pingDatabase } from '@/infra/db'
 import { pingRedis } from '@/infra/redis'
+import { ok } from '@/shared/api'
 import { HealthResponse, RootResponse } from './model'
 
 export const root = new Elysia({ tags: ['Core'] })
 	.model({ RootResponse, HealthResponse })
-	.get('/', () => ({ message: "What's up motherfuckers! 🤘" }), {
+	.get('/', () => ok({ message: "What's up motherfuckers! 🤘" }), {
 		response: 'RootResponse',
 		detail: {
 			summary: 'System greeting',
@@ -25,14 +26,14 @@ export const root = new Elysia({ tags: ['Core'] })
 
 			if (!healthy) set.status = 503
 
-			return {
+			return ok({
 				status: healthy
 					? ('operational' as const)
 					: ('degraded' as const),
 				database,
 				cache,
 				timestamp: new Date().toISOString(),
-			}
+			})
 		},
 		{
 			response: 'HealthResponse',

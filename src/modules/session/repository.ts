@@ -2,12 +2,6 @@ import type { Prisma, Session } from '@prisma/generated/client'
 
 import { db } from '@/infra/db'
 
-/**
- * PostgreSQL is the source of truth for sessions. Nothing in here knows about
- * the cache — see `./cache.ts` for the read path used on every request.
- */
-
-/** A session that has neither been revoked nor reached its expiry. */
 const active = (now: Date): Prisma.SessionWhereInput => ({
 	revokedAt: null,
 	expiresAt: { gt: now },
@@ -46,7 +40,6 @@ export const listActiveSessionIds = async (userId: string) => {
 	return sessions.map(({ id }) => id)
 }
 
-/** Scoped by `userId` so one user can never revoke another user's session. */
 export const revokeSessionById = async (userId: string, sessionId: string) => {
 	const { count } = await db.session.updateMany({
 		where: { id: sessionId, userId, ...active(new Date()) },
@@ -68,7 +61,6 @@ export const revokeSessionsByUser = async (userId: string) => {
 export const touchSession = (sessionId: string, lastSeenAt: Date) =>
 	db.session.update({ where: { id: sessionId }, data: { lastSeenAt } })
 
-/** Rows are kept past their expiry for a while so the user can audit history. */
 export const deleteSessionsDeadBefore = async (cutoff: Date) => {
 	const { count } = await db.session.deleteMany({
 		where: {

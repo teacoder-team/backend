@@ -18,11 +18,7 @@ if (!FormatRegistry.Has('uri')) {
 
 const envSchema = t.Object({
 	NODE_ENV: t.Union(
-		[
-			t.Literal('development'),
-			t.Literal('production'),
-			t.Literal('test'),
-		],
+		[t.Literal('development'), t.Literal('production'), t.Literal('test')],
 		{ default: 'development' },
 	),
 
@@ -41,6 +37,10 @@ const envSchema = t.Object({
 		],
 		{ default: 'info' },
 	),
+	/** Fraction of non-error, non-slow requests to keep (tail sampling). */
+	LOG_SAMPLE_RATE: t.Number({ default: 1, minimum: 0, maximum: 1 }),
+	/** Requests slower than this are always logged, regardless of sample rate. */
+	LOG_SLOW_REQUEST_MS: t.Number({ default: 1000 }),
 
 	RESOURCES_DIR: t.String({ default: './resources' }),
 
@@ -75,20 +75,17 @@ const envSchema = t.Object({
 
 	YOOKASSA_SHOP_ID: t.String(),
 	YOOKASSA_SECRET_KEY: t.String(),
+
+	CRYPTO_BOT_TOKEN: t.String(),
+	CRYPTO_BOT_TESTNET: t.Boolean({ default: false }),
+
+	NPD_INN: t.String(),
+	NPD_PASSWORD: t.String(),
+	NPD_DEVICE_ID: t.String({ default: '' }),
 })
 
 export type Env = Static<typeof envSchema>
 
-/**
- * `Clean` drops everything that is not declared above, `Default` fills the
- * gaps and `Convert` coerces the string values Bun hands us into the declared
- * types. Adding a variable to the schema is therefore the only step required.
- */
-/**
- * `Clean` drops undeclared variables, `Default` fills the gaps and `Convert`
- * coerces the strings Bun hands us into the declared types. Adding a variable
- * to the schema above is therefore the only step required.
- */
 const parsed = Value.Convert(
 	envSchema,
 	Value.Default(envSchema, Value.Clean(envSchema, { ...Bun.env })),

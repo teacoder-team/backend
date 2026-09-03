@@ -89,8 +89,7 @@ export type UserProgress = Prisma.UserProgressModel
 export type DownloadLog = Prisma.DownloadLogModel
 /**
  * Model Session
- * Authenticated sessions. This table is the source of truth: Redis only
- * caches rows for the hot lookup on every authenticated request.
+ * 
  */
 export type Session = Prisma.SessionModel
 /**

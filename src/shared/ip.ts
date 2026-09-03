@@ -9,8 +9,6 @@ const IP_HEADERS = [
 ]
 
 const LOOPBACK = '127.0.0.1'
-
-/** A routable address so geo lookups return something useful while developing. */
 const DEVELOPMENT_IP = '104.28.225.185'
 
 export const getClientIp = (headers: Headers): string => {
@@ -20,7 +18,6 @@ export const getClientIp = (headers: Headers): string => {
 		const value = headers.get(header)
 		if (!value) continue
 
-		// x-forwarded-for is a chain: the client is the leftmost entry.
 		const ip = value.split(',')[0]?.trim()
 		if (ip) return ip
 	}

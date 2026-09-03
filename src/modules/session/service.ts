@@ -2,7 +2,7 @@ import { UAParser } from 'ua-parser-js'
 
 import { env } from '@/config/env'
 import { lookupLocation } from '@/infra/datasets/geo'
-import { logger } from '@/infra/logger'
+import { extendLogContext, logger } from '@/infra/logger'
 import { ErrorCode, NotFoundError } from '@/shared/errors'
 import {
 	type CachedSession,
@@ -21,10 +21,6 @@ import {
 	touchSession,
 } from './repository'
 
-/**
- * How stale `lastSeenAt` may get before it is written again. Without this the
- * hot path would issue an UPDATE on every authenticated request.
- */
 const TOUCH_INTERVAL_MS = 5 * 60 * 1000
 
 export interface SessionContext {
@@ -55,16 +51,11 @@ export const createSession = async ({
 
 	await writeCachedSession(toCachedSession(session))
 
-	logger.info({ userId, sessionId: session.id }, 'session_created')
+	extendLogContext({ event: 'session_created', userId, sessionId: session.id })
 
 	return session
 }
 
-/**
- * Updates `lastSeenAt` in the background: the request that happens to cross
- * the interval should not pay for the write, and a failed write is not a
- * reason to reject an otherwise valid session.
- */
 const touchInBackground = (session: CachedSession) => {
 	if (Date.now() - Date.parse(session.lastSeenAt) < TOUCH_INTERVAL_MS) return
 
@@ -82,7 +73,6 @@ const touchInBackground = (session: CachedSession) => {
 		})
 }
 
-/** The hot path: cache first, PostgreSQL behind it. */
 export const resolveSession = async (sessionId: string) => {
 	const session = await readCachedSession(sessionId, async () => {
 		const stored = await findActiveSession(sessionId)
@@ -119,13 +109,15 @@ export const revokeSession = async (userId: string, sessionId: string) => {
 	const revoked = await revokeSessionById(userId, sessionId)
 
 	if (!revoked) {
-		throw new NotFoundError('Session not found', ErrorCode.SESSION_NOT_FOUND)
+		throw new NotFoundError(
+			'Session not found',
+			ErrorCode.SESSION_NOT_FOUND,
+		)
 	}
 
-	// Dropped after the write, so no request can re-cache the stale row.
 	await dropCachedSessions(sessionId)
 
-	logger.info({ userId, sessionId }, 'session_revoked')
+	extendLogContext({ event: 'session_revoked', sessionId })
 
 	return { revoked }
 }
@@ -136,7 +128,7 @@ export const revokeAllSessions = async (userId: string) => {
 
 	await dropCachedSessions(...sessionIds)
 
-	logger.info({ userId, revoked }, 'all_sessions_revoked')
+	extendLogContext({ event: 'all_sessions_revoked', revoked })
 
 	return { revoked }
 }

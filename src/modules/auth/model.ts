@@ -1,5 +1,7 @@
 import { t, type Static } from 'elysia'
 
+import { ApiResponse } from '@/shared/api'
+
 export const RegisterPayload = t.Object({
 	name: t.String({
 		minLength: 2,
@@ -46,19 +48,22 @@ export const LoginPayload = t.Object({
 	}),
 })
 
-export const MessageResponse = t.Object({
+const MessageResult = t.Object({
 	message: t.String({
 		description: 'Status message indicating the next step.',
 		examples: ['Verification code sent to email'],
 	}),
 })
 
-export const AuthResponse = t.Object({
+const AuthResult = t.Object({
 	id: t.String({
 		description: 'Unique identifier of the authenticated user.',
 		examples: ['49003cb8-7f31-4942-abec-ac9e29318681'],
 	}),
 })
+
+export const MessageResponse = ApiResponse(MessageResult)
+export const AuthResponse = ApiResponse(AuthResult)
 
 export type RegisterInput = Static<typeof RegisterPayload>
 export type VerifyRegisterInput = Static<typeof VerifyRegisterPayload>

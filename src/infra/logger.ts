@@ -6,10 +6,16 @@ import { env, isDevelopment } from '@/config/env'
 
 export interface LogContext {
 	requestId: string
-	userId?: string
+	[key: string]: unknown
 }
 
 export const logContext = new AsyncLocalStorage<LogContext>()
+
+export const extendLogContext = (fields: Record<string, unknown>) => {
+	const store = logContext.getStore()
+
+	if (store) Object.assign(store, fields)
+}
 
 const formatters = {
 	level: (label: string) => ({ level: label.toUpperCase() }),

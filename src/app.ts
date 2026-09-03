@@ -2,6 +2,7 @@ import { openapi } from '@elysiajs/openapi'
 import { Elysia } from 'elysia'
 
 import { auth } from '@/modules/auth'
+import { payment } from '@/modules/payment'
 import { root } from '@/modules/root'
 import { session } from '@/modules/session'
 import { errorHandler } from '@/plugins/error-handler'
@@ -45,5 +46,6 @@ export const createApp = () =>
 		.use(root)
 		.use(auth)
 		.use(session)
+		.use(payment)
 
 export type App = ReturnType<typeof createApp>
