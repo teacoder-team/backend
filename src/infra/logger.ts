@@ -1,8 +1,7 @@
-import { AsyncLocalStorage } from 'node:async_hooks'
-
+import { env, isDevelopment } from '~/config/env'
 import pino from 'pino'
 
-import { env, isDevelopment } from '@/config/env'
+import { AsyncLocalStorage } from 'node:async_hooks'
 
 export interface LogContext {
 	requestId: string
@@ -18,7 +17,7 @@ export const extendLogContext = (fields: Record<string, unknown>) => {
 }
 
 const formatters = {
-	level: (label: string) => ({ level: label.toUpperCase() }),
+	level: (label: string) => ({ level: label.toUpperCase() })
 }
 
 const serializers = {
@@ -27,9 +26,9 @@ const serializers = {
 			? {
 					type: err.constructor.name,
 					message: err.message,
-					stack: err.stack,
+					stack: err.stack
 				}
-			: err,
+			: err
 }
 
 const transport = isDevelopment
@@ -38,8 +37,8 @@ const transport = isDevelopment
 			options: {
 				colorize: true,
 				ignore: 'pid,hostname',
-				translateTime: 'HH:MM:ss Z',
-			},
+				translateTime: 'HH:MM:ss Z'
+			}
 		})
 	: pino.destination(1)
 
@@ -48,7 +47,7 @@ export const logger = pino(
 		level: env.LOG_LEVEL,
 		formatters,
 		serializers,
-		mixin: () => ({ ...logContext.getStore() }),
+		mixin: () => ({ ...logContext.getStore() })
 	},
-	transport,
+	transport
 )

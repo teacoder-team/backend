@@ -1,15 +1,15 @@
+import { env } from '~/config/env'
+import { lookupLocation } from '~/infra/datasets/geo'
+import { extendLogContext, logger } from '~/infra/logger'
+import { ErrorCode, NotFoundError } from '~/shared/errors'
 import { UAParser } from 'ua-parser-js'
 
-import { env } from '@/config/env'
-import { lookupLocation } from '@/infra/datasets/geo'
-import { extendLogContext, logger } from '@/infra/logger'
-import { ErrorCode, NotFoundError } from '@/shared/errors'
 import {
 	type CachedSession,
 	dropCachedSessions,
 	readCachedSession,
 	toCachedSession,
-	writeCachedSession,
+	writeCachedSession
 } from './cache'
 import {
 	findActiveSession,
@@ -18,7 +18,7 @@ import {
 	listActiveSessions,
 	revokeSessionById,
 	revokeSessionsByUser,
-	touchSession,
+	touchSession
 } from './repository'
 
 const TOUCH_INTERVAL_MS = 5 * 60 * 1000
@@ -29,11 +29,7 @@ export interface SessionContext {
 	userAgent: string
 }
 
-export const createSession = async ({
-	userId,
-	ip,
-	userAgent,
-}: SessionContext) => {
+export const createSession = async ({ userId, ip, userAgent }: SessionContext) => {
 	const { country, city } = await lookupLocation(ip)
 	const agent = new UAParser(userAgent).getResult()
 
@@ -46,7 +42,7 @@ export const createSession = async ({
 		browser: agent.browser.name ?? null,
 		os: agent.os.name ?? null,
 		device: agent.device.model ?? null,
-		expiresAt: new Date(Date.now() + env.SESSION_TTL * 1000),
+		expiresAt: new Date(Date.now() + env.SESSION_TTL * 1000)
 	})
 
 	await writeCachedSession(toCachedSession(session))
@@ -65,8 +61,8 @@ const touchInBackground = (session: CachedSession) => {
 		.then(() =>
 			writeCachedSession({
 				...session,
-				lastSeenAt: lastSeenAt.toISOString(),
-			}),
+				lastSeenAt: lastSeenAt.toISOString()
+			})
 		)
 		.catch((err) => {
 			logger.warn({ err, sessionId: session.id }, 'session_touch_failed')
@@ -85,10 +81,7 @@ export const resolveSession = async (sessionId: string) => {
 	return session
 }
 
-export const getUserSessions = async (
-	userId: string,
-	currentSessionId: string,
-) => {
+export const getUserSessions = async (userId: string, currentSessionId: string) => {
 	const sessions = await listActiveSessions(userId)
 
 	return sessions.map((session) => ({
@@ -101,7 +94,7 @@ export const getUserSessions = async (
 		device: session.device,
 		current: session.id === currentSessionId,
 		lastSeenAt: session.lastSeenAt.toISOString(),
-		createdAt: session.createdAt.toISOString(),
+		createdAt: session.createdAt.toISOString()
 	}))
 }
 
@@ -109,10 +102,7 @@ export const revokeSession = async (userId: string, sessionId: string) => {
 	const revoked = await revokeSessionById(userId, sessionId)
 
 	if (!revoked) {
-		throw new NotFoundError(
-			'Session not found',
-			ErrorCode.SESSION_NOT_FOUND,
-		)
+		throw new NotFoundError('Session not found', ErrorCode.SESSION_NOT_FOUND)
 	}
 
 	await dropCachedSessions(sessionId)

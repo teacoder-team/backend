@@ -1,11 +1,11 @@
-import { isDevelopment } from '@/config/env'
+import { isDevelopment } from '~/config/env'
 
 const IP_HEADERS = [
 	'cf-connecting-ip',
 	'true-client-ip',
 	'x-real-ip',
 	'x-client-ip',
-	'x-forwarded-for',
+	'x-forwarded-for'
 ]
 
 const LOOPBACK = '127.0.0.1'

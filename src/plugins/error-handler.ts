@@ -1,8 +1,7 @@
+import { extendLogContext } from '~/infra/logger'
+import { type ApiIssue, fail } from '~/shared/api'
+import { AppError, ErrorCode } from '~/shared/errors'
 import { Elysia } from 'elysia'
-
-import { extendLogContext } from '@/infra/logger'
-import { type ApiIssue, fail } from '@/shared/api'
-import { AppError, ErrorCode } from '@/shared/errors'
 
 const issue = (code: ErrorCode, message: string, field?: string): ApiIssue =>
 	field ? { code, message, field } : { code, message }
@@ -27,8 +26,8 @@ const validationIssues = (issues: readonly ValidationIssue[]) =>
 		issue(
 			ErrorCode.VALIDATION_ERROR,
 			messageFor(each),
-			each.path?.replace(/^\//, '').replace(/\//g, '.') || undefined,
-		),
+			each.path?.replace(/^\//, '').replace(/\//g, '.') || undefined
+		)
 	)
 
 export const errorHandler = new Elysia({ name: 'error-handler' })
@@ -49,7 +48,7 @@ export const errorHandler = new Elysia({ name: 'error-handler' })
 
 			extendLogContext({
 				errorCode: error.code,
-				errorMessage: error.message,
+				errorMessage: error.message
 			})
 
 			return fail([issue(error.code, error.message)])
@@ -64,12 +63,10 @@ export const errorHandler = new Elysia({ name: 'error-handler' })
 		extendLogContext({
 			errorCode: ErrorCode.INTERNAL_SERVER_ERROR,
 			errorMessage: error instanceof Error ? error.message : String(error),
-			errorStack: error instanceof Error ? error.stack : undefined,
+			errorStack: error instanceof Error ? error.stack : undefined
 		})
 
 		set.status = 500
 
-		return fail([
-			issue(ErrorCode.INTERNAL_SERVER_ERROR, 'Internal server error'),
-		])
+		return fail([issue(ErrorCode.INTERNAL_SERVER_ERROR, 'Internal server error')])
 	})

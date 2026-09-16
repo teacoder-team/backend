@@ -37,6 +37,8 @@ model Lesson {
 
     kinescopeId String? @map("kinescope_id")
 
+    access LessonAccess @default(FREE)
+
     isPublished Boolean @default(false) @map("is_published")
 
     userProgress UserProgress[]
@@ -48,5 +50,13 @@ model Lesson {
     updatedAt DateTime @updatedAt @map("updated_at")
 
     @@index([courseId, isPublished, position], map: "ix_lessons_course_id_is_published_position")
+    @@index([courseId, access], map: "ix_lessons_course_id_access")
     @@map("lessons")
+}
+
+enum LessonAccess {
+    FREE
+    PREMIUM
+
+    @@map("lesson_access")
 }

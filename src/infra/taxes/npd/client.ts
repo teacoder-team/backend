@@ -1,4 +1,5 @@
-import { HttpError, createHttpClient } from '@/infra/http/client'
+import { createHttpClient, HttpError } from '~/infra/http/client'
+
 import { getAccessToken, invalidateAccessToken } from './session'
 import { API_URL } from './types'
 
@@ -7,27 +8,27 @@ const TIMEOUT = 10_000
 const HEADERS = {
 	'Content-Type': 'application/json',
 	Accept: 'application/json, text/plain, */*',
-	Referer: 'https://lknpd.nalog.ru/',
+	Referer: 'https://lknpd.nalog.ru/'
 }
 
 const readClient = createHttpClient({
 	baseURL: API_URL,
 	timeout: TIMEOUT,
 	headers: HEADERS,
-	retry: { retries: 2, minTimeout: 400, factor: 2 },
+	retry: { retries: 2, minTimeout: 400, factor: 2 }
 })
 
 const writeClient = createHttpClient({
 	baseURL: API_URL,
 	timeout: TIMEOUT,
-	headers: HEADERS,
+	headers: HEADERS
 })
 
 export class NpdError extends Error {
 	constructor(
 		readonly status: number,
 		message: string,
-		readonly code?: string,
+		readonly code?: string
 	) {
 		super(message)
 		this.name = 'NpdError'
@@ -46,7 +47,7 @@ const toNpdError = (err: HttpError) => {
 	return new NpdError(
 		err.status,
 		body.message ?? body.exceptionType ?? `Request failed (${err.status})`,
-		body.code,
+		body.code
 	)
 }
 
@@ -58,7 +59,7 @@ interface RequestOptions {
 
 export const request = async <T>(
 	path: string,
-	{ method = 'GET', body, retryable = method === 'GET' }: RequestOptions = {},
+	{ method = 'GET', body, retryable = method === 'GET' }: RequestOptions = {}
 ): Promise<T> => {
 	const send = async () => {
 		const client = retryable ? readClient : writeClient
@@ -66,7 +67,7 @@ export const request = async <T>(
 		return client<T>(path, {
 			method,
 			headers: { Authorization: `Bearer ${await getAccessToken()}` },
-			...(body === undefined ? {} : { body: JSON.stringify(body) }),
+			...(body === undefined ? {} : { body: JSON.stringify(body) })
 		})
 	}
 
@@ -81,9 +82,7 @@ export const request = async <T>(
 			try {
 				return await send()
 			} catch (retried) {
-				throw retried instanceof HttpError
-					? toNpdError(retried)
-					: retried
+				throw retried instanceof HttpError ? toNpdError(retried) : retried
 			}
 		}
 

@@ -1,10 +1,9 @@
-import { randomUUID } from 'node:crypto'
-
+import { env } from '~/config/env'
+import { logContext, logger } from '~/infra/logger'
+import { getClientIp } from '~/shared/ip'
 import { Elysia } from 'elysia'
 
-import { env } from '@/config/env'
-import { logContext, logger } from '@/infra/logger'
-import { getClientIp } from '@/shared/ip'
+import { randomUUID } from 'node:crypto'
 
 const REQUEST_ID_HEADER = 'x-request-id'
 
@@ -20,9 +19,9 @@ export const requestContext = new Elysia({ name: 'request-context' }).derive(
 		return {
 			requestId,
 			ip: getClientIp(request.headers),
-			userAgent: request.headers.get('user-agent') ?? 'Unknown',
+			userAgent: request.headers.get('user-agent') ?? 'Unknown'
 		}
-	},
+	}
 )
 
 export const requestLogger = new Elysia({ name: 'request-logger' })
@@ -44,8 +43,8 @@ export const requestLogger = new Elysia({ name: 'request-logger' })
 				method: request.method,
 				path,
 				status,
-				duration: Number(duration.toFixed(1)),
+				duration: Number(duration.toFixed(1))
 			},
-			'request_completed',
+			'request_completed'
 		)
 	})

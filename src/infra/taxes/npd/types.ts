@@ -67,7 +67,7 @@ export interface CreateIncomeResponse {
 
 export const CancelReason = {
 	MISTAKE: 'Чек сформирован ошибочно',
-	RETURN: 'Возврат средств',
+	RETURN: 'Возврат средств'
 } as const
 
 export type CancelReasonCode = keyof typeof CancelReason

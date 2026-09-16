@@ -1305,10 +1305,6 @@ export type $PaymentPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     currency: string
     status: $Enums.PaymentStatus
     method: $Enums.PaymentMethod
-    /**
-     * Which integration handled it - without this `providerPaymentId` is
-     * ambiguous and a webhook cannot be traced back to its payment.
-     */
     provider: $Enums.PaymentProvider
     providerPaymentId: string | null
     metadata: runtime.JsonValue | null

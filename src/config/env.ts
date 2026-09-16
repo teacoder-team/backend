@@ -1,11 +1,6 @@
-import { FormatRegistry, Type as t, type Static } from '@sinclair/typebox'
+import { FormatRegistry, type Static, Type as t } from '@sinclair/typebox'
 import { Value } from '@sinclair/typebox/value'
 
-/**
- * TypeBox only knows the formats that were registered with it. Elysia
- * registers its own set, but config is the bottom layer and must not depend
- * on anything above it having been imported first.
- */
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 if (!FormatRegistry.Has('email')) {
@@ -17,10 +12,9 @@ if (!FormatRegistry.Has('uri')) {
 }
 
 const envSchema = t.Object({
-	NODE_ENV: t.Union(
-		[t.Literal('development'), t.Literal('production'), t.Literal('test')],
-		{ default: 'development' },
-	),
+	NODE_ENV: t.Union([t.Literal('development'), t.Literal('production'), t.Literal('test')], {
+		default: 'development'
+	}),
 
 	APP_ADDRESS: t.String({ default: '0.0.0.0' }),
 	APP_PORT: t.Number({ default: 3000 }),
@@ -33,9 +27,9 @@ const envSchema = t.Object({
 			t.Literal('info'),
 			t.Literal('warn'),
 			t.Literal('error'),
-			t.Literal('fatal'),
+			t.Literal('fatal')
 		],
-		{ default: 'info' },
+		{ default: 'info' }
 	),
 	/** Fraction of non-error, non-slow requests to keep (tail sampling). */
 	LOG_SAMPLE_RATE: t.Number({ default: 1, minimum: 0, maximum: 1 }),
@@ -48,10 +42,9 @@ const envSchema = t.Object({
 
 	COOKIE_DOMAIN: t.String({ default: 'localhost' }),
 	COOKIE_SECURE: t.Boolean({ default: false }),
-	COOKIE_SAMESITE: t.Union(
-		[t.Literal('lax'), t.Literal('strict'), t.Literal('none')],
-		{ default: 'lax' },
-	),
+	COOKIE_SAMESITE: t.Union([t.Literal('lax'), t.Literal('strict'), t.Literal('none')], {
+		default: 'lax'
+	}),
 	SESSION_TTL: t.Number({ default: 60 * 60 * 24 * 30 }),
 	SESSION_CACHE_TTL: t.Number({ default: 15 * 60 }),
 
@@ -66,11 +59,11 @@ const envSchema = t.Object({
 
 	SMTP_FROM_HELLO: t.String({
 		format: 'email',
-		default: 'hello@teacoder.ru',
+		default: 'hello@teacoder.ru'
 	}),
 	SMTP_FROM_NOREPLY: t.String({
 		format: 'email',
-		default: 'no-reply@teacoder.ru',
+		default: 'no-reply@teacoder.ru'
 	}),
 
 	YOOKASSA_SHOP_ID: t.String(),
@@ -81,14 +74,14 @@ const envSchema = t.Object({
 
 	NPD_INN: t.String(),
 	NPD_PASSWORD: t.String(),
-	NPD_DEVICE_ID: t.String({ default: '' }),
+	NPD_DEVICE_ID: t.String({ default: '' })
 })
 
 export type Env = Static<typeof envSchema>
 
 const parsed = Value.Convert(
 	envSchema,
-	Value.Default(envSchema, Value.Clean(envSchema, { ...Bun.env })),
+	Value.Default(envSchema, Value.Clean(envSchema, { ...Bun.env }))
 )
 
 if (!Value.Check(envSchema, parsed)) {

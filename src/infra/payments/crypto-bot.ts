@@ -1,7 +1,7 @@
-import { createHash, createHmac, timingSafeEqual } from 'node:crypto'
+import { env } from '~/config/env'
+import { createHttpClient } from '~/infra/http/client'
 
-import { env } from '@/config/env'
-import { createHttpClient } from '@/infra/http/client'
+import { createHash, createHmac, timingSafeEqual } from 'node:crypto'
 
 const MAINNET_URL = 'https://pay.crypt.bot/api'
 const TESTNET_URL = 'https://testnet-pay.cr.bot/api'
@@ -10,15 +10,7 @@ const DEFAULT_EXPIRES_IN = 60 * 60
 
 export const SIGNATURE_HEADER = 'crypto-pay-api-signature'
 
-export type CryptoAsset =
-	| 'USDT'
-	| 'USDC'
-	| 'TON'
-	| 'BTC'
-	| 'ETH'
-	| 'LTC'
-	| 'BNB'
-	| 'TRX'
+export type CryptoAsset = 'USDT' | 'USDC' | 'TON' | 'BTC' | 'ETH' | 'LTC' | 'BNB' | 'TRX'
 
 export type FiatCurrency = 'RUB' | 'USD' | 'EUR'
 
@@ -51,7 +43,7 @@ export class CryptoBotError extends Error {
 	constructor(
 		readonly method: string,
 		readonly apiCode: number,
-		readonly apiName: string,
+		readonly apiName: string
 	) {
 		super(`Crypto Pay ${method} failed: ${apiName} (${apiCode})`)
 		this.name = 'CryptoBotError'
@@ -62,9 +54,9 @@ const client = createHttpClient({
 	baseURL: env.CRYPTO_BOT_TESTNET ? TESTNET_URL : MAINNET_URL,
 	timeout: 7000,
 	headers: {
-		'Crypto-Pay-API-Token': env.CRYPTO_BOT_TOKEN,
+		'Crypto-Pay-API-Token': env.CRYPTO_BOT_TOKEN
 	},
-	retry: { retries: 3, minTimeout: 400, factor: 2 },
+	retry: { retries: 3, minTimeout: 400, factor: 2 }
 })
 
 type Param = string | number | boolean | undefined
@@ -94,9 +86,7 @@ const call = async <T>(method: string, params: Record<string, Param> = {}) => {
 }
 
 export interface CreateInvoiceInput {
-	/** Price the invoice in crypto. Mutually exclusive with `fiat`. */
 	asset?: CryptoAsset
-	/** Price the invoice in fiat; the payer still settles in crypto. */
 	fiat?: FiatCurrency
 	amount: number
 	description?: string
@@ -115,13 +105,13 @@ export const createInvoice = (input: CreateInvoiceInput) =>
 		payload: input.payload,
 		expires_in: input.expiresIn ?? DEFAULT_EXPIRES_IN,
 		paid_btn_name: input.returnUrl ? 'viewItem' : undefined,
-		paid_btn_url: input.returnUrl,
+		paid_btn_url: input.returnUrl
 	})
 
 export const getInvoice = async (invoiceId: number) => {
 	const { items } = await call<{ items: Invoice[] }>('getInvoices', {
 		invoice_ids: invoiceId,
-		count: 1,
+		count: 1
 	})
 
 	return items[0] ?? null
@@ -130,10 +120,7 @@ export const getInvoice = async (invoiceId: number) => {
 export const deleteInvoice = (invoiceId: number) =>
 	call<boolean>('deleteInvoice', { invoice_id: invoiceId })
 
-export const verifyWebhookSignature = (
-	rawBody: string,
-	signature: string | undefined,
-): boolean => {
+export const verifyWebhookSignature = (rawBody: string, signature: string | undefined): boolean => {
 	if (!signature) return false
 
 	const secret = createHash('sha256').update(env.CRYPTO_BOT_TOKEN).digest()

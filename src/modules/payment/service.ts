@@ -1,23 +1,20 @@
+import { env } from '~/config/env'
+import { extendLogContext } from '~/infra/logger'
+import { createInvoice } from '~/infra/payments/crypto-bot'
+import { createPayment as createYookassaPayment } from '~/infra/payments/yookassa'
+import { findUserEmail } from '~/modules/auth/repository'
+import { BadRequestError, ErrorCode, InternalError } from '~/shared/errors'
+
 import type { Payment } from '@prisma/generated/client'
 import { PaymentMethod, PaymentProvider } from '@prisma/generated/client'
 
-import { env } from '@/config/env'
-import { extendLogContext } from '@/infra/logger'
-import { createInvoice } from '@/infra/payments/crypto-bot'
-import { createPayment as createYookassaPayment } from '@/infra/payments/yookassa'
-import { findUserEmail } from '@/modules/auth/repository'
-import { BadRequestError, ErrorCode, InternalError } from '@/shared/errors'
 import type { InitPaymentInput } from './model'
-import {
-	attachProviderPayment,
-	createPendingPayment,
-	markPaymentFailed,
-} from './repository'
+import { attachProviderPayment, createPendingPayment, markPaymentFailed } from './repository'
 
 const PREMIUM_PLAN = {
 	amount: 449,
 	currency: 'RUB',
-	description: 'Оплата премиум-подписки на 1 месяц',
+	description: 'Оплата премиум-подписки на 1 месяц'
 } as const
 
 const RETURN_URL = env.APP_PUBLIC_URL
@@ -30,7 +27,7 @@ const PROVIDER_BY_METHOD: Record<PaymentMethod, PaymentProvider | null> = {
 	[PaymentMethod.YOOMONEY]: PaymentProvider.YOOKASSA,
 	[PaymentMethod.CRYPTO]: PaymentProvider.CRYPTO_BOT,
 	[PaymentMethod.INTERNATIONAL_CARD]: null,
-	[PaymentMethod.TELEGRAM_STARS]: null,
+	[PaymentMethod.TELEGRAM_STARS]: null
 }
 
 interface ProviderPayment {
@@ -45,12 +42,12 @@ const startAtProvider = async (payment: Payment): Promise<ProviderPayment> => {
 			amount: payment.amount,
 			description: PREMIUM_PLAN.description,
 			payload: payment.id,
-			returnUrl: RETURN_URL,
+			returnUrl: RETURN_URL
 		})
 
 		return {
 			url: invoice.bot_invoice_url,
-			providerPaymentId: String(invoice.invoice_id),
+			providerPaymentId: String(invoice.invoice_id)
 		}
 	}
 
@@ -58,7 +55,7 @@ const startAtProvider = async (payment: Payment): Promise<ProviderPayment> => {
 		amount: payment.amount,
 		description: PREMIUM_PLAN.description,
 		returnUrl: RETURN_URL,
-		metadata: { paymentId: payment.id },
+		metadata: { paymentId: payment.id }
 	})
 
 	const url = created.confirmation?.confirmation_url
@@ -76,7 +73,7 @@ export const initPayment = async (userId: string, input: InitPaymentInput) => {
 	if (!provider) {
 		throw new BadRequestError(
 			`Payment method ${input.method} is not available yet`,
-			ErrorCode.PAYMENT_METHOD_UNSUPPORTED,
+			ErrorCode.PAYMENT_METHOD_UNSUPPORTED
 		)
 	}
 
@@ -88,7 +85,7 @@ export const initPayment = async (userId: string, input: InitPaymentInput) => {
 		currency: PREMIUM_PLAN.currency,
 		method: input.method,
 		provider,
-		metadata: { email, description: PREMIUM_PLAN.description },
+		metadata: { email, description: PREMIUM_PLAN.description }
 	})
 
 	try {
@@ -101,7 +98,7 @@ export const initPayment = async (userId: string, input: InitPaymentInput) => {
 			userId,
 			paymentId: payment.id,
 			provider,
-			providerPaymentId,
+			providerPaymentId
 		})
 
 		return {
@@ -109,7 +106,7 @@ export const initPayment = async (userId: string, input: InitPaymentInput) => {
 			status: payment.status,
 			provider,
 			method: payment.method,
-			url,
+			url
 		}
 	} catch (err) {
 		await markPaymentFailed(payment.id)
@@ -119,12 +116,12 @@ export const initPayment = async (userId: string, input: InitPaymentInput) => {
 			userId,
 			paymentId: payment.id,
 			provider,
-			errorMessage: err instanceof Error ? err.message : String(err),
+			errorMessage: err instanceof Error ? err.message : String(err)
 		})
 
 		throw new BadRequestError(
 			'Payment provider is unavailable, try again later',
-			ErrorCode.PAYMENT_PROVIDER_ERROR,
+			ErrorCode.PAYMENT_PROVIDER_ERROR
 		)
 	}
 }

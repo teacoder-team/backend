@@ -1,7 +1,6 @@
+import { env } from '~/config/env'
+import { logger } from '~/infra/logger'
 import { Redis } from 'ioredis'
-
-import { env } from '@/config/env'
-import { logger } from '@/infra/logger'
 
 export const redis = new Redis(env.REDIS_URL, {
 	maxRetriesPerRequest: null,
@@ -14,7 +13,7 @@ export const redis = new Redis(env.REDIS_URL, {
 	enableOfflineQueue: false,
 	commandTimeout: 2000,
 	/** Bootstrap owns the connection, exactly like the database client. */
-	lazyConnect: true,
+	lazyConnect: true
 })
 
 redis.on('error', (err) => {

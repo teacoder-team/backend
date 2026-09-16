@@ -1,7 +1,6 @@
+import { env } from '~/config/env'
+import { logger } from '~/infra/logger'
 import nodemailer from 'nodemailer'
-
-import { env } from '@/config/env'
-import { logger } from '@/infra/logger'
 
 export const transporter = nodemailer.createTransport({
 	host: env.SMTP_HOST,
@@ -9,11 +8,11 @@ export const transporter = nodemailer.createTransport({
 	secure: env.SMTP_SECURE,
 	auth: {
 		user: env.SMTP_USERNAME,
-		pass: env.SMTP_PASSWORD,
+		pass: env.SMTP_PASSWORD
 	},
 	pool: true,
 	maxConnections: 5,
-	maxMessages: 100,
+	maxMessages: 100
 })
 
 export const verifyMailTransport = async () => {

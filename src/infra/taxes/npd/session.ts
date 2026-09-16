@@ -1,14 +1,10 @@
+import { env } from '~/config/env'
+import { createHttpClient } from '~/infra/http/client'
+import { logger } from '~/infra/logger'
+
 import { createHash } from 'node:crypto'
 
-import { env } from '@/config/env'
-import { createHttpClient } from '@/infra/http/client'
-import { logger } from '@/infra/logger'
-import {
-	API_URL,
-	type AuthResponse,
-	type DeviceInfo,
-	type Profile,
-} from './types'
+import { API_URL, type AuthResponse, type DeviceInfo, type Profile } from './types'
 
 const EXPIRY_SKEW_MS = 60_000
 const FALLBACK_TTL_MS = 55 * 60 * 1000
@@ -21,16 +17,13 @@ const DEVICE_ID_LENGTH = 21
 
 const deviceId =
 	env.NPD_DEVICE_ID ||
-	createHash('sha256')
-		.update(env.NPD_INN)
-		.digest('hex')
-		.slice(0, DEVICE_ID_LENGTH)
+	createHash('sha256').update(env.NPD_INN).digest('hex').slice(0, DEVICE_ID_LENGTH)
 
 const deviceInfo: DeviceInfo = {
 	sourceDeviceId: deviceId,
 	sourceType: 'WEB',
 	appVersion: APP_VERSION,
-	metaDetails: { userAgent: USER_AGENT },
+	metaDetails: { userAgent: USER_AGENT }
 }
 
 const authClient = createHttpClient({
@@ -40,8 +33,8 @@ const authClient = createHttpClient({
 		'Content-Type': 'application/json',
 		Accept: 'application/json, text/plain, */*',
 		Referer: 'https://lknpd.nalog.ru/',
-		'User-Agent': USER_AGENT,
-	},
+		'User-Agent': USER_AGENT
+	}
 })
 
 interface Session {
@@ -55,9 +48,7 @@ let session: Session | null = null
 let renewal: Promise<Session> | null = null
 
 const expiryOf = (response: AuthResponse) => {
-	const stated = response.tokenExpireIn
-		? Date.parse(response.tokenExpireIn)
-		: Number.NaN
+	const stated = response.tokenExpireIn ? Date.parse(response.tokenExpireIn) : Number.NaN
 
 	return Number.isNaN(stated) ? Date.now() + FALLBACK_TTL_MS : stated
 }
@@ -66,7 +57,7 @@ const toSession = (response: AuthResponse): Session => ({
 	token: response.token,
 	refreshToken: response.refreshToken,
 	expiresAt: expiryOf(response),
-	profile: response.profile,
+	profile: response.profile
 })
 
 const signIn = async (): Promise<Session> => {
@@ -75,8 +66,8 @@ const signIn = async (): Promise<Session> => {
 		body: JSON.stringify({
 			username: env.NPD_INN,
 			password: env.NPD_PASSWORD,
-			deviceInfo,
-		}),
+			deviceInfo
+		})
 	})
 
 	logger.info({ context: 'npd', inn: response.profile.inn }, 'npd_signed_in')
@@ -89,8 +80,8 @@ const refresh = async (current: Session): Promise<Session> => {
 		method: 'POST',
 		body: JSON.stringify({
 			refreshToken: current.refreshToken,
-			deviceInfo: { sourceDeviceId: deviceId },
-		}),
+			deviceInfo: { sourceDeviceId: deviceId }
+		})
 	})
 
 	logger.debug({ context: 'npd' }, 'npd_token_refreshed')
@@ -98,7 +89,7 @@ const refresh = async (current: Session): Promise<Session> => {
 	return {
 		...toSession(response),
 		refreshToken: response.refreshToken || current.refreshToken,
-		profile: response.profile ?? current.profile,
+		profile: response.profile ?? current.profile
 	}
 }
 
@@ -109,10 +100,7 @@ const renew = (): Promise<Session> => {
 
 			session = previous
 				? await refresh(previous).catch(async (err) => {
-						logger.warn(
-							{ context: 'npd', err },
-							'npd_refresh_failed_signing_in',
-						)
+						logger.warn({ context: 'npd', err }, 'npd_refresh_failed_signing_in')
 
 						return signIn()
 					})
@@ -127,8 +115,7 @@ const renew = (): Promise<Session> => {
 	return renewal
 }
 
-const isUsable = (current: Session) =>
-	current.expiresAt - EXPIRY_SKEW_MS > Date.now()
+const isUsable = (current: Session) => current.expiresAt - EXPIRY_SKEW_MS > Date.now()
 
 export const getAccessToken = async (): Promise<string> => {
 	if (session && isUsable(session)) return session.token

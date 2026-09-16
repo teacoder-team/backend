@@ -1,4 +1,5 @@
-import { logger } from '@/infra/logger'
+import { logger } from '~/infra/logger'
+
 import { NpdError, request } from './client'
 import { getAccountInn, getDeviceId } from './session'
 import {
@@ -9,7 +10,7 @@ import {
 	type IncomeClient,
 	type PaymentType,
 	type Receipt,
-	type ServiceItem,
+	type ServiceItem
 } from './types'
 
 export { NpdError } from './client'
@@ -22,12 +23,7 @@ const INN_LENGTH = { company: 10, entrepreneur: 12 }
 const round = (value: number) => Math.round(value * 100) / 100
 
 const totalOf = (services: ServiceItem[]) =>
-	round(
-		services.reduce(
-			(sum, service) => sum + round(service.amount * service.quantity),
-			0,
-		),
-	)
+	round(services.reduce((sum, service) => sum + round(service.amount * service.quantity), 0))
 
 /**
  * The service answers a malformed payload with an opaque 400, so the payload is
@@ -44,17 +40,11 @@ const validate = (services: ServiceItem[], client: IncomeClient) => {
 		}
 
 		if (!(service.amount > 0)) {
-			throw new NpdError(
-				0,
-				`Amount for "${service.name}" must be greater than zero`,
-			)
+			throw new NpdError(0, `Amount for "${service.name}" must be greater than zero`)
 		}
 
 		if (!(service.quantity > 0)) {
-			throw new NpdError(
-				0,
-				`Quantity for "${service.name}" must be greater than zero`,
-			)
+			throw new NpdError(0, `Quantity for "${service.name}" must be greater than zero`)
 		}
 	}
 
@@ -65,7 +55,7 @@ const validate = (services: ServiceItem[], client: IncomeClient) => {
 	if (client.inn && !/^\d{10}$|^\d{12}$/.test(client.inn)) {
 		throw new NpdError(
 			0,
-			`Client INN must be ${INN_LENGTH.company} or ${INN_LENGTH.entrepreneur} digits`,
+			`Client INN must be ${INN_LENGTH.company} or ${INN_LENGTH.entrepreneur} digits`
 		)
 	}
 }
@@ -97,50 +87,47 @@ export const issueReceipt = async ({
 	services,
 	client = {},
 	paymentType = 'CASH',
-	operationTime = new Date(),
+	operationTime = new Date()
 }: IssueReceiptInput): Promise<IssuedReceipt> => {
 	const incomeClient: IncomeClient = {
 		incomeType: client.incomeType ?? 'FROM_INDIVIDUAL',
 		inn: client.inn ?? null,
 		displayName: client.displayName ?? null,
-		contactPhone: client.contactPhone ?? null,
+		contactPhone: client.contactPhone ?? null
 	}
 
 	validate(services, incomeClient)
 
 	const totalAmount = totalOf(services)
 
-	const { approvedReceiptUuid } = await request<CreateIncomeResponse>(
-		'/income',
-		{
-			method: 'POST',
-			retryable: false,
-			body: {
-				operationTime: operationTime.toISOString(),
-				requestTime: new Date().toISOString(),
-				services: services.map((service) => ({
-					name: service.name,
-					amount: round(service.amount),
-					quantity: service.quantity,
-				})),
-				totalAmount,
-				client: incomeClient,
-				paymentType,
-				ignoreMaxTotalIncomeRestriction: false,
-				deviceId: getDeviceId(),
-			},
-		},
-	)
+	const { approvedReceiptUuid } = await request<CreateIncomeResponse>('/income', {
+		method: 'POST',
+		retryable: false,
+		body: {
+			operationTime: operationTime.toISOString(),
+			requestTime: new Date().toISOString(),
+			services: services.map((service) => ({
+				name: service.name,
+				amount: round(service.amount),
+				quantity: service.quantity
+			})),
+			totalAmount,
+			client: incomeClient,
+			paymentType,
+			ignoreMaxTotalIncomeRestriction: false,
+			deviceId: getDeviceId()
+		}
+	})
 
 	logger.info(
 		{ context: 'npd', receiptId: approvedReceiptUuid, totalAmount },
-		'npd_receipt_issued',
+		'npd_receipt_issued'
 	)
 
 	return {
 		receiptId: approvedReceiptUuid,
 		totalAmount,
-		printUrl: await getReceiptPrintUrl(approvedReceiptUuid),
+		printUrl: await getReceiptPrintUrl(approvedReceiptUuid)
 	}
 }
 
@@ -153,7 +140,7 @@ export interface CancelReceiptInput {
 export const cancelReceipt = async ({
 	receiptId,
 	reason,
-	operationTime = new Date(),
+	operationTime = new Date()
 }: CancelReceiptInput) => {
 	await request('/cancel', {
 		method: 'POST',
@@ -163,8 +150,8 @@ export const cancelReceipt = async ({
 			requestTime: new Date().toISOString(),
 			comment: CancelReason[reason],
 			receiptUuid: receiptId,
-			partnerCode: null,
-		},
+			partnerCode: null
+		}
 	})
 
 	logger.info({ context: 'npd', receiptId, reason }, 'npd_receipt_cancelled')

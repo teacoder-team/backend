@@ -1,7 +1,7 @@
+import { authGuard } from '~/plugins/auth-guard'
+import { ok } from '~/shared/api'
 import { Elysia } from 'elysia'
 
-import { authGuard } from '@/plugins/auth-guard'
-import { ok } from '@/shared/api'
 import { RevokeResponse, SessionListResponse, SessionParams } from './model'
 import { getUserSessions, revokeAllSessions, revokeSession } from './service'
 
@@ -9,34 +9,29 @@ export const session = new Elysia({ prefix: '/sessions', tags: ['Sessions'] })
 	.use(authGuard)
 	.model({ SessionListResponse, RevokeResponse, SessionParams })
 	.guard({ auth: true, detail: { security: [{ bearerAuth: [] }] } })
-	.get(
-		'/',
-		async ({ session }) => ok(await getUserSessions(session.userId, session.id)),
-		{
-			response: 'SessionListResponse',
-			detail: {
-				summary: 'List active sessions',
-				description: 'Every device currently signed in to this account.',
-			},
-		},
-	)
+	.get('/', async ({ session }) => ok(await getUserSessions(session.userId, session.id)), {
+		response: 'SessionListResponse',
+		detail: {
+			summary: 'List active sessions',
+			description: 'Every device currently signed in to this account.'
+		}
+	})
 	.delete(
 		'/:id',
-		async ({ session, params }) =>
-			ok(await revokeSession(session.userId, params.id)),
+		async ({ session, params }) => ok(await revokeSession(session.userId, params.id)),
 		{
 			params: 'SessionParams',
 			response: 'RevokeResponse',
 			detail: {
 				summary: 'Revoke a session',
-				description: 'Sign a single device out of this account.',
-			},
-		},
+				description: 'Sign a single device out of this account.'
+			}
+		}
 	)
 	.delete('/', async ({ session }) => ok(await revokeAllSessions(session.userId)), {
 		response: 'RevokeResponse',
 		detail: {
 			summary: 'Revoke all sessions',
-			description: 'Sign every device out, including the current one.',
-		},
+			description: 'Sign every device out, including the current one.'
+		}
 	})

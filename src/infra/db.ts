@@ -1,16 +1,16 @@
+import { env } from '~/config/env'
+import { logger } from '~/infra/logger'
+
 import { PrismaPg } from '@prisma/adapter-pg'
 import { Prisma, PrismaClient } from '@prisma/generated/client'
-
-import { env } from '@/config/env'
-import { logger } from '@/infra/logger'
 
 export const db = new PrismaClient({
 	adapter: new PrismaPg({ connectionString: env.DATABASE_URL }),
 	log: [
 		{ emit: 'event', level: 'query' },
 		{ emit: 'event', level: 'error' },
-		{ emit: 'event', level: 'warn' },
-	],
+		{ emit: 'event', level: 'warn' }
+	]
 })
 
 db.$on('query', (event: Prisma.QueryEvent) => {
@@ -19,9 +19,9 @@ db.$on('query', (event: Prisma.QueryEvent) => {
 			context: 'database',
 			query: event.query,
 			params: event.params,
-			duration: `${event.duration}ms`,
+			duration: `${event.duration}ms`
 		},
-		'sql_query_executed',
+		'sql_query_executed'
 	)
 })
 

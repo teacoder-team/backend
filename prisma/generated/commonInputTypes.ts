@@ -201,6 +201,23 @@ export type BoolWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedBoolFilter<$PrismaModel>
 }
 
+export type EnumLessonAccessFilter<$PrismaModel = never> = {
+  equals?: $Enums.LessonAccess | Prisma.EnumLessonAccessFieldRefInput<$PrismaModel>
+  in?: $Enums.LessonAccess[] | Prisma.ListEnumLessonAccessFieldRefInput<$PrismaModel>
+  notIn?: $Enums.LessonAccess[] | Prisma.ListEnumLessonAccessFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumLessonAccessFilter<$PrismaModel> | $Enums.LessonAccess
+}
+
+export type EnumLessonAccessWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.LessonAccess | Prisma.EnumLessonAccessFieldRefInput<$PrismaModel>
+  in?: $Enums.LessonAccess[] | Prisma.ListEnumLessonAccessFieldRefInput<$PrismaModel>
+  notIn?: $Enums.LessonAccess[] | Prisma.ListEnumLessonAccessFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumLessonAccessWithAggregatesFilter<$PrismaModel> | $Enums.LessonAccess
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumLessonAccessFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumLessonAccessFilter<$PrismaModel>
+}
+
 export type EnumTotpStatusFilter<$PrismaModel = never> = {
   equals?: $Enums.TotpStatus | Prisma.EnumTotpStatusFieldRefInput<$PrismaModel>
   in?: $Enums.TotpStatus[] | Prisma.ListEnumTotpStatusFieldRefInput<$PrismaModel>
@@ -743,6 +760,23 @@ export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedBoolFilter<$PrismaModel>
   _max?: Prisma.NestedBoolFilter<$PrismaModel>
+}
+
+export type NestedEnumLessonAccessFilter<$PrismaModel = never> = {
+  equals?: $Enums.LessonAccess | Prisma.EnumLessonAccessFieldRefInput<$PrismaModel>
+  in?: $Enums.LessonAccess[] | Prisma.ListEnumLessonAccessFieldRefInput<$PrismaModel>
+  notIn?: $Enums.LessonAccess[] | Prisma.ListEnumLessonAccessFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumLessonAccessFilter<$PrismaModel> | $Enums.LessonAccess
+}
+
+export type NestedEnumLessonAccessWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.LessonAccess | Prisma.EnumLessonAccessFieldRefInput<$PrismaModel>
+  in?: $Enums.LessonAccess[] | Prisma.ListEnumLessonAccessFieldRefInput<$PrismaModel>
+  notIn?: $Enums.LessonAccess[] | Prisma.ListEnumLessonAccessFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumLessonAccessWithAggregatesFilter<$PrismaModel> | $Enums.LessonAccess
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumLessonAccessFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumLessonAccessFilter<$PrismaModel>
 }
 
 export type NestedEnumTotpStatusFilter<$PrismaModel = never> = {

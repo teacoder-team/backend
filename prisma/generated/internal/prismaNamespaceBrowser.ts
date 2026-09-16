@@ -145,6 +145,7 @@ export const LessonScalarFieldEnum = {
   description: 'description',
   position: 'position',
   kinescopeId: 'kinescopeId',
+  access: 'access',
   isPublished: 'isPublished',
   courseId: 'courseId',
   createdAt: 'createdAt',

@@ -1,7 +1,7 @@
-import { createHmac, timingSafeEqual } from 'node:crypto'
+import { env } from '~/config/env'
+import { ErrorCode, UnauthorizedError } from '~/shared/errors'
 
-import { env } from '@/config/env'
-import { ErrorCode, UnauthorizedError } from '@/shared/errors'
+import { createHmac, timingSafeEqual } from 'node:crypto'
 
 const TOKEN_PREFIX = 'tc'
 
@@ -16,9 +16,7 @@ const sign = (encodedPayload: string) =>
 	createHmac('sha256', env.TOKEN_SECRET).update(encodedPayload).digest('hex')
 
 export const signToken = (payload: TokenPayload): string => {
-	const encodedPayload = Buffer.from(JSON.stringify(payload)).toString(
-		'base64url',
-	)
+	const encodedPayload = Buffer.from(JSON.stringify(payload)).toString('base64url')
 
 	return `${TOKEN_PREFIX}_${encodedPayload}.${sign(encodedPayload)}`
 }
@@ -29,9 +27,7 @@ export const verifyToken = (token: string): TokenPayload => {
 			throw new Error('Invalid token prefix')
 		}
 
-		const [encodedPayload, signature] = token
-			.slice(TOKEN_PREFIX.length + 1)
-			.split('.')
+		const [encodedPayload, signature] = token.slice(TOKEN_PREFIX.length + 1).split('.')
 
 		if (!encodedPayload || !signature) {
 			throw new Error('Malformed token structure')
@@ -39,18 +35,16 @@ export const verifyToken = (token: string): TokenPayload => {
 
 		const isValid = timingSafeEqual(
 			Buffer.from(signature, 'hex'),
-			Buffer.from(sign(encodedPayload), 'hex'),
+			Buffer.from(sign(encodedPayload), 'hex')
 		)
 
 		if (!isValid) throw new Error('Signature mismatch')
 
-		return JSON.parse(
-			Buffer.from(encodedPayload, 'base64url').toString('utf8'),
-		) as TokenPayload
+		return JSON.parse(Buffer.from(encodedPayload, 'base64url').toString('utf8')) as TokenPayload
 	} catch {
 		throw new UnauthorizedError(
 			'Invalid or corrupted authentication token',
-			ErrorCode.NOT_AUTHORIZED,
+			ErrorCode.NOT_AUTHORIZED
 		)
 	}
 }

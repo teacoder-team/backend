@@ -7,11 +7,8 @@ model Payment {
     status PaymentStatus @default(PENDING)
     method PaymentMethod
 
-    /// Which integration handled it - without this `providerPaymentId` is
-    /// ambiguous and a webhook cannot be traced back to its payment.
-    provider PaymentProvider
-
-    providerPaymentId String? @map("provider_payment_id")
+    provider          PaymentProvider
+    providerPaymentId String?         @map("provider_payment_id")
 
     metadata Json?
 

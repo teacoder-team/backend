@@ -1,15 +1,15 @@
+import { authCookie } from '~/plugins/auth-cookie'
+import { authGuard } from '~/plugins/auth-guard'
+import { requestContext } from '~/plugins/request-context'
+import { ok } from '~/shared/api'
 import { Elysia } from 'elysia'
 
-import { authCookie } from '@/plugins/auth-cookie'
-import { authGuard } from '@/plugins/auth-guard'
-import { requestContext } from '@/plugins/request-context'
-import { ok } from '@/shared/api'
 import {
 	AuthResponse,
 	LoginPayload,
 	MessageResponse,
 	RegisterPayload,
-	VerifyRegisterPayload,
+	VerifyRegisterPayload
 } from './model'
 import { login, logout, register, verifyRegister } from './service'
 
@@ -22,7 +22,7 @@ export const auth = new Elysia({ prefix: '/auth', tags: ['Auth'] })
 		VerifyRegisterPayload,
 		LoginPayload,
 		MessageResponse,
-		AuthResponse,
+		AuthResponse
 	})
 	.post(
 		'/register',
@@ -36,9 +36,9 @@ export const auth = new Elysia({ prefix: '/auth', tags: ['Auth'] })
 			response: 'MessageResponse',
 			detail: {
 				summary: 'Initialize register',
-				description: 'Start the process of creating a new user account.',
-			},
-		},
+				description: 'Start the process of creating a new user account.'
+			}
+		}
 	)
 	.post(
 		'/verify',
@@ -54,9 +54,9 @@ export const auth = new Elysia({ prefix: '/auth', tags: ['Auth'] })
 			response: 'AuthResponse',
 			detail: {
 				summary: 'Verify register',
-				description: 'Confirm and activate your newly created account.',
-			},
-		},
+				description: 'Confirm and activate your newly created account.'
+			}
+		}
 	)
 	.post(
 		'/login',
@@ -72,9 +72,9 @@ export const auth = new Elysia({ prefix: '/auth', tags: ['Auth'] })
 			response: 'AuthResponse',
 			detail: {
 				summary: 'Login with email',
-				description: 'Authenticate and start a new session.',
-			},
-		},
+				description: 'Authenticate and start a new session.'
+			}
+		}
 	)
 	.post(
 		'/logout',
@@ -91,7 +91,7 @@ export const auth = new Elysia({ prefix: '/auth', tags: ['Auth'] })
 			detail: {
 				summary: 'Logout',
 				description: 'Terminate the current session and clear the cookie.',
-				security: [{ bearerAuth: [] }],
-			},
-		},
+				security: [{ bearerAuth: [] }]
+			}
+		}
 	)

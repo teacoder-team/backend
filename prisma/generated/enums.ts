@@ -39,6 +39,14 @@ export const PasswordResetStatus = {
 export type PasswordResetStatus = (typeof PasswordResetStatus)[keyof typeof PasswordResetStatus]
 
 
+export const LessonAccess = {
+  FREE: 'FREE',
+  PREMIUM: 'PREMIUM'
+} as const
+
+export type LessonAccess = (typeof LessonAccess)[keyof typeof LessonAccess]
+
+
 export const TotpStatus = {
   DISABLED: 'DISABLED',
   PENDING: 'PENDING',

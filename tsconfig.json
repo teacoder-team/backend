@@ -8,7 +8,7 @@
 		"lib": ["ESNext", "dom"],
 		"types": ["bun-types"],
 		"paths": {
-			"@/*": ["./src/*"],
+			"~/*": ["./src/*"],
 			"@prisma/generated": ["./prisma/generated"],
 			"@prisma/generated/*": ["./prisma/generated/*"]
 		},

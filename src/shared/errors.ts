@@ -30,7 +30,7 @@ export enum ErrorCode {
 	NOT_FOUND = 'SYSTEM_002',
 	SERVICE_UNAVAILABLE = 'SYSTEM_003',
 	RATE_LIMIT_EXCEEDED = 'SYSTEM_004',
-	CONFLICT = 'SYSTEM_005',
+	CONFLICT = 'SYSTEM_005'
 }
 
 /**
@@ -43,7 +43,7 @@ export class AppError extends Error {
 		readonly code: ErrorCode,
 		readonly statusCode: number,
 		message: string,
-		readonly details?: unknown,
+		readonly details?: unknown
 	) {
 		super(message)
 		this.name = new.target.name
@@ -54,17 +54,14 @@ export class BadRequestError extends AppError {
 	constructor(
 		message: string,
 		code: ErrorCode = ErrorCode.INVALID_INPUT_DATA,
-		details?: unknown,
+		details?: unknown
 	) {
 		super(code, 400, message, details)
 	}
 }
 
 export class UnauthorizedError extends AppError {
-	constructor(
-		message = 'Unauthorized',
-		code: ErrorCode = ErrorCode.NOT_AUTHORIZED,
-	) {
+	constructor(message = 'Unauthorized', code: ErrorCode = ErrorCode.NOT_AUTHORIZED) {
 		super(code, 401, message)
 	}
 }

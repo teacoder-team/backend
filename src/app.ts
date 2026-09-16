@@ -1,12 +1,11 @@
+import { auth } from '~/modules/auth'
+import { payment } from '~/modules/payment'
+import { root } from '~/modules/root'
+import { session } from '~/modules/session'
+import { errorHandler } from '~/plugins/error-handler'
+import { requestContext, requestLogger } from '~/plugins/request-context'
 import { openapi } from '@elysiajs/openapi'
 import { Elysia } from 'elysia'
-
-import { auth } from '@/modules/auth'
-import { payment } from '@/modules/payment'
-import { root } from '@/modules/root'
-import { session } from '@/modules/session'
-import { errorHandler } from '@/plugins/error-handler'
-import { requestContext, requestLogger } from '@/plugins/request-context'
 
 export const createApp = () =>
 	new Elysia()
@@ -22,10 +21,9 @@ export const createApp = () =>
 						version: '1.0.0',
 						contact: {
 							name: 'TeaCoder Support',
-							email: 'support@teacoder.ru',
+							email: 'support@teacoder.ru'
 						},
-						termsOfService:
-							'https://teacoder.ru/documents/terms-of-use',
+						termsOfService: 'https://teacoder.ru/documents/terms-of-use'
 					},
 					components: {
 						securitySchemes: {
@@ -33,12 +31,12 @@ export const createApp = () =>
 								type: 'http',
 								scheme: 'bearer',
 								description:
-									'Enter your valid active session token to access protected resources.',
-							},
-						},
-					},
-				},
-			}),
+									'Enter your valid active session token to access protected resources.'
+							}
+						}
+					}
+				}
+			})
 		)
 		.use(errorHandler)
 		.use(requestContext)

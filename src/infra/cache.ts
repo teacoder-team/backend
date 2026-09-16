@@ -45,8 +45,7 @@ const store = async (key: string, payload: string, ttl: number) => {
 	}
 }
 
-const write = (key: string, value: unknown, ttl: number) =>
-	store(key, JSON.stringify(value), ttl)
+const write = (key: string, value: unknown, ttl: number) => store(key, JSON.stringify(value), ttl)
 
 const drop = async (...keys: string[]) => {
 	if (!keys.length) return
@@ -66,7 +65,7 @@ const drop = async (...keys: string[]) => {
 const readThrough = async <T>(
 	key: string,
 	{ ttl, missTtl = 0 }: CacheOptions<T>,
-	load: () => Promise<T | null>,
+	load: () => Promise<T | null>
 ): Promise<T | null> => {
 	const entry = await read<T>(key)
 

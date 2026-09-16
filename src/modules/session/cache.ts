@@ -1,7 +1,7 @@
-import type { Session } from '@prisma/generated/client'
+import { env } from '~/config/env'
+import { cache } from '~/infra/cache'
 
-import { env } from '@/config/env'
-import { cache } from '@/infra/cache'
+import type { Session } from '@prisma/generated/client'
 
 const MISS_TTL = 30
 
@@ -18,7 +18,7 @@ export const toCachedSession = (session: Session): CachedSession => ({
 	id: session.id,
 	userId: session.userId,
 	expiresAt: session.expiresAt.toISOString(),
-	lastSeenAt: session.lastSeenAt.toISOString(),
+	lastSeenAt: session.lastSeenAt.toISOString()
 })
 
 const ttlFor = ({ expiresAt }: CachedSession) => {
@@ -27,18 +27,10 @@ const ttlFor = ({ expiresAt }: CachedSession) => {
 	return Math.min(env.SESSION_CACHE_TTL, remaining)
 }
 
-export const readCachedSession = (
-	sessionId: string,
-	load: () => Promise<CachedSession | null>,
-) =>
-	cache.readThrough<CachedSession>(
-		key(sessionId),
-		{ ttl: ttlFor, missTtl: MISS_TTL },
-		load,
-	)
+export const readCachedSession = (sessionId: string, load: () => Promise<CachedSession | null>) =>
+	cache.readThrough<CachedSession>(key(sessionId), { ttl: ttlFor, missTtl: MISS_TTL }, load)
 
 export const writeCachedSession = (session: CachedSession) =>
 	cache.write(key(session.id), session, ttlFor(session))
 
-export const dropCachedSessions = (...sessionIds: string[]) =>
-	cache.drop(...sessionIds.map(key))
+export const dropCachedSessions = (...sessionIds: string[]) => cache.drop(...sessionIds.map(key))

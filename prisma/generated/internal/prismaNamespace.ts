@@ -1776,6 +1776,7 @@ export const LessonScalarFieldEnum = {
   description: 'description',
   position: 'position',
   kinescopeId: 'kinescopeId',
+  access: 'access',
   isPublished: 'isPublished',
   courseId: 'courseId',
   createdAt: 'createdAt',
@@ -2110,6 +2111,20 @@ export type ListEnumPasswordResetStatusFieldRefInput<$PrismaModel> = FieldRefInp
  * Reference to a field of type 'Boolean'
  */
 export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
+
+
+/**
+ * Reference to a field of type 'LessonAccess'
+ */
+export type EnumLessonAccessFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'LessonAccess'>
+    
+
+
+/**
+ * Reference to a field of type 'LessonAccess[]'
+ */
+export type ListEnumLessonAccessFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'LessonAccess[]'>
     
 
 

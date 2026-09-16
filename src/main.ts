@@ -1,7 +1,7 @@
-import { createApp } from '@/app'
-import { bootstrap, shutdown } from '@/bootstrap'
-import { env } from '@/config/env'
-import { logger } from '@/infra/logger'
+import { createApp } from '~/app'
+import { bootstrap, shutdown } from '~/bootstrap'
+import { env } from '~/config/env'
+import { logger } from '~/infra/logger'
 
 await bootstrap()
 
@@ -13,11 +13,11 @@ const app = createApp().listen(
 				context: 'server',
 				network: { host: hostname, port, url: env.APP_PUBLIC_URL },
 				environment: env.NODE_ENV,
-				runtime: { bun: Bun.version, platform: process.platform },
+				runtime: { bun: Bun.version, platform: process.platform }
 			},
-			'server_listening',
+			'server_listening'
 		)
-	},
+	}
 )
 
 for (const signal of ['SIGINT', 'SIGTERM'] as const) {

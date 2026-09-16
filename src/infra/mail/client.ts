@@ -1,19 +1,18 @@
+import { env } from '~/config/env'
+import { logger } from '~/infra/logger'
 import { render } from '@react-email/render'
 import type { ReactElement } from 'react'
 
-import { env } from '@/config/env'
-import { logger } from '@/infra/logger'
 import { transporter } from './transport'
 
 export type MailSender = 'hello' | 'noreply'
 
 const SENDERS: Record<MailSender, string> = {
 	hello: `TeaCoder <${env.SMTP_FROM_HELLO}>`,
-	noreply: `TeaCoder <${env.SMTP_FROM_NOREPLY}>`,
+	noreply: `TeaCoder <${env.SMTP_FROM_NOREPLY}>`
 }
 
-const PLAIN_TEXT_FALLBACK =
-	'Please view this email in an HTML-compatible client.'
+const PLAIN_TEXT_FALLBACK = 'Please view this email in an HTML-compatible client.'
 
 export interface SendMailOptions {
 	to: string
@@ -22,12 +21,7 @@ export interface SendMailOptions {
 	sender?: MailSender
 }
 
-export const sendMail = async ({
-	to,
-	subject,
-	template,
-	sender = 'noreply',
-}: SendMailOptions) => {
+export const sendMail = async ({ to, subject, template, sender = 'noreply' }: SendMailOptions) => {
 	const html = await render(template)
 
 	const info = await transporter.sendMail({
@@ -35,7 +29,7 @@ export const sendMail = async ({
 		to,
 		subject,
 		html,
-		text: PLAIN_TEXT_FALLBACK,
+		text: PLAIN_TEXT_FALLBACK
 	})
 
 	logger.info(
@@ -43,9 +37,9 @@ export const sendMail = async ({
 			context: 'mail',
 			messageId: info.messageId,
 			to,
-			sender,
+			sender
 		},
-		'email_sent',
+		'email_sent'
 	)
 
 	return info

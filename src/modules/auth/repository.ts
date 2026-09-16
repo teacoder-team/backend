@@ -1,10 +1,6 @@
-import {
-	AuthProvider,
-	CredentialType,
-	UserRole,
-} from '@prisma/generated/client'
+import { db } from '~/infra/db'
 
-import { db } from '@/infra/db'
+import { AuthProvider, CredentialType, UserRole } from '@prisma/generated/client'
 
 const PASSWORD_ALGORITHM = 'argon2'
 const PASSWORD_VERSION = 1
@@ -15,17 +11,17 @@ export const findCredentialByEmail = (email: string) =>
 		where: {
 			provider_identifier: {
 				provider: AuthProvider.EMAIL,
-				identifier: email,
-			},
+				identifier: email
+			}
 		},
-		include: { user: true, passwordHash: true },
+		include: { user: true, passwordHash: true }
 	})
 
 /** The address the account signs in with, when it has one. */
 export const findUserEmail = async (userId: string) => {
 	const credential = await db.credential.findFirst({
 		where: { userId, provider: AuthProvider.EMAIL },
-		select: { identifier: true },
+		select: { identifier: true }
 	})
 
 	return credential?.identifier ?? null
@@ -33,7 +29,7 @@ export const findUserEmail = async (userId: string) => {
 
 export const emailExists = async (email: string) =>
 	(await db.credential.count({
-		where: { provider: AuthProvider.EMAIL, identifier: email },
+		where: { provider: AuthProvider.EMAIL, identifier: email }
 	})) > 0
 
 export interface CreateUserInput {
@@ -49,8 +45,8 @@ export const createUser = (input: CreateUserInput) =>
 			data: {
 				username: input.username,
 				displayName: input.displayName,
-				role: UserRole.STUDENT,
-			},
+				role: UserRole.STUDENT
+			}
 		})
 
 		const credential = await tx.credential.create({
@@ -58,8 +54,8 @@ export const createUser = (input: CreateUserInput) =>
 				userId: user.id,
 				provider: AuthProvider.EMAIL,
 				type: CredentialType.PASSWORD,
-				identifier: input.email,
-			},
+				identifier: input.email
+			}
 		})
 
 		await tx.passwordHash.create({
@@ -67,8 +63,8 @@ export const createUser = (input: CreateUserInput) =>
 				credentialId: credential.id,
 				hash: input.passwordHash,
 				algorithm: PASSWORD_ALGORITHM,
-				version: PASSWORD_VERSION,
-			},
+				version: PASSWORD_VERSION
+			}
 		})
 
 		return user

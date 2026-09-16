@@ -1,5 +1,5 @@
-import { env } from '@/config/env'
-import { createHttpClient } from '@/infra/http/client'
+import { env } from '~/config/env'
+import { createHttpClient } from '~/infra/http/client'
 
 export interface CreatePaymentInput {
 	amount: number
@@ -21,28 +21,25 @@ export interface Payment {
 
 const CURRENCY = 'RUB'
 
-const credentials = Buffer.from(
-	`${env.YOOKASSA_SHOP_ID}:${env.YOOKASSA_SECRET_KEY}`,
-).toString('base64')
+const credentials = Buffer.from(`${env.YOOKASSA_SHOP_ID}:${env.YOOKASSA_SECRET_KEY}`).toString(
+	'base64'
+)
 
 const client = createHttpClient({
 	baseURL: 'https://api.yookassa.ru/v3',
 	timeout: 7000,
 	headers: {
 		Authorization: `Basic ${credentials}`,
-		'Content-Type': 'application/json',
+		'Content-Type': 'application/json'
 	},
 	retry: { retries: 3, minTimeout: 400, factor: 2 },
 	beforeRequest: (request) => {
-		if (
-			request.method === 'POST' &&
-			!request.headers.has('Idempotence-Key')
-		) {
+		if (request.method === 'POST' && !request.headers.has('Idempotence-Key')) {
 			request.headers.set('Idempotence-Key', crypto.randomUUID())
 		}
 
 		return request
-	},
+	}
 })
 
 export const createPayment = (input: CreatePaymentInput) =>
@@ -53,9 +50,8 @@ export const createPayment = (input: CreatePaymentInput) =>
 			capture: true,
 			confirmation: { type: 'redirect', return_url: input.returnUrl },
 			description: input.description,
-			metadata: input.metadata,
-		}),
+			metadata: input.metadata
+		})
 	})
 
-export const getPayment = (paymentId: string) =>
-	client<Payment>(`/payments/${paymentId}`)
+export const getPayment = (paymentId: string) => client<Payment>(`/payments/${paymentId}`)

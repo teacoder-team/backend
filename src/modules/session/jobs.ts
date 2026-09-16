@@ -1,6 +1,7 @@
-import { logger } from '@/infra/logger'
-import { maintenanceQueue } from '@/infra/queue/queues'
-import type { JobHandlers } from '@/infra/queue/runner'
+import { logger } from '~/infra/logger'
+import { maintenanceQueue } from '~/infra/queue/queues'
+import type { JobHandlers } from '~/infra/queue/runner'
+
 import { deleteSessionsDeadBefore } from './repository'
 
 /** How long a dead session stays readable as account history. */
@@ -19,16 +20,13 @@ export const maintenanceJobs: JobHandlers<MaintenanceJobs> = {
 		const cutoff = new Date(Date.now() - RETENTION_DAYS * DAY_MS)
 		const removed = await deleteSessionsDeadBefore(cutoff)
 
-		logger.info(
-			{ context: 'maintenance', removed, cutoff },
-			'dead_sessions_pruned',
-		)
-	},
+		logger.info({ context: 'maintenance', removed, cutoff }, 'dead_sessions_pruned')
+	}
 }
 
 export const scheduleMaintenance = () =>
 	maintenanceQueue.upsertJobScheduler(
 		'prune-sessions',
 		{ pattern: SCHEDULE },
-		{ name: 'pruneSessions' },
+		{ name: 'pruneSessions' }
 	)

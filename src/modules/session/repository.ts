@@ -1,10 +1,10 @@
-import type { Prisma, Session } from '@prisma/generated/client'
+import { db } from '~/infra/db'
 
-import { db } from '@/infra/db'
+import type { Prisma, Session } from '@prisma/generated/client'
 
 const active = (now: Date): Prisma.SessionWhereInput => ({
 	revokedAt: null,
-	expiresAt: { gt: now },
+	expiresAt: { gt: now }
 })
 
 export interface NewSession {
@@ -19,8 +19,7 @@ export interface NewSession {
 	expiresAt: Date
 }
 
-export const insertSession = (data: NewSession): Promise<Session> =>
-	db.session.create({ data })
+export const insertSession = (data: NewSession): Promise<Session> => db.session.create({ data })
 
 export const findActiveSession = (sessionId: string) =>
 	db.session.findFirst({ where: { id: sessionId, ...active(new Date()) } })
@@ -28,13 +27,13 @@ export const findActiveSession = (sessionId: string) =>
 export const listActiveSessions = (userId: string) =>
 	db.session.findMany({
 		where: { userId, ...active(new Date()) },
-		orderBy: { lastSeenAt: 'desc' },
+		orderBy: { lastSeenAt: 'desc' }
 	})
 
 export const listActiveSessionIds = async (userId: string) => {
 	const sessions = await db.session.findMany({
 		where: { userId, ...active(new Date()) },
-		select: { id: true },
+		select: { id: true }
 	})
 
 	return sessions.map(({ id }) => id)
@@ -43,7 +42,7 @@ export const listActiveSessionIds = async (userId: string) => {
 export const revokeSessionById = async (userId: string, sessionId: string) => {
 	const { count } = await db.session.updateMany({
 		where: { id: sessionId, userId, ...active(new Date()) },
-		data: { revokedAt: new Date() },
+		data: { revokedAt: new Date() }
 	})
 
 	return count
@@ -52,7 +51,7 @@ export const revokeSessionById = async (userId: string, sessionId: string) => {
 export const revokeSessionsByUser = async (userId: string) => {
 	const { count } = await db.session.updateMany({
 		where: { userId, ...active(new Date()) },
-		data: { revokedAt: new Date() },
+		data: { revokedAt: new Date() }
 	})
 
 	return count
@@ -64,8 +63,8 @@ export const touchSession = (sessionId: string, lastSeenAt: Date) =>
 export const deleteSessionsDeadBefore = async (cutoff: Date) => {
 	const { count } = await db.session.deleteMany({
 		where: {
-			OR: [{ expiresAt: { lt: cutoff } }, { revokedAt: { lt: cutoff } }],
-		},
+			OR: [{ expiresAt: { lt: cutoff } }, { revokedAt: { lt: cutoff } }]
+		}
 	})
 
 	return count

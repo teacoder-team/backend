@@ -1,6 +1,6 @@
+import { logger } from '~/infra/logger'
 import { type Job, Worker } from 'bullmq'
 
-import { logger } from '@/infra/logger'
 import { queueConnection } from './connection'
 import type { QueueName } from './queues'
 
@@ -12,7 +12,7 @@ export type JobHandlers<Jobs extends Record<string, unknown>> = {
 
 export const startWorker = <Jobs extends Record<string, unknown>>(
 	queue: QueueName,
-	handlers: JobHandlers<Jobs>,
+	handlers: JobHandlers<Jobs>
 ) => {
 	const worker = new Worker(
 		queue,
@@ -20,28 +20,20 @@ export const startWorker = <Jobs extends Record<string, unknown>>(
 			const handle = handlers[job.name as keyof Jobs]
 
 			if (!handle) {
-				throw new Error(
-					`No handler for job "${job.name}" in "${queue}"`,
-				)
+				throw new Error(`No handler for job "${job.name}" in "${queue}"`)
 			}
 
 			await handle(job.data)
 		},
-		{ connection: queueConnection, concurrency: CONCURRENCY },
+		{ connection: queueConnection, concurrency: CONCURRENCY }
 	)
 
 	worker.on('completed', (job) => {
-		logger.debug(
-			{ context: 'queue', queue, job: job.name },
-			'job_completed',
-		)
+		logger.debug({ context: 'queue', queue, job: job.name }, 'job_completed')
 	})
 
 	worker.on('failed', (job, err) => {
-		logger.error(
-			{ context: 'queue', queue, job: job?.name, err },
-			'job_failed',
-		)
+		logger.error({ context: 'queue', queue, job: job?.name, err }, 'job_failed')
 	})
 
 	logger.info({ context: 'queue', queue }, 'worker_started')

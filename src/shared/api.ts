@@ -26,42 +26,42 @@ export const ok = <T>(result: T): ApiSuccess<T> => ({
 	success: true,
 	errors: [],
 	messages: [],
-	result,
+	result
 })
 
 export const fail = (errors: ApiIssue[]): ApiFailure => ({
 	success: false,
 	errors,
 	messages: [],
-	result: null,
+	result: null
 })
 
 const IssueSchema = t.Object({
 	code: t.String({
 		description: 'Stable machine-readable identifier for this issue.',
-		examples: ['AUTH_002'],
+		examples: ['AUTH_002']
 	}),
 	message: t.String({
 		description: 'Human-readable explanation.',
-		examples: ['Invalid email or password'],
+		examples: ['Invalid email or password']
 	}),
 	field: t.Optional(
 		t.String({
 			description: 'Input field the issue refers to, when it has one.',
-			examples: ['email'],
-		}),
-	),
+			examples: ['email']
+		})
+	)
 })
 
 export const PrismaEnum = <const T extends Record<string, string>>(
 	values: T,
-	options?: Parameters<typeof t.UnionEnum>[1],
+	options?: Parameters<typeof t.UnionEnum>[1]
 ) => {
 	const allowed = Object.values(values) as [T[keyof T], ...T[keyof T][]]
 
 	return t.UnionEnum(allowed, {
 		error: `Expected one of: ${allowed.join(', ')}`,
-		...options,
+		...options
 	})
 }
 
@@ -70,12 +70,12 @@ export const ApiResponse = <T extends TSchema>(result: T) =>
 		success: t.Literal(true),
 		errors: t.Array(IssueSchema),
 		messages: t.Array(IssueSchema),
-		result,
+		result
 	})
 
 export const ApiErrorResponse = t.Object({
 	success: t.Literal(false),
 	errors: t.Array(IssueSchema),
 	messages: t.Array(IssueSchema),
-	result: t.Null(),
+	result: t.Null()
 })
