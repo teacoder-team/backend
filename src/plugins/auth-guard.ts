@@ -1,8 +1,9 @@
+import { Elysia } from 'elysia'
+
 import { extendLogContext } from '~/infra/logger'
 import { resolveSession } from '~/modules/session/service'
-import { ErrorCode, UnauthorizedError } from '~/shared/errors'
+import { UnauthorizedError } from '~/shared/errors'
 import { verifyToken } from '~/shared/security/token'
-import { Elysia } from 'elysia'
 
 import { SESSION_COOKIE } from './auth-cookie'
 
@@ -16,11 +17,6 @@ const readToken = (cookieToken: string | undefined, authorization: string | unde
 	return cookieToken
 }
 
-/**
- * Adds `auth: true` to any route. The handler then receives a `session` that
- * is guaranteed to still exist in Redis, so a revoked session stops working
- * immediately rather than at token expiry.
- */
 export const authGuard = new Elysia({ name: 'auth-guard' }).macro({
 	auth: {
 		async resolve({ cookie, headers }) {
@@ -35,7 +31,7 @@ export const authGuard = new Elysia({ name: 'auth-guard' }).macro({
 			const session = await resolveSession(payload.sid)
 
 			if (!session || session.userId !== payload.sub) {
-				throw new UnauthorizedError('Session expired or revoked', ErrorCode.SESSION_EXPIRED)
+				throw new UnauthorizedError('Session expired or revoked')
 			}
 
 			extendLogContext({ userId: session.userId })

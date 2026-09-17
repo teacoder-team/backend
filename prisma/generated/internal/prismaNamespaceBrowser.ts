@@ -55,6 +55,7 @@ export const ModelName = {
   PasswordHash: 'PasswordHash',
   PasswordResetToken: 'PasswordResetToken',
   Course: 'Course',
+  CoursePurchase: 'CoursePurchase',
   Lesson: 'Lesson',
   MultiFactorAuthentication: 'MultiFactorAuthentication',
   Totp: 'Totp',
@@ -130,12 +131,26 @@ export const CourseScalarFieldEnum = {
   youtubeUrl: 'youtubeUrl',
   attachment: 'attachment',
   isPublished: 'isPublished',
+  price: 'price',
   views: 'views',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type CourseScalarFieldEnum = (typeof CourseScalarFieldEnum)[keyof typeof CourseScalarFieldEnum]
+
+
+export const CoursePurchaseScalarFieldEnum = {
+  id: 'id',
+  pricePaid: 'pricePaid',
+  currency: 'currency',
+  userId: 'userId',
+  courseId: 'courseId',
+  paymentId: 'paymentId',
+  createdAt: 'createdAt'
+} as const
+
+export type CoursePurchaseScalarFieldEnum = (typeof CoursePurchaseScalarFieldEnum)[keyof typeof CoursePurchaseScalarFieldEnum]
 
 
 export const LessonScalarFieldEnum = {
@@ -216,6 +231,7 @@ export const PaymentScalarFieldEnum = {
   method: 'method',
   provider: 'provider',
   providerPaymentId: 'providerPaymentId',
+  invoiceNumber: 'invoiceNumber',
   metadata: 'metadata',
   userId: 'userId',
   paymentMethodId: 'paymentMethodId',

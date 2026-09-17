@@ -2,7 +2,7 @@ model Course {
     id String @id @default(uuid())
 
     title String
-    slug  String @unique
+    slug  String @unique(map: "uq_courses_slug")
 
     shortDescription String? @map("short_description")
     fullDescription  String? @map("full_description")
@@ -14,9 +14,12 @@ model Course {
 
     isPublished Boolean @default(false) @map("is_published")
 
+    price Decimal? @db.Decimal(10, 2)
+
     views Int @default(0)
 
     lessons      Lesson[]
+    purchases    CoursePurchase[]
     downloadLogs DownloadLog[]
 
     createdAt DateTime @default(now()) @map("created_at")
@@ -26,11 +29,35 @@ model Course {
     @@map("courses")
 }
 
+model CoursePurchase {
+    id String @id @default(uuid())
+
+    pricePaid Decimal @map("price_paid") @db.Decimal(10, 2)
+    currency  String
+
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId String @map("user_id")
+
+    course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+    courseId String @map("course_id")
+
+    /// Null allows a purchase granted without a real charge (comp, admin
+    /// gift). Unique so one payment can never be double-counted as two grants.
+    payment   Payment? @relation(fields: [paymentId], references: [id])
+    paymentId String?  @unique(map: "uq_course_purchases_payment_id") @map("payment_id")
+
+    createdAt DateTime @default(now()) @map("created_at")
+
+    @@unique([userId, courseId], map: "uq_course_purchases_user_id_course_id")
+    @@index([courseId], map: "ix_course_purchases_course_id")
+    @@map("course_purchases")
+}
+
 model Lesson {
     id String @id @default(uuid())
 
     title String
-    slug  String @unique
+    slug  String @unique(map: "uq_lessons_slug")
 
     description String?
     position    Int
@@ -55,8 +82,8 @@ model Lesson {
 }
 
 enum LessonAccess {
-    FREE
-    PREMIUM
+    FREE    @map("free")
+    PREMIUM @map("premium")
 
     @@map("lesson_access")
 }

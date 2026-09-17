@@ -6,10 +6,10 @@ model MultiFactorAuthentication {
     passkeys Passkey[]
 
     totp   Totp?   @relation(fields: [totpId], references: [id], onDelete: Cascade)
-    totpId String? @unique @map("totp_id")
+    totpId String? @unique(map: "uq_multi_factor_authentication_totp_id") @map("totp_id")
 
     user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId String @unique @map("user_id")
+    userId String @unique(map: "uq_multi_factor_authentication_user_id") @map("user_id")
 
     createdAt DateTime @default(now()) @map("created_at")
     updatedAt DateTime @updatedAt @map("updated_at")
@@ -36,7 +36,7 @@ model Passkey {
 
     deviceName String @map("device_name")
 
-    credentialId String   @unique @map("credential_id")
+    credentialId String   @unique(map: "uq_passkeys_credential_id") @map("credential_id")
     publicKey    String   @map("public_key")
     counter      Int      @default(0)
     transports   String[]
@@ -56,9 +56,9 @@ model Passkey {
 }
 
 enum TotpStatus {
-    DISABLED
-    PENDING
-    ENABLED
+    DISABLED @map("disabled")
+    PENDING  @map("pending")
+    ENABLED  @map("enabled")
 
     @@map("totp_statuses")
 }

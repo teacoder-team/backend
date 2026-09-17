@@ -388,6 +388,7 @@ export const ModelName = {
   PasswordHash: 'PasswordHash',
   PasswordResetToken: 'PasswordResetToken',
   Course: 'Course',
+  CoursePurchase: 'CoursePurchase',
   Lesson: 'Lesson',
   MultiFactorAuthentication: 'MultiFactorAuthentication',
   Totp: 'Totp',
@@ -416,7 +417,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "credential" | "passwordHash" | "passwordResetToken" | "course" | "lesson" | "multiFactorAuthentication" | "totp" | "passkey" | "restriction" | "payment" | "receipt" | "userPaymentMethod" | "userProgress" | "downloadLog" | "session" | "subscription" | "user"
+    modelProps: "credential" | "passwordHash" | "passwordResetToken" | "course" | "coursePurchase" | "lesson" | "multiFactorAuthentication" | "totp" | "passkey" | "restriction" | "payment" | "receipt" | "userPaymentMethod" | "userProgress" | "downloadLog" | "session" | "subscription" | "user"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -713,6 +714,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.CourseCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.CourseCountAggregateOutputType> | number
+        }
+      }
+    }
+    CoursePurchase: {
+      payload: Prisma.$CoursePurchasePayload<ExtArgs>
+      fields: Prisma.CoursePurchaseFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CoursePurchaseFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoursePurchasePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CoursePurchaseFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoursePurchasePayload>
+        }
+        findFirst: {
+          args: Prisma.CoursePurchaseFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoursePurchasePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CoursePurchaseFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoursePurchasePayload>
+        }
+        findMany: {
+          args: Prisma.CoursePurchaseFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoursePurchasePayload>[]
+        }
+        create: {
+          args: Prisma.CoursePurchaseCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoursePurchasePayload>
+        }
+        createMany: {
+          args: Prisma.CoursePurchaseCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.CoursePurchaseCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoursePurchasePayload>[]
+        }
+        delete: {
+          args: Prisma.CoursePurchaseDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoursePurchasePayload>
+        }
+        update: {
+          args: Prisma.CoursePurchaseUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoursePurchasePayload>
+        }
+        deleteMany: {
+          args: Prisma.CoursePurchaseDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CoursePurchaseUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.CoursePurchaseUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoursePurchasePayload>[]
+        }
+        upsert: {
+          args: Prisma.CoursePurchaseUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CoursePurchasePayload>
+        }
+        aggregate: {
+          args: Prisma.CoursePurchaseAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCoursePurchase>
+        }
+        groupBy: {
+          args: Prisma.CoursePurchaseGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CoursePurchaseGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CoursePurchaseCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CoursePurchaseCountAggregateOutputType> | number
         }
       }
     }
@@ -1761,12 +1836,26 @@ export const CourseScalarFieldEnum = {
   youtubeUrl: 'youtubeUrl',
   attachment: 'attachment',
   isPublished: 'isPublished',
+  price: 'price',
   views: 'views',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type CourseScalarFieldEnum = (typeof CourseScalarFieldEnum)[keyof typeof CourseScalarFieldEnum]
+
+
+export const CoursePurchaseScalarFieldEnum = {
+  id: 'id',
+  pricePaid: 'pricePaid',
+  currency: 'currency',
+  userId: 'userId',
+  courseId: 'courseId',
+  paymentId: 'paymentId',
+  createdAt: 'createdAt'
+} as const
+
+export type CoursePurchaseScalarFieldEnum = (typeof CoursePurchaseScalarFieldEnum)[keyof typeof CoursePurchaseScalarFieldEnum]
 
 
 export const LessonScalarFieldEnum = {
@@ -1847,6 +1936,7 @@ export const PaymentScalarFieldEnum = {
   method: 'method',
   provider: 'provider',
   providerPaymentId: 'providerPaymentId',
+  invoiceNumber: 'invoiceNumber',
   metadata: 'metadata',
   userId: 'userId',
   paymentMethodId: 'paymentMethodId',
@@ -2115,6 +2205,20 @@ export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel,
 
 
 /**
+ * Reference to a field of type 'Decimal'
+ */
+export type DecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal'>
+    
+
+
+/**
+ * Reference to a field of type 'Decimal[]'
+ */
+export type ListDecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal[]'>
+    
+
+
+/**
  * Reference to a field of type 'LessonAccess'
  */
 export type EnumLessonAccessFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'LessonAccess'>
@@ -2255,20 +2359,6 @@ export type ListEnumReceiptStatusFieldRefInput<$PrismaModel> = FieldRefInputType
 
 
 /**
- * Reference to a field of type 'Decimal'
- */
-export type DecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal'>
-    
-
-
-/**
- * Reference to a field of type 'Decimal[]'
- */
-export type ListDecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal[]'>
-    
-
-
-/**
  * Reference to a field of type 'UserRole'
  */
 export type EnumUserRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UserRole'>
@@ -2395,6 +2485,7 @@ export type GlobalOmitConfig = {
   passwordHash?: Prisma.PasswordHashOmit
   passwordResetToken?: Prisma.PasswordResetTokenOmit
   course?: Prisma.CourseOmit
+  coursePurchase?: Prisma.CoursePurchaseOmit
   lesson?: Prisma.LessonOmit
   multiFactorAuthentication?: Prisma.MultiFactorAuthenticationOmit
   totp?: Prisma.TotpOmit

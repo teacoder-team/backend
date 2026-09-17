@@ -10,9 +10,12 @@ model Payment {
     provider          PaymentProvider
     providerPaymentId String?         @map("provider_payment_id")
 
+    invoiceNumber Int @unique(map: "uq_payments_invoice_number") @default(autoincrement()) @map("invoice_number")
+
     metadata Json?
 
-    receipts Receipt[]
+    receipts       Receipt[]
+    coursePurchase CoursePurchase?
 
     user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId String @map("user_id")
@@ -61,7 +64,7 @@ model UserPaymentMethod {
 
     type       PaymentMethod
     provider   PaymentProvider
-    providerId String          @unique @map("provider_id")
+    providerId String          @unique(map: "uq_user_payment_methods_provider_id") @map("provider_id")
 
     last4       String?
     first6      String?
@@ -86,38 +89,42 @@ model UserPaymentMethod {
 }
 
 enum PaymentStatus {
-    PENDING
-    SUCCESS
-    FAILED
+    PENDING @map("pending")
+    SUCCESS @map("success")
+    FAILED  @map("failed")
 
     @@map("payment_statuses")
 }
 
 enum ReceiptStatus {
-    PENDING
-    SUCCESS
-    FAILED
+    PENDING @map("pending")
+    SUCCESS @map("success")
+    FAILED  @map("failed")
 
     @@map("receipt_statuses")
 }
 
 enum PaymentProvider {
-    YOOKASSA
-    ROBOKASSA
-    CRYPTO_BOT
+    YOOKASSA      @map("yookassa")
+    ROBOKASSA     @map("robokassa")
+    PRODAMUS      @map("prodamus")
+    HELEKET       @map("heleket")
+    CRYPTO_BOT    @map("crypto_bot")
+    CLOUDPAYMENTS @map("cloudpayments")
+    TELEGRAM      @map("telegram")
 
     @@map("payment_providers")
 }
 
 enum PaymentMethod {
-    BANK_CARD
-    SBP
-    T_PAY
-    SBER_PAY
-    YOOMONEY
-    CRYPTO
-    INTERNATIONAL_CARD
-    TELEGRAM_STARS
+    BANK_CARD          @map("bank_card")
+    SBP                @map("sbp")
+    T_PAY              @map("t_pay")
+    SBER_PAY           @map("sber_pay")
+    YOOMONEY           @map("yoomoney")
+    CRYPTO             @map("crypto")
+    INTERNATIONAL_CARD @map("international_card")
+    TELEGRAM_STARS     @map("telegram_stars")
 
     @@map("payment_methods")
 }

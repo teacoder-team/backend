@@ -1,7 +1,7 @@
-import { db } from '~/infra/db'
-
 import type { Prisma } from '@prisma/generated/client'
 import { type PaymentMethod, type PaymentProvider, PaymentStatus } from '@prisma/generated/client'
+
+import { db } from '~/infra/db'
 
 export interface NewPayment {
 	userId: string

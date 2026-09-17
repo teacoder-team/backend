@@ -1,7 +1,7 @@
-import { env } from '~/config/env'
-import { ErrorCode, UnauthorizedError } from '~/shared/errors'
-
 import { createHmac, timingSafeEqual } from 'node:crypto'
+
+import { env } from '~/config/env'
+import { UnauthorizedError } from '~/shared/errors'
 
 const TOKEN_PREFIX = 'tc'
 
@@ -42,9 +42,6 @@ export const verifyToken = (token: string): TokenPayload => {
 
 		return JSON.parse(Buffer.from(encodedPayload, 'base64url').toString('utf8')) as TokenPayload
 	} catch {
-		throw new UnauthorizedError(
-			'Invalid or corrupted authentication token',
-			ErrorCode.NOT_AUTHORIZED
-		)
+		throw new UnauthorizedError('Invalid or corrupted authentication token')
 	}
 }

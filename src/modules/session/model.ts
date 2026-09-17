@@ -1,4 +1,3 @@
-import { ApiResponse } from '~/shared/api'
 import { t } from 'elysia'
 
 /** Geo and user-agent parsing can genuinely fail — `null` says so honestly. */
@@ -25,16 +24,14 @@ export const SessionResponse = t.Object({
 	createdAt: t.String({ examples: ['2026-07-04T14:16:54.000Z'] })
 })
 
-export const SessionListResponse = ApiResponse(t.Array(SessionResponse))
+export const SessionListResponse = t.Array(SessionResponse)
 
-const RevokeResult = t.Object({
+export const RevokeResponse = t.Object({
 	revoked: t.Number({
 		description: 'How many sessions were terminated.',
 		examples: [1]
 	})
 })
-
-export const RevokeResponse = ApiResponse(RevokeResult)
 
 export const SessionParams = t.Object({
 	id: t.String({ description: 'Session identifier to revoke.' })

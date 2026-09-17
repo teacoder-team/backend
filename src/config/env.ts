@@ -31,9 +31,7 @@ const envSchema = t.Object({
 		],
 		{ default: 'info' }
 	),
-	/** Fraction of non-error, non-slow requests to keep (tail sampling). */
 	LOG_SAMPLE_RATE: t.Number({ default: 1, minimum: 0, maximum: 1 }),
-	/** Requests slower than this are always logged, regardless of sample rate. */
 	LOG_SLOW_REQUEST_MS: t.Number({ default: 1000 }),
 
 	RESOURCES_DIR: t.String({ default: './resources' }),
@@ -71,6 +69,48 @@ const envSchema = t.Object({
 
 	CRYPTO_BOT_TOKEN: t.String(),
 	CRYPTO_BOT_TESTNET: t.Boolean({ default: false }),
+
+	TELEGRAM_BOT_TOKEN: t.String(),
+	TELEGRAM_WEBHOOK_SECRET: t.String({ minLength: 16 }),
+
+	GOOGLE_CLIENT_ID: t.String(),
+	GOOGLE_CLIENT_SECRET: t.String(),
+
+	GITHUB_CLIENT_ID: t.String(),
+	GITHUB_CLIENT_SECRET: t.String(),
+
+	DISCORD_CLIENT_ID: t.String(),
+	DISCORD_CLIENT_SECRET: t.String(),
+
+	YANDEX_CLIENT_ID: t.String(),
+	YANDEX_CLIENT_SECRET: t.String(),
+
+	/** Issued by @BotFather for "Login with Telegram" - not the bot token. */
+	TELEGRAM_CLIENT_ID: t.String(),
+	TELEGRAM_CLIENT_SECRET: t.String(),
+
+	OAUTH_STATE_TTL: t.Number({ default: 10 * 60 }),
+
+	ROBOKASSA_MERCHANT_LOGIN: t.String(),
+	ROBOKASSA_PASSWORD_1: t.String(),
+	ROBOKASSA_PASSWORD_2: t.String(),
+	ROBOKASSA_TEST_PASSWORD_1: t.String({ default: '' }),
+	ROBOKASSA_TEST_PASSWORD_2: t.String({ default: '' }),
+	ROBOKASSA_TEST_MODE: t.Boolean({ default: false }),
+	ROBOKASSA_HASH_ALGORITHM: t.Union(
+		[
+			t.Literal('md5'),
+			t.Literal('ripemd160'),
+			t.Literal('sha1'),
+			t.Literal('sha256'),
+			t.Literal('sha384'),
+			t.Literal('sha512')
+		],
+		{ default: 'md5' }
+	),
+
+	HELEKET_MERCHANT_ID: t.String(),
+	HELEKET_PAYMENT_API_KEY: t.String(),
 
 	NPD_INN: t.String(),
 	NPD_PASSWORD: t.String(),

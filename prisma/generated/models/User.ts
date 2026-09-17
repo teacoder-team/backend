@@ -247,6 +247,7 @@ export type UserWhereInput = {
   subscription?: Prisma.XOR<Prisma.SubscriptionNullableScalarRelationFilter, Prisma.SubscriptionWhereInput> | null
   payments?: Prisma.PaymentListRelationFilter
   userPaymentMethods?: Prisma.UserPaymentMethodListRelationFilter
+  coursePurchases?: Prisma.CoursePurchaseListRelationFilter
   userProgresses?: Prisma.UserProgressListRelationFilter
   downloadLogs?: Prisma.DownloadLogListRelationFilter
 }
@@ -267,6 +268,7 @@ export type UserOrderByWithRelationInput = {
   subscription?: Prisma.SubscriptionOrderByWithRelationInput
   payments?: Prisma.PaymentOrderByRelationAggregateInput
   userPaymentMethods?: Prisma.UserPaymentMethodOrderByRelationAggregateInput
+  coursePurchases?: Prisma.CoursePurchaseOrderByRelationAggregateInput
   userProgresses?: Prisma.UserProgressOrderByRelationAggregateInput
   downloadLogs?: Prisma.DownloadLogOrderByRelationAggregateInput
 }
@@ -290,6 +292,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   subscription?: Prisma.XOR<Prisma.SubscriptionNullableScalarRelationFilter, Prisma.SubscriptionWhereInput> | null
   payments?: Prisma.PaymentListRelationFilter
   userPaymentMethods?: Prisma.UserPaymentMethodListRelationFilter
+  coursePurchases?: Prisma.CoursePurchaseListRelationFilter
   userProgresses?: Prisma.UserProgressListRelationFilter
   downloadLogs?: Prisma.DownloadLogListRelationFilter
 }, "id" | "username">
@@ -340,6 +343,7 @@ export type UserCreateInput = {
   subscription?: Prisma.SubscriptionCreateNestedOneWithoutUserInput
   payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
   userPaymentMethods?: Prisma.UserPaymentMethodCreateNestedManyWithoutUserInput
+  coursePurchases?: Prisma.CoursePurchaseCreateNestedManyWithoutUserInput
   userProgresses?: Prisma.UserProgressCreateNestedManyWithoutUserInput
   downloadLogs?: Prisma.DownloadLogCreateNestedManyWithoutUserInput
 }
@@ -360,6 +364,7 @@ export type UserUncheckedCreateInput = {
   subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutUserInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
   userPaymentMethods?: Prisma.UserPaymentMethodUncheckedCreateNestedManyWithoutUserInput
+  coursePurchases?: Prisma.CoursePurchaseUncheckedCreateNestedManyWithoutUserInput
   userProgresses?: Prisma.UserProgressUncheckedCreateNestedManyWithoutUserInput
   downloadLogs?: Prisma.DownloadLogUncheckedCreateNestedManyWithoutUserInput
 }
@@ -380,6 +385,7 @@ export type UserUpdateInput = {
   subscription?: Prisma.SubscriptionUpdateOneWithoutUserNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
   userPaymentMethods?: Prisma.UserPaymentMethodUpdateManyWithoutUserNestedInput
+  coursePurchases?: Prisma.CoursePurchaseUpdateManyWithoutUserNestedInput
   userProgresses?: Prisma.UserProgressUpdateManyWithoutUserNestedInput
   downloadLogs?: Prisma.DownloadLogUpdateManyWithoutUserNestedInput
 }
@@ -400,6 +406,7 @@ export type UserUncheckedUpdateInput = {
   subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutUserNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
   userPaymentMethods?: Prisma.UserPaymentMethodUncheckedUpdateManyWithoutUserNestedInput
+  coursePurchases?: Prisma.CoursePurchaseUncheckedUpdateManyWithoutUserNestedInput
   userProgresses?: Prisma.UserProgressUncheckedUpdateManyWithoutUserNestedInput
   downloadLogs?: Prisma.DownloadLogUncheckedUpdateManyWithoutUserNestedInput
 }
@@ -495,6 +502,20 @@ export type UserUpdateOneRequiredWithoutCredentialsNestedInput = {
   upsert?: Prisma.UserUpsertWithoutCredentialsInput
   connect?: Prisma.UserWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutCredentialsInput, Prisma.UserUpdateWithoutCredentialsInput>, Prisma.UserUncheckedUpdateWithoutCredentialsInput>
+}
+
+export type UserCreateNestedOneWithoutCoursePurchasesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCoursePurchasesInput, Prisma.UserUncheckedCreateWithoutCoursePurchasesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCoursePurchasesInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutCoursePurchasesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCoursePurchasesInput, Prisma.UserUncheckedCreateWithoutCoursePurchasesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCoursePurchasesInput
+  upsert?: Prisma.UserUpsertWithoutCoursePurchasesInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutCoursePurchasesInput, Prisma.UserUpdateWithoutCoursePurchasesInput>, Prisma.UserUncheckedUpdateWithoutCoursePurchasesInput>
 }
 
 export type UserCreateNestedOneWithoutMfaInput = {
@@ -628,6 +649,7 @@ export type UserCreateWithoutCredentialsInput = {
   subscription?: Prisma.SubscriptionCreateNestedOneWithoutUserInput
   payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
   userPaymentMethods?: Prisma.UserPaymentMethodCreateNestedManyWithoutUserInput
+  coursePurchases?: Prisma.CoursePurchaseCreateNestedManyWithoutUserInput
   userProgresses?: Prisma.UserProgressCreateNestedManyWithoutUserInput
   downloadLogs?: Prisma.DownloadLogCreateNestedManyWithoutUserInput
 }
@@ -647,6 +669,7 @@ export type UserUncheckedCreateWithoutCredentialsInput = {
   subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutUserInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
   userPaymentMethods?: Prisma.UserPaymentMethodUncheckedCreateNestedManyWithoutUserInput
+  coursePurchases?: Prisma.CoursePurchaseUncheckedCreateNestedManyWithoutUserInput
   userProgresses?: Prisma.UserProgressUncheckedCreateNestedManyWithoutUserInput
   downloadLogs?: Prisma.DownloadLogUncheckedCreateNestedManyWithoutUserInput
 }
@@ -682,6 +705,7 @@ export type UserUpdateWithoutCredentialsInput = {
   subscription?: Prisma.SubscriptionUpdateOneWithoutUserNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
   userPaymentMethods?: Prisma.UserPaymentMethodUpdateManyWithoutUserNestedInput
+  coursePurchases?: Prisma.CoursePurchaseUpdateManyWithoutUserNestedInput
   userProgresses?: Prisma.UserProgressUpdateManyWithoutUserNestedInput
   downloadLogs?: Prisma.DownloadLogUpdateManyWithoutUserNestedInput
 }
@@ -695,6 +719,103 @@ export type UserUncheckedUpdateWithoutCredentialsInput = {
   points?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  mfa?: Prisma.MultiFactorAuthenticationUncheckedUpdateOneWithoutUserNestedInput
+  restrictions?: Prisma.RestrictionUncheckedUpdateManyWithoutUserNestedInput
+  subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutUserNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
+  userPaymentMethods?: Prisma.UserPaymentMethodUncheckedUpdateManyWithoutUserNestedInput
+  coursePurchases?: Prisma.CoursePurchaseUncheckedUpdateManyWithoutUserNestedInput
+  userProgresses?: Prisma.UserProgressUncheckedUpdateManyWithoutUserNestedInput
+  downloadLogs?: Prisma.DownloadLogUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutCoursePurchasesInput = {
+  id?: string
+  username: string
+  displayName: string
+  avatar?: string | null
+  role?: $Enums.UserRole
+  points?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  credentials?: Prisma.CredentialCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  mfa?: Prisma.MultiFactorAuthenticationCreateNestedOneWithoutUserInput
+  restrictions?: Prisma.RestrictionCreateNestedManyWithoutUserInput
+  subscription?: Prisma.SubscriptionCreateNestedOneWithoutUserInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
+  userPaymentMethods?: Prisma.UserPaymentMethodCreateNestedManyWithoutUserInput
+  userProgresses?: Prisma.UserProgressCreateNestedManyWithoutUserInput
+  downloadLogs?: Prisma.DownloadLogCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutCoursePurchasesInput = {
+  id?: string
+  username: string
+  displayName: string
+  avatar?: string | null
+  role?: $Enums.UserRole
+  points?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  credentials?: Prisma.CredentialUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  mfa?: Prisma.MultiFactorAuthenticationUncheckedCreateNestedOneWithoutUserInput
+  restrictions?: Prisma.RestrictionUncheckedCreateNestedManyWithoutUserInput
+  subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutUserInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
+  userPaymentMethods?: Prisma.UserPaymentMethodUncheckedCreateNestedManyWithoutUserInput
+  userProgresses?: Prisma.UserProgressUncheckedCreateNestedManyWithoutUserInput
+  downloadLogs?: Prisma.DownloadLogUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutCoursePurchasesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutCoursePurchasesInput, Prisma.UserUncheckedCreateWithoutCoursePurchasesInput>
+}
+
+export type UserUpsertWithoutCoursePurchasesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutCoursePurchasesInput, Prisma.UserUncheckedUpdateWithoutCoursePurchasesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutCoursePurchasesInput, Prisma.UserUncheckedCreateWithoutCoursePurchasesInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutCoursePurchasesInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutCoursePurchasesInput, Prisma.UserUncheckedUpdateWithoutCoursePurchasesInput>
+}
+
+export type UserUpdateWithoutCoursePurchasesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  points?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  credentials?: Prisma.CredentialUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  mfa?: Prisma.MultiFactorAuthenticationUpdateOneWithoutUserNestedInput
+  restrictions?: Prisma.RestrictionUpdateManyWithoutUserNestedInput
+  subscription?: Prisma.SubscriptionUpdateOneWithoutUserNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
+  userPaymentMethods?: Prisma.UserPaymentMethodUpdateManyWithoutUserNestedInput
+  userProgresses?: Prisma.UserProgressUpdateManyWithoutUserNestedInput
+  downloadLogs?: Prisma.DownloadLogUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutCoursePurchasesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  points?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  credentials?: Prisma.CredentialUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   mfa?: Prisma.MultiFactorAuthenticationUncheckedUpdateOneWithoutUserNestedInput
   restrictions?: Prisma.RestrictionUncheckedUpdateManyWithoutUserNestedInput
@@ -720,6 +841,7 @@ export type UserCreateWithoutMfaInput = {
   subscription?: Prisma.SubscriptionCreateNestedOneWithoutUserInput
   payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
   userPaymentMethods?: Prisma.UserPaymentMethodCreateNestedManyWithoutUserInput
+  coursePurchases?: Prisma.CoursePurchaseCreateNestedManyWithoutUserInput
   userProgresses?: Prisma.UserProgressCreateNestedManyWithoutUserInput
   downloadLogs?: Prisma.DownloadLogCreateNestedManyWithoutUserInput
 }
@@ -739,6 +861,7 @@ export type UserUncheckedCreateWithoutMfaInput = {
   subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutUserInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
   userPaymentMethods?: Prisma.UserPaymentMethodUncheckedCreateNestedManyWithoutUserInput
+  coursePurchases?: Prisma.CoursePurchaseUncheckedCreateNestedManyWithoutUserInput
   userProgresses?: Prisma.UserProgressUncheckedCreateNestedManyWithoutUserInput
   downloadLogs?: Prisma.DownloadLogUncheckedCreateNestedManyWithoutUserInput
 }
@@ -774,6 +897,7 @@ export type UserUpdateWithoutMfaInput = {
   subscription?: Prisma.SubscriptionUpdateOneWithoutUserNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
   userPaymentMethods?: Prisma.UserPaymentMethodUpdateManyWithoutUserNestedInput
+  coursePurchases?: Prisma.CoursePurchaseUpdateManyWithoutUserNestedInput
   userProgresses?: Prisma.UserProgressUpdateManyWithoutUserNestedInput
   downloadLogs?: Prisma.DownloadLogUpdateManyWithoutUserNestedInput
 }
@@ -793,6 +917,7 @@ export type UserUncheckedUpdateWithoutMfaInput = {
   subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutUserNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
   userPaymentMethods?: Prisma.UserPaymentMethodUncheckedUpdateManyWithoutUserNestedInput
+  coursePurchases?: Prisma.CoursePurchaseUncheckedUpdateManyWithoutUserNestedInput
   userProgresses?: Prisma.UserProgressUncheckedUpdateManyWithoutUserNestedInput
   downloadLogs?: Prisma.DownloadLogUncheckedUpdateManyWithoutUserNestedInput
 }
@@ -812,6 +937,7 @@ export type UserCreateWithoutRestrictionsInput = {
   subscription?: Prisma.SubscriptionCreateNestedOneWithoutUserInput
   payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
   userPaymentMethods?: Prisma.UserPaymentMethodCreateNestedManyWithoutUserInput
+  coursePurchases?: Prisma.CoursePurchaseCreateNestedManyWithoutUserInput
   userProgresses?: Prisma.UserProgressCreateNestedManyWithoutUserInput
   downloadLogs?: Prisma.DownloadLogCreateNestedManyWithoutUserInput
 }
@@ -831,6 +957,7 @@ export type UserUncheckedCreateWithoutRestrictionsInput = {
   subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutUserInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
   userPaymentMethods?: Prisma.UserPaymentMethodUncheckedCreateNestedManyWithoutUserInput
+  coursePurchases?: Prisma.CoursePurchaseUncheckedCreateNestedManyWithoutUserInput
   userProgresses?: Prisma.UserProgressUncheckedCreateNestedManyWithoutUserInput
   downloadLogs?: Prisma.DownloadLogUncheckedCreateNestedManyWithoutUserInput
 }
@@ -866,6 +993,7 @@ export type UserUpdateWithoutRestrictionsInput = {
   subscription?: Prisma.SubscriptionUpdateOneWithoutUserNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
   userPaymentMethods?: Prisma.UserPaymentMethodUpdateManyWithoutUserNestedInput
+  coursePurchases?: Prisma.CoursePurchaseUpdateManyWithoutUserNestedInput
   userProgresses?: Prisma.UserProgressUpdateManyWithoutUserNestedInput
   downloadLogs?: Prisma.DownloadLogUpdateManyWithoutUserNestedInput
 }
@@ -885,6 +1013,7 @@ export type UserUncheckedUpdateWithoutRestrictionsInput = {
   subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutUserNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
   userPaymentMethods?: Prisma.UserPaymentMethodUncheckedUpdateManyWithoutUserNestedInput
+  coursePurchases?: Prisma.CoursePurchaseUncheckedUpdateManyWithoutUserNestedInput
   userProgresses?: Prisma.UserProgressUncheckedUpdateManyWithoutUserNestedInput
   downloadLogs?: Prisma.DownloadLogUncheckedUpdateManyWithoutUserNestedInput
 }
@@ -904,6 +1033,7 @@ export type UserCreateWithoutPaymentsInput = {
   restrictions?: Prisma.RestrictionCreateNestedManyWithoutUserInput
   subscription?: Prisma.SubscriptionCreateNestedOneWithoutUserInput
   userPaymentMethods?: Prisma.UserPaymentMethodCreateNestedManyWithoutUserInput
+  coursePurchases?: Prisma.CoursePurchaseCreateNestedManyWithoutUserInput
   userProgresses?: Prisma.UserProgressCreateNestedManyWithoutUserInput
   downloadLogs?: Prisma.DownloadLogCreateNestedManyWithoutUserInput
 }
@@ -923,6 +1053,7 @@ export type UserUncheckedCreateWithoutPaymentsInput = {
   restrictions?: Prisma.RestrictionUncheckedCreateNestedManyWithoutUserInput
   subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutUserInput
   userPaymentMethods?: Prisma.UserPaymentMethodUncheckedCreateNestedManyWithoutUserInput
+  coursePurchases?: Prisma.CoursePurchaseUncheckedCreateNestedManyWithoutUserInput
   userProgresses?: Prisma.UserProgressUncheckedCreateNestedManyWithoutUserInput
   downloadLogs?: Prisma.DownloadLogUncheckedCreateNestedManyWithoutUserInput
 }
@@ -958,6 +1089,7 @@ export type UserUpdateWithoutPaymentsInput = {
   restrictions?: Prisma.RestrictionUpdateManyWithoutUserNestedInput
   subscription?: Prisma.SubscriptionUpdateOneWithoutUserNestedInput
   userPaymentMethods?: Prisma.UserPaymentMethodUpdateManyWithoutUserNestedInput
+  coursePurchases?: Prisma.CoursePurchaseUpdateManyWithoutUserNestedInput
   userProgresses?: Prisma.UserProgressUpdateManyWithoutUserNestedInput
   downloadLogs?: Prisma.DownloadLogUpdateManyWithoutUserNestedInput
 }
@@ -977,6 +1109,7 @@ export type UserUncheckedUpdateWithoutPaymentsInput = {
   restrictions?: Prisma.RestrictionUncheckedUpdateManyWithoutUserNestedInput
   subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutUserNestedInput
   userPaymentMethods?: Prisma.UserPaymentMethodUncheckedUpdateManyWithoutUserNestedInput
+  coursePurchases?: Prisma.CoursePurchaseUncheckedUpdateManyWithoutUserNestedInput
   userProgresses?: Prisma.UserProgressUncheckedUpdateManyWithoutUserNestedInput
   downloadLogs?: Prisma.DownloadLogUncheckedUpdateManyWithoutUserNestedInput
 }
@@ -996,6 +1129,7 @@ export type UserCreateWithoutUserPaymentMethodsInput = {
   restrictions?: Prisma.RestrictionCreateNestedManyWithoutUserInput
   subscription?: Prisma.SubscriptionCreateNestedOneWithoutUserInput
   payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
+  coursePurchases?: Prisma.CoursePurchaseCreateNestedManyWithoutUserInput
   userProgresses?: Prisma.UserProgressCreateNestedManyWithoutUserInput
   downloadLogs?: Prisma.DownloadLogCreateNestedManyWithoutUserInput
 }
@@ -1015,6 +1149,7 @@ export type UserUncheckedCreateWithoutUserPaymentMethodsInput = {
   restrictions?: Prisma.RestrictionUncheckedCreateNestedManyWithoutUserInput
   subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutUserInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
+  coursePurchases?: Prisma.CoursePurchaseUncheckedCreateNestedManyWithoutUserInput
   userProgresses?: Prisma.UserProgressUncheckedCreateNestedManyWithoutUserInput
   downloadLogs?: Prisma.DownloadLogUncheckedCreateNestedManyWithoutUserInput
 }
@@ -1050,6 +1185,7 @@ export type UserUpdateWithoutUserPaymentMethodsInput = {
   restrictions?: Prisma.RestrictionUpdateManyWithoutUserNestedInput
   subscription?: Prisma.SubscriptionUpdateOneWithoutUserNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
+  coursePurchases?: Prisma.CoursePurchaseUpdateManyWithoutUserNestedInput
   userProgresses?: Prisma.UserProgressUpdateManyWithoutUserNestedInput
   downloadLogs?: Prisma.DownloadLogUpdateManyWithoutUserNestedInput
 }
@@ -1069,6 +1205,7 @@ export type UserUncheckedUpdateWithoutUserPaymentMethodsInput = {
   restrictions?: Prisma.RestrictionUncheckedUpdateManyWithoutUserNestedInput
   subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutUserNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
+  coursePurchases?: Prisma.CoursePurchaseUncheckedUpdateManyWithoutUserNestedInput
   userProgresses?: Prisma.UserProgressUncheckedUpdateManyWithoutUserNestedInput
   downloadLogs?: Prisma.DownloadLogUncheckedUpdateManyWithoutUserNestedInput
 }
@@ -1089,6 +1226,7 @@ export type UserCreateWithoutUserProgressesInput = {
   subscription?: Prisma.SubscriptionCreateNestedOneWithoutUserInput
   payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
   userPaymentMethods?: Prisma.UserPaymentMethodCreateNestedManyWithoutUserInput
+  coursePurchases?: Prisma.CoursePurchaseCreateNestedManyWithoutUserInput
   downloadLogs?: Prisma.DownloadLogCreateNestedManyWithoutUserInput
 }
 
@@ -1108,6 +1246,7 @@ export type UserUncheckedCreateWithoutUserProgressesInput = {
   subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutUserInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
   userPaymentMethods?: Prisma.UserPaymentMethodUncheckedCreateNestedManyWithoutUserInput
+  coursePurchases?: Prisma.CoursePurchaseUncheckedCreateNestedManyWithoutUserInput
   downloadLogs?: Prisma.DownloadLogUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -1143,6 +1282,7 @@ export type UserUpdateWithoutUserProgressesInput = {
   subscription?: Prisma.SubscriptionUpdateOneWithoutUserNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
   userPaymentMethods?: Prisma.UserPaymentMethodUpdateManyWithoutUserNestedInput
+  coursePurchases?: Prisma.CoursePurchaseUpdateManyWithoutUserNestedInput
   downloadLogs?: Prisma.DownloadLogUpdateManyWithoutUserNestedInput
 }
 
@@ -1162,6 +1302,7 @@ export type UserUncheckedUpdateWithoutUserProgressesInput = {
   subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutUserNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
   userPaymentMethods?: Prisma.UserPaymentMethodUncheckedUpdateManyWithoutUserNestedInput
+  coursePurchases?: Prisma.CoursePurchaseUncheckedUpdateManyWithoutUserNestedInput
   downloadLogs?: Prisma.DownloadLogUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -1181,6 +1322,7 @@ export type UserCreateWithoutDownloadLogsInput = {
   subscription?: Prisma.SubscriptionCreateNestedOneWithoutUserInput
   payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
   userPaymentMethods?: Prisma.UserPaymentMethodCreateNestedManyWithoutUserInput
+  coursePurchases?: Prisma.CoursePurchaseCreateNestedManyWithoutUserInput
   userProgresses?: Prisma.UserProgressCreateNestedManyWithoutUserInput
 }
 
@@ -1200,6 +1342,7 @@ export type UserUncheckedCreateWithoutDownloadLogsInput = {
   subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutUserInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
   userPaymentMethods?: Prisma.UserPaymentMethodUncheckedCreateNestedManyWithoutUserInput
+  coursePurchases?: Prisma.CoursePurchaseUncheckedCreateNestedManyWithoutUserInput
   userProgresses?: Prisma.UserProgressUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -1235,6 +1378,7 @@ export type UserUpdateWithoutDownloadLogsInput = {
   subscription?: Prisma.SubscriptionUpdateOneWithoutUserNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
   userPaymentMethods?: Prisma.UserPaymentMethodUpdateManyWithoutUserNestedInput
+  coursePurchases?: Prisma.CoursePurchaseUpdateManyWithoutUserNestedInput
   userProgresses?: Prisma.UserProgressUpdateManyWithoutUserNestedInput
 }
 
@@ -1254,6 +1398,7 @@ export type UserUncheckedUpdateWithoutDownloadLogsInput = {
   subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutUserNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
   userPaymentMethods?: Prisma.UserPaymentMethodUncheckedUpdateManyWithoutUserNestedInput
+  coursePurchases?: Prisma.CoursePurchaseUncheckedUpdateManyWithoutUserNestedInput
   userProgresses?: Prisma.UserProgressUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -1272,6 +1417,7 @@ export type UserCreateWithoutSessionsInput = {
   subscription?: Prisma.SubscriptionCreateNestedOneWithoutUserInput
   payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
   userPaymentMethods?: Prisma.UserPaymentMethodCreateNestedManyWithoutUserInput
+  coursePurchases?: Prisma.CoursePurchaseCreateNestedManyWithoutUserInput
   userProgresses?: Prisma.UserProgressCreateNestedManyWithoutUserInput
   downloadLogs?: Prisma.DownloadLogCreateNestedManyWithoutUserInput
 }
@@ -1291,6 +1437,7 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutUserInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
   userPaymentMethods?: Prisma.UserPaymentMethodUncheckedCreateNestedManyWithoutUserInput
+  coursePurchases?: Prisma.CoursePurchaseUncheckedCreateNestedManyWithoutUserInput
   userProgresses?: Prisma.UserProgressUncheckedCreateNestedManyWithoutUserInput
   downloadLogs?: Prisma.DownloadLogUncheckedCreateNestedManyWithoutUserInput
 }
@@ -1326,6 +1473,7 @@ export type UserUpdateWithoutSessionsInput = {
   subscription?: Prisma.SubscriptionUpdateOneWithoutUserNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
   userPaymentMethods?: Prisma.UserPaymentMethodUpdateManyWithoutUserNestedInput
+  coursePurchases?: Prisma.CoursePurchaseUpdateManyWithoutUserNestedInput
   userProgresses?: Prisma.UserProgressUpdateManyWithoutUserNestedInput
   downloadLogs?: Prisma.DownloadLogUpdateManyWithoutUserNestedInput
 }
@@ -1345,6 +1493,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutUserNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
   userPaymentMethods?: Prisma.UserPaymentMethodUncheckedUpdateManyWithoutUserNestedInput
+  coursePurchases?: Prisma.CoursePurchaseUncheckedUpdateManyWithoutUserNestedInput
   userProgresses?: Prisma.UserProgressUncheckedUpdateManyWithoutUserNestedInput
   downloadLogs?: Prisma.DownloadLogUncheckedUpdateManyWithoutUserNestedInput
 }
@@ -1364,6 +1513,7 @@ export type UserCreateWithoutSubscriptionInput = {
   restrictions?: Prisma.RestrictionCreateNestedManyWithoutUserInput
   payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
   userPaymentMethods?: Prisma.UserPaymentMethodCreateNestedManyWithoutUserInput
+  coursePurchases?: Prisma.CoursePurchaseCreateNestedManyWithoutUserInput
   userProgresses?: Prisma.UserProgressCreateNestedManyWithoutUserInput
   downloadLogs?: Prisma.DownloadLogCreateNestedManyWithoutUserInput
 }
@@ -1383,6 +1533,7 @@ export type UserUncheckedCreateWithoutSubscriptionInput = {
   restrictions?: Prisma.RestrictionUncheckedCreateNestedManyWithoutUserInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
   userPaymentMethods?: Prisma.UserPaymentMethodUncheckedCreateNestedManyWithoutUserInput
+  coursePurchases?: Prisma.CoursePurchaseUncheckedCreateNestedManyWithoutUserInput
   userProgresses?: Prisma.UserProgressUncheckedCreateNestedManyWithoutUserInput
   downloadLogs?: Prisma.DownloadLogUncheckedCreateNestedManyWithoutUserInput
 }
@@ -1418,6 +1569,7 @@ export type UserUpdateWithoutSubscriptionInput = {
   restrictions?: Prisma.RestrictionUpdateManyWithoutUserNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
   userPaymentMethods?: Prisma.UserPaymentMethodUpdateManyWithoutUserNestedInput
+  coursePurchases?: Prisma.CoursePurchaseUpdateManyWithoutUserNestedInput
   userProgresses?: Prisma.UserProgressUpdateManyWithoutUserNestedInput
   downloadLogs?: Prisma.DownloadLogUpdateManyWithoutUserNestedInput
 }
@@ -1437,6 +1589,7 @@ export type UserUncheckedUpdateWithoutSubscriptionInput = {
   restrictions?: Prisma.RestrictionUncheckedUpdateManyWithoutUserNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
   userPaymentMethods?: Prisma.UserPaymentMethodUncheckedUpdateManyWithoutUserNestedInput
+  coursePurchases?: Prisma.CoursePurchaseUncheckedUpdateManyWithoutUserNestedInput
   userProgresses?: Prisma.UserProgressUncheckedUpdateManyWithoutUserNestedInput
   downloadLogs?: Prisma.DownloadLogUncheckedUpdateManyWithoutUserNestedInput
 }
@@ -1452,6 +1605,7 @@ export type UserCountOutputType = {
   restrictions: number
   payments: number
   userPaymentMethods: number
+  coursePurchases: number
   userProgresses: number
   downloadLogs: number
 }
@@ -1462,6 +1616,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   restrictions?: boolean | UserCountOutputTypeCountRestrictionsArgs
   payments?: boolean | UserCountOutputTypeCountPaymentsArgs
   userPaymentMethods?: boolean | UserCountOutputTypeCountUserPaymentMethodsArgs
+  coursePurchases?: boolean | UserCountOutputTypeCountCoursePurchasesArgs
   userProgresses?: boolean | UserCountOutputTypeCountUserProgressesArgs
   downloadLogs?: boolean | UserCountOutputTypeCountDownloadLogsArgs
 }
@@ -1514,6 +1669,13 @@ export type UserCountOutputTypeCountUserPaymentMethodsArgs<ExtArgs extends runti
 /**
  * UserCountOutputType without action
  */
+export type UserCountOutputTypeCountCoursePurchasesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CoursePurchaseWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
 export type UserCountOutputTypeCountUserProgressesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.UserProgressWhereInput
 }
@@ -1542,6 +1704,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   subscription?: boolean | Prisma.User$subscriptionArgs<ExtArgs>
   payments?: boolean | Prisma.User$paymentsArgs<ExtArgs>
   userPaymentMethods?: boolean | Prisma.User$userPaymentMethodsArgs<ExtArgs>
+  coursePurchases?: boolean | Prisma.User$coursePurchasesArgs<ExtArgs>
   userProgresses?: boolean | Prisma.User$userProgressesArgs<ExtArgs>
   downloadLogs?: boolean | Prisma.User$downloadLogsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
@@ -1589,6 +1752,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   subscription?: boolean | Prisma.User$subscriptionArgs<ExtArgs>
   payments?: boolean | Prisma.User$paymentsArgs<ExtArgs>
   userPaymentMethods?: boolean | Prisma.User$userPaymentMethodsArgs<ExtArgs>
+  coursePurchases?: boolean | Prisma.User$coursePurchasesArgs<ExtArgs>
   userProgresses?: boolean | Prisma.User$userProgressesArgs<ExtArgs>
   downloadLogs?: boolean | Prisma.User$downloadLogsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
@@ -1606,6 +1770,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     subscription: Prisma.$SubscriptionPayload<ExtArgs> | null
     payments: Prisma.$PaymentPayload<ExtArgs>[]
     userPaymentMethods: Prisma.$UserPaymentMethodPayload<ExtArgs>[]
+    coursePurchases: Prisma.$CoursePurchasePayload<ExtArgs>[]
     userProgresses: Prisma.$UserProgressPayload<ExtArgs>[]
     downloadLogs: Prisma.$DownloadLogPayload<ExtArgs>[]
   }
@@ -2019,6 +2184,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   subscription<T extends Prisma.User$subscriptionArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$subscriptionArgs<ExtArgs>>): Prisma.Prisma__SubscriptionClient<runtime.Types.Result.GetResult<Prisma.$SubscriptionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   payments<T extends Prisma.User$paymentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$paymentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   userPaymentMethods<T extends Prisma.User$userPaymentMethodsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$userPaymentMethodsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserPaymentMethodPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  coursePurchases<T extends Prisma.User$coursePurchasesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$coursePurchasesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CoursePurchasePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   userProgresses<T extends Prisma.User$userProgressesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$userProgressesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserProgressPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   downloadLogs<T extends Prisma.User$downloadLogsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$downloadLogsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DownloadLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
@@ -2606,6 +2772,30 @@ export type User$userPaymentMethodsArgs<ExtArgs extends runtime.Types.Extensions
   take?: number
   skip?: number
   distinct?: Prisma.UserPaymentMethodScalarFieldEnum | Prisma.UserPaymentMethodScalarFieldEnum[]
+}
+
+/**
+ * User.coursePurchases
+ */
+export type User$coursePurchasesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CoursePurchase
+   */
+  select?: Prisma.CoursePurchaseSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the CoursePurchase
+   */
+  omit?: Prisma.CoursePurchaseOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CoursePurchaseInclude<ExtArgs> | null
+  where?: Prisma.CoursePurchaseWhereInput
+  orderBy?: Prisma.CoursePurchaseOrderByWithRelationInput | Prisma.CoursePurchaseOrderByWithRelationInput[]
+  cursor?: Prisma.CoursePurchaseWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.CoursePurchaseScalarFieldEnum | Prisma.CoursePurchaseScalarFieldEnum[]
 }
 
 /**

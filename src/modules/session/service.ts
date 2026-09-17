@@ -1,8 +1,10 @@
+import { UAParser } from 'ua-parser-js'
+
 import { env } from '~/config/env'
 import { lookupLocation } from '~/infra/datasets/geo'
 import { extendLogContext, logger } from '~/infra/logger'
-import { ErrorCode, NotFoundError } from '~/shared/errors'
-import { UAParser } from 'ua-parser-js'
+import { NotFoundError } from '~/shared/errors'
+import { signToken } from '~/shared/security/token'
 
 import {
 	type CachedSession,
@@ -81,6 +83,18 @@ export const resolveSession = async (sessionId: string) => {
 	return session
 }
 
+export interface RequestOrigin {
+	ip: string
+	userAgent: string
+}
+
+/** Creates a session for an already-authenticated user and signs its token. */
+export const issueSession = async (userId: string, origin: RequestOrigin) => {
+	const session = await createSession({ userId, ...origin })
+
+	return signToken({ sid: session.id, sub: userId })
+}
+
 export const getUserSessions = async (userId: string, currentSessionId: string) => {
 	const sessions = await listActiveSessions(userId)
 
@@ -102,7 +116,7 @@ export const revokeSession = async (userId: string, sessionId: string) => {
 	const revoked = await revokeSessionById(userId, sessionId)
 
 	if (!revoked) {
-		throw new NotFoundError('Session not found', ErrorCode.SESSION_NOT_FOUND)
+		throw new NotFoundError('Session not found')
 	}
 
 	await dropCachedSessions(sessionId)

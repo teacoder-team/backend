@@ -95,7 +95,11 @@ export type ReceiptStatus = (typeof ReceiptStatus)[keyof typeof ReceiptStatus]
 export const PaymentProvider = {
   YOOKASSA: 'YOOKASSA',
   ROBOKASSA: 'ROBOKASSA',
-  CRYPTO_BOT: 'CRYPTO_BOT'
+  PRODAMUS: 'PRODAMUS',
+  HELEKET: 'HELEKET',
+  CRYPTO_BOT: 'CRYPTO_BOT',
+  CLOUDPAYMENTS: 'CLOUDPAYMENTS',
+  TELEGRAM: 'TELEGRAM'
 } as const
 
 export type PaymentProvider = (typeof PaymentProvider)[keyof typeof PaymentProvider]

@@ -1,11 +1,13 @@
+import { openapi } from '@elysiajs/openapi'
+import { Elysia } from 'elysia'
+
 import { auth } from '~/modules/auth'
-import { payment } from '~/modules/payment'
+import { billing } from '~/modules/billing'
+import { oauth } from '~/modules/oauth'
 import { root } from '~/modules/root'
 import { session } from '~/modules/session'
 import { errorHandler } from '~/plugins/error-handler'
 import { requestContext, requestLogger } from '~/plugins/request-context'
-import { openapi } from '@elysiajs/openapi'
-import { Elysia } from 'elysia'
 
 export const createApp = () =>
 	new Elysia()
@@ -13,7 +15,7 @@ export const createApp = () =>
 			openapi({
 				provider: 'scalar',
 				path: '/docs',
-				specPath: '/openapi.json',
+				specPath: '/spec.json',
 				documentation: {
 					info: {
 						title: 'TeaCoder API',
@@ -43,7 +45,8 @@ export const createApp = () =>
 		.use(requestLogger)
 		.use(root)
 		.use(auth)
+		.use(oauth)
 		.use(session)
-		.use(payment)
+		.use(billing)
 
 export type App = ReturnType<typeof createApp>

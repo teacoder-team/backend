@@ -1,10 +1,14 @@
-import { extendLogContext } from '~/infra/logger'
-import { type ApiIssue, fail } from '~/shared/api'
-import { AppError, ErrorCode } from '~/shared/errors'
 import { Elysia } from 'elysia'
 
-const issue = (code: ErrorCode, message: string, field?: string): ApiIssue =>
-	field ? { code, message, field } : { code, message }
+import { extendLogContext } from '~/infra/logger'
+import { AppError } from '~/shared/errors'
+
+interface ErrorBody {
+	status: number
+	messages: string[]
+}
+
+const respond = (status: number, messages: string[]): ErrorBody => ({ status, messages })
 
 interface ValidationIssue {
 	path?: string
@@ -13,6 +17,7 @@ interface ValidationIssue {
 	schema?: { error?: unknown }
 }
 
+/** A schema-declared `error` string wins — it was written for the caller. */
 const messageFor = (issue: ValidationIssue) => {
 	const declared = issue.schema?.error
 
@@ -21,52 +26,51 @@ const messageFor = (issue: ValidationIssue) => {
 	return issue.summary ?? issue.message ?? 'Invalid value'
 }
 
-const validationIssues = (issues: readonly ValidationIssue[]) =>
-	issues.map((each) =>
-		issue(
-			ErrorCode.VALIDATION_ERROR,
-			messageFor(each),
-			each.path?.replace(/^\//, '').replace(/\//g, '.') || undefined
-		)
-	)
+/** "email: Invalid email format" — keeps which field failed as plain text, no separate property. */
+const describe = (issue: ValidationIssue) => {
+	const field = issue.path?.replace(/^\//, '').replace(/\//g, '.')
+	const message = messageFor(issue)
 
+	return field ? `${field}: ${message}` : message
+}
+
+/**
+ * The single place where an error becomes an HTTP response, and the single
+ * place errors are logged — services throw and stay quiet.
+ */
 export const errorHandler = new Elysia({ name: 'error-handler' })
 	.error({ APP_ERROR: AppError })
-	.onError({ as: 'global' }, ({ code, error, set }) => {
+	.onError({ as: 'global' }, ({ code, error, set, path }) => {
 		set.headers['content-type'] = 'application/json; charset=utf-8'
 
 		if (code === 'VALIDATION') {
 			set.status = 422
 
-			extendLogContext({ errorCode: ErrorCode.VALIDATION_ERROR })
+			extendLogContext({ errorMessage: 'validation failed' })
 
-			return fail(validationIssues(error.all))
+			return respond(422, error.all.map(describe))
 		}
 
 		if (error instanceof AppError) {
 			set.status = error.statusCode
 
-			extendLogContext({
-				errorCode: error.code,
-				errorMessage: error.message
-			})
+			extendLogContext({ errorMessage: error.message })
 
-			return fail([issue(error.code, error.message)])
+			return respond(error.statusCode, [error.message])
 		}
 
 		if (code === 'NOT_FOUND') {
 			set.status = 404
 
-			return fail([issue(ErrorCode.NOT_FOUND, 'Route not found')])
+			return respond(404, ['Route not found'])
 		}
 
 		extendLogContext({
-			errorCode: ErrorCode.INTERNAL_SERVER_ERROR,
 			errorMessage: error instanceof Error ? error.message : String(error),
-			errorStack: error instanceof Error ? error.stack : undefined
+			errorStack: error instanceof Error ? error.stack : undefined,
 		})
 
 		set.status = 500
 
-		return fail([issue(ErrorCode.INTERNAL_SERVER_ERROR, 'Internal server error')])
+		return respond(500, ['Internal server error'])
 	})

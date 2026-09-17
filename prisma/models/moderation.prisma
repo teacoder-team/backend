@@ -16,17 +16,17 @@ model Restriction {
 }
 
 enum RestrictionReason {
-    INAPPROPRIATE_USERNAME
-    SPAM
-    OFFENSIVE_BEHAVIOR
+    INAPPROPRIATE_USERNAME @map("inappropriate_username")
+    SPAM                   @map("spam")
+    OFFENSIVE_BEHAVIOR     @map("offensive_behavior")
 
     @@map("restriction_reasons")
 }
 
 enum RestrictionStatus {
-    ACTIVE
-    EXPIRED
-    CANCELED
+    ACTIVE   @map("active")
+    EXPIRED  @map("expired")
+    CANCELED @map("canceled")
 
     @@map("restriction_statuses")
 }

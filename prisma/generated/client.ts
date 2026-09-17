@@ -62,6 +62,11 @@ export type PasswordResetToken = Prisma.PasswordResetTokenModel
  */
 export type Course = Prisma.CourseModel
 /**
+ * Model CoursePurchase
+ * 
+ */
+export type CoursePurchase = Prisma.CoursePurchaseModel
+/**
  * Model Lesson
  * 
  */

@@ -8,7 +8,7 @@ model Subscription {
     expiresAt DateTime? @map("expires_at")
 
     user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId String @unique @map("user_id")
+    userId String @unique(map: "uq_subscriptions_user_id") @map("user_id")
 
     payments Payment[]
 
