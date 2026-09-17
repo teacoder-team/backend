@@ -1,5 +1,38 @@
 import { db } from '~/infra/db'
 
+export const listPublishedCourses = () =>
+	db.course.findMany({
+		where: { isPublished: true },
+		select: {
+			id: true,
+			title: true,
+			slug: true,
+			shortDescription: true,
+			thumbnail: true,
+			_count: { select: { lessons: { where: { isPublished: true } } } }
+		},
+		orderBy: { createdAt: 'desc' }
+	})
+
+export const findPublishedCourseBySlug = (slug: string) =>
+	db.course.findFirst({
+		where: { slug, isPublished: true },
+		select: {
+			id: true,
+			title: true,
+			slug: true,
+			shortDescription: true,
+			fullDescription: true,
+			thumbnail: true,
+			youtubeUrl: true,
+			price: true,
+			views: true
+		}
+	})
+
+export const incrementCourseViews = (id: string) =>
+	db.course.update({ where: { id }, data: { views: { increment: 1 } } })
+
 export const findPurchasableCourse = (courseId: string) =>
 	db.course.findFirst({
 		where: {

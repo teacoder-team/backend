@@ -3,6 +3,7 @@ import { Elysia } from 'elysia'
 
 import { auth } from '~/modules/auth'
 import { billing } from '~/modules/billing'
+import { course } from '~/modules/course'
 import { oauth } from '~/modules/oauth'
 import { root } from '~/modules/root'
 import { session } from '~/modules/session'
@@ -48,5 +49,6 @@ export const createApp = () =>
 		.use(oauth)
 		.use(session)
 		.use(billing)
+		.use(course)
 
 export type App = ReturnType<typeof createApp>
