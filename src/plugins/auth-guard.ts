@@ -9,7 +9,7 @@ import { SESSION_COOKIE } from './auth-cookie'
 
 const BEARER_PREFIX = 'Bearer '
 
-const readToken = (cookieToken: string | undefined, authorization: string | undefined) => {
+export const readToken = (cookieToken: string | undefined, authorization: string | undefined) => {
 	if (authorization?.startsWith(BEARER_PREFIX)) {
 		return authorization.slice(BEARER_PREFIX.length)
 	}
@@ -40,3 +40,27 @@ export const authGuard = new Elysia({ name: 'auth-guard' }).macro({
 		}
 	}
 })
+
+/** Resolves a session when present, without requiring one - unlike `auth`, never throws. */
+export const optionalAuth = new Elysia({ name: 'optional-auth' }).derive(
+	{ as: 'global' },
+	async ({ cookie, headers }) => {
+		const token = readToken(
+			cookie[SESSION_COOKIE]?.value as string | undefined,
+			headers.authorization
+		)
+
+		if (!token) return { optionalSession: null }
+
+		try {
+			const payload = verifyToken(token)
+			const session = await resolveSession(payload.sid)
+
+			if (!session || session.userId !== payload.sub) return { optionalSession: null }
+
+			return { optionalSession: session }
+		} catch {
+			return { optionalSession: null }
+		}
+	}
+)

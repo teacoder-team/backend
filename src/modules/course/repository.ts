@@ -33,6 +33,19 @@ export const findPublishedCourseBySlug = (slug: string) =>
 export const incrementCourseViews = (id: string) =>
 	db.course.update({ where: { id }, data: { views: { increment: 1 } } })
 
+export const findPublishedLessonsForCourse = (courseId: string) =>
+	db.lesson.findMany({
+		where: { courseId, isPublished: true },
+		select: {
+			id: true,
+			title: true,
+			slug: true,
+			position: true,
+			access: true
+		},
+		orderBy: { position: 'asc' }
+	})
+
 export const findPurchasableCourse = (courseId: string) =>
 	db.course.findFirst({
 		where: {

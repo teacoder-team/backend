@@ -4,7 +4,9 @@ import { Elysia } from 'elysia'
 import { auth } from '~/modules/auth'
 import { billing } from '~/modules/billing'
 import { course } from '~/modules/course'
+import { lesson } from '~/modules/lesson'
 import { oauth } from '~/modules/oauth'
+import { progress } from '~/modules/progress'
 import { root } from '~/modules/root'
 import { session } from '~/modules/session'
 import { errorHandler } from '~/plugins/error-handler'
@@ -50,5 +52,7 @@ export const createApp = () =>
 		.use(session)
 		.use(billing)
 		.use(course)
+		.use(lesson)
+		.use(progress)
 
 export type App = ReturnType<typeof createApp>
