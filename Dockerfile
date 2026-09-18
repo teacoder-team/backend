@@ -50,6 +50,7 @@ COPY --from=build --chown=bun:bun /app/prisma ./prisma
 COPY --from=build --chown=bun:bun /app/prisma.config.ts ./prisma.config.ts
 COPY --from=build --chown=bun:bun /app/node_modules ./node_modules
 
+COPY --chown=bun:bun resources ./resources
 COPY --from=geo --chown=bun:bun /resources/geo ./resources/geo
 
 COPY --chown=bun:bun docker-entrypoint.sh ./docker-entrypoint.sh
