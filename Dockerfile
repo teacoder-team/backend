@@ -33,8 +33,11 @@ COPY --from=build --chown=bun:bun /app/node_modules ./node_modules
 COPY --chown=bun:bun resources ./resources
 COPY --chown=bun:bun docker-entrypoint.sh ./docker-entrypoint.sh
 
+COPY --chown=bun:bun docker-entrypoint.sh ./
 RUN chmod +x docker-entrypoint.sh
 
 USER bun
 
-ENTRYPOINT ["./docker-entrypoint.sh"]
+ENTRYPOINT ["/usr/bin/dumb-init", "--", "./docker-entrypoint.sh"]
+
+CMD ["node", "dist/main.js"]
