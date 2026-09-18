@@ -12,6 +12,8 @@ import { session } from '~/modules/session'
 import { errorHandler } from '~/plugins/error-handler'
 import { requestContext, requestLogger } from '~/plugins/request-context'
 
+import { webhook } from './modules/webhook'
+
 export const createApp = () =>
 	new Elysia()
 		.use(
@@ -51,6 +53,7 @@ export const createApp = () =>
 		.use(oauth)
 		.use(session)
 		.use(billing)
+		.use(webhook)
 		.use(course)
 		.use(lesson)
 		.use(progress)
