@@ -1,15 +1,24 @@
 model User {
     id String @id @default(uuid())
 
+    emailCipher Bytes? @map("email_cipher")
+    emailHash   Bytes? @unique(map: "uq_users_email_hash") @map("email_hash")
+
     username    String  @unique(map: "uq_users_username")
     displayName String  @map("display_name")
     avatar      String?
 
+    status          UserStatus @default(PENDING)
+    emailVerifiedAt DateTime?  @map("email_verified_at")
+    lastLoginAt     DateTime?  @map("last_login_at")
+
     role   UserRole @default(STUDENT)
     points Int      @default(0)
 
-    credentials Credential[]
-    sessions    Session[]
+    passwordCredential PasswordCredential?
+    oauthAccounts      OAuthAccount[]
+    verificationCodes  VerificationCode[]
+    sessions           Session[]
 
     mfa          MultiFactorAuthentication?
     restrictions Restriction[]
@@ -17,10 +26,10 @@ model User {
     subscription       Subscription?
     payments           Payment[]
     userPaymentMethods UserPaymentMethod[]
-    
-    coursePurchases    CoursePurchase[]
-    userProgresses UserProgress[]
-    downloadLogs   DownloadLog[]
+
+    coursePurchases CoursePurchase[]
+    userProgresses  UserProgress[]
+    downloadLogs    DownloadLog[]
 
     createdAt DateTime @default(now()) @map("created_at")
     updatedAt DateTime @updatedAt @map("updated_at")
@@ -33,4 +42,11 @@ enum UserRole {
     ADMIN   @map("admin")
 
     @@map("user_roles")
+}
+
+enum UserStatus {
+    PENDING @map("pending")
+    ACTIVE  @map("active")
+
+    @@map("user_statuses")
 }

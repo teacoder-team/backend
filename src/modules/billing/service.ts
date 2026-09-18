@@ -8,7 +8,7 @@ import { createInvoice as createHeleketInvoice } from '~/infra/payments/heleket'
 import { createInvoiceUrl } from '~/infra/payments/robokassa'
 import { createInvoiceLink } from '~/infra/payments/telegram-stars'
 import { createPayment as createYookassaPayment } from '~/infra/payments/yookassa'
-import { findUserEmail } from '~/modules/auth/repository'
+import { getUserEmail } from '~/modules/auth/service'
 import { findPurchasableCourse } from '~/modules/course/repository'
 import { cancelSubscription as cancelSubscriptionRow } from '~/modules/subscription/repository'
 import { AppError, BadRequestError, InternalError, NotFoundError } from '~/shared/errors'
@@ -242,7 +242,7 @@ export const createPayment = async (userId: string, input: CreatePaymentInput) =
 	}
 
 	const product = await resolveProduct(input.courseId)
-	const email = (await findUserEmail(userId)) ?? input.email ?? null
+	const email = (await getUserEmail(userId)) ?? input.email ?? null
 
 	const payment = await createPendingPayment({
 		userId,

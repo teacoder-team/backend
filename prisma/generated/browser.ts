@@ -18,20 +18,20 @@ export { Prisma }
 export * as $Enums from './enums.ts'
 export * from './enums.ts';
 /**
- * Model Credential
+ * Model PasswordCredential
  * 
  */
-export type Credential = Prisma.CredentialModel
+export type PasswordCredential = Prisma.PasswordCredentialModel
 /**
- * Model PasswordHash
+ * Model OAuthAccount
  * 
  */
-export type PasswordHash = Prisma.PasswordHashModel
+export type OAuthAccount = Prisma.OAuthAccountModel
 /**
- * Model PasswordResetToken
+ * Model VerificationCode
  * 
  */
-export type PasswordResetToken = Prisma.PasswordResetTokenModel
+export type VerificationCode = Prisma.VerificationCodeModel
 /**
  * Model Course
  * 
@@ -97,6 +97,11 @@ export type DownloadLog = Prisma.DownloadLogModel
  * 
  */
 export type Session = Prisma.SessionModel
+/**
+ * Model RefreshToken
+ * 
+ */
+export type RefreshToken = Prisma.RefreshTokenModel
 /**
  * Model Subscription
  * 

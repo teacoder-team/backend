@@ -27,11 +27,11 @@ export const oauth = new Elysia({ prefix: '/oauth', tags: ['OAuth'] })
 	.get(
 		'/:provider/callback',
 		async ({ params, query, authCookie }) => {
-			const { user, token } = await finishOAuth(params.provider, query)
+			const result = await finishOAuth(params.provider, query)
 
-			authCookie.set(token)
+			authCookie.set(result)
 
-			return { id: user.id }
+			return result
 		},
 		{
 			params: 'OAuthProviderParams',

@@ -1,71 +1,82 @@
+import { UserRole, UserStatus, VerificationPurpose } from '@prisma/generated/client'
+
 import { db } from '~/infra/db'
+import { toBytes } from '~/shared/bytes'
 
-import { AuthProvider, CredentialType, UserRole } from '@prisma/generated/client'
-
-const PASSWORD_ALGORITHM = 'argon2'
-const PASSWORD_VERSION = 1
-
-/** Callers pass an already normalized address - see `normalizeEmail`. */
-export const findCredentialByEmail = (email: string) =>
-	db.credential.findUnique({
-		where: {
-			provider_identifier: {
-				provider: AuthProvider.EMAIL,
-				identifier: email
-			}
-		},
-		include: { user: true, passwordHash: true }
+export const findUserByEmailHash = (emailHash: Buffer) =>
+	db.user.findUnique({
+		where: { emailHash: toBytes(emailHash) },
+		include: { passwordCredential: true }
 	})
 
-/** The address the account signs in with, when it has one. */
-export const findUserEmail = async (userId: string) => {
-	const credential = await db.credential.findFirst({
-		where: { userId, provider: AuthProvider.EMAIL },
-		select: { identifier: true }
-	})
+export const findEmailCipher = async (userId: string) => {
+	const user = await db.user.findUnique({ where: { id: userId }, select: { emailCipher: true } })
 
-	return credential?.identifier ?? null
+	return user?.emailCipher ?? null
 }
 
-export const emailExists = async (email: string) =>
-	(await db.credential.count({
-		where: { provider: AuthProvider.EMAIL, identifier: email }
-	})) > 0
-
-export interface CreateUserInput {
-	email: string
+export interface CreatePendingUserInput {
+	emailCipher: Buffer
+	emailHash: Buffer
 	passwordHash: string
 	displayName: string
 	username: string
 }
 
-export const createUser = (input: CreateUserInput) =>
+export const createPendingUser = (input: CreatePendingUserInput) =>
 	db.$transaction(async (tx) => {
 		const user = await tx.user.create({
 			data: {
 				username: input.username,
 				displayName: input.displayName,
-				role: UserRole.STUDENT
+				role: UserRole.STUDENT,
+				emailCipher: toBytes(input.emailCipher),
+				emailHash: toBytes(input.emailHash)
 			}
 		})
 
-		const credential = await tx.credential.create({
-			data: {
-				userId: user.id,
-				provider: AuthProvider.EMAIL,
-				type: CredentialType.PASSWORD,
-				identifier: input.email
-			}
-		})
-
-		await tx.passwordHash.create({
-			data: {
-				credentialId: credential.id,
-				hash: input.passwordHash,
-				algorithm: PASSWORD_ALGORITHM,
-				version: PASSWORD_VERSION
-			}
+		await tx.passwordCredential.create({
+			data: { userId: user.id, passwordHash: input.passwordHash }
 		})
 
 		return user
 	})
+
+export const deletePendingUser = (userId: string) => db.user.delete({ where: { id: userId } })
+
+export const activateUser = (userId: string) =>
+	db.user.update({
+		where: { id: userId },
+		data: { status: UserStatus.ACTIVE, emailVerifiedAt: new Date() }
+	})
+
+export const updateLastLogin = (userId: string) =>
+	db.user.update({ where: { id: userId }, data: { lastLoginAt: new Date() } })
+
+export const updatePasswordHash = (userId: string, passwordHash: string) =>
+	db.passwordCredential.update({
+		where: { userId },
+		data: { passwordHash, changedAt: new Date() }
+	})
+
+export interface NewVerificationCode {
+	userId: string
+	purpose: VerificationPurpose
+	codeHash: Buffer
+	expiresAt: Date
+}
+
+export const createVerificationCode = (data: NewVerificationCode) =>
+	db.verificationCode.create({ data: { ...data, codeHash: toBytes(data.codeHash) } })
+
+export const findLatestVerificationCode = (userId: string, purpose: VerificationPurpose) =>
+	db.verificationCode.findFirst({
+		where: { userId, purpose, consumedAt: null },
+		orderBy: { createdAt: 'desc' }
+	})
+
+export const consumeVerificationCode = (id: string) =>
+	db.verificationCode.update({ where: { id }, data: { consumedAt: new Date() } })
+
+export const incrementVerificationAttempts = (id: string) =>
+	db.verificationCode.update({ where: { id }, data: { attempts: { increment: 1 } } })

@@ -1,10 +1,13 @@
 import { UAParser } from 'ua-parser-js'
 
+import { randomUUID } from 'node:crypto'
+
 import { env } from '~/config/env'
 import { lookupLocation } from '~/infra/datasets/geo'
 import { extendLogContext, logger } from '~/infra/logger'
-import { NotFoundError } from '~/shared/errors'
-import { signToken } from '~/shared/security/token'
+import { NotFoundError, UnauthorizedError } from '~/shared/errors'
+import { signAccessToken } from '~/shared/security/jwt'
+import { generateRefreshToken, hashRefreshToken } from '~/shared/security/refresh-token'
 
 import {
 	type CachedSession,
@@ -14,12 +17,16 @@ import {
 	writeCachedSession
 } from './cache'
 import {
+	createRefreshToken,
+	deleteRefreshTokenFamily,
 	findActiveSession,
+	findRefreshTokenByHash,
 	insertSession,
 	listActiveSessionIds,
 	listActiveSessions,
 	revokeSessionById,
 	revokeSessionsByUser,
+	rotateRefreshToken,
 	touchSession
 } from './repository'
 
@@ -31,18 +38,28 @@ export interface SessionContext {
 	userAgent: string
 }
 
+const friendlyNameFor = (browser: string | null, os: string | null) => {
+	if (browser && os) return `${browser}, ${os}`
+
+	return browser ?? os
+}
+
 export const createSession = async ({ userId, ip, userAgent }: SessionContext) => {
 	const { country, city } = await lookupLocation(ip)
+
 	const agent = new UAParser(userAgent).getResult()
+	const browser = agent.browser.name ?? null
+	const os = agent.os.name ?? null
 
 	const session = await insertSession({
 		userId,
 		ip,
 		userAgent,
+		friendlyName: friendlyNameFor(browser, os),
 		country,
 		city,
-		browser: agent.browser.name ?? null,
-		os: agent.os.name ?? null,
+		browser,
+		os,
 		device: agent.device.model ?? null,
 		expiresAt: new Date(Date.now() + env.SESSION_TTL * 1000)
 	})
@@ -88,11 +105,62 @@ export interface RequestOrigin {
 	userAgent: string
 }
 
-/** Creates a session for an already-authenticated user and signs its token. */
-export const issueSession = async (userId: string, origin: RequestOrigin) => {
+export interface TokenPair {
+	accessToken: string
+	refreshToken: string
+}
+
+const refreshExpiresAt = () => new Date(Date.now() + env.SESSION_TTL * 1000)
+
+export const issueTokenPair = async (userId: string, origin: RequestOrigin): Promise<TokenPair> => {
 	const session = await createSession({ userId, ...origin })
 
-	return signToken({ sid: session.id, sub: userId })
+	const refresh = generateRefreshToken()
+
+	await createRefreshToken({
+		sessionId: session.id,
+		familyId: randomUUID(),
+		tokenHash: refresh.hash,
+		expiresAt: refreshExpiresAt()
+	})
+
+	const accessToken = await signAccessToken({ sub: userId, sid: session.id })
+
+	return { accessToken, refreshToken: refresh.token }
+}
+
+export const refreshTokenPair = async (rawToken: string): Promise<TokenPair> => {
+	const existing = await findRefreshTokenByHash(hashRefreshToken(rawToken))
+
+	if (!existing || existing.expiresAt < new Date()) {
+		throw new UnauthorizedError('Refresh token expired or invalid')
+	}
+
+	const session = await findActiveSession(existing.sessionId)
+
+	if (!session) throw new UnauthorizedError('Session expired or revoked')
+
+	if (existing.usedAt) {
+		await revokeSession(session.userId, session.id)
+		await deleteRefreshTokenFamily(existing.familyId)
+
+		extendLogContext({ event: 'refresh_token_reuse_detected', sessionId: session.id })
+
+		throw new UnauthorizedError('Refresh token already used')
+	}
+
+	const refresh = generateRefreshToken()
+
+	await rotateRefreshToken(existing.id, {
+		sessionId: existing.sessionId,
+		familyId: existing.familyId,
+		tokenHash: refresh.hash,
+		expiresAt: refreshExpiresAt()
+	})
+
+	const accessToken = await signAccessToken({ sub: session.userId, sid: session.id })
+
+	return { accessToken, refreshToken: refresh.token }
 }
 
 export const getUserSessions = async (userId: string, currentSessionId: string) => {
@@ -101,11 +169,9 @@ export const getUserSessions = async (userId: string, currentSessionId: string) 
 	return sessions.map((session) => ({
 		id: session.id,
 		ip: session.ip,
+		friendlyName: session.friendlyName,
 		country: session.country,
 		city: session.city,
-		browser: session.browser,
-		os: session.os,
-		device: session.device,
 		current: session.id === currentSessionId,
 		lastSeenAt: session.lastSeenAt.toISOString(),
 		createdAt: session.createdAt.toISOString()

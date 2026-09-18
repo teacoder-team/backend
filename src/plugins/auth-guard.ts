@@ -3,9 +3,9 @@ import { Elysia } from 'elysia'
 import { extendLogContext } from '~/infra/logger'
 import { resolveSession } from '~/modules/session/service'
 import { UnauthorizedError } from '~/shared/errors'
-import { verifyToken } from '~/shared/security/token'
+import { verifyAccessToken } from '~/shared/security/jwt'
 
-import { SESSION_COOKIE } from './auth-cookie'
+import { ACCESS_COOKIE } from './auth-cookie'
 
 const BEARER_PREFIX = 'Bearer '
 
@@ -21,13 +21,13 @@ export const authGuard = new Elysia({ name: 'auth-guard' }).macro({
 	auth: {
 		async resolve({ cookie, headers }) {
 			const token = readToken(
-				cookie[SESSION_COOKIE]?.value as string | undefined,
+				cookie[ACCESS_COOKIE]?.value as string | undefined,
 				headers.authorization
 			)
 
 			if (!token) throw new UnauthorizedError('Authentication required')
 
-			const payload = verifyToken(token)
+			const payload = await verifyAccessToken(token)
 			const session = await resolveSession(payload.sid)
 
 			if (!session || session.userId !== payload.sub) {
@@ -46,14 +46,14 @@ export const optionalAuth = new Elysia({ name: 'optional-auth' }).derive(
 	{ as: 'global' },
 	async ({ cookie, headers }) => {
 		const token = readToken(
-			cookie[SESSION_COOKIE]?.value as string | undefined,
+			cookie[ACCESS_COOKIE]?.value as string | undefined,
 			headers.authorization
 		)
 
 		if (!token) return { optionalSession: null }
 
 		try {
-			const payload = verifyToken(token)
+			const payload = await verifyAccessToken(token)
 			const session = await resolveSession(payload.sid)
 
 			if (!session || session.userId !== payload.sub) return { optionalSession: null }

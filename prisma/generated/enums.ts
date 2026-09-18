@@ -10,33 +10,22 @@
 */
 
 export const AuthProvider = {
-  EMAIL: 'EMAIL',
   GOOGLE: 'GOOGLE',
   GITHUB: 'GITHUB',
   DISCORD: 'DISCORD',
   TELEGRAM: 'TELEGRAM',
-  YANDEX: 'YANDEX',
-  GITLAB: 'GITLAB'
+  YANDEX: 'YANDEX'
 } as const
 
 export type AuthProvider = (typeof AuthProvider)[keyof typeof AuthProvider]
 
 
-export const CredentialType = {
-  PASSWORD: 'PASSWORD',
-  OAUTH: 'OAUTH'
+export const VerificationPurpose = {
+  EMAIL_CONFIRM: 'EMAIL_CONFIRM',
+  PASSWORD_RESET: 'PASSWORD_RESET'
 } as const
 
-export type CredentialType = (typeof CredentialType)[keyof typeof CredentialType]
-
-
-export const PasswordResetStatus = {
-  PENDING: 'PENDING',
-  USED: 'USED',
-  EXPIRED: 'EXPIRED'
-} as const
-
-export type PasswordResetStatus = (typeof PasswordResetStatus)[keyof typeof PasswordResetStatus]
+export type VerificationPurpose = (typeof VerificationPurpose)[keyof typeof VerificationPurpose]
 
 
 export const LessonAccess = {
@@ -125,3 +114,11 @@ export const UserRole = {
 } as const
 
 export type UserRole = (typeof UserRole)[keyof typeof UserRole]
+
+
+export const UserStatus = {
+  PENDING: 'PENDING',
+  ACTIVE: 'ACTIVE'
+} as const
+
+export type UserStatus = (typeof UserStatus)[keyof typeof UserStatus]

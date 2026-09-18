@@ -1,6 +1,7 @@
-import { db } from '~/infra/db'
+import type { Prisma, RefreshToken, Session } from '@prisma/generated/client'
 
-import type { Prisma, Session } from '@prisma/generated/client'
+import { db } from '~/infra/db'
+import { toBytes } from '~/shared/bytes'
 
 const active = (now: Date): Prisma.SessionWhereInput => ({
 	revokedAt: null,
@@ -11,6 +12,7 @@ export interface NewSession {
 	userId: string
 	ip: string
 	userAgent: string
+	friendlyName: string | null
 	country: string | null
 	city: string | null
 	browser: string | null
@@ -66,6 +68,42 @@ export const deleteSessionsDeadBefore = async (cutoff: Date) => {
 			OR: [{ expiresAt: { lt: cutoff } }, { revokedAt: { lt: cutoff } }]
 		}
 	})
+
+	return count
+}
+
+export interface NewRefreshToken {
+	sessionId: string
+	familyId: string
+	tokenHash: Buffer
+	expiresAt: Date
+}
+
+export const createRefreshToken = (data: NewRefreshToken): Promise<RefreshToken> =>
+	db.refreshToken.create({ data: { ...data, tokenHash: toBytes(data.tokenHash) } })
+
+export const findRefreshTokenByHash = (tokenHash: Buffer) =>
+	db.refreshToken.findUnique({ where: { tokenHash: toBytes(tokenHash) } })
+
+export const rotateRefreshToken = (oldId: string, next: NewRefreshToken) =>
+	db.$transaction(async (tx) => {
+		const created = await tx.refreshToken.create({
+			data: { ...next, tokenHash: toBytes(next.tokenHash) }
+		})
+
+		await tx.refreshToken.update({
+			where: { id: oldId },
+			data: { usedAt: new Date(), replacedById: created.id }
+		})
+
+		return created
+	})
+
+export const markRefreshTokenUsed = (id: string) =>
+	db.refreshToken.update({ where: { id }, data: { usedAt: new Date() } })
+
+export const deleteRefreshTokenFamily = async (familyId: string) => {
+	const { count } = await db.refreshToken.deleteMany({ where: { familyId } })
 
 	return count
 }

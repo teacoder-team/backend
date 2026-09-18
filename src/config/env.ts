@@ -37,6 +37,11 @@ const envSchema = t.Object({
 	RESOURCES_DIR: t.String({ default: './resources' }),
 
 	TOKEN_SECRET: t.String({ minLength: 32 }),
+	ACCESS_TOKEN_TTL: t.Number({ default: 15 * 60 }),
+
+	EMAIL_ENCRYPTION_KEY: t.String(),
+	EMAIL_HASH_KEY: t.String(),
+	VERIFICATION_CODE_HASH_KEY: t.String(),
 
 	COOKIE_DOMAIN: t.String({ default: 'localhost' }),
 	COOKIE_SECURE: t.Boolean({ default: false }),

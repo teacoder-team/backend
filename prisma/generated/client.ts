@@ -31,8 +31,8 @@ export * from "./enums.ts"
  * const prisma = new PrismaClient({
  *   adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL })
  * })
- * // Fetch zero or more Credentials
- * const credentials = await prisma.credential.findMany()
+ * // Fetch zero or more PasswordCredentials
+ * const passwordCredentials = await prisma.passwordCredential.findMany()
  * ```
  * 
  * Read more in our [docs](https://pris.ly/d/client).
@@ -42,20 +42,20 @@ export type PrismaClient<LogOpts extends Prisma.LogLevel = never, OmitOpts exten
 export { Prisma }
 
 /**
- * Model Credential
+ * Model PasswordCredential
  * 
  */
-export type Credential = Prisma.CredentialModel
+export type PasswordCredential = Prisma.PasswordCredentialModel
 /**
- * Model PasswordHash
+ * Model OAuthAccount
  * 
  */
-export type PasswordHash = Prisma.PasswordHashModel
+export type OAuthAccount = Prisma.OAuthAccountModel
 /**
- * Model PasswordResetToken
+ * Model VerificationCode
  * 
  */
-export type PasswordResetToken = Prisma.PasswordResetTokenModel
+export type VerificationCode = Prisma.VerificationCodeModel
 /**
  * Model Course
  * 
@@ -121,6 +121,11 @@ export type DownloadLog = Prisma.DownloadLogModel
  * 
  */
 export type Session = Prisma.SessionModel
+/**
+ * Model RefreshToken
+ * 
+ */
+export type RefreshToken = Prisma.RefreshTokenModel
 /**
  * Model Subscription
  * 

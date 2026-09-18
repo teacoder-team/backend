@@ -7,13 +7,14 @@ import { extendLogContext } from '~/infra/logger'
 import { OAUTH_PROVIDERS, type OAuthProviderName } from '~/infra/oauth/registry'
 import type { OAuthProfile } from '~/infra/oauth/types'
 import { redis } from '~/infra/redis'
-import { findCredentialByEmail } from '~/modules/auth/repository'
-import { issueSession, type RequestOrigin } from '~/modules/session/service'
+import { findUserByEmailHash } from '~/modules/auth/repository'
+import { issueTokenPair, type RequestOrigin } from '~/modules/session/service'
 import { normalizeEmail } from '~/shared/email'
 import { BadRequestError, ForbiddenError } from '~/shared/errors'
+import { encryptEmail, hashEmail } from '~/shared/security/email-crypto'
 import { generateUsername } from '~/shared/username'
 
-import { createOAuthUser, findIdentity, linkIdentity } from './repository'
+import { createOAuthUser, findOAuthAccount, linkOAuthAccount } from './repository'
 
 const stateKey = (id: string) => `oauth:state:${id}`
 
@@ -69,26 +70,30 @@ export const startOAuth = async (providerName: string, origin: RequestOrigin) =>
 }
 
 const resolveUser = async (provider: AuthProvider, profile: OAuthProfile) => {
-	const existing = await findIdentity(provider, profile.providerAccountId)
+	const existing = await findOAuthAccount(provider, profile.providerAccountId)
 
 	if (existing) return { user: existing.user, outcome: 'login' as const }
 
 	if (profile.email) {
-		const byEmail = await findCredentialByEmail(normalizeEmail(profile.email))
+		const byEmail = await findUserByEmailHash(hashEmail(normalizeEmail(profile.email)))
 
 		if (byEmail) {
-			await linkIdentity(byEmail.userId, provider, profile.providerAccountId)
+			await linkOAuthAccount(byEmail.id, provider, profile.providerAccountId)
 
-			return { user: byEmail.user, outcome: 'linked' as const }
+			return { user: byEmail, outcome: 'linked' as const }
 		}
 	}
+
+	const encrypted = profile.email ? encryptEmail(normalizeEmail(profile.email)) : null
 
 	const user = await createOAuthUser({
 		provider,
 		providerAccountId: profile.providerAccountId,
 		displayName: profile.name,
 		username: generateUsername(),
-		avatar: profile.avatarUrl
+		avatar: profile.avatarUrl,
+		emailCipher: encrypted?.cipher ?? null,
+		emailHash: encrypted?.hash ?? null
 	})
 
 	return { user, outcome: 'signup' as const }
@@ -131,7 +136,7 @@ export const finishOAuth = async (
 		userId: user.id
 	})
 
-	const token = await issueSession(user.id, { ip: state.ip, userAgent: state.userAgent })
+	const tokens = await issueTokenPair(user.id, { ip: state.ip, userAgent: state.userAgent })
 
-	return { user, token }
+	return { id: user.id, ...tokens }
 }

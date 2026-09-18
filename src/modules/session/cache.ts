@@ -1,7 +1,7 @@
+import type { Session } from '@prisma/generated/client'
+
 import { env } from '~/config/env'
 import { cache } from '~/infra/cache'
-
-import type { Session } from '@prisma/generated/client'
 
 const MISS_TTL = 30
 

@@ -1,6 +1,5 @@
 import { t } from 'elysia'
 
-/** Geo and user-agent parsing can genuinely fail — `null` says so honestly. */
 const Detected = (examples: string[]) => t.Nullable(t.String({ examples }))
 
 export const SessionResponse = t.Object({
@@ -9,11 +8,9 @@ export const SessionResponse = t.Object({
 		examples: ['b3f1c2d4-5e6f-4a7b-8c9d-0e1f2a3b4c5d']
 	}),
 	ip: t.String({ examples: ['104.28.225.185'] }),
+	friendlyName: Detected(['Chrome on Windows']),
 	country: Detected(['Россия']),
 	city: Detected(['Москва']),
-	browser: Detected(['Chrome']),
-	os: Detected(['Windows']),
-	device: Detected(['iPhone']),
 	current: t.Boolean({
 		description: 'Whether this is the session making the request.'
 	}),

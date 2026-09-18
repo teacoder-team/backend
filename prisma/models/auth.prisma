@@ -1,73 +1,63 @@
-model Credential {
+model PasswordCredential {
+    userId       String @id @map("user_id")
+    passwordHash String @map("password_hash")
+    algorithm    String @default("argon2id")
+
+    mustChange Boolean  @default(false) @map("must_change")
+    changedAt  DateTime @default(now()) @map("changed_at")
+
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@map("password_credentials")
+}
+
+model OAuthAccount {
+    id                String       @id @default(uuid())
+    provider          AuthProvider
+    providerAccountId String       @map("provider_account_id")
+
+    linkedAt DateTime @default(now()) @map("linked_at")
+
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId String @map("user_id")
+
+    @@unique([provider, providerAccountId], map: "uq_oauth_accounts_provider_account")
+    @@index([userId], map: "ix_oauth_accounts_user_id")
+    @@map("oauth_accounts")
+}
+
+model VerificationCode {
     id String @id @default(uuid())
 
-    provider AuthProvider
-    type     CredentialType
+    purpose  VerificationPurpose
+    codeHash Bytes               @map("code_hash")
 
-    identifier String
-
-    passwordHash PasswordHash?
-    resetTokens  PasswordResetToken[]
+    attempts   Int       @default(0)
+    expiresAt  DateTime  @map("expires_at")
+    consumedAt DateTime? @map("consumed_at")
 
     user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId String @map("user_id")
 
     createdAt DateTime @default(now()) @map("created_at")
-    updatedAt DateTime @updatedAt @map("updated_at")
 
-    @@unique([provider, identifier], map: "uq_credentials_provider_identifier")
-    @@index([userId], map: "ix_credentials_user_id")
-    @@map("credentials")
-}
-
-model PasswordHash {
-    hash      String
-    algorithm String
-    version   Int
-
-    credential   Credential @relation(fields: [credentialId], references: [id], onDelete: Cascade)
-    credentialId String     @id @map("credential_id")
-
-    @@map("password_hashes")
-}
-
-model PasswordResetToken {
-    id String @id @default(uuid())
-
-    token     String              @unique(map: "uq_password_reset_tokens_token")
-    status    PasswordResetStatus @default(PENDING)
-    expiresAt DateTime            @map("expires_at")
-
-    credential   Credential @relation(fields: [credentialId], references: [id], onDelete: Cascade)
-    credentialId String     @map("credential_id")
-
-    @@index([status, expiresAt], map: "ix_password_reset_tokens_status_expires_at")
-    @@map("password_reset_tokens")
+    @@index([userId, purpose, consumedAt], map: "ix_verification_codes_lookup")
+    @@map("verification_codes")
 }
 
 enum AuthProvider {
-    EMAIL    @map("email")
     GOOGLE   @map("google")
     GITHUB   @map("github")
     DISCORD  @map("discord")
     TELEGRAM @map("telegram")
     YANDEX   @map("yandex")
-    GITLAB   @map("gitlab")
 
     @@map("account_providers")
 }
 
-enum CredentialType {
-    PASSWORD @map("password")
-    OAUTH    @map("oauth")
+enum VerificationPurpose {
+    EMAIL_CONFIRM  @map("email_confirm")
+    PASSWORD_RESET @map("password_reset")
 
-    @@map("credential_types")
-}
-
-enum PasswordResetStatus {
-    PENDING @map("pending")
-    USED    @map("used")
-    EXPIRED @map("expired")
-
-    @@map("password_reset_statuses")
+    @@map("verification_purposes")
 }

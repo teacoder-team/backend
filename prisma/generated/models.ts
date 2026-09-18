@@ -8,9 +8,9 @@
  *
  * 🟢 You can import this file directly.
  */
-export type * from './models/Credential.ts'
-export type * from './models/PasswordHash.ts'
-export type * from './models/PasswordResetToken.ts'
+export type * from './models/PasswordCredential.ts'
+export type * from './models/OAuthAccount.ts'
+export type * from './models/VerificationCode.ts'
 export type * from './models/Course.ts'
 export type * from './models/CoursePurchase.ts'
 export type * from './models/Lesson.ts'
@@ -24,6 +24,7 @@ export type * from './models/UserPaymentMethod.ts'
 export type * from './models/UserProgress.ts'
 export type * from './models/DownloadLog.ts'
 export type * from './models/Session.ts'
+export type * from './models/RefreshToken.ts'
 export type * from './models/Subscription.ts'
 export type * from './models/User.ts'
 export type * from './commonInputTypes.ts'

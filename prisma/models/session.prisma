@@ -1,8 +1,9 @@
 model Session {
     id String @id @default(uuid())
 
-    ip        String
-    userAgent String @map("user_agent")
+    ip           String
+    userAgent    String  @map("user_agent")
+    friendlyName String? @map("friendly_name")
 
     country String?
     city    String?
@@ -17,9 +18,35 @@ model Session {
     user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId String @map("user_id")
 
+    refreshTokens RefreshToken[]
+
     createdAt DateTime @default(now()) @map("created_at")
 
     @@index([userId, revokedAt, expiresAt], map: "ix_sessions_user_id_revoked_at_expires_at")
     @@index([expiresAt], map: "ix_sessions_expires_at")
     @@map("sessions")
+}
+
+model RefreshToken {
+    id        String @id @default(uuid())
+    /// Groups a rotation chain - reusing an already-rotated token revokes the whole family.
+    familyId  String @map("family_id")
+    tokenHash Bytes  @map("token_hash")
+
+    expiresAt DateTime  @map("expires_at")
+    usedAt    DateTime? @map("used_at")
+
+    session   Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+    sessionId String  @map("session_id")
+
+    replacedBy   RefreshToken? @relation("RefreshTokenChain", fields: [replacedById], references: [id], onDelete: SetNull)
+    replacedById String?       @unique @map("replaced_by_id")
+    replaces     RefreshToken? @relation("RefreshTokenChain")
+
+    createdAt DateTime @default(now()) @map("created_at")
+
+    @@unique([tokenHash], map: "uq_refresh_tokens_token_hash")
+    @@index([sessionId], map: "ix_refresh_tokens_session_id")
+    @@index([familyId], map: "ix_refresh_tokens_family_id")
+    @@map("refresh_tokens")
 }
