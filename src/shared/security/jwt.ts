@@ -3,7 +3,7 @@ import { jwtVerify, SignJWT } from 'jose'
 import { env } from '~/config/env'
 import { UnauthorizedError } from '~/shared/errors'
 
-const secret = new TextEncoder().encode(env.TOKEN_SECRET)
+const secret = new TextEncoder().encode(env.JWT_SECRET)
 
 export interface AccessTokenPayload {
 	[claim: string]: unknown
