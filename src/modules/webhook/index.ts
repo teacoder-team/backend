@@ -1,3 +1,4 @@
+import { getForwardedIp } from '~/shared/ip'
 import { Elysia, t } from 'elysia'
 
 import { WebhookAckResponse } from './model'
@@ -7,8 +8,8 @@ export const webhook = new Elysia({ prefix: '/webhook', tags: ['Webhooks'] })
 	.model({ WebhookAckResponse })
 	.post(
 		'/yookassa',
-		async ({ body }) => {
-			await receiveYookassaWebhook(body)
+		async ({ body, request }) => {
+			await receiveYookassaWebhook(body, getForwardedIp(request.headers))
 
 			return { received: true }
 		},
@@ -18,14 +19,14 @@ export const webhook = new Elysia({ prefix: '/webhook', tags: ['Webhooks'] })
 			detail: {
 				summary: 'YooKassa webhook',
 				description:
-					'Captures a raw YooKassa notification, re-fetches the payment from their API to confirm it is real (YooKassa notifications carry no signature), and logs it. No payment-status changes happen here yet.'
+					"Only accepted from YooKassa's documented IP ranges. Re-fetches the payment from their API to confirm it is real (YooKassa notifications carry no signature), captures it, and logs it. No payment-status changes happen here yet."
 			}
 		}
 	)
 	.post(
 		'/heleket',
-		async ({ body }) => {
-			await receiveHeleketWebhook(body)
+		async ({ body, request }) => {
+			await receiveHeleketWebhook(body, getForwardedIp(request.headers))
 
 			return { received: true }
 		},
@@ -35,7 +36,7 @@ export const webhook = new Elysia({ prefix: '/webhook', tags: ['Webhooks'] })
 			detail: {
 				summary: 'Heleket webhook',
 				description:
-					'Verifies the payload signature, captures the raw notification, and logs it. No payment-status changes happen here yet.'
+					"Only accepted from Heleket's documented IP, then signature-verified, captured, and logged. No payment-status changes happen here yet."
 			}
 		}
 	)

@@ -3,14 +3,40 @@ import type { Prisma } from '@prisma/generated/client'
 import { extendLogContext, logger } from '~/infra/logger'
 import { verifyWebhookSignature } from '~/infra/payments/heleket'
 import { getPayment } from '~/infra/payments/yookassa'
-import { BadRequestError } from '~/shared/errors'
+import { BadRequestError, ForbiddenError } from '~/shared/errors'
+import { isIpAllowed } from '~/shared/ip-allowlist'
 
 import { createWebhookEvent, findWebhookEvent } from './repository'
 
 const PSP_HELEKET = 'heleket'
 const PSP_YOOKASSA = 'yookassa'
 
-export const receiveHeleketWebhook = async (payload: Record<string, unknown>) => {
+/** Documented at https://doc.heleket.com/methods/payments/webhook. */
+const HELEKET_IP_RANGES = ['31.133.220.8']
+
+/** Documented at https://yookassa.ru/developers/using-api/webhooks. */
+const YOOKASSA_IP_RANGES = [
+	'185.71.76.0/27',
+	'185.71.77.0/27',
+	'77.75.153.0/25',
+	'77.75.156.11',
+	'77.75.156.35',
+	'77.75.154.128/25',
+	'2a02:5180::/32'
+]
+
+const assertKnownIp = (ip: string | null, ranges: readonly string[], provider: string) => {
+	if (!ip || !isIpAllowed(ip, ranges)) {
+		throw new ForbiddenError(`Request did not come from a recognized ${provider} IP`)
+	}
+}
+
+export const receiveHeleketWebhook = async (
+	payload: Record<string, unknown>,
+	ip: string | null
+) => {
+	assertKnownIp(ip, HELEKET_IP_RANGES, 'Heleket')
+
 	const { uuid, type } = payload
 
 	if (typeof uuid !== 'string' || typeof type !== 'string') {
@@ -35,7 +61,11 @@ export const receiveHeleketWebhook = async (payload: Record<string, unknown>) =>
 
 	if (!signatureOk) {
 		logger.warn(
-			{ context: 'webhook', provider: PSP_HELEKET, pspEventId: uuid },
+			{
+				context: 'webhook',
+				provider: PSP_HELEKET,
+				pspEventId: uuid
+			},
 			'webhook_signature_invalid'
 		)
 	}
@@ -54,7 +84,9 @@ interface YookassaNotification {
 	object?: { id?: string }
 }
 
-export const receiveYookassaWebhook = async (body: YookassaNotification) => {
+export const receiveYookassaWebhook = async (body: YookassaNotification, ip: string | null) => {
+	assertKnownIp(ip, YOOKASSA_IP_RANGES, 'YooKassa')
+
 	const { event, object } = body
 	const objectId = object?.id
 
@@ -70,8 +102,6 @@ export const receiveYookassaWebhook = async (body: YookassaNotification) => {
 		return
 	}
 
-	/** YooKassa notifications carry no signature - their own docs recommend re-fetching the
-	 *  object instead of trusting the body. `signatureOk` here means "confirmed via re-fetch". */
 	let signatureOk = true
 	let payload: unknown = object
 

@@ -1,4 +1,4 @@
-import type { PaymentIntent } from '@prisma/generated/client'
+import type { PaymentIntent, Prisma } from '@prisma/generated/client'
 import { PaymentMethod, PaymentProvider } from '@prisma/generated/client'
 
 import { env } from '~/config/env'
@@ -77,11 +77,17 @@ const METHODS: Record<PaymentMethod, MethodDefinition> = {
 		description: 'Оплата картой зарубежных банков',
 		providers: [PaymentProvider.ROBOKASSA, PaymentProvider.PRODAMUS]
 	},
-	[PaymentMethod.CRYPTO]: {
+	[PaymentMethod.CRYPTO_BOT]: {
 		category: 'CRYPTO',
-		name: 'Криптовалюта',
-		description: 'Оплата в криптовалюте - USDT, TON, BTC и другие',
-		providers: [PaymentProvider.CRYPTO_BOT, PaymentProvider.HELEKET]
+		name: 'Crypto Bot',
+		description: 'Оплата в криптовалюте через Telegram Crypto Bot - USDT, TON, BTC и другие',
+		providers: [PaymentProvider.CRYPTO_BOT]
+	},
+	[PaymentMethod.HELEKET]: {
+		category: 'CRYPTO',
+		name: 'Heleket',
+		description: 'Оплата в криптовалюте через Heleket - USDT, TON, BTC и другие',
+		providers: [PaymentProvider.HELEKET]
 	},
 	[PaymentMethod.TELEGRAM_STARS]: {
 		category: 'STARS',
@@ -173,7 +179,7 @@ const startAtProvider = async (payment: PaymentIntent, product: Product, email: 
 				throw new InternalError('Provider returned no confirmation URL')
 			}
 
-			return { url, pspIntentId: created.id }
+			return { url, pspIntentId: created.id, raw: created }
 		}
 
 		case PaymentProvider.ROBOKASSA: {
@@ -188,7 +194,7 @@ const startAtProvider = async (payment: PaymentIntent, product: Product, email: 
 				customParams: { paymentId: payment.id }
 			})
 
-			return { url, pspIntentId: String(payment.invoiceNumber) }
+			return { url, pspIntentId: String(payment.invoiceNumber), raw: undefined }
 		}
 
 		case PaymentProvider.CRYPTO_BOT: {
@@ -202,7 +208,8 @@ const startAtProvider = async (payment: PaymentIntent, product: Product, email: 
 
 			return {
 				url: invoice.bot_invoice_url,
-				pspIntentId: String(invoice.invoice_id)
+				pspIntentId: String(invoice.invoice_id),
+				raw: invoice
 			}
 		}
 
@@ -214,7 +221,7 @@ const startAtProvider = async (payment: PaymentIntent, product: Product, email: 
 				additionalData: product.description
 			})
 
-			return { url: invoice.url, pspIntentId: invoice.uuid }
+			return { url: invoice.url, pspIntentId: invoice.uuid, raw: invoice }
 		}
 
 		case PaymentProvider.TELEGRAM: {
@@ -229,7 +236,7 @@ const startAtProvider = async (payment: PaymentIntent, product: Product, email: 
 				amount: product.stars
 			})
 
-			return { url, pspIntentId: null }
+			return { url, pspIntentId: null, raw: undefined }
 		}
 
 		default:
@@ -300,9 +307,13 @@ export const createPayment = async (
 	})
 
 	try {
-		const { url, pspIntentId } = await startAtProvider(payment, product, email)
+		const { url, pspIntentId, raw } = await startAtProvider(payment, product, email)
 
-		await attachProviderPayment(payment.id, pspIntentId, { url })
+		await attachProviderPayment(
+			payment.id,
+			pspIntentId,
+			{ url, ...(raw ? { raw } : {}) } as unknown as Prisma.InputJsonValue
+		)
 
 		extendLogContext({
 			event: 'payment_initialized',

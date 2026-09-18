@@ -11,9 +11,8 @@ const IP_HEADERS = [
 const LOOPBACK = '127.0.0.1'
 const DEVELOPMENT_IP = '104.28.225.185'
 
-export const getClientIp = (headers: Headers): string => {
-	if (isDevelopment) return DEVELOPMENT_IP
-
+/** The real forwarded IP, with no dev-mode faking - for callers that verify against it (e.g. webhook IP allowlists). */
+export const getForwardedIp = (headers: Headers): string | null => {
 	for (const header of IP_HEADERS) {
 		const value = headers.get(header)
 		if (!value) continue
@@ -22,5 +21,11 @@ export const getClientIp = (headers: Headers): string => {
 		if (ip) return ip
 	}
 
-	return LOOPBACK
+	return null
+}
+
+export const getClientIp = (headers: Headers): string => {
+	if (isDevelopment) return DEVELOPMENT_IP
+
+	return getForwardedIp(headers) ?? LOOPBACK
 }

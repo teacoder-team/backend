@@ -132,7 +132,8 @@ enum PaymentMethod {
     T_PAY              @map("t_pay")
     SBER_PAY           @map("sber_pay")
     YOOMONEY           @map("yoomoney")
-    CRYPTO             @map("crypto")
+    CRYPTO_BOT         @map("crypto_bot")
+    HELEKET            @map("heleket")
     INTERNATIONAL_CARD @map("international_card")
     TELEGRAM_STARS     @map("telegram_stars")
 
