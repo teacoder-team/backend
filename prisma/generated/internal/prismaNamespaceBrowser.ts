@@ -61,7 +61,7 @@ export const ModelName = {
   Totp: 'Totp',
   Passkey: 'Passkey',
   Restriction: 'Restriction',
-  Payment: 'Payment',
+  PaymentIntent: 'PaymentIntent',
   Receipt: 'Receipt',
   UserPaymentMethod: 'UserPaymentMethod',
   UserProgress: 'UserProgress',
@@ -69,7 +69,9 @@ export const ModelName = {
   Session: 'Session',
   RefreshToken: 'RefreshToken',
   Subscription: 'Subscription',
-  User: 'User'
+  User: 'User',
+  WebhookEvent: 'WebhookEvent',
+  ReconciliationRun: 'ReconciliationRun'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -226,15 +228,19 @@ export const RestrictionScalarFieldEnum = {
 export type RestrictionScalarFieldEnum = (typeof RestrictionScalarFieldEnum)[keyof typeof RestrictionScalarFieldEnum]
 
 
-export const PaymentScalarFieldEnum = {
+export const PaymentIntentScalarFieldEnum = {
   id: 'id',
   amount: 'amount',
   currency: 'currency',
   status: 'status',
   method: 'method',
   provider: 'provider',
-  providerPaymentId: 'providerPaymentId',
+  pspIntentId: 'pspIntentId',
+  pspPayload: 'pspPayload',
+  failureCode: 'failureCode',
+  idempotencyKey: 'idempotencyKey',
   invoiceNumber: 'invoiceNumber',
+  courseId: 'courseId',
   metadata: 'metadata',
   userId: 'userId',
   paymentMethodId: 'paymentMethodId',
@@ -243,7 +249,7 @@ export const PaymentScalarFieldEnum = {
   updatedAt: 'updatedAt'
 } as const
 
-export type PaymentScalarFieldEnum = (typeof PaymentScalarFieldEnum)[keyof typeof PaymentScalarFieldEnum]
+export type PaymentIntentScalarFieldEnum = (typeof PaymentIntentScalarFieldEnum)[keyof typeof PaymentIntentScalarFieldEnum]
 
 
 export const ReceiptScalarFieldEnum = {
@@ -377,6 +383,35 @@ export const UserScalarFieldEnum = {
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
 
 
+export const WebhookEventScalarFieldEnum = {
+  id: 'id',
+  pspName: 'pspName',
+  pspEventId: 'pspEventId',
+  eventType: 'eventType',
+  signatureOk: 'signatureOk',
+  payload: 'payload',
+  processedAt: 'processedAt',
+  processError: 'processError',
+  receivedAt: 'receivedAt'
+} as const
+
+export type WebhookEventScalarFieldEnum = (typeof WebhookEventScalarFieldEnum)[keyof typeof WebhookEventScalarFieldEnum]
+
+
+export const ReconciliationRunScalarFieldEnum = {
+  id: 'id',
+  periodDate: 'periodDate',
+  pspTotal: 'pspTotal',
+  ledgerTotal: 'ledgerTotal',
+  diffAmount: 'diffAmount',
+  mismatches: 'mismatches',
+  status: 'status',
+  createdAt: 'createdAt'
+} as const
+
+export type ReconciliationRunScalarFieldEnum = (typeof ReconciliationRunScalarFieldEnum)[keyof typeof ReconciliationRunScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -385,19 +420,19 @@ export const SortOrder = {
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
+export const JsonNullValueInput = {
+  JsonNull: JsonNull
+} as const
+
+export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
+
+
 export const NullableJsonNullValueInput = {
   DbNull: DbNull,
   JsonNull: JsonNull
 } as const
 
 export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
-
-
-export const JsonNullValueInput = {
-  JsonNull: JsonNull
-} as const
-
-export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
 
 
 export const QueryMode = {

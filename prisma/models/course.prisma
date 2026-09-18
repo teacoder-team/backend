@@ -41,10 +41,8 @@ model CoursePurchase {
     course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
     courseId String @map("course_id")
 
-    /// Null allows a purchase granted without a real charge (comp, admin
-    /// gift). Unique so one payment can never be double-counted as two grants.
-    payment   Payment? @relation(fields: [paymentId], references: [id])
-    paymentId String?  @unique(map: "uq_course_purchases_payment_id") @map("payment_id")
+    payment   PaymentIntent? @relation(fields: [paymentId], references: [id])
+    paymentId String?        @unique(map: "uq_course_purchases_payment_id") @map("payment_id")
 
     createdAt DateTime @default(now()) @map("created_at")
 

@@ -1,6 +1,6 @@
 import { type Static, t } from 'elysia'
 
-import { PaymentMethod, PaymentProvider, PaymentStatus } from '@prisma/generated/client'
+import { IntentStatus, PaymentMethod, PaymentProvider } from '@prisma/generated/client'
 
 import { PrismaEnum } from '~/shared/api'
 
@@ -30,7 +30,7 @@ export const CreatePaymentResponse = t.Object({
 		description: 'Our own payment id. Quote it in support requests.',
 		examples: ['0f2a1c3e-9b7d-4a51-8c62-1d4e5f6a7b8c']
 	}),
-	status: PrismaEnum(PaymentStatus, { examples: [PaymentStatus.PENDING] }),
+	status: PrismaEnum(IntentStatus, { examples: [IntentStatus.REQUIRES_PAYMENT] }),
 	provider: PrismaEnum(PaymentProvider, {
 		description: 'Integration the payment was routed to.',
 		examples: [PaymentProvider.YOOKASSA]

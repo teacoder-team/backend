@@ -10,7 +10,7 @@ model Subscription {
     user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId String @unique(map: "uq_subscriptions_user_id") @map("user_id")
 
-    payments Payment[]
+    payments PaymentIntent[]
 
     createdAt DateTime @default(now()) @map("created_at")
     updatedAt DateTime @updatedAt @map("updated_at")

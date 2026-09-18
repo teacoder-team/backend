@@ -1,5 +1,5 @@
 import type { Prisma } from '@prisma/generated/client'
-import { type PaymentMethod, type PaymentProvider, PaymentStatus } from '@prisma/generated/client'
+import { type PaymentMethod, type PaymentProvider, IntentStatus } from '@prisma/generated/client'
 
 import { db } from '~/infra/db'
 
@@ -9,26 +9,35 @@ export interface NewPayment {
 	currency: string
 	method: PaymentMethod
 	provider: PaymentProvider
+	courseId?: string
+	idempotencyKey?: string
 	metadata: Prisma.InputJsonValue
 }
 
 export const createPendingPayment = (data: NewPayment) =>
-	db.payment.create({ data: { ...data, status: PaymentStatus.PENDING } })
+	db.paymentIntent.create({ data: { ...data, status: IntentStatus.REQUIRES_PAYMENT } })
 
-export const attachProviderPayment = (paymentId: string, providerPaymentId: string) =>
-	db.payment.update({
+export const attachProviderPayment = (
+	paymentId: string,
+	pspIntentId: string | null,
+	pspPayload: Prisma.InputJsonValue
+) =>
+	db.paymentIntent.update({
 		where: { id: paymentId },
-		data: { providerPaymentId }
+		data: { pspIntentId, pspPayload }
 	})
 
-export const markPaymentFailed = (paymentId: string) =>
-	db.payment.update({
+export const markPaymentFailed = (paymentId: string, failureCode?: string) =>
+	db.paymentIntent.update({
 		where: { id: paymentId },
-		data: { status: PaymentStatus.FAILED }
+		data: { status: IntentStatus.FAILED, failureCode }
 	})
 
 export const findPaymentById = (userId: string, paymentId: string) =>
-	db.payment.findFirst({ where: { id: paymentId, userId } })
+	db.paymentIntent.findFirst({ where: { id: paymentId, userId } })
 
-export const findPaymentByProviderId = (provider: PaymentProvider, providerPaymentId: string) =>
-	db.payment.findFirst({ where: { provider, providerPaymentId } })
+export const findPaymentByProviderId = (provider: PaymentProvider, pspIntentId: string) =>
+	db.paymentIntent.findFirst({ where: { provider, pspIntentId } })
+
+export const findPaymentByIdempotencyKey = (userId: string, idempotencyKey: string) =>
+	db.paymentIntent.findFirst({ where: { userId, idempotencyKey } })

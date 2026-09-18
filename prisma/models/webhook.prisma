@@ -1,0 +1,43 @@
+/// Raw capture of every inbound provider notification, before we trust or act on it.
+model WebhookEvent {
+    id String @id @default(uuid())
+
+    pspName     String  @map("psp_name")
+    pspEventId  String  @map("psp_event_id")
+    eventType   String  @map("event_type")
+    signatureOk Boolean @map("signature_ok")
+    payload     Json
+
+    processedAt  DateTime? @map("processed_at")
+    processError String?   @map("process_error")
+    receivedAt   DateTime  @default(now()) @map("received_at")
+
+    @@unique([pspName, pspEventId], map: "uq_webhook_events_psp_event")
+    @@map("webhook_events")
+}
+
+/// Result of a nightly PSP-statement-vs-ledger diff. Schema only for now - nothing populates
+/// this yet, since no provider integration can fetch settlement statements today.
+model ReconciliationRun {
+    id String @id @default(uuid())
+
+    periodDate  DateTime             @map("period_date") @db.Date
+    pspTotal    BigInt               @map("psp_total")
+    ledgerTotal BigInt               @map("ledger_total")
+    diffAmount  BigInt               @map("diff_amount")
+    mismatches  Json                 @default("[]")
+    status      ReconciliationStatus
+
+    createdAt DateTime @default(now()) @map("created_at")
+
+    @@unique([periodDate], map: "uq_reconciliation_runs_period_date")
+    @@map("reconciliation_runs")
+}
+
+enum ReconciliationStatus {
+    OK       @map("ok")
+    MISMATCH @map("mismatch")
+    FAILED   @map("failed")
+
+    @@map("reconciliation_statuses")
+}

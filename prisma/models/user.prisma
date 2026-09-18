@@ -24,7 +24,7 @@ model User {
     restrictions Restriction[]
 
     subscription       Subscription?
-    payments           Payment[]
+    payments           PaymentIntent[]
     userPaymentMethods UserPaymentMethod[]
 
     coursePurchases CoursePurchase[]

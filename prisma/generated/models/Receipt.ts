@@ -248,7 +248,7 @@ export type ReceiptWhereInput = {
   paymentId?: Prisma.StringFilter<"Receipt"> | string
   createdAt?: Prisma.DateTimeFilter<"Receipt"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Receipt"> | Date | string
-  payment?: Prisma.XOR<Prisma.PaymentScalarRelationFilter, Prisma.PaymentWhereInput>
+  payment?: Prisma.XOR<Prisma.PaymentIntentScalarRelationFilter, Prisma.PaymentIntentWhereInput>
 }
 
 export type ReceiptOrderByWithRelationInput = {
@@ -262,7 +262,7 @@ export type ReceiptOrderByWithRelationInput = {
   paymentId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  payment?: Prisma.PaymentOrderByWithRelationInput
+  payment?: Prisma.PaymentIntentOrderByWithRelationInput
 }
 
 export type ReceiptWhereUniqueInput = Prisma.AtLeast<{
@@ -279,7 +279,7 @@ export type ReceiptWhereUniqueInput = Prisma.AtLeast<{
   paymentId?: Prisma.StringFilter<"Receipt"> | string
   createdAt?: Prisma.DateTimeFilter<"Receipt"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Receipt"> | Date | string
-  payment?: Prisma.XOR<Prisma.PaymentScalarRelationFilter, Prisma.PaymentWhereInput>
+  payment?: Prisma.XOR<Prisma.PaymentIntentScalarRelationFilter, Prisma.PaymentIntentWhereInput>
 }, "id">
 
 export type ReceiptOrderByWithAggregationInput = {
@@ -326,7 +326,7 @@ export type ReceiptCreateInput = {
   errorMessage?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  payment: Prisma.PaymentCreateNestedOneWithoutReceiptsInput
+  payment: Prisma.PaymentIntentCreateNestedOneWithoutReceiptsInput
 }
 
 export type ReceiptUncheckedCreateInput = {
@@ -352,7 +352,7 @@ export type ReceiptUpdateInput = {
   errorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  payment?: Prisma.PaymentUpdateOneRequiredWithoutReceiptsNestedInput
+  payment?: Prisma.PaymentIntentUpdateOneRequiredWithoutReceiptsNestedInput
 }
 
 export type ReceiptUncheckedUpdateInput = {
@@ -632,7 +632,7 @@ export type ReceiptSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   paymentId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  payment?: boolean | Prisma.PaymentDefaultArgs<ExtArgs>
+  payment?: boolean | Prisma.PaymentIntentDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["receipt"]>
 
 export type ReceiptSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -646,7 +646,7 @@ export type ReceiptSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   paymentId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  payment?: boolean | Prisma.PaymentDefaultArgs<ExtArgs>
+  payment?: boolean | Prisma.PaymentIntentDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["receipt"]>
 
 export type ReceiptSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -660,7 +660,7 @@ export type ReceiptSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   paymentId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  payment?: boolean | Prisma.PaymentDefaultArgs<ExtArgs>
+  payment?: boolean | Prisma.PaymentIntentDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["receipt"]>
 
 export type ReceiptSelectScalar = {
@@ -678,19 +678,19 @@ export type ReceiptSelectScalar = {
 
 export type ReceiptOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "status" | "amount" | "items" | "raw" | "fiscalProviderId" | "errorMessage" | "paymentId" | "createdAt" | "updatedAt", ExtArgs["result"]["receipt"]>
 export type ReceiptInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  payment?: boolean | Prisma.PaymentDefaultArgs<ExtArgs>
+  payment?: boolean | Prisma.PaymentIntentDefaultArgs<ExtArgs>
 }
 export type ReceiptIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  payment?: boolean | Prisma.PaymentDefaultArgs<ExtArgs>
+  payment?: boolean | Prisma.PaymentIntentDefaultArgs<ExtArgs>
 }
 export type ReceiptIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  payment?: boolean | Prisma.PaymentDefaultArgs<ExtArgs>
+  payment?: boolean | Prisma.PaymentIntentDefaultArgs<ExtArgs>
 }
 
 export type $ReceiptPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Receipt"
   objects: {
-    payment: Prisma.$PaymentPayload<ExtArgs>
+    payment: Prisma.$PaymentIntentPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1097,7 +1097,7 @@ readonly fields: ReceiptFieldRefs;
  */
 export interface Prisma__ReceiptClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  payment<T extends Prisma.PaymentDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PaymentDefaultArgs<ExtArgs>>): Prisma.Prisma__PaymentClient<runtime.Types.Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  payment<T extends Prisma.PaymentIntentDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PaymentIntentDefaultArgs<ExtArgs>>): Prisma.Prisma__PaymentIntentClient<runtime.Types.Result.GetResult<Prisma.$PaymentIntentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.

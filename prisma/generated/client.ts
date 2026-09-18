@@ -92,10 +92,10 @@ export type Passkey = Prisma.PasskeyModel
  */
 export type Restriction = Prisma.RestrictionModel
 /**
- * Model Payment
+ * Model PaymentIntent
  * 
  */
-export type Payment = Prisma.PaymentModel
+export type PaymentIntent = Prisma.PaymentIntentModel
 /**
  * Model Receipt
  * 
@@ -136,3 +136,14 @@ export type Subscription = Prisma.SubscriptionModel
  * 
  */
 export type User = Prisma.UserModel
+/**
+ * Model WebhookEvent
+ * Raw capture of every inbound provider notification, before we trust or act on it.
+ */
+export type WebhookEvent = Prisma.WebhookEventModel
+/**
+ * Model ReconciliationRun
+ * Result of a nightly PSP-statement-vs-ledger diff. Schema only for now - nothing populates
+ * this yet, since no provider integration can fetch settlement statements today.
+ */
+export type ReconciliationRun = Prisma.ReconciliationRunModel

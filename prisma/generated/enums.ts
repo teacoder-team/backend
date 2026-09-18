@@ -63,13 +63,16 @@ export const RestrictionStatus = {
 export type RestrictionStatus = (typeof RestrictionStatus)[keyof typeof RestrictionStatus]
 
 
-export const PaymentStatus = {
-  PENDING: 'PENDING',
-  SUCCESS: 'SUCCESS',
-  FAILED: 'FAILED'
+export const IntentStatus = {
+  REQUIRES_PAYMENT: 'REQUIRES_PAYMENT',
+  PROCESSING: 'PROCESSING',
+  CAPTURED: 'CAPTURED',
+  FAILED: 'FAILED',
+  EXPIRED: 'EXPIRED',
+  CANCELLED: 'CANCELLED'
 } as const
 
-export type PaymentStatus = (typeof PaymentStatus)[keyof typeof PaymentStatus]
+export type IntentStatus = (typeof IntentStatus)[keyof typeof IntentStatus]
 
 
 export const ReceiptStatus = {
@@ -122,3 +125,12 @@ export const UserStatus = {
 } as const
 
 export type UserStatus = (typeof UserStatus)[keyof typeof UserStatus]
+
+
+export const ReconciliationStatus = {
+  OK: 'OK',
+  MISMATCH: 'MISMATCH',
+  FAILED: 'FAILED'
+} as const
+
+export type ReconciliationStatus = (typeof ReconciliationStatus)[keyof typeof ReconciliationStatus]

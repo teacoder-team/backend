@@ -1,16 +1,22 @@
-model Payment {
+model PaymentIntent {
     id String @id @default(uuid())
 
     amount   Float
     currency String
 
-    status PaymentStatus @default(PENDING)
+    status IntentStatus  @default(REQUIRES_PAYMENT)
     method PaymentMethod
 
-    provider          PaymentProvider
-    providerPaymentId String?         @map("provider_payment_id")
+    provider    PaymentProvider
+    pspIntentId String?         @map("psp_intent_id")
+    pspPayload  Json            @default("{}") @map("psp_payload")
+    failureCode String?         @map("failure_code")
 
-    invoiceNumber Int @unique(map: "uq_payments_invoice_number") @default(autoincrement()) @map("invoice_number")
+    idempotencyKey String? @unique(map: "uq_payment_intents_idempotency_key") @map("idempotency_key")
+
+    invoiceNumber Int @unique(map: "uq_payment_intents_invoice_number") @default(autoincrement()) @map("invoice_number")
+
+    courseId String? @map("course_id")
 
     metadata Json?
 
@@ -29,10 +35,11 @@ model Payment {
     createdAt DateTime @default(now()) @map("created_at")
     updatedAt DateTime @updatedAt @map("updated_at")
 
-    @@index([status, createdAt(sort: Desc)], map: "ix_payments_status_created_at")
-    @@index([subscriptionId], map: "ix_payments_subscription_id")
-    @@index([provider, providerPaymentId], map: "ix_payments_provider_provider_payment_id")
-    @@map("payments")
+    @@index([status, createdAt(sort: Desc)], map: "ix_payment_intents_status_created_at")
+    @@index([subscriptionId], map: "ix_payment_intents_subscription_id")
+    @@index([provider, pspIntentId], map: "ix_payment_intents_provider_psp_intent_id")
+    @@index([courseId, createdAt(sort: Desc)], map: "ix_payment_intents_course_id_created_at")
+    @@map("payment_intents")
 }
 
 model Receipt {
@@ -47,8 +54,8 @@ model Receipt {
     fiscalProviderId String? @map("fiscal_provider_id")
     errorMessage     String? @map("error_message")
 
-    payment   Payment @relation(fields: [paymentId], references: [id], onDelete: Cascade)
-    paymentId String  @map("payment_id")
+    payment   PaymentIntent @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+    paymentId String        @map("payment_id")
 
     createdAt DateTime @default(now()) @map("created_at")
     updatedAt DateTime @updatedAt @map("updated_at")
@@ -79,7 +86,7 @@ model UserPaymentMethod {
     user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId String @map("user_id")
 
-    payments Payment[]
+    payments PaymentIntent[]
 
     createdAt DateTime @default(now()) @map("created_at")
     updatedAt DateTime @updatedAt @map("updated_at")
@@ -88,12 +95,15 @@ model UserPaymentMethod {
     @@map("user_payment_methods")
 }
 
-enum PaymentStatus {
-    PENDING @map("pending")
-    SUCCESS @map("success")
-    FAILED  @map("failed")
+enum IntentStatus {
+    REQUIRES_PAYMENT @map("requires_payment")
+    PROCESSING       @map("processing")
+    CAPTURED         @map("captured")
+    FAILED           @map("failed")
+    EXPIRED          @map("expired")
+    CANCELLED        @map("cancelled")
 
-    @@map("payment_statuses")
+    @@map("intent_statuses")
 }
 
 enum ReceiptStatus {

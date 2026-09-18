@@ -1,4 +1,4 @@
-import type { Payment } from '@prisma/generated/client'
+import type { PaymentIntent } from '@prisma/generated/client'
 import { PaymentMethod, PaymentProvider } from '@prisma/generated/client'
 
 import { env } from '~/config/env'
@@ -14,7 +14,12 @@ import { cancelSubscription as cancelSubscriptionRow } from '~/modules/subscript
 import { AppError, BadRequestError, InternalError, NotFoundError } from '~/shared/errors'
 
 import type { CreatePaymentInput } from './model'
-import { attachProviderPayment, createPendingPayment, markPaymentFailed } from './repository'
+import {
+	attachProviderPayment,
+	createPendingPayment,
+	findPaymentByIdempotencyKey,
+	markPaymentFailed
+} from './repository'
 
 const CURRENCY = 'RUB'
 
@@ -152,7 +157,7 @@ const resolveProduct = async (courseId: string | undefined): Promise<Product> =>
 	}
 }
 
-const startAtProvider = async (payment: Payment, product: Product, email: string | null) => {
+const startAtProvider = async (payment: PaymentIntent, product: Product, email: string | null) => {
 	switch (payment.provider) {
 		case PaymentProvider.YOOKASSA: {
 			const created = await createYookassaPayment({
@@ -168,7 +173,7 @@ const startAtProvider = async (payment: Payment, product: Product, email: string
 				throw new InternalError('Provider returned no confirmation URL')
 			}
 
-			return { url, providerPaymentId: created.id }
+			return { url, pspIntentId: created.id }
 		}
 
 		case PaymentProvider.ROBOKASSA: {
@@ -183,7 +188,7 @@ const startAtProvider = async (payment: Payment, product: Product, email: string
 				customParams: { paymentId: payment.id }
 			})
 
-			return { url, providerPaymentId: String(payment.invoiceNumber) }
+			return { url, pspIntentId: String(payment.invoiceNumber) }
 		}
 
 		case PaymentProvider.CRYPTO_BOT: {
@@ -197,7 +202,7 @@ const startAtProvider = async (payment: Payment, product: Product, email: string
 
 			return {
 				url: invoice.bot_invoice_url,
-				providerPaymentId: String(invoice.invoice_id)
+				pspIntentId: String(invoice.invoice_id)
 			}
 		}
 
@@ -209,14 +214,12 @@ const startAtProvider = async (payment: Payment, product: Product, email: string
 				additionalData: product.description
 			})
 
-			return { url: invoice.url, providerPaymentId: invoice.uuid }
+			return { url: invoice.url, pspIntentId: invoice.uuid }
 		}
 
 		case PaymentProvider.TELEGRAM: {
 			if (!product.stars) {
-				throw new BadRequestError(
-					'Telegram Stars pricing is not set up for this purchase yet'
-				)
+				throw new BadRequestError('Telegram Stars pricing is not set up for this purchase yet')
 			}
 
 			const url = await createInvoiceLink({
@@ -226,7 +229,7 @@ const startAtProvider = async (payment: Payment, product: Product, email: string
 				amount: product.stars
 			})
 
-			return { url, providerPaymentId: null }
+			return { url, pspIntentId: null }
 		}
 
 		default:
@@ -234,7 +237,44 @@ const startAtProvider = async (payment: Payment, product: Product, email: string
 	}
 }
 
-export const createPayment = async (userId: string, input: CreatePaymentInput) => {
+interface ReplayableIntent {
+	id: string
+	status: PaymentIntent['status']
+	provider: PaymentProvider
+	method: PaymentMethod
+	amount: number
+	currency: string
+	metadata: unknown
+	pspPayload: unknown
+}
+
+const toResponse = (payment: ReplayableIntent) => {
+	const metadata = payment.metadata as { description?: string } | null
+	const pspPayload = payment.pspPayload as { url?: string } | null
+
+	return {
+		paymentId: payment.id,
+		status: payment.status,
+		provider: payment.provider,
+		method: payment.method,
+		amount: payment.amount,
+		currency: payment.currency,
+		description: metadata?.description ?? '',
+		url: pspPayload?.url ?? ''
+	}
+}
+
+export const createPayment = async (
+	userId: string,
+	input: CreatePaymentInput,
+	idempotencyKey?: string
+) => {
+	if (idempotencyKey) {
+		const existing = await findPaymentByIdempotencyKey(userId, idempotencyKey)
+
+		if (existing) return toResponse(existing)
+	}
+
 	const provider = resolveProvider(input.method)
 
 	if (!provider) {
@@ -250,6 +290,8 @@ export const createPayment = async (userId: string, input: CreatePaymentInput) =
 		currency: CURRENCY,
 		method: input.method,
 		provider,
+		courseId: product.courseId,
+		idempotencyKey,
 		metadata: {
 			email,
 			description: product.description,
@@ -258,16 +300,16 @@ export const createPayment = async (userId: string, input: CreatePaymentInput) =
 	})
 
 	try {
-		const { url, providerPaymentId } = await startAtProvider(payment, product, email)
+		const { url, pspIntentId } = await startAtProvider(payment, product, email)
 
-		if (providerPaymentId) await attachProviderPayment(payment.id, providerPaymentId)
+		await attachProviderPayment(payment.id, pspIntentId, { url })
 
 		extendLogContext({
 			event: 'payment_initialized',
 			userId,
 			paymentId: payment.id,
 			provider,
-			providerPaymentId,
+			pspIntentId,
 			product: product.kind
 		})
 
