@@ -29,15 +29,16 @@ ENV RESOURCES_DIR=/app/resources
 
 COPY --from=build --chown=bun:bun /app/dist ./dist
 COPY --from=build --chown=bun:bun /app/prisma ./prisma
+COPY --from=build --chown=bun:bun /app/prisma.config.ts ./prisma.config.ts
 COPY --from=build --chown=bun:bun /app/node_modules ./node_modules
+
 COPY --chown=bun:bun resources ./resources
 COPY --chown=bun:bun docker-entrypoint.sh ./docker-entrypoint.sh
 
-COPY --chown=bun:bun docker-entrypoint.sh ./
 RUN chmod +x docker-entrypoint.sh
 
 USER bun
 
-ENTRYPOINT ["/usr/bin/dumb-init", "--", "./docker-entrypoint.sh"]
+ENTRYPOINT ["./docker-entrypoint.sh"]
 
-CMD ["node", "dist/main.js"]
+CMD ["bun", "run", "dist/main.js"]
