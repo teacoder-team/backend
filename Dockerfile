@@ -33,7 +33,7 @@ RUN apt-get update \
     && update-ca-certificates \
     && mkdir -p geo \
     && curl -fL \
-        "https://github.com/P3TERX/GeoLite.mmdb/releases/download/2026.09.16/GeoLite2-City.mmdb" \
+        "https://github.com/P3TERX/GeoLite.mmdb/releases/download/2026.09.25/GeoLite2-City.mmdb" \
         -o geo/city.mmdb \
     && rm -rf /var/lib/apt/lists/*
 
