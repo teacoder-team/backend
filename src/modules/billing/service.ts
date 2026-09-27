@@ -131,6 +131,15 @@ export const listPaymentMethods = () => ({
 	}))
 })
 
+export const listAvailablePaymentMethods = () =>
+	Object.entries(METHODS)
+		.filter(([id]) => resolveProvider(id as PaymentMethod) !== null)
+		.map(([id, definition]) => ({
+			id: id as PaymentMethod,
+			name: definition.name,
+			description: definition.description
+		}))
+
 interface Product {
 	kind: 'subscription' | 'course'
 	amount: number
@@ -226,7 +235,9 @@ const startAtProvider = async (payment: PaymentIntent, product: Product, email: 
 
 		case PaymentProvider.TELEGRAM: {
 			if (!product.stars) {
-				throw new BadRequestError('Telegram Stars pricing is not set up for this purchase yet')
+				throw new BadRequestError(
+					'Telegram Stars pricing is not set up for this purchase yet'
+				)
 			}
 
 			const url = await createInvoiceLink({
@@ -309,11 +320,10 @@ export const createPayment = async (
 	try {
 		const { url, pspIntentId, raw } = await startAtProvider(payment, product, email)
 
-		await attachProviderPayment(
-			payment.id,
-			pspIntentId,
-			{ url, ...(raw ? { raw } : {}) } as unknown as Prisma.InputJsonValue
-		)
+		await attachProviderPayment(payment.id, pspIntentId, {
+			url,
+			...(raw ? { raw } : {})
+		} as unknown as Prisma.InputJsonValue)
 
 		extendLogContext({
 			event: 'payment_initialized',

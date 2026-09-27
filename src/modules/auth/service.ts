@@ -1,6 +1,7 @@
 import { UserStatus, VerificationPurpose } from '@prisma/generated/client'
 
 import { isProduction } from '~/config/env'
+import { verifyCaptcha } from '~/infra/captcha'
 import { isDisposableEmail } from '~/infra/datasets/disposable-emails'
 import { extendLogContext } from '~/infra/logger'
 import { redis } from '~/infra/redis'
@@ -45,21 +46,61 @@ import {
 	updatePasswordHash
 } from './repository'
 
-const VERIFICATION_TTL = 15 * 60
+export const VERIFICATION_TTL = 15 * 60
 const VERIFICATION_MAX_ATTEMPTS = 5
 
 const LOGIN_ATTEMPT_MAX = 5
 const LOGIN_ATTEMPT_WINDOW = 15 * 60
 
-const issueVerificationCode = async (userId: string, email: string) => {
+/** Generates, hashes, and stores a code for the given purpose. Callers own emailing and logging it. */
+export const issueVerificationCode = async (
+	userId: string,
+	purpose: VerificationPurpose
+): Promise<string> => {
 	const code = generateOtpCode()
 
 	await createVerificationCode({
 		userId,
-		purpose: VerificationPurpose.EMAIL_CONFIRM,
+		purpose,
 		codeHash: hashVerificationCode(code),
 		expiresAt: new Date(Date.now() + VERIFICATION_TTL * 1000)
 	})
+
+	return code
+}
+
+interface VerifyCodeMessages {
+	expired?: string
+	invalid?: string
+}
+
+export const verifyCode = async (
+	userId: string,
+	purpose: VerificationPurpose,
+	code: string,
+	messages: VerifyCodeMessages = {}
+): Promise<void> => {
+	const verification = await findLatestVerificationCode(userId, purpose)
+
+	if (!verification || verification.expiresAt < new Date()) {
+		throw new BadRequestError(messages.expired ?? 'Code expired or not found')
+	}
+
+	if (verification.attempts >= VERIFICATION_MAX_ATTEMPTS) {
+		throw new BadRequestError('Too many attempts - request a new code')
+	}
+
+	if (!verificationCodeMatches(code, verification.codeHash)) {
+		await incrementVerificationAttempts(verification.id)
+
+		throw new BadRequestError(messages.invalid ?? 'Invalid code')
+	}
+
+	await consumeVerificationCode(verification.id)
+}
+
+const issueRegistrationCode = async (userId: string, email: string) => {
+	const code = await issueVerificationCode(userId, VerificationPurpose.EMAIL_CONFIRM)
 
 	await enqueueVerificationCode({ email, code })
 
@@ -70,7 +111,9 @@ const issueVerificationCode = async (userId: string, email: string) => {
 	})
 }
 
-export const register = async (input: RegisterInput) => {
+export const register = async (input: RegisterInput, ip: string) => {
+	await verifyCaptcha(input.captchaToken, ip)
+
 	const email = normalizeEmail(input.email)
 
 	if (await isDisposableEmail(email)) {
@@ -88,7 +131,7 @@ export const register = async (input: RegisterInput) => {
 		const isRecent = Date.now() - existing.createdAt.getTime() < VERIFICATION_TTL * 1000
 
 		if (isRecent) {
-			await issueVerificationCode(existing.id, email)
+			await issueRegistrationCode(existing.id, email)
 
 			return
 		}
@@ -106,7 +149,7 @@ export const register = async (input: RegisterInput) => {
 		username: generateUsername()
 	})
 
-	await issueVerificationCode(user.id, email)
+	await issueRegistrationCode(user.id, email)
 }
 
 export const verifyRegister = async (input: VerifyRegisterInput, origin: RequestOrigin) => {
@@ -117,26 +160,11 @@ export const verifyRegister = async (input: VerifyRegisterInput, origin: Request
 		throw new BadRequestError('Verification code expired or registration not found')
 	}
 
-	const verification = await findLatestVerificationCode(
-		user.id,
-		VerificationPurpose.EMAIL_CONFIRM
-	)
+	await verifyCode(user.id, VerificationPurpose.EMAIL_CONFIRM, input.code, {
+		expired: 'Verification code expired or registration not found',
+		invalid: 'Invalid verification code'
+	})
 
-	if (!verification || verification.expiresAt < new Date()) {
-		throw new BadRequestError('Verification code expired or registration not found')
-	}
-
-	if (verification.attempts >= VERIFICATION_MAX_ATTEMPTS) {
-		throw new BadRequestError('Too many attempts - request a new code')
-	}
-
-	if (!verificationCodeMatches(input.code, verification.codeHash)) {
-		await incrementVerificationAttempts(verification.id)
-
-		throw new BadRequestError('Invalid verification code')
-	}
-
-	await consumeVerificationCode(verification.id)
 	await activateUser(user.id)
 
 	extendLogContext({ event: 'registration_completed', userId: user.id })
@@ -180,6 +208,8 @@ const recordLoginAttempt = async (emailHashHex: string, ip: string, success: boo
 }
 
 export const login = async (input: LoginInput, origin: RequestOrigin) => {
+	await verifyCaptcha(input.captchaToken, origin.ip)
+
 	const email = normalizeEmail(input.email)
 	const emailHash = hashEmail(email)
 	const emailHashHex = emailHash.toString('hex')
@@ -220,20 +250,15 @@ export const getUserEmail = async (userId: string): Promise<string | null> => {
 	return cipher ? decryptEmail(cipher) : null
 }
 
-export const forgotPassword = async (input: ForgotPasswordInput) => {
+export const forgotPassword = async (input: ForgotPasswordInput, ip: string) => {
+	await verifyCaptcha(input.captchaToken, ip)
+
 	const email = normalizeEmail(input.email)
 	const user = await findUserByEmailHash(hashEmail(email))
 
 	if (!user || user.status !== UserStatus.ACTIVE || !user.passwordCredential) return
 
-	const code = generateOtpCode()
-
-	await createVerificationCode({
-		userId: user.id,
-		purpose: VerificationPurpose.PASSWORD_RESET,
-		codeHash: hashVerificationCode(code),
-		expiresAt: new Date(Date.now() + VERIFICATION_TTL * 1000)
-	})
+	const code = await issueVerificationCode(user.id, VerificationPurpose.PASSWORD_RESET)
 
 	await enqueuePasswordResetCode({ email, code })
 
@@ -252,26 +277,11 @@ export const resetPassword = async (input: ResetPasswordInput, origin: RequestOr
 		throw new BadRequestError('Reset code expired or invalid')
 	}
 
-	const verification = await findLatestVerificationCode(
-		user.id,
-		VerificationPurpose.PASSWORD_RESET
-	)
+	await verifyCode(user.id, VerificationPurpose.PASSWORD_RESET, input.code, {
+		expired: 'Reset code expired or invalid',
+		invalid: 'Invalid reset code'
+	})
 
-	if (!verification || verification.expiresAt < new Date()) {
-		throw new BadRequestError('Reset code expired or invalid')
-	}
-
-	if (verification.attempts >= VERIFICATION_MAX_ATTEMPTS) {
-		throw new BadRequestError('Too many attempts - request a new code')
-	}
-
-	if (!verificationCodeMatches(input.code, verification.codeHash)) {
-		await incrementVerificationAttempts(verification.id)
-
-		throw new BadRequestError('Invalid reset code')
-	}
-
-	await consumeVerificationCode(verification.id)
 	await updatePasswordHash(user.id, await hashPassword(input.newPassword))
 
 	await revokeAllSessions(user.id)

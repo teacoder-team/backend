@@ -36,8 +36,8 @@ export const auth = new Elysia({ prefix: '/auth', tags: ['Auth'] })
 	})
 	.post(
 		'/register',
-		async ({ body }) => {
-			await register(body)
+		async ({ body, ip }) => {
+			await register(body, ip)
 
 			return { message: 'Verification code sent to email' }
 		},
@@ -111,8 +111,8 @@ export const auth = new Elysia({ prefix: '/auth', tags: ['Auth'] })
 	)
 	.post(
 		'/forgot-password',
-		async ({ body }) => {
-			await forgotPassword(body)
+		async ({ body, ip }) => {
+			await forgotPassword(body, ip)
 
 			return { message: 'If that email exists, a reset code has been sent' }
 		},

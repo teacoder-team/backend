@@ -52,7 +52,9 @@ export const discordProvider: OAuthProviderAdapter = {
 
 		const response = await fetch(TOKEN_URL, {
 			method: 'POST',
-			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded'
+			},
 			body: new URLSearchParams({
 				client_id: env.DISCORD_CLIENT_ID,
 				client_secret: env.DISCORD_CLIENT_SECRET,

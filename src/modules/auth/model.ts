@@ -1,5 +1,12 @@
 import { type Static, t } from 'elysia'
 
+const CaptchaToken = t.Optional(
+	t.String({
+		description: 'Token from the active CAPTCHA widget (Turnstile or Yandex SmartCaptcha).',
+		examples: ['0.AAAA-token-from-widget']
+	})
+)
+
 export const RegisterPayload = t.Object({
 	name: t.String({
 		minLength: 2,
@@ -16,7 +23,8 @@ export const RegisterPayload = t.Object({
 		minLength: 6,
 		error: 'Password must be at least 6 characters',
 		examples: ['securepassword123']
-	})
+	}),
+	captchaToken: CaptchaToken
 })
 
 export const VerifyRegisterPayload = t.Object({
@@ -43,7 +51,8 @@ export const LoginPayload = t.Object({
 		minLength: 6,
 		error: 'Password is required',
 		examples: ['securepassword123']
-	})
+	}),
+	captchaToken: CaptchaToken
 })
 
 export const ForgotPasswordPayload = t.Object({
@@ -51,7 +60,8 @@ export const ForgotPasswordPayload = t.Object({
 		format: 'email',
 		error: 'Invalid email format',
 		examples: ['torvalds.l@teacoder.com']
-	})
+	}),
+	captchaToken: CaptchaToken
 })
 
 export const ResetPasswordPayload = t.Object({

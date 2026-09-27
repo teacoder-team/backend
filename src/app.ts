@@ -1,6 +1,7 @@
 import { openapi } from '@elysiajs/openapi'
 import { Elysia } from 'elysia'
 
+import { API_VERSION } from '~/config/version'
 import { auth } from '~/modules/auth'
 import { billing } from '~/modules/billing'
 import { course } from '~/modules/course'
@@ -9,6 +10,7 @@ import { oauth } from '~/modules/oauth'
 import { progress } from '~/modules/progress'
 import { root } from '~/modules/root'
 import { session } from '~/modules/session'
+import { users } from '~/modules/users'
 import { errorHandler } from '~/plugins/error-handler'
 import { requestContext, requestLogger } from '~/plugins/request-context'
 
@@ -25,7 +27,7 @@ export const createApp = () =>
 					info: {
 						title: 'TeaCoder API',
 						description: 'API for TeaCoder educational platform',
-						version: '1.0.0',
+						version: API_VERSION,
 						contact: {
 							name: 'TeaCoder Support',
 							email: 'support@teacoder.ru'
@@ -52,6 +54,7 @@ export const createApp = () =>
 		.use(auth)
 		.use(oauth)
 		.use(session)
+		.use(users)
 		.use(billing)
 		.use(webhook)
 		.use(course)

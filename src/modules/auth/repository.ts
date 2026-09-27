@@ -59,6 +59,19 @@ export const updatePasswordHash = (userId: string, passwordHash: string) =>
 		data: { passwordHash, changedAt: new Date() }
 	})
 
+export const findPasswordCredential = (userId: string) =>
+	db.passwordCredential.findUnique({ where: { userId } })
+
+export const updateUserEmail = (userId: string, emailCipher: Buffer, emailHash: Buffer) =>
+	db.user.update({
+		where: { id: userId },
+		data: {
+			emailCipher: toBytes(emailCipher),
+			emailHash: toBytes(emailHash),
+			emailVerifiedAt: new Date()
+		}
+	})
+
 export interface NewVerificationCode {
 	userId: string
 	purpose: VerificationPurpose

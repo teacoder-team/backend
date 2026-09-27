@@ -22,7 +22,9 @@ export type AuthProvider = (typeof AuthProvider)[keyof typeof AuthProvider]
 
 export const VerificationPurpose = {
   EMAIL_CONFIRM: 'EMAIL_CONFIRM',
-  PASSWORD_RESET: 'PASSWORD_RESET'
+  PASSWORD_RESET: 'PASSWORD_RESET',
+  EMAIL_CHANGE: 'EMAIL_CHANGE',
+  PASSWORD_CHANGE: 'PASSWORD_CHANGE'
 } as const
 
 export type VerificationPurpose = (typeof VerificationPurpose)[keyof typeof VerificationPurpose]

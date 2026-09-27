@@ -69,6 +69,9 @@ const envSchema = t.Object({
 		default: 'no-reply@teacoder.ru'
 	}),
 
+	ORION_API_URL: t.String({ format: 'uri' }),
+	ORION_MASTER_KEY: t.String(),
+
 	YOOKASSA_SHOP_ID: t.String(),
 	YOOKASSA_SECRET_KEY: t.String(),
 
@@ -77,6 +80,8 @@ const envSchema = t.Object({
 
 	TELEGRAM_BOT_TOKEN: t.String(),
 	TELEGRAM_WEBHOOK_SECRET: t.String({ minLength: 16 }),
+
+	OAUTH_STATE_TTL: t.Number({ default: 10 * 60 }),
 
 	GOOGLE_CLIENT_ID: t.String(),
 	GOOGLE_CLIENT_SECRET: t.String(),
@@ -90,11 +95,8 @@ const envSchema = t.Object({
 	YANDEX_CLIENT_ID: t.String(),
 	YANDEX_CLIENT_SECRET: t.String(),
 
-	/** Issued by @BotFather for "Login with Telegram" - not the bot token. */
 	TELEGRAM_CLIENT_ID: t.String(),
 	TELEGRAM_CLIENT_SECRET: t.String(),
-
-	OAUTH_STATE_TTL: t.Number({ default: 10 * 60 }),
 
 	ROBOKASSA_MERCHANT_LOGIN: t.String(),
 	ROBOKASSA_PASSWORD_1: t.String(),
@@ -119,7 +121,18 @@ const envSchema = t.Object({
 
 	NPD_INN: t.String(),
 	NPD_PASSWORD: t.String(),
-	NPD_DEVICE_ID: t.String({ default: '' })
+	NPD_DEVICE_ID: t.String({ default: '' }),
+
+	/** 'none' skips verification entirely - handy for local dev without real captcha keys. */
+	CAPTCHA_PROVIDER: t.Union(
+		[t.Literal('turnstile'), t.Literal('yandex'), t.Literal('none')],
+		{ default: 'none' }
+	),
+	TURNSTILE_SECRET_KEY: t.String({ default: '' }),
+	YANDEX_CAPTCHA_SECRET_KEY: t.String({ default: '' }),
+	/** Public keys, safe to hand to clients for rendering the widget - see GET /. */
+	TURNSTILE_SITE_KEY: t.String({ default: '' }),
+	YANDEX_CAPTCHA_CLIENT_KEY: t.String({ default: '' })
 })
 
 export type Env = Static<typeof envSchema>

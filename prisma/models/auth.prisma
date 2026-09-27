@@ -56,8 +56,10 @@ enum AuthProvider {
 }
 
 enum VerificationPurpose {
-    EMAIL_CONFIRM  @map("email_confirm")
-    PASSWORD_RESET @map("password_reset")
+    EMAIL_CONFIRM   @map("email_confirm")
+    PASSWORD_RESET  @map("password_reset")
+    EMAIL_CHANGE    @map("email_change")
+    PASSWORD_CHANGE @map("password_change")
 
     @@map("verification_purposes")
 }
