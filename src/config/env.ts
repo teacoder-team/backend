@@ -144,7 +144,13 @@ const envSchema = t.Object({
 	YANDEX_CAPTCHA_SECRET_KEY: t.String({ default: '' }),
 	/** Public keys, safe to hand to clients for rendering the widget - see GET /. */
 	TURNSTILE_SITE_KEY: t.String({ default: '' }),
-	YANDEX_CAPTCHA_CLIENT_KEY: t.String({ default: '' })
+	YANDEX_CAPTCHA_CLIENT_KEY: t.String({ default: '' }),
+
+	/** Fingerprint Server API secret key. Empty disables visitor identification. */
+	FINGERPRINT_SECRET_KEY: t.String({ default: '' }),
+	FINGERPRINT_REGION: t.Union([t.Literal('global'), t.Literal('eu'), t.Literal('ap')], {
+		default: 'global'
+	})
 })
 
 export type Env = Static<typeof envSchema>

@@ -68,6 +68,7 @@ export const ModelName = {
   DownloadLog: 'DownloadLog',
   Session: 'Session',
   RefreshToken: 'RefreshToken',
+  UserVisitor: 'UserVisitor',
   Subscription: 'Subscription',
   User: 'User',
   WebhookEvent: 'WebhookEvent',
@@ -321,6 +322,7 @@ export const SessionScalarFieldEnum = {
   ip: 'ip',
   userAgent: 'userAgent',
   friendlyName: 'friendlyName',
+  visitorId: 'visitorId',
   country: 'country',
   city: 'city',
   browser: 'browser',
@@ -348,6 +350,17 @@ export const RefreshTokenScalarFieldEnum = {
 } as const
 
 export type RefreshTokenScalarFieldEnum = (typeof RefreshTokenScalarFieldEnum)[keyof typeof RefreshTokenScalarFieldEnum]
+
+
+export const UserVisitorScalarFieldEnum = {
+  id: 'id',
+  visitorId: 'visitorId',
+  userId: 'userId',
+  firstSeenAt: 'firstSeenAt',
+  lastSeenAt: 'lastSeenAt'
+} as const
+
+export type UserVisitorScalarFieldEnum = (typeof UserVisitorScalarFieldEnum)[keyof typeof UserVisitorScalarFieldEnum]
 
 
 export const SubscriptionScalarFieldEnum = {

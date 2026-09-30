@@ -25,6 +25,7 @@
 		"@react-email/render": "^2.0.7",
 		"@sinclair/typebox": "^0.34.49",
 		"@teacoder/captcha": "workspace:*",
+		"@teacoder/fingerprint": "workspace:*",
 		"@teacoder/http": "workspace:*",
 		"@teacoder/logger": "workspace:*",
 		"@teacoder/npd": "workspace:*",

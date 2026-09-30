@@ -3,6 +3,7 @@ import { Elysia } from 'elysia'
 import { TAG } from '~/config/openapi'
 import { AuthResponse } from '~/modules/auth/model'
 import { authCookie } from '~/plugins/auth-cookie'
+import { fingerprint } from '~/plugins/fingerprint'
 import { requestContext } from '~/plugins/request-context'
 
 import { OAuthCallbackQuery, OAuthProviderParams, OAuthStartResponse } from './model'
@@ -11,11 +12,14 @@ import { finishOAuth, startOAuth } from './service'
 export const oauth = new Elysia({ prefix: '/oauth', tags: [TAG.oauth] })
 	.use(requestContext)
 	.use(authCookie)
+	.use(fingerprint)
 	.model({ OAuthProviderParams, OAuthCallbackQuery, OAuthStartResponse, AuthResponse })
 	.post(
 		'/:provider/start',
-		async ({ params, ip, userAgent }) => await startOAuth(params.provider, { ip, userAgent }),
+		async ({ params, ip, userAgent, visitorId }) =>
+			await startOAuth(params.provider, { ip, userAgent, visitorId }),
 		{
+			fingerprint: true,
 			params: 'OAuthProviderParams',
 			response: 'OAuthStartResponse',
 			detail: {

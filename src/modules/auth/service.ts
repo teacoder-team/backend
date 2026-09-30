@@ -17,6 +17,7 @@ import { hashPassword, verifyPassword } from '~/lib/security/hash'
 import { generateOtpCode } from '~/lib/security/otp'
 import { hashVerificationCode, verificationCodeMatches } from '~/lib/security/verification-code'
 import { generateUsername } from '~/lib/utils/username'
+import { enqueueRegistrationNotification } from '~/modules/admin-bot/queue'
 import {
 	issueTokenPair,
 	type RequestOrigin,
@@ -171,38 +172,40 @@ export const verifyRegister = async (input: VerifyRegisterInput, origin: Request
 
 	const tokens = await issueTokenPair(user.id, origin)
 
+	await enqueueRegistrationNotification({ userId: user.id, via: 'EMAIL' })
+
 	return { id: user.id, ...tokens }
 }
 
-const loginAttemptKey = (kind: 'email' | 'ip', value: string) => `login_attempts:${kind}:${value}`
+/** Counted per email, IP and device - a proxy changes the IP but not the Fingerprint visitor. */
+const loginAttemptKeys = (emailHash: Buffer, { ip, visitorId }: RequestOrigin) =>
+	[
+		`login_attempts:email:${emailHash.toString('hex')}`,
+		`login_attempts:ip:${ip}`,
+		visitorId && `login_attempts:visitor:${visitorId}`
+	].filter((key): key is string => Boolean(key))
 
-const assertNotLockedOut = async (emailHashHex: string, ip: string) => {
-	const [emailAttempts, ipAttempts] = await Promise.all([
-		redis.get(loginAttemptKey('email', emailHashHex)),
-		redis.get(loginAttemptKey('ip', ip))
-	])
+const assertNotLockedOut = async (keys: string[]) => {
+	const attempts = await redis.mget(keys)
 
-	if (Number(emailAttempts) >= LOGIN_ATTEMPT_MAX || Number(ipAttempts) >= LOGIN_ATTEMPT_MAX) {
+	if (attempts.some((count) => Number(count) >= LOGIN_ATTEMPT_MAX)) {
 		throw new TooManyRequestsError('Too many login attempts - try again later')
 	}
 }
 
-const recordLoginAttempt = async (emailHashHex: string, ip: string, success: boolean) => {
+const recordLoginAttempt = async (keys: string[], success: boolean) => {
 	if (success) {
-		await Promise.all([
-			redis.del(loginAttemptKey('email', emailHashHex)),
-			redis.del(loginAttemptKey('ip', ip))
-		])
+		await redis.del(keys)
 
 		return
 	}
 
 	const pipeline = redis.pipeline()
 
-	pipeline.incr(loginAttemptKey('email', emailHashHex))
-	pipeline.expire(loginAttemptKey('email', emailHashHex), LOGIN_ATTEMPT_WINDOW)
-	pipeline.incr(loginAttemptKey('ip', ip))
-	pipeline.expire(loginAttemptKey('ip', ip), LOGIN_ATTEMPT_WINDOW)
+	for (const key of keys) {
+		pipeline.incr(key)
+		pipeline.expire(key, LOGIN_ATTEMPT_WINDOW)
+	}
 
 	await pipeline.exec()
 }
@@ -212,16 +215,16 @@ export const login = async (input: LoginInput, origin: RequestOrigin) => {
 
 	const email = normalizeEmail(input.email)
 	const emailHash = hashEmail(email)
-	const emailHashHex = emailHash.toString('hex')
+	const attemptKeys = loginAttemptKeys(emailHash, origin)
 
-	await assertNotLockedOut(emailHashHex, origin.ip)
+	await assertNotLockedOut(attemptKeys)
 
 	const user = await findUserByEmailHash(emailHash)
 	const passwordHash = user?.passwordCredential?.passwordHash
 	const isCorrect = passwordHash ? await verifyPassword(input.password, passwordHash) : false
 
 	if (!user || !isCorrect) {
-		await recordLoginAttempt(emailHashHex, origin.ip, false)
+		await recordLoginAttempt(attemptKeys, false)
 
 		extendLogContext({ event: 'failed_login_attempt' })
 
@@ -232,7 +235,7 @@ export const login = async (input: LoginInput, origin: RequestOrigin) => {
 		throw new BadRequestError('Please verify your email before logging in')
 	}
 
-	await recordLoginAttempt(emailHashHex, origin.ip, true)
+	await recordLoginAttempt(attemptKeys, true)
 	await updateLastLogin(user.id)
 
 	extendLogContext({ event: 'user_logged_in', userId: user.id })

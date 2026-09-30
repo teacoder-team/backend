@@ -1,4 +1,4 @@
-export { escapeHtml, Html, type HtmlValue, joinHtml, tg } from './html'
+export { customEmoji, escapeHtml, Html, type HtmlValue, joinHtml, tg } from './html'
 export {
 	createTelegramNotifier,
 	type DeliveryFailure,

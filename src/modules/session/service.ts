@@ -16,7 +16,10 @@ import {
 	toCachedSession,
 	writeCachedSession
 } from './cache'
+import { enqueueNewDeviceLogin } from './jobs'
 import {
+	addUserVisitor,
+	countUserVisitors,
 	createRefreshToken,
 	deleteRefreshTokenFamily,
 	findActiveSession,
@@ -27,15 +30,21 @@ import {
 	revokeSessionById,
 	revokeSessionsByUser,
 	rotateRefreshToken,
-	touchSession
+	touchSession,
+	touchUserVisitor
 } from './repository'
 
 const TOUCH_INTERVAL_MS = 5 * 60 * 1000
 
-export interface SessionContext {
-	userId: string
+export interface RequestOrigin {
 	ip: string
 	userAgent: string
+	/** Fingerprint visitor id, verified server-side. Null when the client sent none. */
+	visitorId?: string | null
+}
+
+export interface SessionContext extends RequestOrigin {
+	userId: string
 }
 
 const friendlyNameFor = (browser: string | null, os: string | null) => {
@@ -46,7 +55,7 @@ const friendlyNameFor = (browser: string | null, os: string | null) => {
 	return browser ?? os
 }
 
-export const createSession = async ({ userId, ip, userAgent }: SessionContext) => {
+export const createSession = async ({ userId, ip, userAgent, visitorId }: SessionContext) => {
 	const { country, city } = await lookupLocation(ip)
 
 	const agent = new UAParser(userAgent).getResult()
@@ -58,6 +67,7 @@ export const createSession = async ({ userId, ip, userAgent }: SessionContext) =
 		ip,
 		userAgent,
 		friendlyName: friendlyNameFor(browser, os),
+		visitorId: visitorId ?? null,
 		country,
 		city,
 		browser,
@@ -106,11 +116,6 @@ export const resolveSession = async (sessionId: string) => {
 	return session
 }
 
-export interface RequestOrigin {
-	ip: string
-	userAgent: string
-}
-
 export interface TokenPair {
 	accessToken: string
 	refreshToken: string
@@ -118,8 +123,27 @@ export interface TokenPair {
 
 const refreshExpiresAt = () => new Date(Date.now() + env.SESSION_TTL * 1000)
 
+/** True for a device the account has never used while it already has others - not on sign-up. */
+const rememberVisitor = async (userId: string, visitorId: string) => {
+	const isNew = await addUserVisitor(userId, visitorId)
+
+	if (!isNew) {
+		await touchUserVisitor(userId, visitorId)
+
+		return false
+	}
+
+	return (await countUserVisitors(userId)) > 1
+}
+
 export const issueTokenPair = async (userId: string, origin: RequestOrigin): Promise<TokenPair> => {
 	const session = await createSession({ userId, ...origin })
+
+	if (origin.visitorId && (await rememberVisitor(userId, origin.visitorId))) {
+		extendLogContext({ newDevice: true })
+
+		await enqueueNewDeviceLogin({ sessionId: session.id })
+	}
 
 	const refresh = generateRefreshToken()
 
@@ -135,7 +159,10 @@ export const issueTokenPair = async (userId: string, origin: RequestOrigin): Pro
 	return { accessToken, refreshToken: refresh.token }
 }
 
-export const refreshTokenPair = async (rawToken: string): Promise<TokenPair> => {
+export const refreshTokenPair = async (
+	rawToken: string,
+	visitorId?: string | null
+): Promise<TokenPair> => {
 	const existing = await findRefreshTokenByHash(hashRefreshToken(rawToken))
 
 	if (!existing || existing.expiresAt < new Date()) {
@@ -155,6 +182,20 @@ export const refreshTokenPair = async (rawToken: string): Promise<TokenPair> => 
 		extendLogContext({ event: 'refresh_token_reuse_detected', sessionId: session.id })
 
 		throw new UnauthorizedError('Refresh token already used')
+	}
+
+	/** Only logged: Fingerprint can drift for the same browser, so this is a signal, not proof of theft. */
+	if (visitorId && session.visitorId && visitorId !== session.visitorId) {
+		logger.warn(
+			{
+				context: 'session',
+				sessionId: session.id,
+				userId: session.userId,
+				visitorId,
+				sessionVisitorId: session.visitorId
+			},
+			'refresh_visitor_mismatch'
+		)
 	}
 
 	const refresh = generateRefreshToken()

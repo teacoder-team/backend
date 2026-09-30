@@ -13,6 +13,7 @@ export interface NewSession {
 	ip: string
 	userAgent: string
 	friendlyName: string | null
+	visitorId: string | null
 	country: string | null
 	city: string | null
 	browser: string | null
@@ -107,3 +108,35 @@ export const deleteRefreshTokenFamily = async (familyId: string) => {
 
 	return count
 }
+
+/** True when the pair was not known yet. */
+export const addUserVisitor = async (userId: string, visitorId: string) => {
+	const { count } = await db.userVisitor.createMany({
+		data: [{ userId, visitorId }],
+		skipDuplicates: true
+	})
+
+	return count === 1
+}
+
+export const touchUserVisitor = (userId: string, visitorId: string) =>
+	db.userVisitor.update({
+		where: { userId_visitorId: { userId, visitorId } },
+		data: { lastSeenAt: new Date() }
+	})
+
+export const countUserVisitors = (userId: string) => db.userVisitor.count({ where: { userId } })
+
+export const findNewDeviceSession = (sessionId: string) =>
+	db.session.findUnique({
+		where: { id: sessionId },
+		select: {
+			ip: true,
+			country: true,
+			city: true,
+			browser: true,
+			os: true,
+			createdAt: true,
+			user: { select: { displayName: true, emailCipher: true } }
+		}
+	})

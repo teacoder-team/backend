@@ -19,6 +19,7 @@ packages/            @teacoder/* bun workspaces - framework-agnostic, no build s
   http/              createHttpClient (timeout, retries+backoff), HttpError
   oauth/             SSO on openid-client: providers + createAuthorization/completeAuthorization
   captcha/           turnstile(), yandexSmartCaptcha() verifiers
+  fingerprint/       Fingerprint Server API v4: event lookup + identify() (freshness, replay, origin, confidence)
   payments/          subpath exports: /yookassa /heleket /crypto-bot /robokassa /telegram-stars
   orion/             Orion file storage client (github.com/teacoder-team/orion)
   npd/               "Мой налог" self-employed tax receipts
@@ -30,7 +31,7 @@ src/
   plugins/           request-context (requestId, ip, userAgent), auth-guard (auth macro), auth-cookie, error-handler
   lib/
     db.ts redis.ts cache.ts logger.ts errors.ts    infrastructure + the app's error classes
-    integrations/    package instances wired with env: oauth, captcha, payments, orion, npd, telegram (admin bot)
+    integrations/    package instances wired with env: oauth, captcha, fingerprint, payments, orion, npd, telegram (admin bot)
     security/        email-crypto, hash (argon2), jwt, otp, refresh-token, verification-code
     queue/ mail/ datasets/   BullMQ, nodemailer + react-email templates, geo/disposable-email data
     utils/           pure helpers, no env: bytes, email, ip, lazy, schema, username
@@ -81,9 +82,10 @@ src/
 
 - **Auth**: email stored encrypted (`emailCipher`, AES-GCM) + `emailHash` (HMAC) for lookup - look users up with `hashEmail(normalizeEmail(email))`, never by plaintext. Access = JWT (`tc_access` cookie or `Authorization: Bearer`); refresh = opaque token, rotated, reuse revokes the session family (`tc_refresh`, path `/auth/refresh`). One-time codes: `issueVerificationCode` / `verifyCode` in `modules/auth/service.ts` (hashed, attempt-limited) - reuse them, don't hand-roll.
 - **Captcha**: `verifyCaptcha(token, ip)` from `~/lib/integrations/captcha` gates register/login/forgot-password; `CAPTCHA_PROVIDER=none` disables it.
+- **Fingerprint**: the client sends `X-Fingerprint-Event: <event_id>` from `fp.get()`; the `fingerprint: true` macro (`~/plugins/fingerprint`) re-reads the event server-side and resolves `visitorId` - never trust a visitor id from the client. Fails open (`null`): sign-in never depends on it. Stored on `Session.visitorId` and in `UserVisitor` (known devices, survives session pruning). Used for: login lockout per device, "new device" email (only when the account already has other devices), same-device accounts in the admin sign-up notification, refresh mismatch logging (log only). `RequestOrigin` carries it; OAuth parks it in the Redis state.
 - **OAuth**: providers in `~/lib/integrations/oauth` (`OAUTH_PROVIDERS`, `AUTH_PROVIDER` maps to the Prisma enum). State + PKCE verifier live in Redis under the state value; accounts are linked by email only when the provider marks it verified.
 - **Payments**: `billing/service.ts` opens a `PaymentIntent` at the provider; a course the user already owns is refused up front (409), not charged and refunded later. At most one payable invoice per user and product: `billing/checkout.ts` hands back the open one for the same method and refuses (409) a different method until it expires (`CHECKOUT_TTL_SECONDS`, also the invoice lifetime at Heleket/Crypto Bot); the whole decision runs under a per-product Redis lock (`withLock` from `~/lib/lock`). `Idempotency-Key` is unique per user: same key + same params replays, different params -> 422, a failed attempt frees the key. Webhooks (`modules/webhook`) authenticate (IP allowlist + signature, or API re-fetch for YooKassa), store raw events in `WebhookEvent` (dedup on `(pspName, pspEventId)`; Heleket key is `uuid:status`), then call `applyPaymentUpdate` (`billing/fulfillment.ts`), which captures + grants the course in one guarded transaction. Subscription payments are intentionally not processed yet - events stay unprocessed. CryptoBot/Robokassa/Stars have no webhook endpoints yet.
-- **Telegram**: two bots with separate tokens. Public bot (`TELEGRAM_PUBLIC_BOT_*`) - users, Telegram Stars payments. Admin bot (`TELEGRAM_ADMIN_BOT_TOKEN`, empty = off) - staff notifications to `TELEGRAM_ADMIN_CHAT_IDS` (`user`, `-100group`, `-100group:topic`), answers `/start` only there. Notifications go through the `notifications` queue (`enqueueCoursePurchaseNotification`), never sent inline from a request.
+- **Telegram**: two bots with separate tokens. Public bot (`TELEGRAM_PUBLIC_BOT_*`) - users, Telegram Stars payments. Admin bot (`TELEGRAM_ADMIN_BOT_TOKEN`, empty = off) - staff notifications to `TELEGRAM_ADMIN_CHAT_IDS` (`user`, `-100group`, `-100group:topic`), answers `/start` only there. Notifications (course purchases, sign-ups) go through the `notifications` queue, never sent inline from a request. Enqueue via `~/modules/admin-bot/queue` (best-effort, never throws), not `jobs.ts` - that one imports services and would create import cycles.
 - **IP**: `ip` in handlers comes from `request-context` (faked to a public IP in development for geo lookup). Webhook allowlists use the real forwarded IP via `createIpAllowlist` / `getForwardedIp` in `~/lib/utils/ip`.
 
 ## Gotchas

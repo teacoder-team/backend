@@ -1,27 +1,27 @@
-import { type ChatTarget, formatChatTarget, type HtmlValue, joinHtml, tg } from '@teacoder/telegram'
+import {
+	type ChatTarget,
+	customEmoji,
+	formatChatTarget,
+	type HtmlValue,
+	joinHtml,
+	tg
+} from '@teacoder/telegram'
 
 import { AuthProvider, UserRole } from '@prisma/generated/client'
 
 import { env } from '~/config/env'
+import { formatDate, formatDateTime } from '~/lib/utils/date'
 import { PAYMENT_PROVIDER_NAMES, paymentMethodName } from '~/modules/billing/service'
 
-import type { PurchasedCourse, PurchaseDetails } from './repository'
+import type { SignUpMethod } from './queue'
+import type {
+	PurchasedCourse,
+	PurchaseDetails,
+	RegistrationDetails,
+	VisitorAccount
+} from './repository'
 
-const TIME_ZONE = 'Europe/Moscow'
 const DAY_MS = 24 * 60 * 60 * 1000
-
-const dateFormat = new Intl.DateTimeFormat('ru-RU', {
-	timeZone: TIME_ZONE,
-	day: 'numeric',
-	month: 'long',
-	year: 'numeric'
-})
-
-const timeFormat = new Intl.DateTimeFormat('ru-RU', {
-	timeZone: TIME_ZONE,
-	hour: '2-digit',
-	minute: '2-digit'
-})
 
 const relativeFormat = new Intl.RelativeTimeFormat('ru', { numeric: 'auto' })
 
@@ -39,11 +39,6 @@ const CHAT_TYPE_NAMES: Record<string, string> = {
 	supergroup: 'группа',
 	channel: 'канал'
 }
-
-/** ICU writes "30 сентября 2026 г." - the trailing "г." is noise in a chat message. */
-const formatDate = (date: Date) => dateFormat.format(date).replace(/\s*г\.$/, '')
-
-const formatDateTime = (date: Date) => `${formatDate(date)}, ${timeFormat.format(date)} МСК`
 
 /** "сегодня", "вчера", "5 дней назад", "3 месяца назад", "2 года назад". */
 const formatAge = (date: Date, now = new Date()) => {
@@ -85,12 +80,19 @@ const tree = (rows: readonly Row[]) => {
 	return joinHtml(
 		shown.map(
 			([label, value], index) =>
-				tg`${index === shown.length - 1 ? '└' : '├'} ${label}: ${value}`
+				tg`${index === shown.length - 1 ? '└' : '├'} <b>${label}:</b> ${value}`
 		)
 	)
 }
 
-const section = (title: string, rows: readonly Row[]) => tg`<b>${title}</b>\n${tree(rows)}`
+const section = (title: HtmlValue, rows: readonly Row[]) => tg`<b>${title}</b>\n${tree(rows)}`
+
+const EMOJI = {
+	signUp: customEmoji('5382357040008021292', '🆕'),
+	user: customEmoji('5193018431875587270', '👤'),
+	device: customEmoji('5444965061749644170', '👨‍💻'),
+	time: customEmoji('5382194935057372936', '⏱')
+}
 
 const code = (value: string | null | undefined) => value && tg`<code>${value}</code>`
 
@@ -163,6 +165,57 @@ export const coursePurchaseMessage = ({
 			buyer,
 			payment,
 			tg`🕒 Оплачен ${formatDateTime(purchase.updatedAt)}\n${tags.join(' ')}`
+		],
+		'\n\n'
+	)
+}
+
+export interface RegistrationMessageInput {
+	user: RegistrationDetails
+	email: string | null
+	via: SignUpMethod
+	/** Other accounts already seen on the same Fingerprint visitor. */
+	sameDevice: readonly VisitorAccount[]
+}
+
+const SAME_DEVICE_SHOWN = 5
+
+const sameDeviceList = (accounts: readonly VisitorAccount[]) => {
+	const shown = accounts
+		.slice(0, SAME_DEVICE_SHOWN)
+		.map((account) => tg`${account.displayName} (<code>@${account.username}</code>)`)
+	const rest = accounts.length - shown.length
+
+	return tg`⚠️ <b>${accounts.length}</b>: ${joinHtml(shown, ', ')}${rest > 0 && ` и ещё ${rest}`}`
+}
+
+export const registrationMessage = ({ user, email, via, sameDevice }: RegistrationMessageInput) => {
+	const session = user.sessions[0]
+	const tags = [
+		'#регистрация',
+		`#${via.toLowerCase()}`,
+		sameDevice.length > 0 && '#мультиаккаунт'
+	]
+
+	return joinHtml(
+		[
+			tg`${EMOJI.signUp} <b>Новая регистрация</b>`,
+			section(tg`${EMOJI.user} Пользователь`, [
+				['Имя', user.displayName],
+				['Почта', email],
+				['Способ', via === 'EMAIL' ? 'почта и пароль' : SIGN_IN_NAMES[via]]
+			]),
+			session &&
+				section(tg`${EMOJI.device} Устройство`, [
+					['IP', code(session.ip)],
+					['Страна', session.country],
+					['Город', session.city],
+					['ОС', session.os],
+					['Браузер', session.browser],
+					['Fingerprint', code(session.visitorId)],
+					['Другие аккаунты', sameDevice.length > 0 && sameDeviceList(sameDevice)]
+				]),
+			tg`${EMOJI.time} ${formatDateTime(session?.createdAt ?? user.createdAt)}\n${joinHtml(tags, ' ')}`
 		],
 		'\n\n'
 	)

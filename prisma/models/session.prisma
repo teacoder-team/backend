@@ -4,6 +4,7 @@ model Session {
     ip           String
     userAgent    String  @map("user_agent")
     friendlyName String? @map("friendly_name")
+    visitorId    String? @map("visitor_id")
 
     country String?
     city    String?
@@ -49,4 +50,20 @@ model RefreshToken {
     @@index([sessionId], map: "ix_refresh_tokens_session_id")
     @@index([familyId], map: "ix_refresh_tokens_family_id")
     @@map("refresh_tokens")
+}
+
+/// Devices (Fingerprint visitor ids) a user has signed in from. Outlives sessions, which get pruned.
+model UserVisitor {
+    id        String @id @default(uuid())
+    visitorId String @map("visitor_id")
+
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId String @map("user_id")
+
+    firstSeenAt DateTime @default(now()) @map("first_seen_at")
+    lastSeenAt  DateTime @default(now()) @map("last_seen_at")
+
+    @@unique([userId, visitorId], map: "uq_user_visitors_user_id_visitor_id")
+    @@index([visitorId], map: "ix_user_visitors_visitor_id")
+    @@map("user_visitors")
 }

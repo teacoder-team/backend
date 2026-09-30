@@ -401,6 +401,7 @@ export const ModelName = {
   DownloadLog: 'DownloadLog',
   Session: 'Session',
   RefreshToken: 'RefreshToken',
+  UserVisitor: 'UserVisitor',
   Subscription: 'Subscription',
   User: 'User',
   WebhookEvent: 'WebhookEvent',
@@ -420,7 +421,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "passwordCredential" | "oAuthAccount" | "verificationCode" | "course" | "coursePurchase" | "lesson" | "multiFactorAuthentication" | "totp" | "passkey" | "restriction" | "paymentIntent" | "receipt" | "userPaymentMethod" | "userProgress" | "downloadLog" | "session" | "refreshToken" | "subscription" | "user" | "webhookEvent" | "reconciliationRun"
+    modelProps: "passwordCredential" | "oAuthAccount" | "verificationCode" | "course" | "coursePurchase" | "lesson" | "multiFactorAuthentication" | "totp" | "passkey" | "restriction" | "paymentIntent" | "receipt" | "userPaymentMethod" | "userProgress" | "downloadLog" | "session" | "refreshToken" | "userVisitor" | "subscription" | "user" | "webhookEvent" | "reconciliationRun"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1682,6 +1683,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    UserVisitor: {
+      payload: Prisma.$UserVisitorPayload<ExtArgs>
+      fields: Prisma.UserVisitorFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.UserVisitorFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserVisitorPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.UserVisitorFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserVisitorPayload>
+        }
+        findFirst: {
+          args: Prisma.UserVisitorFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserVisitorPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.UserVisitorFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserVisitorPayload>
+        }
+        findMany: {
+          args: Prisma.UserVisitorFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserVisitorPayload>[]
+        }
+        create: {
+          args: Prisma.UserVisitorCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserVisitorPayload>
+        }
+        createMany: {
+          args: Prisma.UserVisitorCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.UserVisitorCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserVisitorPayload>[]
+        }
+        delete: {
+          args: Prisma.UserVisitorDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserVisitorPayload>
+        }
+        update: {
+          args: Prisma.UserVisitorUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserVisitorPayload>
+        }
+        deleteMany: {
+          args: Prisma.UserVisitorDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.UserVisitorUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.UserVisitorUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserVisitorPayload>[]
+        }
+        upsert: {
+          args: Prisma.UserVisitorUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserVisitorPayload>
+        }
+        aggregate: {
+          args: Prisma.UserVisitorAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateUserVisitor>
+        }
+        groupBy: {
+          args: Prisma.UserVisitorGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UserVisitorGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.UserVisitorCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UserVisitorCountAggregateOutputType> | number
+        }
+      }
+    }
     Subscription: {
       payload: Prisma.$SubscriptionPayload<ExtArgs>
       fields: Prisma.SubscriptionFieldRefs
@@ -2248,6 +2323,7 @@ export const SessionScalarFieldEnum = {
   ip: 'ip',
   userAgent: 'userAgent',
   friendlyName: 'friendlyName',
+  visitorId: 'visitorId',
   country: 'country',
   city: 'city',
   browser: 'browser',
@@ -2275,6 +2351,17 @@ export const RefreshTokenScalarFieldEnum = {
 } as const
 
 export type RefreshTokenScalarFieldEnum = (typeof RefreshTokenScalarFieldEnum)[keyof typeof RefreshTokenScalarFieldEnum]
+
+
+export const UserVisitorScalarFieldEnum = {
+  id: 'id',
+  visitorId: 'visitorId',
+  userId: 'userId',
+  firstSeenAt: 'firstSeenAt',
+  lastSeenAt: 'lastSeenAt'
+} as const
+
+export type UserVisitorScalarFieldEnum = (typeof UserVisitorScalarFieldEnum)[keyof typeof UserVisitorScalarFieldEnum]
 
 
 export const SubscriptionScalarFieldEnum = {
@@ -2820,6 +2907,7 @@ export type GlobalOmitConfig = {
   downloadLog?: Prisma.DownloadLogOmit
   session?: Prisma.SessionOmit
   refreshToken?: Prisma.RefreshTokenOmit
+  userVisitor?: Prisma.UserVisitorOmit
   subscription?: Prisma.SubscriptionOmit
   user?: Prisma.UserOmit
   webhookEvent?: Prisma.WebhookEventOmit

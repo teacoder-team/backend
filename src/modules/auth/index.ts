@@ -5,6 +5,7 @@ import { BadRequestError } from '~/lib/errors'
 import { refreshTokenPair } from '~/modules/session/service'
 import { authCookie, REFRESH_COOKIE } from '~/plugins/auth-cookie'
 import { authGuard } from '~/plugins/auth-guard'
+import { fingerprint } from '~/plugins/fingerprint'
 import { requestContext } from '~/plugins/request-context'
 
 import {
@@ -24,6 +25,7 @@ export const auth = new Elysia({ prefix: '/auth', tags: [TAG.auth] })
 	.use(requestContext)
 	.use(authCookie)
 	.use(authGuard)
+	.use(fingerprint)
 	.model({
 		RegisterPayload,
 		VerifyRegisterPayload,
@@ -54,8 +56,8 @@ export const auth = new Elysia({ prefix: '/auth', tags: [TAG.auth] })
 	)
 	.post(
 		'/verify',
-		async ({ body, ip, userAgent, authCookie }) => {
-			const result = await verifyRegister(body, { ip, userAgent })
+		async ({ body, ip, userAgent, visitorId, authCookie }) => {
+			const result = await verifyRegister(body, { ip, userAgent, visitorId })
 
 			authCookie.set(result)
 
@@ -63,6 +65,7 @@ export const auth = new Elysia({ prefix: '/auth', tags: [TAG.auth] })
 		},
 		{
 			body: 'VerifyRegisterPayload',
+			fingerprint: true,
 			response: 'AuthResponse',
 			detail: {
 				summary: 'Подтверждение регистрации',
@@ -73,8 +76,8 @@ export const auth = new Elysia({ prefix: '/auth', tags: [TAG.auth] })
 	)
 	.post(
 		'/login',
-		async ({ body, ip, userAgent, authCookie }) => {
-			const result = await login(body, { ip, userAgent })
+		async ({ body, ip, userAgent, visitorId, authCookie }) => {
+			const result = await login(body, { ip, userAgent, visitorId })
 
 			authCookie.set(result)
 
@@ -82,24 +85,25 @@ export const auth = new Elysia({ prefix: '/auth', tags: [TAG.auth] })
 		},
 		{
 			body: 'LoginPayload',
+			fingerprint: true,
 			response: 'AuthResponse',
 			detail: {
 				summary: 'Вход по почте и паролю',
 				description:
-					'Открывает новую сессию: возвращает пару токенов и ставит cookie. После 5 неудачных попыток вход для этой почты и этого IP блокируется на 15 минут. Требует токен капчи, если она включена.'
+					'Открывает новую сессию: возвращает пару токенов и ставит cookie. После 5 неудачных попыток вход блокируется на 15 минут для этой почты, этого IP и этого устройства (если передан `X-Fingerprint-Event`). Вход с устройства, которого аккаунт раньше не видел, присылает владельцу письмо. Требует токен капчи, если она включена.'
 			}
 		}
 	)
 	.post(
 		'/refresh',
-		async ({ body, cookie, authCookie }) => {
+		async ({ body, cookie, visitorId, authCookie }) => {
 			const token = body.refreshToken ?? (cookie[REFRESH_COOKIE]?.value as string | undefined)
 
 			if (!token) {
 				throw new BadRequestError('Missing refresh token')
 			}
 
-			const tokens = await refreshTokenPair(token)
+			const tokens = await refreshTokenPair(token, visitorId)
 
 			authCookie.set(tokens)
 
@@ -107,6 +111,7 @@ export const auth = new Elysia({ prefix: '/auth', tags: [TAG.auth] })
 		},
 		{
 			body: 'RefreshPayload',
+			fingerprint: true,
 			response: 'TokenPairResponse',
 			detail: {
 				summary: 'Обновление токенов',
@@ -134,8 +139,8 @@ export const auth = new Elysia({ prefix: '/auth', tags: [TAG.auth] })
 	)
 	.post(
 		'/reset-password',
-		async ({ body, ip, userAgent, authCookie }) => {
-			const result = await resetPassword(body, { ip, userAgent })
+		async ({ body, ip, userAgent, visitorId, authCookie }) => {
+			const result = await resetPassword(body, { ip, userAgent, visitorId })
 
 			authCookie.set(result)
 
@@ -143,6 +148,7 @@ export const auth = new Elysia({ prefix: '/auth', tags: [TAG.auth] })
 		},
 		{
 			body: 'ResetPasswordPayload',
+			fingerprint: true,
 			response: 'AuthResponse',
 			detail: {
 				summary: 'Сброс пароля',

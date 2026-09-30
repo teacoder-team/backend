@@ -127,6 +127,11 @@ export type Session = Prisma.SessionModel
  */
 export type RefreshToken = Prisma.RefreshTokenModel
 /**
+ * Model UserVisitor
+ * Devices (Fingerprint visitor ids) a user has signed in from. Outlives sessions, which get pruned.
+ */
+export type UserVisitor = Prisma.UserVisitorModel
+/**
  * Model Subscription
  * 
  */
