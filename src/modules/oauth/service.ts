@@ -24,7 +24,8 @@ import { encryptEmail, hashEmail } from '~/lib/security/email-crypto'
 import { generateUsername } from '~/lib/utils/username'
 import { enqueueRegistrationNotification } from '~/modules/admin-bot/queue'
 import { findUserByEmailHash } from '~/modules/auth/repository'
-import { issueTokenPair, type RequestOrigin } from '~/modules/session/service'
+import { completeSignIn } from '~/modules/auth/service'
+import type { RequestOrigin } from '~/modules/session/service'
 
 import { createOAuthUser, findOAuthAccount, linkOAuthAccount } from './repository'
 
@@ -156,15 +157,15 @@ export const finishOAuth = async (providerName: string, search: string) => {
 
 	extendLogContext({ event: 'oauth_authenticated', provider: name, outcome, userId: user.id })
 
-	const tokens = await issueTokenPair(user.id, {
-		ip: session.ip,
-		userAgent: session.userAgent,
-		visitorId: session.visitorId
-	})
+	const result = await completeSignIn(
+		user.id,
+		{ ip: session.ip, userAgent: session.userAgent, visitorId: session.visitorId },
+		name
+	)
 
 	if (outcome === 'signup') {
 		await enqueueRegistrationNotification({ userId: user.id, via: AUTH_PROVIDER[name] })
 	}
 
-	return { id: user.id, ...tokens }
+	return result
 }

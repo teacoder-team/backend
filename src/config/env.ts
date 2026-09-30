@@ -45,6 +45,8 @@ const envSchema = t.Object({
 	EMAIL_ENCRYPTION_KEY: t.String(),
 	EMAIL_HASH_KEY: t.String(),
 	VERIFICATION_CODE_HASH_KEY: t.String(),
+	/** 32 bytes, base64. Encrypts TOTP secrets - rotating it disables every authenticator app. */
+	MFA_ENCRYPTION_KEY: t.String(),
 
 	COOKIE_DOMAIN: t.String({ default: 'localhost' }),
 	COOKIE_SECURE: t.Boolean({ default: false }),

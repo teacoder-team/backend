@@ -1,7 +1,7 @@
 import { Elysia } from 'elysia'
 
 import { TAG } from '~/config/openapi'
-import { MessageResponse, TokenPairResponse } from '~/modules/auth/model'
+import { AccessTokenResponse, MessageResponse } from '~/modules/auth/model'
 import { authCookie } from '~/plugins/auth-cookie'
 import { authGuard } from '~/plugins/auth-guard'
 import { requestContext } from '~/plugins/request-context'
@@ -37,7 +37,7 @@ export const users = new Elysia({ prefix: '/users', tags: [TAG.users] })
 		AvatarUploadPayload,
 		AvatarResponse,
 		MessageResponse,
-		TokenPairResponse
+		AccessTokenResponse
 	})
 	.guard({ auth: true, detail: { security: [{ bearerAuth: [] }] } })
 	.get('/@me', async ({ session }) => await getCurrentUser(session.userId), {
@@ -107,17 +107,15 @@ export const users = new Elysia({ prefix: '/users', tags: [TAG.users] })
 		async ({ session, body, ip, userAgent, authCookie }) => {
 			const tokens = await confirmPasswordChange(session.userId, body, { ip, userAgent })
 
-			authCookie.set(tokens)
-
-			return tokens
+			return authCookie.issue(tokens)
 		},
 		{
 			body: 'ConfirmCodePayload',
-			response: 'TokenPairResponse',
+			response: 'AccessTokenResponse',
 			detail: {
 				summary: 'Подтверждение смены пароля',
 				description:
-					'Проверяет код и устанавливает новый пароль. Все остальные сессии завершаются, а на этом устройстве выдаётся новая пара токенов.'
+					'Проверяет код и устанавливает новый пароль. Все сессии, включая текущую, завершаются, а на этом устройстве открывается новая: access-токен в теле, refresh-токен в httpOnly-cookie `tc_refresh`.'
 			}
 		}
 	)

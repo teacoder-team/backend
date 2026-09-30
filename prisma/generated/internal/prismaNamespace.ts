@@ -390,9 +390,9 @@ export const ModelName = {
   Course: 'Course',
   CoursePurchase: 'CoursePurchase',
   Lesson: 'Lesson',
-  MultiFactorAuthentication: 'MultiFactorAuthentication',
-  Totp: 'Totp',
-  Passkey: 'Passkey',
+  TotpAuthenticator: 'TotpAuthenticator',
+  RecoveryCode: 'RecoveryCode',
+  WebAuthnCredential: 'WebAuthnCredential',
   Restriction: 'Restriction',
   PaymentIntent: 'PaymentIntent',
   Receipt: 'Receipt',
@@ -421,7 +421,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "passwordCredential" | "oAuthAccount" | "verificationCode" | "course" | "coursePurchase" | "lesson" | "multiFactorAuthentication" | "totp" | "passkey" | "restriction" | "paymentIntent" | "receipt" | "userPaymentMethod" | "userProgress" | "downloadLog" | "session" | "refreshToken" | "userVisitor" | "subscription" | "user" | "webhookEvent" | "reconciliationRun"
+    modelProps: "passwordCredential" | "oAuthAccount" | "verificationCode" | "course" | "coursePurchase" | "lesson" | "totpAuthenticator" | "recoveryCode" | "webAuthnCredential" | "restriction" | "paymentIntent" | "receipt" | "userPaymentMethod" | "userProgress" | "downloadLog" | "session" | "refreshToken" | "userVisitor" | "subscription" | "user" | "webhookEvent" | "reconciliationRun"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -869,225 +869,225 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
-    MultiFactorAuthentication: {
-      payload: Prisma.$MultiFactorAuthenticationPayload<ExtArgs>
-      fields: Prisma.MultiFactorAuthenticationFieldRefs
+    TotpAuthenticator: {
+      payload: Prisma.$TotpAuthenticatorPayload<ExtArgs>
+      fields: Prisma.TotpAuthenticatorFieldRefs
       operations: {
         findUnique: {
-          args: Prisma.MultiFactorAuthenticationFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$MultiFactorAuthenticationPayload> | null
+          args: Prisma.TotpAuthenticatorFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TotpAuthenticatorPayload> | null
         }
         findUniqueOrThrow: {
-          args: Prisma.MultiFactorAuthenticationFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$MultiFactorAuthenticationPayload>
+          args: Prisma.TotpAuthenticatorFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TotpAuthenticatorPayload>
         }
         findFirst: {
-          args: Prisma.MultiFactorAuthenticationFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$MultiFactorAuthenticationPayload> | null
+          args: Prisma.TotpAuthenticatorFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TotpAuthenticatorPayload> | null
         }
         findFirstOrThrow: {
-          args: Prisma.MultiFactorAuthenticationFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$MultiFactorAuthenticationPayload>
+          args: Prisma.TotpAuthenticatorFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TotpAuthenticatorPayload>
         }
         findMany: {
-          args: Prisma.MultiFactorAuthenticationFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$MultiFactorAuthenticationPayload>[]
+          args: Prisma.TotpAuthenticatorFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TotpAuthenticatorPayload>[]
         }
         create: {
-          args: Prisma.MultiFactorAuthenticationCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$MultiFactorAuthenticationPayload>
+          args: Prisma.TotpAuthenticatorCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TotpAuthenticatorPayload>
         }
         createMany: {
-          args: Prisma.MultiFactorAuthenticationCreateManyArgs<ExtArgs>
+          args: Prisma.TotpAuthenticatorCreateManyArgs<ExtArgs>
           result: BatchPayload
         }
         createManyAndReturn: {
-          args: Prisma.MultiFactorAuthenticationCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$MultiFactorAuthenticationPayload>[]
+          args: Prisma.TotpAuthenticatorCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TotpAuthenticatorPayload>[]
         }
         delete: {
-          args: Prisma.MultiFactorAuthenticationDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$MultiFactorAuthenticationPayload>
+          args: Prisma.TotpAuthenticatorDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TotpAuthenticatorPayload>
         }
         update: {
-          args: Prisma.MultiFactorAuthenticationUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$MultiFactorAuthenticationPayload>
+          args: Prisma.TotpAuthenticatorUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TotpAuthenticatorPayload>
         }
         deleteMany: {
-          args: Prisma.MultiFactorAuthenticationDeleteManyArgs<ExtArgs>
+          args: Prisma.TotpAuthenticatorDeleteManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateMany: {
-          args: Prisma.MultiFactorAuthenticationUpdateManyArgs<ExtArgs>
+          args: Prisma.TotpAuthenticatorUpdateManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateManyAndReturn: {
-          args: Prisma.MultiFactorAuthenticationUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$MultiFactorAuthenticationPayload>[]
+          args: Prisma.TotpAuthenticatorUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TotpAuthenticatorPayload>[]
         }
         upsert: {
-          args: Prisma.MultiFactorAuthenticationUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$MultiFactorAuthenticationPayload>
+          args: Prisma.TotpAuthenticatorUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TotpAuthenticatorPayload>
         }
         aggregate: {
-          args: Prisma.MultiFactorAuthenticationAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateMultiFactorAuthentication>
+          args: Prisma.TotpAuthenticatorAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateTotpAuthenticator>
         }
         groupBy: {
-          args: Prisma.MultiFactorAuthenticationGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.MultiFactorAuthenticationGroupByOutputType>[]
+          args: Prisma.TotpAuthenticatorGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TotpAuthenticatorGroupByOutputType>[]
         }
         count: {
-          args: Prisma.MultiFactorAuthenticationCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.MultiFactorAuthenticationCountAggregateOutputType> | number
+          args: Prisma.TotpAuthenticatorCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TotpAuthenticatorCountAggregateOutputType> | number
         }
       }
     }
-    Totp: {
-      payload: Prisma.$TotpPayload<ExtArgs>
-      fields: Prisma.TotpFieldRefs
+    RecoveryCode: {
+      payload: Prisma.$RecoveryCodePayload<ExtArgs>
+      fields: Prisma.RecoveryCodeFieldRefs
       operations: {
         findUnique: {
-          args: Prisma.TotpFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$TotpPayload> | null
+          args: Prisma.RecoveryCodeFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RecoveryCodePayload> | null
         }
         findUniqueOrThrow: {
-          args: Prisma.TotpFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$TotpPayload>
+          args: Prisma.RecoveryCodeFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RecoveryCodePayload>
         }
         findFirst: {
-          args: Prisma.TotpFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$TotpPayload> | null
+          args: Prisma.RecoveryCodeFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RecoveryCodePayload> | null
         }
         findFirstOrThrow: {
-          args: Prisma.TotpFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$TotpPayload>
+          args: Prisma.RecoveryCodeFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RecoveryCodePayload>
         }
         findMany: {
-          args: Prisma.TotpFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$TotpPayload>[]
+          args: Prisma.RecoveryCodeFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RecoveryCodePayload>[]
         }
         create: {
-          args: Prisma.TotpCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$TotpPayload>
+          args: Prisma.RecoveryCodeCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RecoveryCodePayload>
         }
         createMany: {
-          args: Prisma.TotpCreateManyArgs<ExtArgs>
+          args: Prisma.RecoveryCodeCreateManyArgs<ExtArgs>
           result: BatchPayload
         }
         createManyAndReturn: {
-          args: Prisma.TotpCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$TotpPayload>[]
+          args: Prisma.RecoveryCodeCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RecoveryCodePayload>[]
         }
         delete: {
-          args: Prisma.TotpDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$TotpPayload>
+          args: Prisma.RecoveryCodeDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RecoveryCodePayload>
         }
         update: {
-          args: Prisma.TotpUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$TotpPayload>
+          args: Prisma.RecoveryCodeUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RecoveryCodePayload>
         }
         deleteMany: {
-          args: Prisma.TotpDeleteManyArgs<ExtArgs>
+          args: Prisma.RecoveryCodeDeleteManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateMany: {
-          args: Prisma.TotpUpdateManyArgs<ExtArgs>
+          args: Prisma.RecoveryCodeUpdateManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateManyAndReturn: {
-          args: Prisma.TotpUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$TotpPayload>[]
+          args: Prisma.RecoveryCodeUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RecoveryCodePayload>[]
         }
         upsert: {
-          args: Prisma.TotpUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$TotpPayload>
+          args: Prisma.RecoveryCodeUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RecoveryCodePayload>
         }
         aggregate: {
-          args: Prisma.TotpAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateTotp>
+          args: Prisma.RecoveryCodeAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateRecoveryCode>
         }
         groupBy: {
-          args: Prisma.TotpGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.TotpGroupByOutputType>[]
+          args: Prisma.RecoveryCodeGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.RecoveryCodeGroupByOutputType>[]
         }
         count: {
-          args: Prisma.TotpCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.TotpCountAggregateOutputType> | number
+          args: Prisma.RecoveryCodeCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.RecoveryCodeCountAggregateOutputType> | number
         }
       }
     }
-    Passkey: {
-      payload: Prisma.$PasskeyPayload<ExtArgs>
-      fields: Prisma.PasskeyFieldRefs
+    WebAuthnCredential: {
+      payload: Prisma.$WebAuthnCredentialPayload<ExtArgs>
+      fields: Prisma.WebAuthnCredentialFieldRefs
       operations: {
         findUnique: {
-          args: Prisma.PasskeyFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasskeyPayload> | null
+          args: Prisma.WebAuthnCredentialFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebAuthnCredentialPayload> | null
         }
         findUniqueOrThrow: {
-          args: Prisma.PasskeyFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasskeyPayload>
+          args: Prisma.WebAuthnCredentialFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebAuthnCredentialPayload>
         }
         findFirst: {
-          args: Prisma.PasskeyFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasskeyPayload> | null
+          args: Prisma.WebAuthnCredentialFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebAuthnCredentialPayload> | null
         }
         findFirstOrThrow: {
-          args: Prisma.PasskeyFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasskeyPayload>
+          args: Prisma.WebAuthnCredentialFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebAuthnCredentialPayload>
         }
         findMany: {
-          args: Prisma.PasskeyFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasskeyPayload>[]
+          args: Prisma.WebAuthnCredentialFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebAuthnCredentialPayload>[]
         }
         create: {
-          args: Prisma.PasskeyCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasskeyPayload>
+          args: Prisma.WebAuthnCredentialCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebAuthnCredentialPayload>
         }
         createMany: {
-          args: Prisma.PasskeyCreateManyArgs<ExtArgs>
+          args: Prisma.WebAuthnCredentialCreateManyArgs<ExtArgs>
           result: BatchPayload
         }
         createManyAndReturn: {
-          args: Prisma.PasskeyCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasskeyPayload>[]
+          args: Prisma.WebAuthnCredentialCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebAuthnCredentialPayload>[]
         }
         delete: {
-          args: Prisma.PasskeyDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasskeyPayload>
+          args: Prisma.WebAuthnCredentialDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebAuthnCredentialPayload>
         }
         update: {
-          args: Prisma.PasskeyUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasskeyPayload>
+          args: Prisma.WebAuthnCredentialUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebAuthnCredentialPayload>
         }
         deleteMany: {
-          args: Prisma.PasskeyDeleteManyArgs<ExtArgs>
+          args: Prisma.WebAuthnCredentialDeleteManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateMany: {
-          args: Prisma.PasskeyUpdateManyArgs<ExtArgs>
+          args: Prisma.WebAuthnCredentialUpdateManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateManyAndReturn: {
-          args: Prisma.PasskeyUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasskeyPayload>[]
+          args: Prisma.WebAuthnCredentialUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebAuthnCredentialPayload>[]
         }
         upsert: {
-          args: Prisma.PasskeyUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasskeyPayload>
+          args: Prisma.WebAuthnCredentialUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WebAuthnCredentialPayload>
         }
         aggregate: {
-          args: Prisma.PasskeyAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregatePasskey>
+          args: Prisma.WebAuthnCredentialAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateWebAuthnCredential>
         }
         groupBy: {
-          args: Prisma.PasskeyGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.PasskeyGroupByOutputType>[]
+          args: Prisma.WebAuthnCredentialGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.WebAuthnCredentialGroupByOutputType>[]
         }
         count: {
-          args: Prisma.PasskeyCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.PasskeyCountAggregateOutputType> | number
+          args: Prisma.WebAuthnCredentialCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.WebAuthnCredentialCountAggregateOutputType> | number
         }
       }
     }
@@ -2177,45 +2177,48 @@ export const LessonScalarFieldEnum = {
 export type LessonScalarFieldEnum = (typeof LessonScalarFieldEnum)[keyof typeof LessonScalarFieldEnum]
 
 
-export const MultiFactorAuthenticationScalarFieldEnum = {
+export const TotpAuthenticatorScalarFieldEnum = {
   id: 'id',
-  recoveryCodes: 'recoveryCodes',
-  totpId: 'totpId',
+  secretCipher: 'secretCipher',
+  confirmedAt: 'confirmedAt',
+  lastUsedStep: 'lastUsedStep',
+  lastUsedAt: 'lastUsedAt',
   userId: 'userId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
-export type MultiFactorAuthenticationScalarFieldEnum = (typeof MultiFactorAuthenticationScalarFieldEnum)[keyof typeof MultiFactorAuthenticationScalarFieldEnum]
+export type TotpAuthenticatorScalarFieldEnum = (typeof TotpAuthenticatorScalarFieldEnum)[keyof typeof TotpAuthenticatorScalarFieldEnum]
 
 
-export const TotpScalarFieldEnum = {
+export const RecoveryCodeScalarFieldEnum = {
   id: 'id',
-  status: 'status',
-  secret: 'secret',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  codeHash: 'codeHash',
+  usedAt: 'usedAt',
+  userId: 'userId',
+  createdAt: 'createdAt'
 } as const
 
-export type TotpScalarFieldEnum = (typeof TotpScalarFieldEnum)[keyof typeof TotpScalarFieldEnum]
+export type RecoveryCodeScalarFieldEnum = (typeof RecoveryCodeScalarFieldEnum)[keyof typeof RecoveryCodeScalarFieldEnum]
 
 
-export const PasskeyScalarFieldEnum = {
+export const WebAuthnCredentialScalarFieldEnum = {
   id: 'id',
-  deviceName: 'deviceName',
   credentialId: 'credentialId',
   publicKey: 'publicKey',
-  counter: 'counter',
+  signCount: 'signCount',
   transports: 'transports',
+  aaguid: 'aaguid',
+  deviceType: 'deviceType',
+  backedUp: 'backedUp',
+  name: 'name',
   lastUsedAt: 'lastUsedAt',
-  ip: 'ip',
-  userAgent: 'userAgent',
-  mfaId: 'mfaId',
+  userId: 'userId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
-export type PasskeyScalarFieldEnum = (typeof PasskeyScalarFieldEnum)[keyof typeof PasskeyScalarFieldEnum]
+export type WebAuthnCredentialScalarFieldEnum = (typeof WebAuthnCredentialScalarFieldEnum)[keyof typeof WebAuthnCredentialScalarFieldEnum]
 
 
 export const RestrictionScalarFieldEnum = {
@@ -2600,16 +2603,30 @@ export type ListEnumLessonAccessFieldRefInput<$PrismaModel> = FieldRefInputType<
 
 
 /**
- * Reference to a field of type 'TotpStatus'
+ * Reference to a field of type 'BigInt'
  */
-export type EnumTotpStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TotpStatus'>
+export type BigIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BigInt'>
     
 
 
 /**
- * Reference to a field of type 'TotpStatus[]'
+ * Reference to a field of type 'BigInt[]'
  */
-export type ListEnumTotpStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TotpStatus[]'>
+export type ListBigIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BigInt[]'>
+    
+
+
+/**
+ * Reference to a field of type 'WebAuthnDeviceType'
+ */
+export type EnumWebAuthnDeviceTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'WebAuthnDeviceType'>
+    
+
+
+/**
+ * Reference to a field of type 'WebAuthnDeviceType[]'
+ */
+export type ListEnumWebAuthnDeviceTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'WebAuthnDeviceType[]'>
     
 
 
@@ -2754,20 +2771,6 @@ export type ListEnumUserRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$Pri
 
 
 /**
- * Reference to a field of type 'BigInt'
- */
-export type BigIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BigInt'>
-    
-
-
-/**
- * Reference to a field of type 'BigInt[]'
- */
-export type ListBigIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BigInt[]'>
-    
-
-
-/**
  * Reference to a field of type 'ReconciliationStatus'
  */
 export type EnumReconciliationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ReconciliationStatus'>
@@ -2896,9 +2899,9 @@ export type GlobalOmitConfig = {
   course?: Prisma.CourseOmit
   coursePurchase?: Prisma.CoursePurchaseOmit
   lesson?: Prisma.LessonOmit
-  multiFactorAuthentication?: Prisma.MultiFactorAuthenticationOmit
-  totp?: Prisma.TotpOmit
-  passkey?: Prisma.PasskeyOmit
+  totpAuthenticator?: Prisma.TotpAuthenticatorOmit
+  recoveryCode?: Prisma.RecoveryCodeOmit
+  webAuthnCredential?: Prisma.WebAuthnCredentialOmit
   restriction?: Prisma.RestrictionOmit
   paymentIntent?: Prisma.PaymentIntentOmit
   receipt?: Prisma.ReceiptOmit

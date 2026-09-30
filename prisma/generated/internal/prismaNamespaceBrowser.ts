@@ -57,9 +57,9 @@ export const ModelName = {
   Course: 'Course',
   CoursePurchase: 'CoursePurchase',
   Lesson: 'Lesson',
-  MultiFactorAuthentication: 'MultiFactorAuthentication',
-  Totp: 'Totp',
-  Passkey: 'Passkey',
+  TotpAuthenticator: 'TotpAuthenticator',
+  RecoveryCode: 'RecoveryCode',
+  WebAuthnCredential: 'WebAuthnCredential',
   Restriction: 'Restriction',
   PaymentIntent: 'PaymentIntent',
   Receipt: 'Receipt',
@@ -176,45 +176,48 @@ export const LessonScalarFieldEnum = {
 export type LessonScalarFieldEnum = (typeof LessonScalarFieldEnum)[keyof typeof LessonScalarFieldEnum]
 
 
-export const MultiFactorAuthenticationScalarFieldEnum = {
+export const TotpAuthenticatorScalarFieldEnum = {
   id: 'id',
-  recoveryCodes: 'recoveryCodes',
-  totpId: 'totpId',
+  secretCipher: 'secretCipher',
+  confirmedAt: 'confirmedAt',
+  lastUsedStep: 'lastUsedStep',
+  lastUsedAt: 'lastUsedAt',
   userId: 'userId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
-export type MultiFactorAuthenticationScalarFieldEnum = (typeof MultiFactorAuthenticationScalarFieldEnum)[keyof typeof MultiFactorAuthenticationScalarFieldEnum]
+export type TotpAuthenticatorScalarFieldEnum = (typeof TotpAuthenticatorScalarFieldEnum)[keyof typeof TotpAuthenticatorScalarFieldEnum]
 
 
-export const TotpScalarFieldEnum = {
+export const RecoveryCodeScalarFieldEnum = {
   id: 'id',
-  status: 'status',
-  secret: 'secret',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  codeHash: 'codeHash',
+  usedAt: 'usedAt',
+  userId: 'userId',
+  createdAt: 'createdAt'
 } as const
 
-export type TotpScalarFieldEnum = (typeof TotpScalarFieldEnum)[keyof typeof TotpScalarFieldEnum]
+export type RecoveryCodeScalarFieldEnum = (typeof RecoveryCodeScalarFieldEnum)[keyof typeof RecoveryCodeScalarFieldEnum]
 
 
-export const PasskeyScalarFieldEnum = {
+export const WebAuthnCredentialScalarFieldEnum = {
   id: 'id',
-  deviceName: 'deviceName',
   credentialId: 'credentialId',
   publicKey: 'publicKey',
-  counter: 'counter',
+  signCount: 'signCount',
   transports: 'transports',
+  aaguid: 'aaguid',
+  deviceType: 'deviceType',
+  backedUp: 'backedUp',
+  name: 'name',
   lastUsedAt: 'lastUsedAt',
-  ip: 'ip',
-  userAgent: 'userAgent',
-  mfaId: 'mfaId',
+  userId: 'userId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
-export type PasskeyScalarFieldEnum = (typeof PasskeyScalarFieldEnum)[keyof typeof PasskeyScalarFieldEnum]
+export type WebAuthnCredentialScalarFieldEnum = (typeof WebAuthnCredentialScalarFieldEnum)[keyof typeof WebAuthnCredentialScalarFieldEnum]
 
 
 export const RestrictionScalarFieldEnum = {

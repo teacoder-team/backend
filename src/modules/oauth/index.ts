@@ -1,7 +1,7 @@
 import { Elysia } from 'elysia'
 
 import { TAG } from '~/config/openapi'
-import { AuthResponse } from '~/modules/auth/model'
+import { SignInResponse } from '~/modules/auth/model'
 import { authCookie } from '~/plugins/auth-cookie'
 import { fingerprint } from '~/plugins/fingerprint'
 import { requestContext } from '~/plugins/request-context'
@@ -13,7 +13,7 @@ export const oauth = new Elysia({ prefix: '/oauth', tags: [TAG.oauth] })
 	.use(requestContext)
 	.use(authCookie)
 	.use(fingerprint)
-	.model({ OAuthProviderParams, OAuthCallbackQuery, OAuthStartResponse, AuthResponse })
+	.model({ OAuthProviderParams, OAuthCallbackQuery, OAuthStartResponse, SignInResponse })
 	.post(
 		'/:provider/start',
 		async ({ params, ip, userAgent, visitorId }) =>
@@ -34,18 +34,20 @@ export const oauth = new Elysia({ prefix: '/oauth', tags: [TAG.oauth] })
 		async ({ params, request, authCookie }) => {
 			const result = await finishOAuth(params.provider, new URL(request.url).search)
 
-			authCookie.set(result)
+			if (result.mfaRequired) {
+				return result
+			}
 
-			return result
+			return authCookie.issue(result)
 		},
 		{
 			params: 'OAuthProviderParams',
 			query: 'OAuthCallbackQuery',
-			response: 'AuthResponse',
+			response: 'SignInResponse',
 			detail: {
 				summary: 'Возврат от провайдера',
 				description:
-					'Сюда провайдер возвращает пользователя после входа. Проверяет ответ, находит аккаунт (или привязывает к существующему по подтверждённой почте, или создаёт новый) и открывает сессию. Вызывать вручную не нужно.'
+					'Сюда провайдер возвращает пользователя после входа. Проверяет ответ, находит аккаунт (или привязывает к существующему по подтверждённой почте, или создаёт новый) и открывает сессию. Если у аккаунта включена двухфакторная защита, сессия не создаётся - в ответе `mfaToken`, как у `POST /auth/login`. Вызывать вручную не нужно.'
 			}
 		}
 	)

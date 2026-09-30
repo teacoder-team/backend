@@ -21,7 +21,10 @@ model User {
     sessions           Session[]
     visitors           UserVisitor[]
 
-    mfa          MultiFactorAuthentication?
+    totpAuthenticator   TotpAuthenticator?
+    recoveryCodes       RecoveryCode[]
+    webauthnCredentials WebAuthnCredential[]
+
     restrictions Restriction[]
 
     subscription       Subscription?

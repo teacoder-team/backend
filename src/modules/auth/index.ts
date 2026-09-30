@@ -3,23 +3,35 @@ import { Elysia } from 'elysia'
 import { TAG } from '~/config/openapi'
 import { BadRequestError } from '~/lib/errors'
 import { refreshTokenPair } from '~/modules/session/service'
-import { authCookie, REFRESH_COOKIE } from '~/plugins/auth-cookie'
+import { authCookie } from '~/plugins/auth-cookie'
 import { authGuard } from '~/plugins/auth-guard'
 import { fingerprint } from '~/plugins/fingerprint'
 import { requestContext } from '~/plugins/request-context'
 
 import {
+	AccessTokenResponse,
 	AuthResponse,
 	ForgotPasswordPayload,
 	LoginPayload,
 	MessageResponse,
-	RefreshPayload,
+	MfaChallengePayload,
+	MfaChallengeResponse,
+	MfaConfirmPayload,
 	RegisterPayload,
 	ResetPasswordPayload,
-	TokenPairResponse,
+	SignInResponse,
 	VerifyRegisterPayload
 } from './model'
-import { forgotPassword, login, logout, register, resetPassword, verifyRegister } from './service'
+import {
+	confirmMfa,
+	forgotPassword,
+	login,
+	logout,
+	register,
+	resetPassword,
+	startMfaChallenge,
+	verifyRegister
+} from './service'
 
 export const auth = new Elysia({ prefix: '/auth', tags: [TAG.auth] })
 	.use(requestContext)
@@ -30,12 +42,15 @@ export const auth = new Elysia({ prefix: '/auth', tags: [TAG.auth] })
 		RegisterPayload,
 		VerifyRegisterPayload,
 		LoginPayload,
-		RefreshPayload,
 		ForgotPasswordPayload,
 		ResetPasswordPayload,
 		MessageResponse,
 		AuthResponse,
-		TokenPairResponse
+		SignInResponse,
+		MfaChallengePayload,
+		MfaChallengeResponse,
+		MfaConfirmPayload,
+		AccessTokenResponse
 	})
 	.post(
 		'/register',
@@ -59,9 +74,7 @@ export const auth = new Elysia({ prefix: '/auth', tags: [TAG.auth] })
 		async ({ body, ip, userAgent, visitorId, authCookie }) => {
 			const result = await verifyRegister(body, { ip, userAgent, visitorId })
 
-			authCookie.set(result)
-
-			return result
+			return authCookie.issue(result)
 		},
 		{
 			body: 'VerifyRegisterPayload',
@@ -70,7 +83,7 @@ export const auth = new Elysia({ prefix: '/auth', tags: [TAG.auth] })
 			detail: {
 				summary: 'Подтверждение регистрации',
 				description:
-					'Проверяет код из письма, активирует аккаунт и сразу выполняет вход: возвращает пару токенов и ставит cookie. На код даётся 5 попыток.'
+					'Проверяет код из письма, активирует аккаунт и сразу выполняет вход: access-токен в теле, refresh-токен в httpOnly-cookie `tc_refresh`. На код даётся 5 попыток.'
 			}
 		}
 	)
@@ -79,44 +92,68 @@ export const auth = new Elysia({ prefix: '/auth', tags: [TAG.auth] })
 		async ({ body, ip, userAgent, visitorId, authCookie }) => {
 			const result = await login(body, { ip, userAgent, visitorId })
 
-			authCookie.set(result)
+			if (result.mfaRequired) {
+				return result
+			}
 
-			return result
+			return authCookie.issue(result)
 		},
 		{
 			body: 'LoginPayload',
 			fingerprint: true,
-			response: 'AuthResponse',
+			response: 'SignInResponse',
 			detail: {
 				summary: 'Вход по почте и паролю',
 				description:
-					'Открывает новую сессию: возвращает пару токенов и ставит cookie. После 5 неудачных попыток вход блокируется на 15 минут для этой почты, этого IP и этого устройства (если передан `X-Fingerprint-Event`). Вход с устройства, которого аккаунт раньше не видел, присылает владельцу письмо. Требует токен капчи, если она включена.'
+					'Проверяет пароль. Если двухфакторная защита выключена - открывает сессию: access-токен в теле, refresh-токен в httpOnly-cookie `tc_refresh`. Если включена - сессия не создаётся: в ответе `mfaRequired: true` и `mfaToken` для `POST /auth/mfa/challenge` и `POST /auth/mfa/confirm`. После 5 неудачных попыток вход блокируется на 15 минут для этой почты, этого IP и этого устройства (если передан `X-Fingerprint-Event`). Вход с устройства, которого аккаунт раньше не видел, присылает владельцу письмо. Требует токен капчи, если она включена.'
+			}
+		}
+	)
+	.post('/mfa/challenge', async ({ body }) => await startMfaChallenge(body), {
+		body: 'MfaChallengePayload',
+		response: 'MfaChallengeResponse',
+		detail: {
+			summary: 'Выбор способа подтверждения входа',
+			description:
+				'Второй шаг входа с двухфакторной защитой: по `mfaToken` из ответа на вход выбирает способ подтверждения и начинает проверку. Способ должен быть из `mfaMethods`. Повторный вызов заменяет прежнюю проверку. Если `mfaToken` истёк - 401, нужно войти заново.'
+		}
+	})
+	.post(
+		'/mfa/confirm',
+		async ({ body, ip, userAgent, visitorId, authCookie }) => {
+			const result = await confirmMfa(body, { ip, userAgent, visitorId })
+
+			return authCookie.issue(result)
+		},
+		{
+			body: 'MfaConfirmPayload',
+			fingerprint: true,
+			response: 'AuthResponse',
+			detail: {
+				summary: 'Подтверждение входа вторым фактором',
+				description:
+					'Проверяет код для выбранного в `POST /auth/mfa/challenge` способа. При успехе открывает сессию (access-токен в теле, refresh-токен в httpOnly-cookie `tc_refresh`), а `mfaToken` сгорает. Неверный код можно ввести повторно, пока билет жив; после 5 неверных кодов проверка блокируется на 15 минут. Использованный резервный код больше не действует.'
 			}
 		}
 	)
 	.post(
 		'/refresh',
-		async ({ body, cookie, visitorId, authCookie }) => {
-			const token = body.refreshToken ?? (cookie[REFRESH_COOKIE]?.value as string | undefined)
+		async ({ visitorId, authCookie }) => {
+			const token = authCookie.read()
 
 			if (!token) {
-				throw new BadRequestError('Missing refresh token')
+				throw new BadRequestError('Missing refresh token cookie')
 			}
 
-			const tokens = await refreshTokenPair(token, visitorId)
-
-			authCookie.set(tokens)
-
-			return tokens
+			return authCookie.issue(await refreshTokenPair(token, visitorId))
 		},
 		{
-			body: 'RefreshPayload',
 			fingerprint: true,
-			response: 'TokenPairResponse',
+			response: 'AccessTokenResponse',
 			detail: {
-				summary: 'Обновление токенов',
+				summary: 'Обновление access-токена',
 				description:
-					'Обменивает refresh-токен на новую пару. Токен берётся из cookie `tc_refresh` или из тела запроса. Старый refresh-токен после этого недействителен, и его повторное использование считается кражей: вся сессия завершается.'
+					"Выдаёт новый access-токен по refresh-токену из httpOnly-cookie `tc_refresh`. Тело запроса не нужно - браузер отправит cookie сам (в `fetch` укажите `credentials: 'include'`). Refresh-токен при этом меняется: новый приходит в той же cookie, старый больше не действует, а его повторное использование считается кражей и завершает всю сессию. Без cookie - 400."
 			}
 		}
 	)
@@ -142,18 +179,20 @@ export const auth = new Elysia({ prefix: '/auth', tags: [TAG.auth] })
 		async ({ body, ip, userAgent, visitorId, authCookie }) => {
 			const result = await resetPassword(body, { ip, userAgent, visitorId })
 
-			authCookie.set(result)
+			if (result.mfaRequired) {
+				return result
+			}
 
-			return result
+			return authCookie.issue(result)
 		},
 		{
 			body: 'ResetPasswordPayload',
 			fingerprint: true,
-			response: 'AuthResponse',
+			response: 'SignInResponse',
 			detail: {
 				summary: 'Сброс пароля',
 				description:
-					'Проверяет код из письма и устанавливает новый пароль. Все остальные сессии завершаются, а на этом устройстве открывается новая.'
+					'Проверяет код из письма и устанавливает новый пароль. Все остальные сессии завершаются. Если двухфакторная защита выключена, на этом устройстве сразу открывается новая сессия; если включена - в ответе `mfaToken`, и вход нужно подтвердить вторым фактором (сброс пароля по почте её не обходит).'
 			}
 		}
 	)
@@ -171,7 +210,8 @@ export const auth = new Elysia({ prefix: '/auth', tags: [TAG.auth] })
 			response: 'MessageResponse',
 			detail: {
 				summary: 'Выход',
-				description: 'Завершает текущую сессию и удаляет cookie с токенами.',
+				description:
+					'Завершает текущую сессию и удаляет cookie `tc_refresh`. Access-токен клиенту достаточно забыть - после выхода сервер его больше не принимает.',
 				security: [{ bearerAuth: [] }]
 			}
 		}

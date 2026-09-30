@@ -285,7 +285,9 @@ export type UserWhereInput = {
   verificationCodes?: Prisma.VerificationCodeListRelationFilter
   sessions?: Prisma.SessionListRelationFilter
   visitors?: Prisma.UserVisitorListRelationFilter
-  mfa?: Prisma.XOR<Prisma.MultiFactorAuthenticationNullableScalarRelationFilter, Prisma.MultiFactorAuthenticationWhereInput> | null
+  totpAuthenticator?: Prisma.XOR<Prisma.TotpAuthenticatorNullableScalarRelationFilter, Prisma.TotpAuthenticatorWhereInput> | null
+  recoveryCodes?: Prisma.RecoveryCodeListRelationFilter
+  webauthnCredentials?: Prisma.WebAuthnCredentialListRelationFilter
   restrictions?: Prisma.RestrictionListRelationFilter
   subscription?: Prisma.XOR<Prisma.SubscriptionNullableScalarRelationFilter, Prisma.SubscriptionWhereInput> | null
   payments?: Prisma.PaymentIntentListRelationFilter
@@ -314,7 +316,9 @@ export type UserOrderByWithRelationInput = {
   verificationCodes?: Prisma.VerificationCodeOrderByRelationAggregateInput
   sessions?: Prisma.SessionOrderByRelationAggregateInput
   visitors?: Prisma.UserVisitorOrderByRelationAggregateInput
-  mfa?: Prisma.MultiFactorAuthenticationOrderByWithRelationInput
+  totpAuthenticator?: Prisma.TotpAuthenticatorOrderByWithRelationInput
+  recoveryCodes?: Prisma.RecoveryCodeOrderByRelationAggregateInput
+  webauthnCredentials?: Prisma.WebAuthnCredentialOrderByRelationAggregateInput
   restrictions?: Prisma.RestrictionOrderByRelationAggregateInput
   subscription?: Prisma.SubscriptionOrderByWithRelationInput
   payments?: Prisma.PaymentIntentOrderByRelationAggregateInput
@@ -346,7 +350,9 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   verificationCodes?: Prisma.VerificationCodeListRelationFilter
   sessions?: Prisma.SessionListRelationFilter
   visitors?: Prisma.UserVisitorListRelationFilter
-  mfa?: Prisma.XOR<Prisma.MultiFactorAuthenticationNullableScalarRelationFilter, Prisma.MultiFactorAuthenticationWhereInput> | null
+  totpAuthenticator?: Prisma.XOR<Prisma.TotpAuthenticatorNullableScalarRelationFilter, Prisma.TotpAuthenticatorWhereInput> | null
+  recoveryCodes?: Prisma.RecoveryCodeListRelationFilter
+  webauthnCredentials?: Prisma.WebAuthnCredentialListRelationFilter
   restrictions?: Prisma.RestrictionListRelationFilter
   subscription?: Prisma.XOR<Prisma.SubscriptionNullableScalarRelationFilter, Prisma.SubscriptionWhereInput> | null
   payments?: Prisma.PaymentIntentListRelationFilter
@@ -415,7 +421,9 @@ export type UserCreateInput = {
   verificationCodes?: Prisma.VerificationCodeCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   visitors?: Prisma.UserVisitorCreateNestedManyWithoutUserInput
-  mfa?: Prisma.MultiFactorAuthenticationCreateNestedOneWithoutUserInput
+  totpAuthenticator?: Prisma.TotpAuthenticatorCreateNestedOneWithoutUserInput
+  recoveryCodes?: Prisma.RecoveryCodeCreateNestedManyWithoutUserInput
+  webauthnCredentials?: Prisma.WebAuthnCredentialCreateNestedManyWithoutUserInput
   restrictions?: Prisma.RestrictionCreateNestedManyWithoutUserInput
   subscription?: Prisma.SubscriptionCreateNestedOneWithoutUserInput
   payments?: Prisma.PaymentIntentCreateNestedManyWithoutUserInput
@@ -444,7 +452,9 @@ export type UserUncheckedCreateInput = {
   verificationCodes?: Prisma.VerificationCodeUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   visitors?: Prisma.UserVisitorUncheckedCreateNestedManyWithoutUserInput
-  mfa?: Prisma.MultiFactorAuthenticationUncheckedCreateNestedOneWithoutUserInput
+  totpAuthenticator?: Prisma.TotpAuthenticatorUncheckedCreateNestedOneWithoutUserInput
+  recoveryCodes?: Prisma.RecoveryCodeUncheckedCreateNestedManyWithoutUserInput
+  webauthnCredentials?: Prisma.WebAuthnCredentialUncheckedCreateNestedManyWithoutUserInput
   restrictions?: Prisma.RestrictionUncheckedCreateNestedManyWithoutUserInput
   subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutUserInput
   payments?: Prisma.PaymentIntentUncheckedCreateNestedManyWithoutUserInput
@@ -473,7 +483,9 @@ export type UserUpdateInput = {
   verificationCodes?: Prisma.VerificationCodeUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   visitors?: Prisma.UserVisitorUpdateManyWithoutUserNestedInput
-  mfa?: Prisma.MultiFactorAuthenticationUpdateOneWithoutUserNestedInput
+  totpAuthenticator?: Prisma.TotpAuthenticatorUpdateOneWithoutUserNestedInput
+  recoveryCodes?: Prisma.RecoveryCodeUpdateManyWithoutUserNestedInput
+  webauthnCredentials?: Prisma.WebAuthnCredentialUpdateManyWithoutUserNestedInput
   restrictions?: Prisma.RestrictionUpdateManyWithoutUserNestedInput
   subscription?: Prisma.SubscriptionUpdateOneWithoutUserNestedInput
   payments?: Prisma.PaymentIntentUpdateManyWithoutUserNestedInput
@@ -502,7 +514,9 @@ export type UserUncheckedUpdateInput = {
   verificationCodes?: Prisma.VerificationCodeUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   visitors?: Prisma.UserVisitorUncheckedUpdateManyWithoutUserNestedInput
-  mfa?: Prisma.MultiFactorAuthenticationUncheckedUpdateOneWithoutUserNestedInput
+  totpAuthenticator?: Prisma.TotpAuthenticatorUncheckedUpdateOneWithoutUserNestedInput
+  recoveryCodes?: Prisma.RecoveryCodeUncheckedUpdateManyWithoutUserNestedInput
+  webauthnCredentials?: Prisma.WebAuthnCredentialUncheckedUpdateManyWithoutUserNestedInput
   restrictions?: Prisma.RestrictionUncheckedUpdateManyWithoutUserNestedInput
   subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutUserNestedInput
   payments?: Prisma.PaymentIntentUncheckedUpdateManyWithoutUserNestedInput
@@ -677,18 +691,46 @@ export type UserUpdateOneRequiredWithoutCoursePurchasesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutCoursePurchasesInput, Prisma.UserUpdateWithoutCoursePurchasesInput>, Prisma.UserUncheckedUpdateWithoutCoursePurchasesInput>
 }
 
-export type UserCreateNestedOneWithoutMfaInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutMfaInput, Prisma.UserUncheckedCreateWithoutMfaInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutMfaInput
+export type UserCreateNestedOneWithoutTotpAuthenticatorInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutTotpAuthenticatorInput, Prisma.UserUncheckedCreateWithoutTotpAuthenticatorInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutTotpAuthenticatorInput
   connect?: Prisma.UserWhereUniqueInput
 }
 
-export type UserUpdateOneRequiredWithoutMfaNestedInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutMfaInput, Prisma.UserUncheckedCreateWithoutMfaInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutMfaInput
-  upsert?: Prisma.UserUpsertWithoutMfaInput
+export type UserUpdateOneRequiredWithoutTotpAuthenticatorNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutTotpAuthenticatorInput, Prisma.UserUncheckedCreateWithoutTotpAuthenticatorInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutTotpAuthenticatorInput
+  upsert?: Prisma.UserUpsertWithoutTotpAuthenticatorInput
   connect?: Prisma.UserWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutMfaInput, Prisma.UserUpdateWithoutMfaInput>, Prisma.UserUncheckedUpdateWithoutMfaInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutTotpAuthenticatorInput, Prisma.UserUpdateWithoutTotpAuthenticatorInput>, Prisma.UserUncheckedUpdateWithoutTotpAuthenticatorInput>
+}
+
+export type UserCreateNestedOneWithoutRecoveryCodesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutRecoveryCodesInput, Prisma.UserUncheckedCreateWithoutRecoveryCodesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutRecoveryCodesInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutRecoveryCodesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutRecoveryCodesInput, Prisma.UserUncheckedCreateWithoutRecoveryCodesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutRecoveryCodesInput
+  upsert?: Prisma.UserUpsertWithoutRecoveryCodesInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutRecoveryCodesInput, Prisma.UserUpdateWithoutRecoveryCodesInput>, Prisma.UserUncheckedUpdateWithoutRecoveryCodesInput>
+}
+
+export type UserCreateNestedOneWithoutWebauthnCredentialsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutWebauthnCredentialsInput, Prisma.UserUncheckedCreateWithoutWebauthnCredentialsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutWebauthnCredentialsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutWebauthnCredentialsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutWebauthnCredentialsInput, Prisma.UserUncheckedCreateWithoutWebauthnCredentialsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutWebauthnCredentialsInput
+  upsert?: Prisma.UserUpsertWithoutWebauthnCredentialsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutWebauthnCredentialsInput, Prisma.UserUpdateWithoutWebauthnCredentialsInput>, Prisma.UserUncheckedUpdateWithoutWebauthnCredentialsInput>
 }
 
 export type UserCreateNestedOneWithoutRestrictionsInput = {
@@ -833,7 +875,9 @@ export type UserCreateWithoutPasswordCredentialInput = {
   verificationCodes?: Prisma.VerificationCodeCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   visitors?: Prisma.UserVisitorCreateNestedManyWithoutUserInput
-  mfa?: Prisma.MultiFactorAuthenticationCreateNestedOneWithoutUserInput
+  totpAuthenticator?: Prisma.TotpAuthenticatorCreateNestedOneWithoutUserInput
+  recoveryCodes?: Prisma.RecoveryCodeCreateNestedManyWithoutUserInput
+  webauthnCredentials?: Prisma.WebAuthnCredentialCreateNestedManyWithoutUserInput
   restrictions?: Prisma.RestrictionCreateNestedManyWithoutUserInput
   subscription?: Prisma.SubscriptionCreateNestedOneWithoutUserInput
   payments?: Prisma.PaymentIntentCreateNestedManyWithoutUserInput
@@ -861,7 +905,9 @@ export type UserUncheckedCreateWithoutPasswordCredentialInput = {
   verificationCodes?: Prisma.VerificationCodeUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   visitors?: Prisma.UserVisitorUncheckedCreateNestedManyWithoutUserInput
-  mfa?: Prisma.MultiFactorAuthenticationUncheckedCreateNestedOneWithoutUserInput
+  totpAuthenticator?: Prisma.TotpAuthenticatorUncheckedCreateNestedOneWithoutUserInput
+  recoveryCodes?: Prisma.RecoveryCodeUncheckedCreateNestedManyWithoutUserInput
+  webauthnCredentials?: Prisma.WebAuthnCredentialUncheckedCreateNestedManyWithoutUserInput
   restrictions?: Prisma.RestrictionUncheckedCreateNestedManyWithoutUserInput
   subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutUserInput
   payments?: Prisma.PaymentIntentUncheckedCreateNestedManyWithoutUserInput
@@ -905,7 +951,9 @@ export type UserUpdateWithoutPasswordCredentialInput = {
   verificationCodes?: Prisma.VerificationCodeUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   visitors?: Prisma.UserVisitorUpdateManyWithoutUserNestedInput
-  mfa?: Prisma.MultiFactorAuthenticationUpdateOneWithoutUserNestedInput
+  totpAuthenticator?: Prisma.TotpAuthenticatorUpdateOneWithoutUserNestedInput
+  recoveryCodes?: Prisma.RecoveryCodeUpdateManyWithoutUserNestedInput
+  webauthnCredentials?: Prisma.WebAuthnCredentialUpdateManyWithoutUserNestedInput
   restrictions?: Prisma.RestrictionUpdateManyWithoutUserNestedInput
   subscription?: Prisma.SubscriptionUpdateOneWithoutUserNestedInput
   payments?: Prisma.PaymentIntentUpdateManyWithoutUserNestedInput
@@ -933,7 +981,9 @@ export type UserUncheckedUpdateWithoutPasswordCredentialInput = {
   verificationCodes?: Prisma.VerificationCodeUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   visitors?: Prisma.UserVisitorUncheckedUpdateManyWithoutUserNestedInput
-  mfa?: Prisma.MultiFactorAuthenticationUncheckedUpdateOneWithoutUserNestedInput
+  totpAuthenticator?: Prisma.TotpAuthenticatorUncheckedUpdateOneWithoutUserNestedInput
+  recoveryCodes?: Prisma.RecoveryCodeUncheckedUpdateManyWithoutUserNestedInput
+  webauthnCredentials?: Prisma.WebAuthnCredentialUncheckedUpdateManyWithoutUserNestedInput
   restrictions?: Prisma.RestrictionUncheckedUpdateManyWithoutUserNestedInput
   subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutUserNestedInput
   payments?: Prisma.PaymentIntentUncheckedUpdateManyWithoutUserNestedInput
@@ -961,7 +1011,9 @@ export type UserCreateWithoutOauthAccountsInput = {
   verificationCodes?: Prisma.VerificationCodeCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   visitors?: Prisma.UserVisitorCreateNestedManyWithoutUserInput
-  mfa?: Prisma.MultiFactorAuthenticationCreateNestedOneWithoutUserInput
+  totpAuthenticator?: Prisma.TotpAuthenticatorCreateNestedOneWithoutUserInput
+  recoveryCodes?: Prisma.RecoveryCodeCreateNestedManyWithoutUserInput
+  webauthnCredentials?: Prisma.WebAuthnCredentialCreateNestedManyWithoutUserInput
   restrictions?: Prisma.RestrictionCreateNestedManyWithoutUserInput
   subscription?: Prisma.SubscriptionCreateNestedOneWithoutUserInput
   payments?: Prisma.PaymentIntentCreateNestedManyWithoutUserInput
@@ -989,7 +1041,9 @@ export type UserUncheckedCreateWithoutOauthAccountsInput = {
   verificationCodes?: Prisma.VerificationCodeUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   visitors?: Prisma.UserVisitorUncheckedCreateNestedManyWithoutUserInput
-  mfa?: Prisma.MultiFactorAuthenticationUncheckedCreateNestedOneWithoutUserInput
+  totpAuthenticator?: Prisma.TotpAuthenticatorUncheckedCreateNestedOneWithoutUserInput
+  recoveryCodes?: Prisma.RecoveryCodeUncheckedCreateNestedManyWithoutUserInput
+  webauthnCredentials?: Prisma.WebAuthnCredentialUncheckedCreateNestedManyWithoutUserInput
   restrictions?: Prisma.RestrictionUncheckedCreateNestedManyWithoutUserInput
   subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutUserInput
   payments?: Prisma.PaymentIntentUncheckedCreateNestedManyWithoutUserInput
@@ -1033,7 +1087,9 @@ export type UserUpdateWithoutOauthAccountsInput = {
   verificationCodes?: Prisma.VerificationCodeUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   visitors?: Prisma.UserVisitorUpdateManyWithoutUserNestedInput
-  mfa?: Prisma.MultiFactorAuthenticationUpdateOneWithoutUserNestedInput
+  totpAuthenticator?: Prisma.TotpAuthenticatorUpdateOneWithoutUserNestedInput
+  recoveryCodes?: Prisma.RecoveryCodeUpdateManyWithoutUserNestedInput
+  webauthnCredentials?: Prisma.WebAuthnCredentialUpdateManyWithoutUserNestedInput
   restrictions?: Prisma.RestrictionUpdateManyWithoutUserNestedInput
   subscription?: Prisma.SubscriptionUpdateOneWithoutUserNestedInput
   payments?: Prisma.PaymentIntentUpdateManyWithoutUserNestedInput
@@ -1061,7 +1117,9 @@ export type UserUncheckedUpdateWithoutOauthAccountsInput = {
   verificationCodes?: Prisma.VerificationCodeUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   visitors?: Prisma.UserVisitorUncheckedUpdateManyWithoutUserNestedInput
-  mfa?: Prisma.MultiFactorAuthenticationUncheckedUpdateOneWithoutUserNestedInput
+  totpAuthenticator?: Prisma.TotpAuthenticatorUncheckedUpdateOneWithoutUserNestedInput
+  recoveryCodes?: Prisma.RecoveryCodeUncheckedUpdateManyWithoutUserNestedInput
+  webauthnCredentials?: Prisma.WebAuthnCredentialUncheckedUpdateManyWithoutUserNestedInput
   restrictions?: Prisma.RestrictionUncheckedUpdateManyWithoutUserNestedInput
   subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutUserNestedInput
   payments?: Prisma.PaymentIntentUncheckedUpdateManyWithoutUserNestedInput
@@ -1089,7 +1147,9 @@ export type UserCreateWithoutVerificationCodesInput = {
   oauthAccounts?: Prisma.OAuthAccountCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   visitors?: Prisma.UserVisitorCreateNestedManyWithoutUserInput
-  mfa?: Prisma.MultiFactorAuthenticationCreateNestedOneWithoutUserInput
+  totpAuthenticator?: Prisma.TotpAuthenticatorCreateNestedOneWithoutUserInput
+  recoveryCodes?: Prisma.RecoveryCodeCreateNestedManyWithoutUserInput
+  webauthnCredentials?: Prisma.WebAuthnCredentialCreateNestedManyWithoutUserInput
   restrictions?: Prisma.RestrictionCreateNestedManyWithoutUserInput
   subscription?: Prisma.SubscriptionCreateNestedOneWithoutUserInput
   payments?: Prisma.PaymentIntentCreateNestedManyWithoutUserInput
@@ -1117,7 +1177,9 @@ export type UserUncheckedCreateWithoutVerificationCodesInput = {
   oauthAccounts?: Prisma.OAuthAccountUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   visitors?: Prisma.UserVisitorUncheckedCreateNestedManyWithoutUserInput
-  mfa?: Prisma.MultiFactorAuthenticationUncheckedCreateNestedOneWithoutUserInput
+  totpAuthenticator?: Prisma.TotpAuthenticatorUncheckedCreateNestedOneWithoutUserInput
+  recoveryCodes?: Prisma.RecoveryCodeUncheckedCreateNestedManyWithoutUserInput
+  webauthnCredentials?: Prisma.WebAuthnCredentialUncheckedCreateNestedManyWithoutUserInput
   restrictions?: Prisma.RestrictionUncheckedCreateNestedManyWithoutUserInput
   subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutUserInput
   payments?: Prisma.PaymentIntentUncheckedCreateNestedManyWithoutUserInput
@@ -1161,7 +1223,9 @@ export type UserUpdateWithoutVerificationCodesInput = {
   oauthAccounts?: Prisma.OAuthAccountUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   visitors?: Prisma.UserVisitorUpdateManyWithoutUserNestedInput
-  mfa?: Prisma.MultiFactorAuthenticationUpdateOneWithoutUserNestedInput
+  totpAuthenticator?: Prisma.TotpAuthenticatorUpdateOneWithoutUserNestedInput
+  recoveryCodes?: Prisma.RecoveryCodeUpdateManyWithoutUserNestedInput
+  webauthnCredentials?: Prisma.WebAuthnCredentialUpdateManyWithoutUserNestedInput
   restrictions?: Prisma.RestrictionUpdateManyWithoutUserNestedInput
   subscription?: Prisma.SubscriptionUpdateOneWithoutUserNestedInput
   payments?: Prisma.PaymentIntentUpdateManyWithoutUserNestedInput
@@ -1189,7 +1253,9 @@ export type UserUncheckedUpdateWithoutVerificationCodesInput = {
   oauthAccounts?: Prisma.OAuthAccountUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   visitors?: Prisma.UserVisitorUncheckedUpdateManyWithoutUserNestedInput
-  mfa?: Prisma.MultiFactorAuthenticationUncheckedUpdateOneWithoutUserNestedInput
+  totpAuthenticator?: Prisma.TotpAuthenticatorUncheckedUpdateOneWithoutUserNestedInput
+  recoveryCodes?: Prisma.RecoveryCodeUncheckedUpdateManyWithoutUserNestedInput
+  webauthnCredentials?: Prisma.WebAuthnCredentialUncheckedUpdateManyWithoutUserNestedInput
   restrictions?: Prisma.RestrictionUncheckedUpdateManyWithoutUserNestedInput
   subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutUserNestedInput
   payments?: Prisma.PaymentIntentUncheckedUpdateManyWithoutUserNestedInput
@@ -1218,7 +1284,9 @@ export type UserCreateWithoutCoursePurchasesInput = {
   verificationCodes?: Prisma.VerificationCodeCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   visitors?: Prisma.UserVisitorCreateNestedManyWithoutUserInput
-  mfa?: Prisma.MultiFactorAuthenticationCreateNestedOneWithoutUserInput
+  totpAuthenticator?: Prisma.TotpAuthenticatorCreateNestedOneWithoutUserInput
+  recoveryCodes?: Prisma.RecoveryCodeCreateNestedManyWithoutUserInput
+  webauthnCredentials?: Prisma.WebAuthnCredentialCreateNestedManyWithoutUserInput
   restrictions?: Prisma.RestrictionCreateNestedManyWithoutUserInput
   subscription?: Prisma.SubscriptionCreateNestedOneWithoutUserInput
   payments?: Prisma.PaymentIntentCreateNestedManyWithoutUserInput
@@ -1246,7 +1314,9 @@ export type UserUncheckedCreateWithoutCoursePurchasesInput = {
   verificationCodes?: Prisma.VerificationCodeUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   visitors?: Prisma.UserVisitorUncheckedCreateNestedManyWithoutUserInput
-  mfa?: Prisma.MultiFactorAuthenticationUncheckedCreateNestedOneWithoutUserInput
+  totpAuthenticator?: Prisma.TotpAuthenticatorUncheckedCreateNestedOneWithoutUserInput
+  recoveryCodes?: Prisma.RecoveryCodeUncheckedCreateNestedManyWithoutUserInput
+  webauthnCredentials?: Prisma.WebAuthnCredentialUncheckedCreateNestedManyWithoutUserInput
   restrictions?: Prisma.RestrictionUncheckedCreateNestedManyWithoutUserInput
   subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutUserInput
   payments?: Prisma.PaymentIntentUncheckedCreateNestedManyWithoutUserInput
@@ -1290,7 +1360,9 @@ export type UserUpdateWithoutCoursePurchasesInput = {
   verificationCodes?: Prisma.VerificationCodeUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   visitors?: Prisma.UserVisitorUpdateManyWithoutUserNestedInput
-  mfa?: Prisma.MultiFactorAuthenticationUpdateOneWithoutUserNestedInput
+  totpAuthenticator?: Prisma.TotpAuthenticatorUpdateOneWithoutUserNestedInput
+  recoveryCodes?: Prisma.RecoveryCodeUpdateManyWithoutUserNestedInput
+  webauthnCredentials?: Prisma.WebAuthnCredentialUpdateManyWithoutUserNestedInput
   restrictions?: Prisma.RestrictionUpdateManyWithoutUserNestedInput
   subscription?: Prisma.SubscriptionUpdateOneWithoutUserNestedInput
   payments?: Prisma.PaymentIntentUpdateManyWithoutUserNestedInput
@@ -1318,7 +1390,9 @@ export type UserUncheckedUpdateWithoutCoursePurchasesInput = {
   verificationCodes?: Prisma.VerificationCodeUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   visitors?: Prisma.UserVisitorUncheckedUpdateManyWithoutUserNestedInput
-  mfa?: Prisma.MultiFactorAuthenticationUncheckedUpdateOneWithoutUserNestedInput
+  totpAuthenticator?: Prisma.TotpAuthenticatorUncheckedUpdateOneWithoutUserNestedInput
+  recoveryCodes?: Prisma.RecoveryCodeUncheckedUpdateManyWithoutUserNestedInput
+  webauthnCredentials?: Prisma.WebAuthnCredentialUncheckedUpdateManyWithoutUserNestedInput
   restrictions?: Prisma.RestrictionUncheckedUpdateManyWithoutUserNestedInput
   subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutUserNestedInput
   payments?: Prisma.PaymentIntentUncheckedUpdateManyWithoutUserNestedInput
@@ -1327,7 +1401,7 @@ export type UserUncheckedUpdateWithoutCoursePurchasesInput = {
   downloadLogs?: Prisma.DownloadLogUncheckedUpdateManyWithoutUserNestedInput
 }
 
-export type UserCreateWithoutMfaInput = {
+export type UserCreateWithoutTotpAuthenticatorInput = {
   id?: string
   emailCipher?: runtime.Bytes | null
   emailHash?: runtime.Bytes | null
@@ -1346,6 +1420,8 @@ export type UserCreateWithoutMfaInput = {
   verificationCodes?: Prisma.VerificationCodeCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   visitors?: Prisma.UserVisitorCreateNestedManyWithoutUserInput
+  recoveryCodes?: Prisma.RecoveryCodeCreateNestedManyWithoutUserInput
+  webauthnCredentials?: Prisma.WebAuthnCredentialCreateNestedManyWithoutUserInput
   restrictions?: Prisma.RestrictionCreateNestedManyWithoutUserInput
   subscription?: Prisma.SubscriptionCreateNestedOneWithoutUserInput
   payments?: Prisma.PaymentIntentCreateNestedManyWithoutUserInput
@@ -1355,7 +1431,7 @@ export type UserCreateWithoutMfaInput = {
   downloadLogs?: Prisma.DownloadLogCreateNestedManyWithoutUserInput
 }
 
-export type UserUncheckedCreateWithoutMfaInput = {
+export type UserUncheckedCreateWithoutTotpAuthenticatorInput = {
   id?: string
   emailCipher?: runtime.Bytes | null
   emailHash?: runtime.Bytes | null
@@ -1374,6 +1450,8 @@ export type UserUncheckedCreateWithoutMfaInput = {
   verificationCodes?: Prisma.VerificationCodeUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   visitors?: Prisma.UserVisitorUncheckedCreateNestedManyWithoutUserInput
+  recoveryCodes?: Prisma.RecoveryCodeUncheckedCreateNestedManyWithoutUserInput
+  webauthnCredentials?: Prisma.WebAuthnCredentialUncheckedCreateNestedManyWithoutUserInput
   restrictions?: Prisma.RestrictionUncheckedCreateNestedManyWithoutUserInput
   subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutUserInput
   payments?: Prisma.PaymentIntentUncheckedCreateNestedManyWithoutUserInput
@@ -1383,23 +1461,23 @@ export type UserUncheckedCreateWithoutMfaInput = {
   downloadLogs?: Prisma.DownloadLogUncheckedCreateNestedManyWithoutUserInput
 }
 
-export type UserCreateOrConnectWithoutMfaInput = {
+export type UserCreateOrConnectWithoutTotpAuthenticatorInput = {
   where: Prisma.UserWhereUniqueInput
-  create: Prisma.XOR<Prisma.UserCreateWithoutMfaInput, Prisma.UserUncheckedCreateWithoutMfaInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutTotpAuthenticatorInput, Prisma.UserUncheckedCreateWithoutTotpAuthenticatorInput>
 }
 
-export type UserUpsertWithoutMfaInput = {
-  update: Prisma.XOR<Prisma.UserUpdateWithoutMfaInput, Prisma.UserUncheckedUpdateWithoutMfaInput>
-  create: Prisma.XOR<Prisma.UserCreateWithoutMfaInput, Prisma.UserUncheckedCreateWithoutMfaInput>
+export type UserUpsertWithoutTotpAuthenticatorInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutTotpAuthenticatorInput, Prisma.UserUncheckedUpdateWithoutTotpAuthenticatorInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutTotpAuthenticatorInput, Prisma.UserUncheckedCreateWithoutTotpAuthenticatorInput>
   where?: Prisma.UserWhereInput
 }
 
-export type UserUpdateToOneWithWhereWithoutMfaInput = {
+export type UserUpdateToOneWithWhereWithoutTotpAuthenticatorInput = {
   where?: Prisma.UserWhereInput
-  data: Prisma.XOR<Prisma.UserUpdateWithoutMfaInput, Prisma.UserUncheckedUpdateWithoutMfaInput>
+  data: Prisma.XOR<Prisma.UserUpdateWithoutTotpAuthenticatorInput, Prisma.UserUncheckedUpdateWithoutTotpAuthenticatorInput>
 }
 
-export type UserUpdateWithoutMfaInput = {
+export type UserUpdateWithoutTotpAuthenticatorInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   emailCipher?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   emailHash?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
@@ -1418,6 +1496,8 @@ export type UserUpdateWithoutMfaInput = {
   verificationCodes?: Prisma.VerificationCodeUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   visitors?: Prisma.UserVisitorUpdateManyWithoutUserNestedInput
+  recoveryCodes?: Prisma.RecoveryCodeUpdateManyWithoutUserNestedInput
+  webauthnCredentials?: Prisma.WebAuthnCredentialUpdateManyWithoutUserNestedInput
   restrictions?: Prisma.RestrictionUpdateManyWithoutUserNestedInput
   subscription?: Prisma.SubscriptionUpdateOneWithoutUserNestedInput
   payments?: Prisma.PaymentIntentUpdateManyWithoutUserNestedInput
@@ -1427,7 +1507,7 @@ export type UserUpdateWithoutMfaInput = {
   downloadLogs?: Prisma.DownloadLogUpdateManyWithoutUserNestedInput
 }
 
-export type UserUncheckedUpdateWithoutMfaInput = {
+export type UserUncheckedUpdateWithoutTotpAuthenticatorInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   emailCipher?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
   emailHash?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
@@ -1446,6 +1526,280 @@ export type UserUncheckedUpdateWithoutMfaInput = {
   verificationCodes?: Prisma.VerificationCodeUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   visitors?: Prisma.UserVisitorUncheckedUpdateManyWithoutUserNestedInput
+  recoveryCodes?: Prisma.RecoveryCodeUncheckedUpdateManyWithoutUserNestedInput
+  webauthnCredentials?: Prisma.WebAuthnCredentialUncheckedUpdateManyWithoutUserNestedInput
+  restrictions?: Prisma.RestrictionUncheckedUpdateManyWithoutUserNestedInput
+  subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutUserNestedInput
+  payments?: Prisma.PaymentIntentUncheckedUpdateManyWithoutUserNestedInput
+  userPaymentMethods?: Prisma.UserPaymentMethodUncheckedUpdateManyWithoutUserNestedInput
+  coursePurchases?: Prisma.CoursePurchaseUncheckedUpdateManyWithoutUserNestedInput
+  userProgresses?: Prisma.UserProgressUncheckedUpdateManyWithoutUserNestedInput
+  downloadLogs?: Prisma.DownloadLogUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutRecoveryCodesInput = {
+  id?: string
+  emailCipher?: runtime.Bytes | null
+  emailHash?: runtime.Bytes | null
+  username: string
+  displayName: string
+  avatar?: string | null
+  status?: $Enums.UserStatus
+  emailVerifiedAt?: Date | string | null
+  lastLoginAt?: Date | string | null
+  role?: $Enums.UserRole
+  points?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  passwordCredential?: Prisma.PasswordCredentialCreateNestedOneWithoutUserInput
+  oauthAccounts?: Prisma.OAuthAccountCreateNestedManyWithoutUserInput
+  verificationCodes?: Prisma.VerificationCodeCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  visitors?: Prisma.UserVisitorCreateNestedManyWithoutUserInput
+  totpAuthenticator?: Prisma.TotpAuthenticatorCreateNestedOneWithoutUserInput
+  webauthnCredentials?: Prisma.WebAuthnCredentialCreateNestedManyWithoutUserInput
+  restrictions?: Prisma.RestrictionCreateNestedManyWithoutUserInput
+  subscription?: Prisma.SubscriptionCreateNestedOneWithoutUserInput
+  payments?: Prisma.PaymentIntentCreateNestedManyWithoutUserInput
+  userPaymentMethods?: Prisma.UserPaymentMethodCreateNestedManyWithoutUserInput
+  coursePurchases?: Prisma.CoursePurchaseCreateNestedManyWithoutUserInput
+  userProgresses?: Prisma.UserProgressCreateNestedManyWithoutUserInput
+  downloadLogs?: Prisma.DownloadLogCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutRecoveryCodesInput = {
+  id?: string
+  emailCipher?: runtime.Bytes | null
+  emailHash?: runtime.Bytes | null
+  username: string
+  displayName: string
+  avatar?: string | null
+  status?: $Enums.UserStatus
+  emailVerifiedAt?: Date | string | null
+  lastLoginAt?: Date | string | null
+  role?: $Enums.UserRole
+  points?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  passwordCredential?: Prisma.PasswordCredentialUncheckedCreateNestedOneWithoutUserInput
+  oauthAccounts?: Prisma.OAuthAccountUncheckedCreateNestedManyWithoutUserInput
+  verificationCodes?: Prisma.VerificationCodeUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  visitors?: Prisma.UserVisitorUncheckedCreateNestedManyWithoutUserInput
+  totpAuthenticator?: Prisma.TotpAuthenticatorUncheckedCreateNestedOneWithoutUserInput
+  webauthnCredentials?: Prisma.WebAuthnCredentialUncheckedCreateNestedManyWithoutUserInput
+  restrictions?: Prisma.RestrictionUncheckedCreateNestedManyWithoutUserInput
+  subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutUserInput
+  payments?: Prisma.PaymentIntentUncheckedCreateNestedManyWithoutUserInput
+  userPaymentMethods?: Prisma.UserPaymentMethodUncheckedCreateNestedManyWithoutUserInput
+  coursePurchases?: Prisma.CoursePurchaseUncheckedCreateNestedManyWithoutUserInput
+  userProgresses?: Prisma.UserProgressUncheckedCreateNestedManyWithoutUserInput
+  downloadLogs?: Prisma.DownloadLogUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutRecoveryCodesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutRecoveryCodesInput, Prisma.UserUncheckedCreateWithoutRecoveryCodesInput>
+}
+
+export type UserUpsertWithoutRecoveryCodesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutRecoveryCodesInput, Prisma.UserUncheckedUpdateWithoutRecoveryCodesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutRecoveryCodesInput, Prisma.UserUncheckedCreateWithoutRecoveryCodesInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutRecoveryCodesInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutRecoveryCodesInput, Prisma.UserUncheckedUpdateWithoutRecoveryCodesInput>
+}
+
+export type UserUpdateWithoutRecoveryCodesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  emailCipher?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
+  emailHash?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  points?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  passwordCredential?: Prisma.PasswordCredentialUpdateOneWithoutUserNestedInput
+  oauthAccounts?: Prisma.OAuthAccountUpdateManyWithoutUserNestedInput
+  verificationCodes?: Prisma.VerificationCodeUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  visitors?: Prisma.UserVisitorUpdateManyWithoutUserNestedInput
+  totpAuthenticator?: Prisma.TotpAuthenticatorUpdateOneWithoutUserNestedInput
+  webauthnCredentials?: Prisma.WebAuthnCredentialUpdateManyWithoutUserNestedInput
+  restrictions?: Prisma.RestrictionUpdateManyWithoutUserNestedInput
+  subscription?: Prisma.SubscriptionUpdateOneWithoutUserNestedInput
+  payments?: Prisma.PaymentIntentUpdateManyWithoutUserNestedInput
+  userPaymentMethods?: Prisma.UserPaymentMethodUpdateManyWithoutUserNestedInput
+  coursePurchases?: Prisma.CoursePurchaseUpdateManyWithoutUserNestedInput
+  userProgresses?: Prisma.UserProgressUpdateManyWithoutUserNestedInput
+  downloadLogs?: Prisma.DownloadLogUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutRecoveryCodesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  emailCipher?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
+  emailHash?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  points?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  passwordCredential?: Prisma.PasswordCredentialUncheckedUpdateOneWithoutUserNestedInput
+  oauthAccounts?: Prisma.OAuthAccountUncheckedUpdateManyWithoutUserNestedInput
+  verificationCodes?: Prisma.VerificationCodeUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  visitors?: Prisma.UserVisitorUncheckedUpdateManyWithoutUserNestedInput
+  totpAuthenticator?: Prisma.TotpAuthenticatorUncheckedUpdateOneWithoutUserNestedInput
+  webauthnCredentials?: Prisma.WebAuthnCredentialUncheckedUpdateManyWithoutUserNestedInput
+  restrictions?: Prisma.RestrictionUncheckedUpdateManyWithoutUserNestedInput
+  subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutUserNestedInput
+  payments?: Prisma.PaymentIntentUncheckedUpdateManyWithoutUserNestedInput
+  userPaymentMethods?: Prisma.UserPaymentMethodUncheckedUpdateManyWithoutUserNestedInput
+  coursePurchases?: Prisma.CoursePurchaseUncheckedUpdateManyWithoutUserNestedInput
+  userProgresses?: Prisma.UserProgressUncheckedUpdateManyWithoutUserNestedInput
+  downloadLogs?: Prisma.DownloadLogUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutWebauthnCredentialsInput = {
+  id?: string
+  emailCipher?: runtime.Bytes | null
+  emailHash?: runtime.Bytes | null
+  username: string
+  displayName: string
+  avatar?: string | null
+  status?: $Enums.UserStatus
+  emailVerifiedAt?: Date | string | null
+  lastLoginAt?: Date | string | null
+  role?: $Enums.UserRole
+  points?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  passwordCredential?: Prisma.PasswordCredentialCreateNestedOneWithoutUserInput
+  oauthAccounts?: Prisma.OAuthAccountCreateNestedManyWithoutUserInput
+  verificationCodes?: Prisma.VerificationCodeCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  visitors?: Prisma.UserVisitorCreateNestedManyWithoutUserInput
+  totpAuthenticator?: Prisma.TotpAuthenticatorCreateNestedOneWithoutUserInput
+  recoveryCodes?: Prisma.RecoveryCodeCreateNestedManyWithoutUserInput
+  restrictions?: Prisma.RestrictionCreateNestedManyWithoutUserInput
+  subscription?: Prisma.SubscriptionCreateNestedOneWithoutUserInput
+  payments?: Prisma.PaymentIntentCreateNestedManyWithoutUserInput
+  userPaymentMethods?: Prisma.UserPaymentMethodCreateNestedManyWithoutUserInput
+  coursePurchases?: Prisma.CoursePurchaseCreateNestedManyWithoutUserInput
+  userProgresses?: Prisma.UserProgressCreateNestedManyWithoutUserInput
+  downloadLogs?: Prisma.DownloadLogCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutWebauthnCredentialsInput = {
+  id?: string
+  emailCipher?: runtime.Bytes | null
+  emailHash?: runtime.Bytes | null
+  username: string
+  displayName: string
+  avatar?: string | null
+  status?: $Enums.UserStatus
+  emailVerifiedAt?: Date | string | null
+  lastLoginAt?: Date | string | null
+  role?: $Enums.UserRole
+  points?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  passwordCredential?: Prisma.PasswordCredentialUncheckedCreateNestedOneWithoutUserInput
+  oauthAccounts?: Prisma.OAuthAccountUncheckedCreateNestedManyWithoutUserInput
+  verificationCodes?: Prisma.VerificationCodeUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  visitors?: Prisma.UserVisitorUncheckedCreateNestedManyWithoutUserInput
+  totpAuthenticator?: Prisma.TotpAuthenticatorUncheckedCreateNestedOneWithoutUserInput
+  recoveryCodes?: Prisma.RecoveryCodeUncheckedCreateNestedManyWithoutUserInput
+  restrictions?: Prisma.RestrictionUncheckedCreateNestedManyWithoutUserInput
+  subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutUserInput
+  payments?: Prisma.PaymentIntentUncheckedCreateNestedManyWithoutUserInput
+  userPaymentMethods?: Prisma.UserPaymentMethodUncheckedCreateNestedManyWithoutUserInput
+  coursePurchases?: Prisma.CoursePurchaseUncheckedCreateNestedManyWithoutUserInput
+  userProgresses?: Prisma.UserProgressUncheckedCreateNestedManyWithoutUserInput
+  downloadLogs?: Prisma.DownloadLogUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutWebauthnCredentialsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutWebauthnCredentialsInput, Prisma.UserUncheckedCreateWithoutWebauthnCredentialsInput>
+}
+
+export type UserUpsertWithoutWebauthnCredentialsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutWebauthnCredentialsInput, Prisma.UserUncheckedUpdateWithoutWebauthnCredentialsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutWebauthnCredentialsInput, Prisma.UserUncheckedCreateWithoutWebauthnCredentialsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutWebauthnCredentialsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutWebauthnCredentialsInput, Prisma.UserUncheckedUpdateWithoutWebauthnCredentialsInput>
+}
+
+export type UserUpdateWithoutWebauthnCredentialsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  emailCipher?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
+  emailHash?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  points?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  passwordCredential?: Prisma.PasswordCredentialUpdateOneWithoutUserNestedInput
+  oauthAccounts?: Prisma.OAuthAccountUpdateManyWithoutUserNestedInput
+  verificationCodes?: Prisma.VerificationCodeUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  visitors?: Prisma.UserVisitorUpdateManyWithoutUserNestedInput
+  totpAuthenticator?: Prisma.TotpAuthenticatorUpdateOneWithoutUserNestedInput
+  recoveryCodes?: Prisma.RecoveryCodeUpdateManyWithoutUserNestedInput
+  restrictions?: Prisma.RestrictionUpdateManyWithoutUserNestedInput
+  subscription?: Prisma.SubscriptionUpdateOneWithoutUserNestedInput
+  payments?: Prisma.PaymentIntentUpdateManyWithoutUserNestedInput
+  userPaymentMethods?: Prisma.UserPaymentMethodUpdateManyWithoutUserNestedInput
+  coursePurchases?: Prisma.CoursePurchaseUpdateManyWithoutUserNestedInput
+  userProgresses?: Prisma.UserProgressUpdateManyWithoutUserNestedInput
+  downloadLogs?: Prisma.DownloadLogUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutWebauthnCredentialsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  emailCipher?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
+  emailHash?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+  emailVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  points?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  passwordCredential?: Prisma.PasswordCredentialUncheckedUpdateOneWithoutUserNestedInput
+  oauthAccounts?: Prisma.OAuthAccountUncheckedUpdateManyWithoutUserNestedInput
+  verificationCodes?: Prisma.VerificationCodeUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  visitors?: Prisma.UserVisitorUncheckedUpdateManyWithoutUserNestedInput
+  totpAuthenticator?: Prisma.TotpAuthenticatorUncheckedUpdateOneWithoutUserNestedInput
+  recoveryCodes?: Prisma.RecoveryCodeUncheckedUpdateManyWithoutUserNestedInput
   restrictions?: Prisma.RestrictionUncheckedUpdateManyWithoutUserNestedInput
   subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutUserNestedInput
   payments?: Prisma.PaymentIntentUncheckedUpdateManyWithoutUserNestedInput
@@ -1474,7 +1828,9 @@ export type UserCreateWithoutRestrictionsInput = {
   verificationCodes?: Prisma.VerificationCodeCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   visitors?: Prisma.UserVisitorCreateNestedManyWithoutUserInput
-  mfa?: Prisma.MultiFactorAuthenticationCreateNestedOneWithoutUserInput
+  totpAuthenticator?: Prisma.TotpAuthenticatorCreateNestedOneWithoutUserInput
+  recoveryCodes?: Prisma.RecoveryCodeCreateNestedManyWithoutUserInput
+  webauthnCredentials?: Prisma.WebAuthnCredentialCreateNestedManyWithoutUserInput
   subscription?: Prisma.SubscriptionCreateNestedOneWithoutUserInput
   payments?: Prisma.PaymentIntentCreateNestedManyWithoutUserInput
   userPaymentMethods?: Prisma.UserPaymentMethodCreateNestedManyWithoutUserInput
@@ -1502,7 +1858,9 @@ export type UserUncheckedCreateWithoutRestrictionsInput = {
   verificationCodes?: Prisma.VerificationCodeUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   visitors?: Prisma.UserVisitorUncheckedCreateNestedManyWithoutUserInput
-  mfa?: Prisma.MultiFactorAuthenticationUncheckedCreateNestedOneWithoutUserInput
+  totpAuthenticator?: Prisma.TotpAuthenticatorUncheckedCreateNestedOneWithoutUserInput
+  recoveryCodes?: Prisma.RecoveryCodeUncheckedCreateNestedManyWithoutUserInput
+  webauthnCredentials?: Prisma.WebAuthnCredentialUncheckedCreateNestedManyWithoutUserInput
   subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutUserInput
   payments?: Prisma.PaymentIntentUncheckedCreateNestedManyWithoutUserInput
   userPaymentMethods?: Prisma.UserPaymentMethodUncheckedCreateNestedManyWithoutUserInput
@@ -1546,7 +1904,9 @@ export type UserUpdateWithoutRestrictionsInput = {
   verificationCodes?: Prisma.VerificationCodeUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   visitors?: Prisma.UserVisitorUpdateManyWithoutUserNestedInput
-  mfa?: Prisma.MultiFactorAuthenticationUpdateOneWithoutUserNestedInput
+  totpAuthenticator?: Prisma.TotpAuthenticatorUpdateOneWithoutUserNestedInput
+  recoveryCodes?: Prisma.RecoveryCodeUpdateManyWithoutUserNestedInput
+  webauthnCredentials?: Prisma.WebAuthnCredentialUpdateManyWithoutUserNestedInput
   subscription?: Prisma.SubscriptionUpdateOneWithoutUserNestedInput
   payments?: Prisma.PaymentIntentUpdateManyWithoutUserNestedInput
   userPaymentMethods?: Prisma.UserPaymentMethodUpdateManyWithoutUserNestedInput
@@ -1574,7 +1934,9 @@ export type UserUncheckedUpdateWithoutRestrictionsInput = {
   verificationCodes?: Prisma.VerificationCodeUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   visitors?: Prisma.UserVisitorUncheckedUpdateManyWithoutUserNestedInput
-  mfa?: Prisma.MultiFactorAuthenticationUncheckedUpdateOneWithoutUserNestedInput
+  totpAuthenticator?: Prisma.TotpAuthenticatorUncheckedUpdateOneWithoutUserNestedInput
+  recoveryCodes?: Prisma.RecoveryCodeUncheckedUpdateManyWithoutUserNestedInput
+  webauthnCredentials?: Prisma.WebAuthnCredentialUncheckedUpdateManyWithoutUserNestedInput
   subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutUserNestedInput
   payments?: Prisma.PaymentIntentUncheckedUpdateManyWithoutUserNestedInput
   userPaymentMethods?: Prisma.UserPaymentMethodUncheckedUpdateManyWithoutUserNestedInput
@@ -1602,7 +1964,9 @@ export type UserCreateWithoutPaymentsInput = {
   verificationCodes?: Prisma.VerificationCodeCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   visitors?: Prisma.UserVisitorCreateNestedManyWithoutUserInput
-  mfa?: Prisma.MultiFactorAuthenticationCreateNestedOneWithoutUserInput
+  totpAuthenticator?: Prisma.TotpAuthenticatorCreateNestedOneWithoutUserInput
+  recoveryCodes?: Prisma.RecoveryCodeCreateNestedManyWithoutUserInput
+  webauthnCredentials?: Prisma.WebAuthnCredentialCreateNestedManyWithoutUserInput
   restrictions?: Prisma.RestrictionCreateNestedManyWithoutUserInput
   subscription?: Prisma.SubscriptionCreateNestedOneWithoutUserInput
   userPaymentMethods?: Prisma.UserPaymentMethodCreateNestedManyWithoutUserInput
@@ -1630,7 +1994,9 @@ export type UserUncheckedCreateWithoutPaymentsInput = {
   verificationCodes?: Prisma.VerificationCodeUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   visitors?: Prisma.UserVisitorUncheckedCreateNestedManyWithoutUserInput
-  mfa?: Prisma.MultiFactorAuthenticationUncheckedCreateNestedOneWithoutUserInput
+  totpAuthenticator?: Prisma.TotpAuthenticatorUncheckedCreateNestedOneWithoutUserInput
+  recoveryCodes?: Prisma.RecoveryCodeUncheckedCreateNestedManyWithoutUserInput
+  webauthnCredentials?: Prisma.WebAuthnCredentialUncheckedCreateNestedManyWithoutUserInput
   restrictions?: Prisma.RestrictionUncheckedCreateNestedManyWithoutUserInput
   subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutUserInput
   userPaymentMethods?: Prisma.UserPaymentMethodUncheckedCreateNestedManyWithoutUserInput
@@ -1674,7 +2040,9 @@ export type UserUpdateWithoutPaymentsInput = {
   verificationCodes?: Prisma.VerificationCodeUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   visitors?: Prisma.UserVisitorUpdateManyWithoutUserNestedInput
-  mfa?: Prisma.MultiFactorAuthenticationUpdateOneWithoutUserNestedInput
+  totpAuthenticator?: Prisma.TotpAuthenticatorUpdateOneWithoutUserNestedInput
+  recoveryCodes?: Prisma.RecoveryCodeUpdateManyWithoutUserNestedInput
+  webauthnCredentials?: Prisma.WebAuthnCredentialUpdateManyWithoutUserNestedInput
   restrictions?: Prisma.RestrictionUpdateManyWithoutUserNestedInput
   subscription?: Prisma.SubscriptionUpdateOneWithoutUserNestedInput
   userPaymentMethods?: Prisma.UserPaymentMethodUpdateManyWithoutUserNestedInput
@@ -1702,7 +2070,9 @@ export type UserUncheckedUpdateWithoutPaymentsInput = {
   verificationCodes?: Prisma.VerificationCodeUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   visitors?: Prisma.UserVisitorUncheckedUpdateManyWithoutUserNestedInput
-  mfa?: Prisma.MultiFactorAuthenticationUncheckedUpdateOneWithoutUserNestedInput
+  totpAuthenticator?: Prisma.TotpAuthenticatorUncheckedUpdateOneWithoutUserNestedInput
+  recoveryCodes?: Prisma.RecoveryCodeUncheckedUpdateManyWithoutUserNestedInput
+  webauthnCredentials?: Prisma.WebAuthnCredentialUncheckedUpdateManyWithoutUserNestedInput
   restrictions?: Prisma.RestrictionUncheckedUpdateManyWithoutUserNestedInput
   subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutUserNestedInput
   userPaymentMethods?: Prisma.UserPaymentMethodUncheckedUpdateManyWithoutUserNestedInput
@@ -1730,7 +2100,9 @@ export type UserCreateWithoutUserPaymentMethodsInput = {
   verificationCodes?: Prisma.VerificationCodeCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   visitors?: Prisma.UserVisitorCreateNestedManyWithoutUserInput
-  mfa?: Prisma.MultiFactorAuthenticationCreateNestedOneWithoutUserInput
+  totpAuthenticator?: Prisma.TotpAuthenticatorCreateNestedOneWithoutUserInput
+  recoveryCodes?: Prisma.RecoveryCodeCreateNestedManyWithoutUserInput
+  webauthnCredentials?: Prisma.WebAuthnCredentialCreateNestedManyWithoutUserInput
   restrictions?: Prisma.RestrictionCreateNestedManyWithoutUserInput
   subscription?: Prisma.SubscriptionCreateNestedOneWithoutUserInput
   payments?: Prisma.PaymentIntentCreateNestedManyWithoutUserInput
@@ -1758,7 +2130,9 @@ export type UserUncheckedCreateWithoutUserPaymentMethodsInput = {
   verificationCodes?: Prisma.VerificationCodeUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   visitors?: Prisma.UserVisitorUncheckedCreateNestedManyWithoutUserInput
-  mfa?: Prisma.MultiFactorAuthenticationUncheckedCreateNestedOneWithoutUserInput
+  totpAuthenticator?: Prisma.TotpAuthenticatorUncheckedCreateNestedOneWithoutUserInput
+  recoveryCodes?: Prisma.RecoveryCodeUncheckedCreateNestedManyWithoutUserInput
+  webauthnCredentials?: Prisma.WebAuthnCredentialUncheckedCreateNestedManyWithoutUserInput
   restrictions?: Prisma.RestrictionUncheckedCreateNestedManyWithoutUserInput
   subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutUserInput
   payments?: Prisma.PaymentIntentUncheckedCreateNestedManyWithoutUserInput
@@ -1802,7 +2176,9 @@ export type UserUpdateWithoutUserPaymentMethodsInput = {
   verificationCodes?: Prisma.VerificationCodeUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   visitors?: Prisma.UserVisitorUpdateManyWithoutUserNestedInput
-  mfa?: Prisma.MultiFactorAuthenticationUpdateOneWithoutUserNestedInput
+  totpAuthenticator?: Prisma.TotpAuthenticatorUpdateOneWithoutUserNestedInput
+  recoveryCodes?: Prisma.RecoveryCodeUpdateManyWithoutUserNestedInput
+  webauthnCredentials?: Prisma.WebAuthnCredentialUpdateManyWithoutUserNestedInput
   restrictions?: Prisma.RestrictionUpdateManyWithoutUserNestedInput
   subscription?: Prisma.SubscriptionUpdateOneWithoutUserNestedInput
   payments?: Prisma.PaymentIntentUpdateManyWithoutUserNestedInput
@@ -1830,7 +2206,9 @@ export type UserUncheckedUpdateWithoutUserPaymentMethodsInput = {
   verificationCodes?: Prisma.VerificationCodeUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   visitors?: Prisma.UserVisitorUncheckedUpdateManyWithoutUserNestedInput
-  mfa?: Prisma.MultiFactorAuthenticationUncheckedUpdateOneWithoutUserNestedInput
+  totpAuthenticator?: Prisma.TotpAuthenticatorUncheckedUpdateOneWithoutUserNestedInput
+  recoveryCodes?: Prisma.RecoveryCodeUncheckedUpdateManyWithoutUserNestedInput
+  webauthnCredentials?: Prisma.WebAuthnCredentialUncheckedUpdateManyWithoutUserNestedInput
   restrictions?: Prisma.RestrictionUncheckedUpdateManyWithoutUserNestedInput
   subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutUserNestedInput
   payments?: Prisma.PaymentIntentUncheckedUpdateManyWithoutUserNestedInput
@@ -1858,7 +2236,9 @@ export type UserCreateWithoutUserProgressesInput = {
   verificationCodes?: Prisma.VerificationCodeCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   visitors?: Prisma.UserVisitorCreateNestedManyWithoutUserInput
-  mfa?: Prisma.MultiFactorAuthenticationCreateNestedOneWithoutUserInput
+  totpAuthenticator?: Prisma.TotpAuthenticatorCreateNestedOneWithoutUserInput
+  recoveryCodes?: Prisma.RecoveryCodeCreateNestedManyWithoutUserInput
+  webauthnCredentials?: Prisma.WebAuthnCredentialCreateNestedManyWithoutUserInput
   restrictions?: Prisma.RestrictionCreateNestedManyWithoutUserInput
   subscription?: Prisma.SubscriptionCreateNestedOneWithoutUserInput
   payments?: Prisma.PaymentIntentCreateNestedManyWithoutUserInput
@@ -1886,7 +2266,9 @@ export type UserUncheckedCreateWithoutUserProgressesInput = {
   verificationCodes?: Prisma.VerificationCodeUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   visitors?: Prisma.UserVisitorUncheckedCreateNestedManyWithoutUserInput
-  mfa?: Prisma.MultiFactorAuthenticationUncheckedCreateNestedOneWithoutUserInput
+  totpAuthenticator?: Prisma.TotpAuthenticatorUncheckedCreateNestedOneWithoutUserInput
+  recoveryCodes?: Prisma.RecoveryCodeUncheckedCreateNestedManyWithoutUserInput
+  webauthnCredentials?: Prisma.WebAuthnCredentialUncheckedCreateNestedManyWithoutUserInput
   restrictions?: Prisma.RestrictionUncheckedCreateNestedManyWithoutUserInput
   subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutUserInput
   payments?: Prisma.PaymentIntentUncheckedCreateNestedManyWithoutUserInput
@@ -1930,7 +2312,9 @@ export type UserUpdateWithoutUserProgressesInput = {
   verificationCodes?: Prisma.VerificationCodeUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   visitors?: Prisma.UserVisitorUpdateManyWithoutUserNestedInput
-  mfa?: Prisma.MultiFactorAuthenticationUpdateOneWithoutUserNestedInput
+  totpAuthenticator?: Prisma.TotpAuthenticatorUpdateOneWithoutUserNestedInput
+  recoveryCodes?: Prisma.RecoveryCodeUpdateManyWithoutUserNestedInput
+  webauthnCredentials?: Prisma.WebAuthnCredentialUpdateManyWithoutUserNestedInput
   restrictions?: Prisma.RestrictionUpdateManyWithoutUserNestedInput
   subscription?: Prisma.SubscriptionUpdateOneWithoutUserNestedInput
   payments?: Prisma.PaymentIntentUpdateManyWithoutUserNestedInput
@@ -1958,7 +2342,9 @@ export type UserUncheckedUpdateWithoutUserProgressesInput = {
   verificationCodes?: Prisma.VerificationCodeUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   visitors?: Prisma.UserVisitorUncheckedUpdateManyWithoutUserNestedInput
-  mfa?: Prisma.MultiFactorAuthenticationUncheckedUpdateOneWithoutUserNestedInput
+  totpAuthenticator?: Prisma.TotpAuthenticatorUncheckedUpdateOneWithoutUserNestedInput
+  recoveryCodes?: Prisma.RecoveryCodeUncheckedUpdateManyWithoutUserNestedInput
+  webauthnCredentials?: Prisma.WebAuthnCredentialUncheckedUpdateManyWithoutUserNestedInput
   restrictions?: Prisma.RestrictionUncheckedUpdateManyWithoutUserNestedInput
   subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutUserNestedInput
   payments?: Prisma.PaymentIntentUncheckedUpdateManyWithoutUserNestedInput
@@ -1986,7 +2372,9 @@ export type UserCreateWithoutDownloadLogsInput = {
   verificationCodes?: Prisma.VerificationCodeCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   visitors?: Prisma.UserVisitorCreateNestedManyWithoutUserInput
-  mfa?: Prisma.MultiFactorAuthenticationCreateNestedOneWithoutUserInput
+  totpAuthenticator?: Prisma.TotpAuthenticatorCreateNestedOneWithoutUserInput
+  recoveryCodes?: Prisma.RecoveryCodeCreateNestedManyWithoutUserInput
+  webauthnCredentials?: Prisma.WebAuthnCredentialCreateNestedManyWithoutUserInput
   restrictions?: Prisma.RestrictionCreateNestedManyWithoutUserInput
   subscription?: Prisma.SubscriptionCreateNestedOneWithoutUserInput
   payments?: Prisma.PaymentIntentCreateNestedManyWithoutUserInput
@@ -2014,7 +2402,9 @@ export type UserUncheckedCreateWithoutDownloadLogsInput = {
   verificationCodes?: Prisma.VerificationCodeUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   visitors?: Prisma.UserVisitorUncheckedCreateNestedManyWithoutUserInput
-  mfa?: Prisma.MultiFactorAuthenticationUncheckedCreateNestedOneWithoutUserInput
+  totpAuthenticator?: Prisma.TotpAuthenticatorUncheckedCreateNestedOneWithoutUserInput
+  recoveryCodes?: Prisma.RecoveryCodeUncheckedCreateNestedManyWithoutUserInput
+  webauthnCredentials?: Prisma.WebAuthnCredentialUncheckedCreateNestedManyWithoutUserInput
   restrictions?: Prisma.RestrictionUncheckedCreateNestedManyWithoutUserInput
   subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutUserInput
   payments?: Prisma.PaymentIntentUncheckedCreateNestedManyWithoutUserInput
@@ -2058,7 +2448,9 @@ export type UserUpdateWithoutDownloadLogsInput = {
   verificationCodes?: Prisma.VerificationCodeUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   visitors?: Prisma.UserVisitorUpdateManyWithoutUserNestedInput
-  mfa?: Prisma.MultiFactorAuthenticationUpdateOneWithoutUserNestedInput
+  totpAuthenticator?: Prisma.TotpAuthenticatorUpdateOneWithoutUserNestedInput
+  recoveryCodes?: Prisma.RecoveryCodeUpdateManyWithoutUserNestedInput
+  webauthnCredentials?: Prisma.WebAuthnCredentialUpdateManyWithoutUserNestedInput
   restrictions?: Prisma.RestrictionUpdateManyWithoutUserNestedInput
   subscription?: Prisma.SubscriptionUpdateOneWithoutUserNestedInput
   payments?: Prisma.PaymentIntentUpdateManyWithoutUserNestedInput
@@ -2086,7 +2478,9 @@ export type UserUncheckedUpdateWithoutDownloadLogsInput = {
   verificationCodes?: Prisma.VerificationCodeUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   visitors?: Prisma.UserVisitorUncheckedUpdateManyWithoutUserNestedInput
-  mfa?: Prisma.MultiFactorAuthenticationUncheckedUpdateOneWithoutUserNestedInput
+  totpAuthenticator?: Prisma.TotpAuthenticatorUncheckedUpdateOneWithoutUserNestedInput
+  recoveryCodes?: Prisma.RecoveryCodeUncheckedUpdateManyWithoutUserNestedInput
+  webauthnCredentials?: Prisma.WebAuthnCredentialUncheckedUpdateManyWithoutUserNestedInput
   restrictions?: Prisma.RestrictionUncheckedUpdateManyWithoutUserNestedInput
   subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutUserNestedInput
   payments?: Prisma.PaymentIntentUncheckedUpdateManyWithoutUserNestedInput
@@ -2113,7 +2507,9 @@ export type UserCreateWithoutSessionsInput = {
   oauthAccounts?: Prisma.OAuthAccountCreateNestedManyWithoutUserInput
   verificationCodes?: Prisma.VerificationCodeCreateNestedManyWithoutUserInput
   visitors?: Prisma.UserVisitorCreateNestedManyWithoutUserInput
-  mfa?: Prisma.MultiFactorAuthenticationCreateNestedOneWithoutUserInput
+  totpAuthenticator?: Prisma.TotpAuthenticatorCreateNestedOneWithoutUserInput
+  recoveryCodes?: Prisma.RecoveryCodeCreateNestedManyWithoutUserInput
+  webauthnCredentials?: Prisma.WebAuthnCredentialCreateNestedManyWithoutUserInput
   restrictions?: Prisma.RestrictionCreateNestedManyWithoutUserInput
   subscription?: Prisma.SubscriptionCreateNestedOneWithoutUserInput
   payments?: Prisma.PaymentIntentCreateNestedManyWithoutUserInput
@@ -2141,7 +2537,9 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   oauthAccounts?: Prisma.OAuthAccountUncheckedCreateNestedManyWithoutUserInput
   verificationCodes?: Prisma.VerificationCodeUncheckedCreateNestedManyWithoutUserInput
   visitors?: Prisma.UserVisitorUncheckedCreateNestedManyWithoutUserInput
-  mfa?: Prisma.MultiFactorAuthenticationUncheckedCreateNestedOneWithoutUserInput
+  totpAuthenticator?: Prisma.TotpAuthenticatorUncheckedCreateNestedOneWithoutUserInput
+  recoveryCodes?: Prisma.RecoveryCodeUncheckedCreateNestedManyWithoutUserInput
+  webauthnCredentials?: Prisma.WebAuthnCredentialUncheckedCreateNestedManyWithoutUserInput
   restrictions?: Prisma.RestrictionUncheckedCreateNestedManyWithoutUserInput
   subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutUserInput
   payments?: Prisma.PaymentIntentUncheckedCreateNestedManyWithoutUserInput
@@ -2185,7 +2583,9 @@ export type UserUpdateWithoutSessionsInput = {
   oauthAccounts?: Prisma.OAuthAccountUpdateManyWithoutUserNestedInput
   verificationCodes?: Prisma.VerificationCodeUpdateManyWithoutUserNestedInput
   visitors?: Prisma.UserVisitorUpdateManyWithoutUserNestedInput
-  mfa?: Prisma.MultiFactorAuthenticationUpdateOneWithoutUserNestedInput
+  totpAuthenticator?: Prisma.TotpAuthenticatorUpdateOneWithoutUserNestedInput
+  recoveryCodes?: Prisma.RecoveryCodeUpdateManyWithoutUserNestedInput
+  webauthnCredentials?: Prisma.WebAuthnCredentialUpdateManyWithoutUserNestedInput
   restrictions?: Prisma.RestrictionUpdateManyWithoutUserNestedInput
   subscription?: Prisma.SubscriptionUpdateOneWithoutUserNestedInput
   payments?: Prisma.PaymentIntentUpdateManyWithoutUserNestedInput
@@ -2213,7 +2613,9 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   oauthAccounts?: Prisma.OAuthAccountUncheckedUpdateManyWithoutUserNestedInput
   verificationCodes?: Prisma.VerificationCodeUncheckedUpdateManyWithoutUserNestedInput
   visitors?: Prisma.UserVisitorUncheckedUpdateManyWithoutUserNestedInput
-  mfa?: Prisma.MultiFactorAuthenticationUncheckedUpdateOneWithoutUserNestedInput
+  totpAuthenticator?: Prisma.TotpAuthenticatorUncheckedUpdateOneWithoutUserNestedInput
+  recoveryCodes?: Prisma.RecoveryCodeUncheckedUpdateManyWithoutUserNestedInput
+  webauthnCredentials?: Prisma.WebAuthnCredentialUncheckedUpdateManyWithoutUserNestedInput
   restrictions?: Prisma.RestrictionUncheckedUpdateManyWithoutUserNestedInput
   subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutUserNestedInput
   payments?: Prisma.PaymentIntentUncheckedUpdateManyWithoutUserNestedInput
@@ -2241,7 +2643,9 @@ export type UserCreateWithoutVisitorsInput = {
   oauthAccounts?: Prisma.OAuthAccountCreateNestedManyWithoutUserInput
   verificationCodes?: Prisma.VerificationCodeCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
-  mfa?: Prisma.MultiFactorAuthenticationCreateNestedOneWithoutUserInput
+  totpAuthenticator?: Prisma.TotpAuthenticatorCreateNestedOneWithoutUserInput
+  recoveryCodes?: Prisma.RecoveryCodeCreateNestedManyWithoutUserInput
+  webauthnCredentials?: Prisma.WebAuthnCredentialCreateNestedManyWithoutUserInput
   restrictions?: Prisma.RestrictionCreateNestedManyWithoutUserInput
   subscription?: Prisma.SubscriptionCreateNestedOneWithoutUserInput
   payments?: Prisma.PaymentIntentCreateNestedManyWithoutUserInput
@@ -2269,7 +2673,9 @@ export type UserUncheckedCreateWithoutVisitorsInput = {
   oauthAccounts?: Prisma.OAuthAccountUncheckedCreateNestedManyWithoutUserInput
   verificationCodes?: Prisma.VerificationCodeUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
-  mfa?: Prisma.MultiFactorAuthenticationUncheckedCreateNestedOneWithoutUserInput
+  totpAuthenticator?: Prisma.TotpAuthenticatorUncheckedCreateNestedOneWithoutUserInput
+  recoveryCodes?: Prisma.RecoveryCodeUncheckedCreateNestedManyWithoutUserInput
+  webauthnCredentials?: Prisma.WebAuthnCredentialUncheckedCreateNestedManyWithoutUserInput
   restrictions?: Prisma.RestrictionUncheckedCreateNestedManyWithoutUserInput
   subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutUserInput
   payments?: Prisma.PaymentIntentUncheckedCreateNestedManyWithoutUserInput
@@ -2313,7 +2719,9 @@ export type UserUpdateWithoutVisitorsInput = {
   oauthAccounts?: Prisma.OAuthAccountUpdateManyWithoutUserNestedInput
   verificationCodes?: Prisma.VerificationCodeUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
-  mfa?: Prisma.MultiFactorAuthenticationUpdateOneWithoutUserNestedInput
+  totpAuthenticator?: Prisma.TotpAuthenticatorUpdateOneWithoutUserNestedInput
+  recoveryCodes?: Prisma.RecoveryCodeUpdateManyWithoutUserNestedInput
+  webauthnCredentials?: Prisma.WebAuthnCredentialUpdateManyWithoutUserNestedInput
   restrictions?: Prisma.RestrictionUpdateManyWithoutUserNestedInput
   subscription?: Prisma.SubscriptionUpdateOneWithoutUserNestedInput
   payments?: Prisma.PaymentIntentUpdateManyWithoutUserNestedInput
@@ -2341,7 +2749,9 @@ export type UserUncheckedUpdateWithoutVisitorsInput = {
   oauthAccounts?: Prisma.OAuthAccountUncheckedUpdateManyWithoutUserNestedInput
   verificationCodes?: Prisma.VerificationCodeUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
-  mfa?: Prisma.MultiFactorAuthenticationUncheckedUpdateOneWithoutUserNestedInput
+  totpAuthenticator?: Prisma.TotpAuthenticatorUncheckedUpdateOneWithoutUserNestedInput
+  recoveryCodes?: Prisma.RecoveryCodeUncheckedUpdateManyWithoutUserNestedInput
+  webauthnCredentials?: Prisma.WebAuthnCredentialUncheckedUpdateManyWithoutUserNestedInput
   restrictions?: Prisma.RestrictionUncheckedUpdateManyWithoutUserNestedInput
   subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutUserNestedInput
   payments?: Prisma.PaymentIntentUncheckedUpdateManyWithoutUserNestedInput
@@ -2370,7 +2780,9 @@ export type UserCreateWithoutSubscriptionInput = {
   verificationCodes?: Prisma.VerificationCodeCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   visitors?: Prisma.UserVisitorCreateNestedManyWithoutUserInput
-  mfa?: Prisma.MultiFactorAuthenticationCreateNestedOneWithoutUserInput
+  totpAuthenticator?: Prisma.TotpAuthenticatorCreateNestedOneWithoutUserInput
+  recoveryCodes?: Prisma.RecoveryCodeCreateNestedManyWithoutUserInput
+  webauthnCredentials?: Prisma.WebAuthnCredentialCreateNestedManyWithoutUserInput
   restrictions?: Prisma.RestrictionCreateNestedManyWithoutUserInput
   payments?: Prisma.PaymentIntentCreateNestedManyWithoutUserInput
   userPaymentMethods?: Prisma.UserPaymentMethodCreateNestedManyWithoutUserInput
@@ -2398,7 +2810,9 @@ export type UserUncheckedCreateWithoutSubscriptionInput = {
   verificationCodes?: Prisma.VerificationCodeUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   visitors?: Prisma.UserVisitorUncheckedCreateNestedManyWithoutUserInput
-  mfa?: Prisma.MultiFactorAuthenticationUncheckedCreateNestedOneWithoutUserInput
+  totpAuthenticator?: Prisma.TotpAuthenticatorUncheckedCreateNestedOneWithoutUserInput
+  recoveryCodes?: Prisma.RecoveryCodeUncheckedCreateNestedManyWithoutUserInput
+  webauthnCredentials?: Prisma.WebAuthnCredentialUncheckedCreateNestedManyWithoutUserInput
   restrictions?: Prisma.RestrictionUncheckedCreateNestedManyWithoutUserInput
   payments?: Prisma.PaymentIntentUncheckedCreateNestedManyWithoutUserInput
   userPaymentMethods?: Prisma.UserPaymentMethodUncheckedCreateNestedManyWithoutUserInput
@@ -2442,7 +2856,9 @@ export type UserUpdateWithoutSubscriptionInput = {
   verificationCodes?: Prisma.VerificationCodeUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   visitors?: Prisma.UserVisitorUpdateManyWithoutUserNestedInput
-  mfa?: Prisma.MultiFactorAuthenticationUpdateOneWithoutUserNestedInput
+  totpAuthenticator?: Prisma.TotpAuthenticatorUpdateOneWithoutUserNestedInput
+  recoveryCodes?: Prisma.RecoveryCodeUpdateManyWithoutUserNestedInput
+  webauthnCredentials?: Prisma.WebAuthnCredentialUpdateManyWithoutUserNestedInput
   restrictions?: Prisma.RestrictionUpdateManyWithoutUserNestedInput
   payments?: Prisma.PaymentIntentUpdateManyWithoutUserNestedInput
   userPaymentMethods?: Prisma.UserPaymentMethodUpdateManyWithoutUserNestedInput
@@ -2470,7 +2886,9 @@ export type UserUncheckedUpdateWithoutSubscriptionInput = {
   verificationCodes?: Prisma.VerificationCodeUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   visitors?: Prisma.UserVisitorUncheckedUpdateManyWithoutUserNestedInput
-  mfa?: Prisma.MultiFactorAuthenticationUncheckedUpdateOneWithoutUserNestedInput
+  totpAuthenticator?: Prisma.TotpAuthenticatorUncheckedUpdateOneWithoutUserNestedInput
+  recoveryCodes?: Prisma.RecoveryCodeUncheckedUpdateManyWithoutUserNestedInput
+  webauthnCredentials?: Prisma.WebAuthnCredentialUncheckedUpdateManyWithoutUserNestedInput
   restrictions?: Prisma.RestrictionUncheckedUpdateManyWithoutUserNestedInput
   payments?: Prisma.PaymentIntentUncheckedUpdateManyWithoutUserNestedInput
   userPaymentMethods?: Prisma.UserPaymentMethodUncheckedUpdateManyWithoutUserNestedInput
@@ -2489,6 +2907,8 @@ export type UserCountOutputType = {
   verificationCodes: number
   sessions: number
   visitors: number
+  recoveryCodes: number
+  webauthnCredentials: number
   restrictions: number
   payments: number
   userPaymentMethods: number
@@ -2502,6 +2922,8 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   verificationCodes?: boolean | UserCountOutputTypeCountVerificationCodesArgs
   sessions?: boolean | UserCountOutputTypeCountSessionsArgs
   visitors?: boolean | UserCountOutputTypeCountVisitorsArgs
+  recoveryCodes?: boolean | UserCountOutputTypeCountRecoveryCodesArgs
+  webauthnCredentials?: boolean | UserCountOutputTypeCountWebauthnCredentialsArgs
   restrictions?: boolean | UserCountOutputTypeCountRestrictionsArgs
   payments?: boolean | UserCountOutputTypeCountPaymentsArgs
   userPaymentMethods?: boolean | UserCountOutputTypeCountUserPaymentMethodsArgs
@@ -2546,6 +2968,20 @@ export type UserCountOutputTypeCountSessionsArgs<ExtArgs extends runtime.Types.E
  */
 export type UserCountOutputTypeCountVisitorsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.UserVisitorWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountRecoveryCodesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.RecoveryCodeWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountWebauthnCredentialsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.WebAuthnCredentialWhereInput
 }
 
 /**
@@ -2610,7 +3046,9 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   verificationCodes?: boolean | Prisma.User$verificationCodesArgs<ExtArgs>
   sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>
   visitors?: boolean | Prisma.User$visitorsArgs<ExtArgs>
-  mfa?: boolean | Prisma.User$mfaArgs<ExtArgs>
+  totpAuthenticator?: boolean | Prisma.User$totpAuthenticatorArgs<ExtArgs>
+  recoveryCodes?: boolean | Prisma.User$recoveryCodesArgs<ExtArgs>
+  webauthnCredentials?: boolean | Prisma.User$webauthnCredentialsArgs<ExtArgs>
   restrictions?: boolean | Prisma.User$restrictionsArgs<ExtArgs>
   subscription?: boolean | Prisma.User$subscriptionArgs<ExtArgs>
   payments?: boolean | Prisma.User$paymentsArgs<ExtArgs>
@@ -2676,7 +3114,9 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   verificationCodes?: boolean | Prisma.User$verificationCodesArgs<ExtArgs>
   sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>
   visitors?: boolean | Prisma.User$visitorsArgs<ExtArgs>
-  mfa?: boolean | Prisma.User$mfaArgs<ExtArgs>
+  totpAuthenticator?: boolean | Prisma.User$totpAuthenticatorArgs<ExtArgs>
+  recoveryCodes?: boolean | Prisma.User$recoveryCodesArgs<ExtArgs>
+  webauthnCredentials?: boolean | Prisma.User$webauthnCredentialsArgs<ExtArgs>
   restrictions?: boolean | Prisma.User$restrictionsArgs<ExtArgs>
   subscription?: boolean | Prisma.User$subscriptionArgs<ExtArgs>
   payments?: boolean | Prisma.User$paymentsArgs<ExtArgs>
@@ -2697,7 +3137,9 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     verificationCodes: Prisma.$VerificationCodePayload<ExtArgs>[]
     sessions: Prisma.$SessionPayload<ExtArgs>[]
     visitors: Prisma.$UserVisitorPayload<ExtArgs>[]
-    mfa: Prisma.$MultiFactorAuthenticationPayload<ExtArgs> | null
+    totpAuthenticator: Prisma.$TotpAuthenticatorPayload<ExtArgs> | null
+    recoveryCodes: Prisma.$RecoveryCodePayload<ExtArgs>[]
+    webauthnCredentials: Prisma.$WebAuthnCredentialPayload<ExtArgs>[]
     restrictions: Prisma.$RestrictionPayload<ExtArgs>[]
     subscription: Prisma.$SubscriptionPayload<ExtArgs> | null
     payments: Prisma.$PaymentIntentPayload<ExtArgs>[]
@@ -3119,7 +3561,9 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   verificationCodes<T extends Prisma.User$verificationCodesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$verificationCodesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$VerificationCodePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   sessions<T extends Prisma.User$sessionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   visitors<T extends Prisma.User$visitorsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$visitorsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserVisitorPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  mfa<T extends Prisma.User$mfaArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$mfaArgs<ExtArgs>>): Prisma.Prisma__MultiFactorAuthenticationClient<runtime.Types.Result.GetResult<Prisma.$MultiFactorAuthenticationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  totpAuthenticator<T extends Prisma.User$totpAuthenticatorArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$totpAuthenticatorArgs<ExtArgs>>): Prisma.Prisma__TotpAuthenticatorClient<runtime.Types.Result.GetResult<Prisma.$TotpAuthenticatorPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  recoveryCodes<T extends Prisma.User$recoveryCodesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$recoveryCodesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RecoveryCodePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  webauthnCredentials<T extends Prisma.User$webauthnCredentialsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$webauthnCredentialsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WebAuthnCredentialPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   restrictions<T extends Prisma.User$restrictionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$restrictionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RestrictionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   subscription<T extends Prisma.User$subscriptionArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$subscriptionArgs<ExtArgs>>): Prisma.Prisma__SubscriptionClient<runtime.Types.Result.GetResult<Prisma.$SubscriptionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   payments<T extends Prisma.User$paymentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$paymentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PaymentIntentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -3677,22 +4121,70 @@ export type User$visitorsArgs<ExtArgs extends runtime.Types.Extensions.InternalA
 }
 
 /**
- * User.mfa
+ * User.totpAuthenticator
  */
-export type User$mfaArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type User$totpAuthenticatorArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the MultiFactorAuthentication
+   * Select specific fields to fetch from the TotpAuthenticator
    */
-  select?: Prisma.MultiFactorAuthenticationSelect<ExtArgs> | null
+  select?: Prisma.TotpAuthenticatorSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the MultiFactorAuthentication
+   * Omit specific fields from the TotpAuthenticator
    */
-  omit?: Prisma.MultiFactorAuthenticationOmit<ExtArgs> | null
+  omit?: Prisma.TotpAuthenticatorOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.MultiFactorAuthenticationInclude<ExtArgs> | null
-  where?: Prisma.MultiFactorAuthenticationWhereInput
+  include?: Prisma.TotpAuthenticatorInclude<ExtArgs> | null
+  where?: Prisma.TotpAuthenticatorWhereInput
+}
+
+/**
+ * User.recoveryCodes
+ */
+export type User$recoveryCodesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the RecoveryCode
+   */
+  select?: Prisma.RecoveryCodeSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the RecoveryCode
+   */
+  omit?: Prisma.RecoveryCodeOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RecoveryCodeInclude<ExtArgs> | null
+  where?: Prisma.RecoveryCodeWhereInput
+  orderBy?: Prisma.RecoveryCodeOrderByWithRelationInput | Prisma.RecoveryCodeOrderByWithRelationInput[]
+  cursor?: Prisma.RecoveryCodeWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.RecoveryCodeScalarFieldEnum | Prisma.RecoveryCodeScalarFieldEnum[]
+}
+
+/**
+ * User.webauthnCredentials
+ */
+export type User$webauthnCredentialsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the WebAuthnCredential
+   */
+  select?: Prisma.WebAuthnCredentialSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the WebAuthnCredential
+   */
+  omit?: Prisma.WebAuthnCredentialOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.WebAuthnCredentialInclude<ExtArgs> | null
+  where?: Prisma.WebAuthnCredentialWhereInput
+  orderBy?: Prisma.WebAuthnCredentialOrderByWithRelationInput | Prisma.WebAuthnCredentialOrderByWithRelationInput[]
+  cursor?: Prisma.WebAuthnCredentialWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.WebAuthnCredentialScalarFieldEnum | Prisma.WebAuthnCredentialScalarFieldEnum[]
 }
 
 /**

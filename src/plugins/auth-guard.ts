@@ -5,25 +5,20 @@ import { extendLogContext } from '~/lib/logger'
 import { verifyAccessToken } from '~/lib/security/jwt'
 import { resolveSession } from '~/modules/session/service'
 
-import { ACCESS_COOKIE } from './auth-cookie'
-
 const BEARER_PREFIX = 'Bearer '
 
-export const readToken = (cookieToken: string | undefined, authorization: string | undefined) => {
-	if (authorization?.startsWith(BEARER_PREFIX)) {
-		return authorization.slice(BEARER_PREFIX.length)
+export const readBearerToken = (authorization: string | undefined) => {
+	if (!authorization?.startsWith(BEARER_PREFIX)) {
+		return undefined
 	}
 
-	return cookieToken
+	return authorization.slice(BEARER_PREFIX.length)
 }
 
 export const authGuard = new Elysia({ name: 'auth-guard' }).macro({
 	auth: {
-		async resolve({ cookie, headers }) {
-			const token = readToken(
-				cookie[ACCESS_COOKIE]?.value as string | undefined,
-				headers.authorization
-			)
+		async resolve({ headers }) {
+			const token = readBearerToken(headers.authorization)
 
 			if (!token) {
 				throw new UnauthorizedError('Authentication required')
@@ -43,14 +38,10 @@ export const authGuard = new Elysia({ name: 'auth-guard' }).macro({
 	}
 })
 
-/** Resolves a session when present, without requiring one - unlike `auth`, never throws. */
 export const optionalAuth = new Elysia({ name: 'optional-auth' }).derive(
 	{ as: 'global' },
-	async ({ cookie, headers }) => {
-		const token = readToken(
-			cookie[ACCESS_COOKIE]?.value as string | undefined,
-			headers.authorization
-		)
+	async ({ headers }) => {
+		const token = readBearerToken(headers.authorization)
 
 		if (!token) {
 			return { optionalSession: null }

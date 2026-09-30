@@ -1,3 +1,5 @@
+import { randomUUID } from 'node:crypto'
+
 import { UserStatus, VerificationPurpose } from '@prisma/generated/client'
 
 import { isProduction } from '~/config/env'
@@ -18,6 +20,8 @@ import { generateOtpCode } from '~/lib/security/otp'
 import { hashVerificationCode, verificationCodeMatches } from '~/lib/security/verification-code'
 import { generateUsername } from '~/lib/utils/username'
 import { enqueueRegistrationNotification } from '~/modules/admin-bot/queue'
+import type { MfaMethod } from '~/modules/mfa/model'
+import { getMfaMethods, verifyMfaCode } from '~/modules/mfa/service'
 import {
 	issueTokenPair,
 	type RequestOrigin,
@@ -26,9 +30,18 @@ import {
 } from '~/modules/session/service'
 
 import { enqueuePasswordResetCode, enqueueVerificationCode } from './jobs'
+import {
+	closeMfaTicket,
+	MFA_TICKET_TTL,
+	openMfaTicket,
+	readMfaTicket,
+	setMfaChallenge
+} from './mfa-ticket'
 import type {
 	ForgotPasswordInput,
 	LoginInput,
+	MfaChallengeInput,
+	MfaConfirmInput,
 	RegisterInput,
 	ResetPasswordInput,
 	VerifyRegisterInput
@@ -236,13 +249,10 @@ export const login = async (input: LoginInput, origin: RequestOrigin) => {
 	}
 
 	await recordLoginAttempt(attemptKeys, true)
-	await updateLastLogin(user.id)
 
 	extendLogContext({ event: 'user_logged_in', userId: user.id })
 
-	const tokens = await issueTokenPair(user.id, origin)
-
-	return { id: user.id, ...tokens }
+	return await completeSignIn(user.id, origin, 'password')
 }
 
 export const logout = (userId: string, sessionId: string) => revokeSession(userId, sessionId)
@@ -293,7 +303,91 @@ export const resetPassword = async (input: ResetPasswordInput, origin: RequestOr
 
 	extendLogContext({ event: 'password_reset_completed', userId: user.id })
 
-	const tokens = await issueTokenPair(user.id, origin)
+	return await completeSignIn(user.id, origin, 'password_reset')
+}
 
-	return { id: user.id, ...tokens }
+export type SignInResult =
+	| { mfaRequired: false; mfaToken: null; id: string; accessToken: string; refreshToken: string }
+	| { mfaRequired: true; mfaToken: string; mfaMethods: MfaMethod[]; expiresIn: number }
+
+/** The first factor is proven. With MFA on, the session waits in a ticket for the second one. */
+export const completeSignIn = async (
+	userId: string,
+	origin: RequestOrigin,
+	via: string
+): Promise<SignInResult> => {
+	const mfaMethods = await getMfaMethods(userId)
+
+	if (mfaMethods.length > 0) {
+		const mfaToken = await openMfaTicket(userId, via)
+
+		extendLogContext({ mfaRequired: true })
+
+		return { mfaRequired: true, mfaToken, mfaMethods, expiresIn: MFA_TICKET_TTL }
+	}
+
+	await updateLastLogin(userId)
+
+	const tokens = await issueTokenPair(userId, origin)
+
+	return { mfaRequired: false, mfaToken: null, id: userId, ...tokens }
+}
+
+const takeTicket = async (mfaToken: string) => {
+	const ticket = await readMfaTicket(mfaToken)
+
+	if (!ticket) {
+		throw new UnauthorizedError('MFA session expired - sign in again')
+	}
+
+	return ticket
+}
+
+export const startMfaChallenge = async ({ mfaToken, method }: MfaChallengeInput) => {
+	const ticket = await takeTicket(mfaToken)
+	const methods = await getMfaMethods(ticket.userId)
+
+	if (!methods.includes(method)) {
+		throw new BadRequestError(`MFA method ${method} is not available for this account`)
+	}
+
+	const challenge = { id: randomUUID(), method }
+
+	if (!(await setMfaChallenge(mfaToken, ticket, challenge))) {
+		throw new UnauthorizedError('MFA session expired - sign in again')
+	}
+
+	extendLogContext({ event: 'mfa_challenge_started', userId: ticket.userId, method })
+
+	return { challengeId: challenge.id, message: `Verification code initiated via ${method}` }
+}
+
+export const confirmMfa = async (
+	{ mfaToken, challengeId, code }: MfaConfirmInput,
+	origin: RequestOrigin
+) => {
+	const ticket = await takeTicket(mfaToken)
+
+	if (ticket.challenge?.id !== challengeId) {
+		throw new BadRequestError('Unknown MFA challenge - start a new one')
+	}
+
+	await verifyMfaCode(ticket.userId, ticket.challenge.method, code)
+
+	if (!(await closeMfaTicket(mfaToken))) {
+		throw new UnauthorizedError('MFA session expired - sign in again')
+	}
+
+	await updateLastLogin(ticket.userId)
+
+	extendLogContext({
+		event: 'mfa_sign_in_completed',
+		userId: ticket.userId,
+		method: ticket.challenge.method,
+		via: ticket.via
+	})
+
+	const tokens = await issueTokenPair(ticket.userId, origin)
+
+	return { id: ticket.userId, ...tokens }
 }

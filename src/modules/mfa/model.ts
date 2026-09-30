@@ -1,0 +1,88 @@
+import { type Static, t } from 'elysia'
+
+export const MFA_METHODS = ['TOTP', 'RECOVERY_CODE'] as const
+
+export type MfaMethod = (typeof MFA_METHODS)[number]
+
+export const MfaMethodSchema = t.UnionEnum(MFA_METHODS, {
+	description:
+		'Способ подтверждения: `TOTP` - код из приложения-аутентификатора, `RECOVERY_CODE` - один из резервных кодов.',
+	error: 'Unknown MFA method',
+	examples: ['TOTP']
+})
+
+export const TotpSetupResponse = t.Object(
+	{
+		secret: t.String({
+			description:
+				'Секрет в base32 - для ручного ввода, если QR-код отсканировать не получается. Показывается один раз.',
+			examples: ['JBSWY3DPEHPK3PXPJBSWY3DPEHPK3PXP']
+		}),
+		otpauthUrl: t.String({
+			description: 'Ссылка `otpauth://` - то же, что в QR-коде. На телефоне открывает приложение-аутентификатор.',
+			examples: [
+				'otpauth://totp/TeaCoder:torvalds.l%40teacoder.com?secret=JBSWY3DPEHPK3PXPJBSWY3DPEHPK3PXP&issuer=TeaCoder&algorithm=SHA1&digits=6&period=30'
+			]
+		}),
+		qrCodeUrl: t.String({
+			description: 'QR-код в виде `data:image/png;base64,...` - можно сразу подставить в `<img src>`.',
+			examples: ['data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA...']
+		})
+	},
+	{ description: 'Данные для подключения приложения-аутентификатора.' }
+)
+
+export const TotpCodePayload = t.Object(
+	{
+		code: t.String({
+			pattern: '^\\d{6}$',
+			description: '6-значный код из приложения-аутентификатора.',
+			error: 'Code must be 6 digits',
+			examples: ['492039']
+		})
+	},
+	{ description: 'Код из приложения-аутентификатора.' }
+)
+
+export type TotpCodeInput = Static<typeof TotpCodePayload>
+
+export const MfaCodePayload = t.Object(
+	{
+		code: t.String({
+			minLength: 6,
+			maxLength: 32,
+			description:
+				'6-значный код из приложения-аутентификатора или один из резервных кодов (`xxxxx-xxxxx`, регистр и дефис не важны).',
+			error: 'Code must be an authenticator or recovery code',
+			examples: ['492039', 'k7m3p-x9q2w']
+		})
+	},
+	{ description: 'Подтверждение действия вторым фактором.' }
+)
+
+export type MfaCodeInput = Static<typeof MfaCodePayload>
+
+export const RecoveryCodesResponse = t.Object(
+	{
+		codes: t.Array(t.String({ examples: ['k7m3p-x9q2w'] }), {
+			description:
+				'Резервные коды, каждый одноразовый. Показываются только сейчас - на сервере хранятся лишь их хэши. Прежние коды больше не действуют.',
+			examples: [['k7m3p-x9q2w', 'b4n8r-t2v6y', 'h3j9d-c5f7g']]
+		})
+	},
+	{ description: 'Новый набор резервных кодов.' }
+)
+
+export const RecoveryCodesStatusResponse = t.Object(
+	{
+		total: t.Number({ description: 'Сколько кодов выпущено в текущем наборе.', examples: [10] }),
+		remaining: t.Number({ description: 'Сколько из них ещё не использовано.', examples: [8] }),
+		generatedAt: t.Nullable(
+			t.String({
+				description: 'Когда выпущен текущий набор. `null`, если кодов нет.',
+				examples: ['2026-09-30T14:16:54.000Z']
+			})
+		)
+	},
+	{ description: 'Состояние резервных кодов. Сами коды повторно не показываются.' }
+)

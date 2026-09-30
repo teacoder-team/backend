@@ -9,6 +9,7 @@ export const TAG = {
 	oauth: 'Вход через соцсети',
 	sessions: 'Сессии',
 	users: 'Профиль',
+	mfa: 'Двухфакторная аутентификация',
 	courses: 'Курсы',
 	lessons: 'Уроки',
 	progress: 'Прогресс',
@@ -21,10 +22,12 @@ API образовательной платформы [TeaCoder](https://teacode
 
 ## Авторизация
 
-После входа API выдаёт пару токенов - и в теле ответа, и в httpOnly-cookie:
+После входа сессия держится на двух токенах, и каждый живёт только в одном месте:
 
-- **access** - короткоживущий JWT. Браузеру достаточно cookie; остальные клиенты передают его в заголовке \`Authorization: Bearer <token>\`.
-- **refresh** - долгоживущий токен (cookie \`tc_refresh\`) для получения новой пары через \`POST /auth/refresh\`. Каждый раз меняется на новый; повторное использование старого завершает сессию.
+- **access** - короткоживущий JWT, приходит **только в теле ответа** (\`accessToken\`). В cookie сервер его не кладёт. Храните его в памяти приложения (не в \`localStorage\`) и передавайте в заголовке \`Authorization: Bearer <token>\`.
+- **refresh** - долгоживущий токен, приходит **только в httpOnly-cookie \`tc_refresh\`**. В теле ответа его нет, и JavaScript на странице его не видит. Cookie ограничена путём \`/auth/refresh\`, так что к остальным запросам браузер её не прикладывает.
+
+Когда access-токен истёк (ответ 401) или приложение открыли заново, вызовите \`POST /auth/refresh\` без тела, с \`credentials: 'include'\`. Браузер сам отправит cookie, в ответ придёт новый \`accessToken\`, а cookie обновится. Refresh-токен одноразовый: повторное использование старого завершает сессию целиком.
 
 Защищённые методы помечены замком.
 
@@ -79,6 +82,11 @@ export const documentation: ElysiaOpenAPIConfig['documentation'] = {
 			description: 'Профиль текущего пользователя: аватар, смена почты и пароля.'
 		},
 		{
+			name: TAG.mfa,
+			description:
+				'Второй фактор входа: приложение-аутентификатор (TOTP) и резервные коды на случай потери телефона.'
+		},
+		{
 			name: TAG.courses,
 			description: 'Каталог курсов и их программа.'
 		},
@@ -106,7 +114,8 @@ export const documentation: ElysiaOpenAPIConfig['documentation'] = {
 				type: 'http',
 				scheme: 'bearer',
 				bearerFormat: 'JWT',
-				description: 'Access-токен из ответа на вход или обновление токенов.'
+				description:
+					'Access-токен (`accessToken`) из ответа на вход или `POST /auth/refresh`. Только заголовок - cookie для него нет.'
 			}
 		}
 	}

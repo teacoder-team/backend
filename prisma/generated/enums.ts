@@ -38,13 +38,12 @@ export const LessonAccess = {
 export type LessonAccess = (typeof LessonAccess)[keyof typeof LessonAccess]
 
 
-export const TotpStatus = {
-  DISABLED: 'DISABLED',
-  PENDING: 'PENDING',
-  ENABLED: 'ENABLED'
+export const WebAuthnDeviceType = {
+  SINGLE_DEVICE: 'SINGLE_DEVICE',
+  MULTI_DEVICE: 'MULTI_DEVICE'
 } as const
 
-export type TotpStatus = (typeof TotpStatus)[keyof typeof TotpStatus]
+export type WebAuthnDeviceType = (typeof WebAuthnDeviceType)[keyof typeof WebAuthnDeviceType]
 
 
 export const RestrictionReason = {

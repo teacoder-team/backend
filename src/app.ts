@@ -10,6 +10,7 @@ import { oauth } from '~/modules/oauth'
 import { progress } from '~/modules/progress'
 import { root } from '~/modules/root'
 import { session } from '~/modules/session'
+import { mfa } from '~/modules/mfa'
 import { users } from '~/modules/users'
 import { errorHandler } from '~/plugins/error-handler'
 import { requestContext, requestLogger } from '~/plugins/request-context'
@@ -34,6 +35,7 @@ export const createApp = () =>
 		.use(oauth)
 		.use(session)
 		.use(users)
+		.use(mfa)
 		.use(billing)
 		.use(webhook)
 		.use(course)

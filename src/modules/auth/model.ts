@@ -1,5 +1,7 @@
 import { type Static, t } from 'elysia'
 
+import { MfaMethodSchema } from '~/modules/mfa/model'
+
 const CaptchaToken = t.Optional(
 	t.String({
 		description:
@@ -102,53 +104,134 @@ export const MessageResponse = t.Object(
 	{ description: 'Текстовый результат операции.' }
 )
 
-const AccessToken = t.String({
-	description:
-		'Короткоживущий JWT. Передаётся в заголовке `Authorization: Bearer <token>`; браузеру достаточно cookie `tc_access`.',
-	examples: ['eyJhbGciOiJIUzI1NiJ9...']
+const UserId = t.String({
+	description: 'Идентификатор пользователя.',
+	examples: ['49003cb8-7f31-4942-abec-ac9e29318681']
 })
 
-const RefreshToken = t.String({
+const AccessToken = t.String({
 	description:
-		'Долгоживущий токен для получения новой пары через `POST /auth/refresh`. Одноразовый: после обмена становится недействительным.',
-	examples: ['3f8a1c2e9b7d4a51-8c62-1d4e5f6a7b8c...']
+		'Короткоживущий JWT. Храните в памяти (не в localStorage) и передавайте в заголовке `Authorization: Bearer <token>` - в cookie сервер его не кладёт. Когда истечёт, получите новый через `POST /auth/refresh`.',
+	examples: ['eyJhbGciOiJIUzI1NiJ9...']
 })
 
 export const AuthResponse = t.Object(
 	{
-		id: t.String({
-			description: 'Идентификатор пользователя.',
-			examples: ['49003cb8-7f31-4942-abec-ac9e29318681']
-		}),
-		accessToken: AccessToken,
-		refreshToken: RefreshToken
+		id: UserId,
+		accessToken: AccessToken
 	},
-	{ description: 'Выполненный вход: пользователь и пара токенов.' }
+	{
+		description:
+			'Выполненный вход: пользователь и access-токен. Refresh-токен приходит в httpOnly-cookie `tc_refresh`.'
+	}
 )
 
-export const RefreshPayload = t.Object(
-	{
-		refreshToken: t.Optional(
-			t.String({
+const MfaToken = t.String({
+	minLength: 1,
+	maxLength: 128,
+	description:
+		'Временный билет второго шага входа из ответа на вход. Действует 5 минут и срабатывает один раз.',
+	error: 'MFA token is required',
+	examples: ['q2fSx1Gd0Yk7uJ9ZlQm3cW8vB4nR6tHpE5aT1oKyL0s']
+})
+
+export const SignInResponse = t.Union(
+	[
+		t.Object(
+			{
+				mfaRequired: t.Literal(false, { description: 'Второй фактор не нужен.' }),
+				mfaToken: t.Null({ description: 'Всегда `null`, если второй фактор не нужен.' }),
+				id: UserId,
+				accessToken: AccessToken
+			},
+			{
 				description:
-					'Нужен, только если клиент не отправляет cookie `tc_refresh` (например, мобильное приложение).'
-			})
+					'Вход выполнен: сессия открыта. Access-токен - в теле, refresh-токен - в httpOnly-cookie `tc_refresh`.'
+			}
+		),
+		t.Object(
+			{
+				mfaRequired: t.Literal(true, {
+					description: 'Включена двухфакторная защита - нужен второй шаг.'
+				}),
+				mfaToken: MfaToken,
+				mfaMethods: t.Array(MfaMethodSchema, {
+					description: 'Способы, которыми можно подтвердить вход.',
+					examples: [['TOTP', 'RECOVERY_CODE']]
+				}),
+				expiresIn: t.Number({
+					description: 'Через сколько секунд `mfaToken` перестанет действовать.',
+					examples: [300]
+				})
+			},
+			{
+				description:
+					'Пароль (или вход через соцсеть) принят, но сессия ещё не открыта: нужно подтвердить вход через `POST /auth/mfa/challenge` и `POST /auth/mfa/confirm`.'
+			}
 		)
-	},
-	{ description: 'Refresh-токен для обмена.' }
+	],
+	{
+		description:
+			'Результат входа. Если `mfaRequired` = `true`, токенов нет - вместо них `mfaToken` для второго шага.'
+	}
 )
 
-export const TokenPairResponse = t.Object(
+export const MfaChallengePayload = t.Object(
 	{
-		accessToken: AccessToken,
-		refreshToken: RefreshToken
+		mfaToken: MfaToken,
+		method: MfaMethodSchema
 	},
-	{ description: 'Новая пара токенов.' }
+	{ description: 'Билет второго шага и выбранный способ подтверждения.' }
+)
+
+export const MfaChallengeResponse = t.Object(
+	{
+		challengeId: t.String({
+			format: 'uuid',
+			description: 'Идентификатор проверки - передаётся в `POST /auth/mfa/confirm`.',
+			examples: ['9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d']
+		}),
+		message: t.String({
+			description: 'Что произошло.',
+			examples: ['Verification code initiated via TOTP']
+		})
+	},
+	{ description: 'Начатая проверка второго фактора.' }
+)
+
+export const MfaConfirmPayload = t.Object(
+	{
+		mfaToken: MfaToken,
+		challengeId: t.String({
+			format: 'uuid',
+			description: 'Идентификатор из `POST /auth/mfa/challenge`.',
+			error: 'Invalid challenge id',
+			examples: ['9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d']
+		}),
+		code: t.String({
+			minLength: 6,
+			maxLength: 32,
+			description:
+				'Код для выбранного способа: 6 цифр из приложения или резервный код (`xxxxx-xxxxx`, регистр и дефис не важны).',
+			error: 'Code must be between 6 and 32 characters',
+			examples: ['492039']
+		})
+	},
+	{ description: 'Код второго фактора.' }
+)
+
+export const AccessTokenResponse = t.Object(
+	{ accessToken: AccessToken },
+	{
+		description:
+			'Новый access-токен. Новый refresh-токен приходит в httpOnly-cookie `tc_refresh`, прежний больше не действует.'
+	}
 )
 
 export type RegisterInput = Static<typeof RegisterPayload>
 export type VerifyRegisterInput = Static<typeof VerifyRegisterPayload>
 export type LoginInput = Static<typeof LoginPayload>
-export type RefreshInput = Static<typeof RefreshPayload>
 export type ForgotPasswordInput = Static<typeof ForgotPasswordPayload>
 export type ResetPasswordInput = Static<typeof ResetPasswordPayload>
+export type MfaChallengeInput = Static<typeof MfaChallengePayload>
+export type MfaConfirmInput = Static<typeof MfaConfirmPayload>
