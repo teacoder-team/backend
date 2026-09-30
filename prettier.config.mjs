@@ -8,7 +8,14 @@ export default {
 	arrowParens: 'always',
 	printWidth: 100,
 
-	importOrder: ['<THIRD_PARTY_MODULES>', '^node:(.*)$', '^@prisma/(.*)$', '^~/(.*)$', '^[./]'],
+	importOrder: [
+		'<THIRD_PARTY_MODULES>',
+		'^node:(.*)$',
+		'^@teacoder/(.*)$',
+		'^@prisma/(.*)$',
+		'^~/(.*)$',
+		'^[./]'
+	],
 
 	importOrderSeparation: true,
 	importOrderSortSpecifiers: true,

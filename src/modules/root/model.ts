@@ -2,7 +2,7 @@ import { t } from 'elysia'
 
 import { PaymentMethod } from '@prisma/generated/client'
 
-import { PrismaEnum } from '~/shared/api'
+import { PrismaEnum } from '~/lib/utils/schema'
 
 const AuthFeature = t.Object({
 	providers: t.Array(t.String(), {
@@ -21,10 +21,9 @@ const CaptchaFeature = t.Object({
 	provider: t.Union([t.Literal('turnstile'), t.Literal('yandex'), t.Literal('none')], {
 		description: 'Which CAPTCHA provider clients must solve a challenge for.'
 	}),
-	clientKey: t.Nullable(
+	key: t.Nullable(
 		t.String({
-			description:
-				'Public site/client key for rendering the widget. Null when provider is none.',
+			description: 'Public site key for rendering the widget. Null when provider is none.',
 			examples: ['0x4AAAAAAA_example_site_key']
 		})
 	)

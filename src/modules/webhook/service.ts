@@ -1,21 +1,34 @@
-import type { Prisma } from '@prisma/generated/client'
+import { HttpError } from '@teacoder/http'
+import type {
+	WebhookPayload as HeleketPayload,
+	PaymentStatus as HeleketStatus
+} from '@teacoder/payments/heleket'
+import type { Payment as YookassaPayment } from '@teacoder/payments/yookassa'
 
-import { extendLogContext, logger } from '~/infra/logger'
-import { verifyWebhookSignature } from '~/infra/payments/heleket'
-import { getPayment } from '~/infra/payments/yookassa'
-import { BadRequestError, ForbiddenError } from '~/shared/errors'
-import { isIpAllowed } from '~/shared/ip-allowlist'
+import { IntentStatus, PaymentProvider, type Prisma } from '@prisma/generated/client'
 
-import { createWebhookEvent, findWebhookEvent } from './repository'
+import { AppError, BadRequestError, ForbiddenError } from '~/lib/errors'
+import { heleket, yookassa } from '~/lib/integrations/payments'
+import { extendLogContext, logger } from '~/lib/logger'
+import { createIpAllowlist } from '~/lib/utils/ip'
+import { applyPaymentUpdate, type ProviderPaymentUpdate } from '~/modules/billing/fulfillment'
+
+import {
+	createWebhookEvent,
+	findWebhookEvent,
+	markWebhookFailed,
+	markWebhookProcessed,
+	refreshWebhookEvent
+} from './repository'
 
 const PSP_HELEKET = 'heleket'
 const PSP_YOOKASSA = 'yookassa'
 
 /** Documented at https://doc.heleket.com/methods/payments/webhook. */
-const HELEKET_IP_RANGES = ['31.133.220.8']
+const isHeleketIp = createIpAllowlist(['31.133.220.8'])
 
 /** Documented at https://yookassa.ru/developers/using-api/webhooks. */
-const YOOKASSA_IP_RANGES = [
+const isYookassaIp = createIpAllowlist([
 	'185.71.76.0/27',
 	'185.71.77.0/27',
 	'77.75.153.0/25',
@@ -23,58 +36,121 @@ const YOOKASSA_IP_RANGES = [
 	'77.75.156.35',
 	'77.75.154.128/25',
 	'2a02:5180::/32'
-]
+])
 
-const assertKnownIp = (ip: string | null, ranges: readonly string[], provider: string) => {
-	if (!ip || !isIpAllowed(ip, ranges)) {
+/** Refund statuses are left out on purpose - refunds are not handled yet. */
+const HELEKET_STATUSES: Partial<Record<HeleketStatus, IntentStatus>> = {
+	confirm_check: IntentStatus.PROCESSING,
+	paid: IntentStatus.CAPTURED,
+	paid_over: IntentStatus.CAPTURED,
+	wrong_amount: IntentStatus.FAILED,
+	fail: IntentStatus.FAILED,
+	system_fail: IntentStatus.FAILED,
+	cancel: IntentStatus.CANCELLED
+}
+
+const YOOKASSA_STATUSES: Record<YookassaPayment['status'], IntentStatus> = {
+	pending: IntentStatus.REQUIRES_PAYMENT,
+	waiting_for_capture: IntentStatus.PROCESSING,
+	succeeded: IntentStatus.CAPTURED,
+	canceled: IntentStatus.CANCELLED
+}
+
+const assertKnownIp = (
+	ip: string | null,
+	isAllowed: (ip: string | null) => boolean,
+	provider: string
+) => {
+	if (!isAllowed(ip)) {
 		throw new ForbiddenError(`Request did not come from a recognized ${provider} IP`)
 	}
 }
+
+/**
+ * Applies an authenticated update and records the outcome on the event. A thrown
+ * error leaves the event unprocessed and surfaces as a 5xx, so the provider retries.
+ */
+const settle = async (eventId: string, update: ProviderPaymentUpdate) => {
+	try {
+		const result = await applyPaymentUpdate(update)
+
+		if (result.outcome === 'deferred') return
+
+		await markWebhookProcessed(eventId, result.outcome === 'rejected' ? result.reason : null)
+	} catch (err) {
+		await markWebhookFailed(eventId, err instanceof Error ? err.message : String(err))
+
+		throw err
+	}
+}
+
+const isHeleketPayload = (
+	payload: Record<string, unknown>
+): payload is HeleketPayload & Record<string, unknown> =>
+	['uuid', 'type', 'status', 'order_id', 'amount', 'currency'].every(
+		(field) => typeof payload[field] === 'string'
+	)
 
 export const receiveHeleketWebhook = async (
 	payload: Record<string, unknown>,
 	ip: string | null
 ) => {
-	assertKnownIp(ip, HELEKET_IP_RANGES, 'Heleket')
+	assertKnownIp(ip, isHeleketIp, 'Heleket')
 
-	const { uuid, type } = payload
+	if (!isHeleketPayload(payload)) throw new BadRequestError('Malformed webhook payload')
 
-	if (typeof uuid !== 'string' || typeof type !== 'string') {
-		throw new BadRequestError('Malformed webhook payload')
-	}
+	/** Heleket posts once per status change of the same invoice - uuid alone would drop the "paid" one. */
+	const pspEventId = `${payload.uuid}:${payload.status}`
+	const existing = await findWebhookEvent(PSP_HELEKET, pspEventId)
 
-	if (await findWebhookEvent(PSP_HELEKET, uuid)) {
-		extendLogContext({ event: 'webhook_duplicate', provider: PSP_HELEKET, pspEventId: uuid })
+	if (existing?.processedAt) {
+		extendLogContext({ event: 'webhook_duplicate', provider: PSP_HELEKET, pspEventId })
 
 		return
 	}
 
-	const signatureOk = verifyWebhookSignature(payload)
+	const signatureOk = heleket.verifyWebhookSignature(payload)
 
-	await createWebhookEvent({
-		pspName: PSP_HELEKET,
-		pspEventId: uuid,
-		eventType: type,
-		signatureOk,
-		payload: payload as Prisma.InputJsonValue
-	})
-
-	if (!signatureOk) {
-		logger.warn(
-			{
-				context: 'webhook',
-				provider: PSP_HELEKET,
-				pspEventId: uuid
-			},
-			'webhook_signature_invalid'
-		)
-	}
+	const event =
+		existing ??
+		(await createWebhookEvent({
+			pspName: PSP_HELEKET,
+			pspEventId,
+			eventType: payload.status,
+			signatureOk,
+			payload: payload as Prisma.InputJsonValue
+		}))
 
 	extendLogContext({
 		event: 'webhook_received',
 		provider: PSP_HELEKET,
-		eventType: type,
+		eventType: payload.status,
 		signatureOk
+	})
+
+	if (!signatureOk) {
+		logger.warn(
+			{ context: 'webhook', provider: PSP_HELEKET, pspEventId },
+			'webhook_signature_invalid'
+		)
+
+		return markWebhookProcessed(event.id, 'invalid_signature')
+	}
+
+	if (payload.type !== 'payment') return markWebhookProcessed(event.id, 'not_an_invoice')
+
+	const status = HELEKET_STATUSES[payload.status]
+
+	if (!status) return markWebhookProcessed(event.id, `status_not_handled:${payload.status}`)
+
+	await settle(event.id, {
+		provider: PaymentProvider.HELEKET,
+		paymentId: payload.order_id,
+		pspIntentId: payload.uuid,
+		status,
+		amount: payload.amount,
+		currency: payload.currency,
+		failureCode: status === IntentStatus.FAILED ? payload.status : undefined
 	})
 }
 
@@ -85,49 +161,90 @@ interface YookassaNotification {
 }
 
 export const receiveYookassaWebhook = async (body: YookassaNotification, ip: string | null) => {
-	assertKnownIp(ip, YOOKASSA_IP_RANGES, 'YooKassa')
+	assertKnownIp(ip, isYookassaIp, 'YooKassa')
 
 	const { event, object } = body
 	const objectId = object?.id
 
-	if (!event || !objectId) {
-		throw new BadRequestError('Malformed webhook payload')
-	}
+	if (!event || !objectId) throw new BadRequestError('Malformed webhook payload')
 
 	const pspEventId = `${event}:${objectId}`
+	const existing = await findWebhookEvent(PSP_YOOKASSA, pspEventId)
 
-	if (await findWebhookEvent(PSP_YOOKASSA, pspEventId)) {
+	if (existing?.processedAt) {
 		extendLogContext({ event: 'webhook_duplicate', provider: PSP_YOOKASSA, pspEventId })
 
 		return
 	}
 
-	let signatureOk = true
-	let payload: unknown = object
+	const record = (signatureOk: boolean, payload: unknown) =>
+		existing
+			? refreshWebhookEvent(existing.id, {
+					signatureOk,
+					payload: payload as Prisma.InputJsonValue
+				})
+			: createWebhookEvent({
+					pspName: PSP_YOOKASSA,
+					pspEventId,
+					eventType: event,
+					signatureOk,
+					payload: payload as Prisma.InputJsonValue
+				})
+
+	extendLogContext({ event: 'webhook_received', provider: PSP_YOOKASSA, eventType: event })
+
+	/** Refunds, payouts and deals are not payments we can re-fetch - not handled yet. */
+	if (!event.startsWith('payment.')) {
+		const row = await record(false, object)
+
+		return markWebhookProcessed(row.id, 'event_not_handled')
+	}
+
+	/** YooKassa notifications carry no signature - the API's own answer is the only trusted source. */
+	let payment: YookassaPayment
 
 	try {
-		payload = await getPayment(objectId)
+		payment = await yookassa.getPayment(objectId)
 	} catch (err) {
-		signatureOk = false
+		const row = await record(false, object)
+
+		if (err instanceof HttpError && err.status === 404) {
+			logger.warn(
+				{ context: 'webhook', provider: PSP_YOOKASSA, objectId },
+				'webhook_unknown_payment'
+			)
+
+			return markWebhookProcessed(row.id, 'payment_not_found')
+		}
 
 		logger.warn(
 			{ context: 'webhook', provider: PSP_YOOKASSA, objectId, err },
 			'webhook_refetch_failed'
 		)
+
+		await markWebhookFailed(row.id, 'refetch_failed')
+
+		throw new AppError('Could not confirm the payment with YooKassa, retry later', 503)
 	}
 
-	await createWebhookEvent({
-		pspName: PSP_YOOKASSA,
-		pspEventId,
-		eventType: event,
-		signatureOk,
-		payload: payload as Prisma.InputJsonValue
-	})
+	const row = await record(true, payment)
+	const paymentId = payment.metadata?.paymentId
 
-	extendLogContext({
-		event: 'webhook_received',
-		provider: PSP_YOOKASSA,
-		eventType: event,
-		signatureOk
+	if (typeof paymentId !== 'string')
+		return markWebhookProcessed(row.id, 'missing_payment_reference')
+
+	const status =
+		payment.cancellation_details?.reason === 'expired_on_confirmation'
+			? IntentStatus.EXPIRED
+			: YOOKASSA_STATUSES[payment.status]
+
+	await settle(row.id, {
+		provider: PaymentProvider.YOOKASSA,
+		paymentId,
+		pspIntentId: payment.id,
+		status,
+		amount: payment.amount.value,
+		currency: payment.amount.currency,
+		failureCode: payment.cancellation_details?.reason
 	})
 }

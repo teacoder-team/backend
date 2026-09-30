@@ -1,4 +1,4 @@
-import { db } from '~/infra/db'
+import { db } from '~/lib/db'
 
 const POINTS_PER_LESSON = 5
 

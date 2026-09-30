@@ -1,7 +1,7 @@
 import { UserRole, UserStatus, VerificationPurpose } from '@prisma/generated/client'
 
-import { db } from '~/infra/db'
-import { toBytes } from '~/shared/bytes'
+import { toBytes } from '~/lib/utils/bytes'
+import { db } from '~/lib/db'
 
 export const findUserByEmailHash = (emailHash: Buffer) =>
 	db.user.findUnique({

@@ -26,8 +26,8 @@ export const oauth = new Elysia({ prefix: '/oauth', tags: ['OAuth'] })
 	)
 	.get(
 		'/:provider/callback',
-		async ({ params, query, authCookie }) => {
-			const result = await finishOAuth(params.provider, query)
+		async ({ params, request, authCookie }) => {
+			const result = await finishOAuth(params.provider, new URL(request.url).search)
 
 			authCookie.set(result)
 

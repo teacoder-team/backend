@@ -2,7 +2,7 @@ import { type Static, t } from 'elysia'
 
 import { UserRole, UserStatus } from '@prisma/generated/client'
 
-import { PrismaEnum } from '~/shared/api'
+import { PrismaEnum } from '~/lib/utils/schema'
 
 export const UserResponse = t.Object({
 	id: t.String({ examples: ['49003cb8-7f31-4942-abec-ac9e29318681'] }),

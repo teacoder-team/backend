@@ -1,10 +1,14 @@
 import { VerificationPurpose } from '@prisma/generated/client'
 
 import { isProduction } from '~/config/env'
-import { isDisposableEmail } from '~/infra/datasets/disposable-emails'
-import { extendLogContext } from '~/infra/logger'
-import { getFileUrl, uploadFile } from '~/infra/orion'
-import { redis } from '~/infra/redis'
+import { isDisposableEmail } from '~/lib/datasets/disposable-emails'
+import { normalizeEmail } from '~/lib/utils/email'
+import { BadRequestError, ConflictError, NotFoundError, UnauthorizedError } from '~/lib/errors'
+import { extendLogContext } from '~/lib/logger'
+import { orion } from '~/lib/integrations/orion'
+import { redis } from '~/lib/redis'
+import { encryptEmail, hashEmail } from '~/lib/security/email-crypto'
+import { hashPassword, verifyPassword } from '~/lib/security/hash'
 import { enqueueEmailChangeCode, enqueuePasswordChangeCode } from '~/modules/auth/jobs'
 import {
 	findPasswordCredential,
@@ -19,10 +23,6 @@ import {
 	verifyCode
 } from '~/modules/auth/service'
 import { issueTokenPair, type RequestOrigin, revokeAllSessions } from '~/modules/session/service'
-import { normalizeEmail } from '~/shared/email'
-import { BadRequestError, ConflictError, NotFoundError, UnauthorizedError } from '~/shared/errors'
-import { encryptEmail, hashEmail } from '~/shared/security/email-crypto'
-import { hashPassword, verifyPassword } from '~/shared/security/hash'
 
 import type {
 	AvatarUploadInput,
@@ -157,8 +157,7 @@ export const confirmPasswordChange = async (
 }
 
 export const updateAvatar = async (userId: string, input: AvatarUploadInput) => {
-	const uploaded = await uploadFile('avatars', input.file)
-	const avatar = getFileUrl('avatars', uploaded.fileId)
+	const { url: avatar } = await orion.upload('avatars', input.file)
 
 	await updateAvatarRecord(userId, avatar)
 

@@ -1,7 +1,7 @@
 import { AuthProvider, UserRole, UserStatus } from '@prisma/generated/client'
 
-import { db } from '~/infra/db'
-import { toBytes } from '~/shared/bytes'
+import { toBytes } from '~/lib/utils/bytes'
+import { db } from '~/lib/db'
 
 export const findOAuthAccount = (provider: AuthProvider, providerAccountId: string) =>
 	db.oAuthAccount.findUnique({

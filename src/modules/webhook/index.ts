@@ -1,4 +1,4 @@
-import { getForwardedIp } from '~/shared/ip'
+import { getForwardedIp } from '~/lib/utils/ip'
 import { Elysia, t } from 'elysia'
 
 import { WebhookAckResponse } from './model'
@@ -19,7 +19,7 @@ export const webhook = new Elysia({ prefix: '/webhook', tags: ['Webhooks'] })
 			detail: {
 				summary: 'YooKassa webhook',
 				description:
-					"Only accepted from YooKassa's documented IP ranges. Re-fetches the payment from their API to confirm it is real (YooKassa notifications carry no signature), captures it, and logs it. No payment-status changes happen here yet."
+					"Only accepted from YooKassa's documented IP ranges. Re-fetches the payment from their API (notifications carry no signature) and applies that authoritative state: a succeeded course payment is captured and the course granted; cancellations move the intent to CANCELLED/EXPIRED. Subscription payments are recorded but not processed yet. Answers 503 when YooKassa's API can't be reached, so they redeliver."
 			}
 		}
 	)
@@ -36,7 +36,7 @@ export const webhook = new Elysia({ prefix: '/webhook', tags: ['Webhooks'] })
 			detail: {
 				summary: 'Heleket webhook',
 				description:
-					"Only accepted from Heleket's documented IP, then signature-verified, captured, and logged. No payment-status changes happen here yet."
+					"Only accepted from Heleket's documented IP, then signature-verified. A paid course invoice is captured and the course granted; failed/cancelled invoices move the intent accordingly. Subscription payments are recorded but not processed yet."
 			}
 		}
 	)

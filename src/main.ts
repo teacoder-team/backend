@@ -1,7 +1,7 @@
 import { createApp } from '~/app'
 import { bootstrap, shutdown } from '~/bootstrap'
 import { env } from '~/config/env'
-import { logger } from '~/infra/logger'
+import { logger } from '~/lib/logger'
 
 await bootstrap()
 
@@ -11,7 +11,7 @@ const app = createApp().listen(
 		logger.info(
 			{
 				context: 'server',
-				network: { host: hostname, port, url: env.APP_PUBLIC_URL },
+				network: { host: hostname, port, url: env.GATEWAY_URL },
 				environment: env.NODE_ENV,
 				runtime: { bun: Bun.version, platform: process.platform }
 			},

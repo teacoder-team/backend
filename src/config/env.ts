@@ -18,7 +18,10 @@ const envSchema = t.Object({
 
 	APP_ADDRESS: t.String({ default: '0.0.0.0' }),
 	APP_PORT: t.Number({ default: 3000 }),
-	APP_PUBLIC_URL: t.String({ format: 'uri' }),
+	/** Public URL of this API - OAuth callbacks and provider webhooks point here. */
+	GATEWAY_URL: t.String({ format: 'uri' }),
+	/** Public URL of the website - links in emails and post-payment redirects point here. */
+	APP_URL: t.String({ format: 'uri' }),
 
 	LOG_LEVEL: t.Union(
 		[

@@ -1,72 +1,94 @@
-import { createHash, randomBytes } from 'node:crypto'
+import {
+	type AuthorizationRequest,
+	completeAuthorization,
+	createAuthorization,
+	OAuthDeniedError,
+	OAuthError,
+	type OAuthProfile
+} from '@teacoder/oauth'
 
 import type { AuthProvider } from '@prisma/generated/client'
 
 import { env } from '~/config/env'
-import { extendLogContext } from '~/infra/logger'
-import { OAUTH_PROVIDERS, type OAuthProviderName } from '~/infra/oauth/registry'
-import type { OAuthProfile } from '~/infra/oauth/types'
-import { redis } from '~/infra/redis'
+import { normalizeEmail } from '~/lib/utils/email'
+import { BadRequestError, ForbiddenError } from '~/lib/errors'
+import { extendLogContext, logger } from '~/lib/logger'
+import {
+	AUTH_PROVIDER,
+	isOAuthProvider,
+	OAUTH_PROVIDERS,
+	type OAuthProviderName
+} from '~/lib/integrations/oauth'
+import { redis } from '~/lib/redis'
+import { encryptEmail, hashEmail } from '~/lib/security/email-crypto'
+import { generateUsername } from '~/lib/utils/username'
 import { findUserByEmailHash } from '~/modules/auth/repository'
 import { issueTokenPair, type RequestOrigin } from '~/modules/session/service'
-import { normalizeEmail } from '~/shared/email'
-import { BadRequestError, ForbiddenError } from '~/shared/errors'
-import { encryptEmail, hashEmail } from '~/shared/security/email-crypto'
-import { generateUsername } from '~/shared/username'
 
 import { createOAuthUser, findOAuthAccount, linkOAuthAccount } from './repository'
 
-const stateKey = (id: string) => `oauth:state:${id}`
+const stateKey = (state: string) => `oauth:state:${state}`
 
-interface OAuthState extends RequestOrigin {
+/** Parked in Redis under the state value between the redirect out and the callback. */
+interface OAuthSession extends RequestOrigin {
 	provider: OAuthProviderName
 	codeVerifier?: string
 }
 
-const base64Url = (buffer: Buffer) =>
-	buffer.toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+const resolveProvider = (name: string): OAuthProviderName => {
+	if (!isOAuthProvider(name))
+		throw new BadRequestError(`OAuth provider "${name}" is not supported`)
 
-const generatePkce = () => {
-	const verifier = base64Url(randomBytes(64))
-	const challenge = base64Url(createHash('sha256').update(verifier).digest())
-
-	return { verifier, challenge }
+	return name
 }
 
-const resolveProvider = (name: string) => {
-	const provider = OAUTH_PROVIDERS[name as OAuthProviderName]
-
-	if (!provider) throw new BadRequestError(`OAuth provider "${name}" is not supported`)
-
-	return provider
-}
-
-const callbackUrl = (name: string) => `${env.APP_PUBLIC_URL}/oauth/${name}/callback`
+/** openid-client derives the token request's redirect_uri from this, minus the query. */
+const callbackUrl = (name: OAuthProviderName) =>
+	new URL(`${env.GATEWAY_URL}/oauth/${name}/callback`)
 
 export const startOAuth = async (providerName: string, origin: RequestOrigin) => {
-	const provider = resolveProvider(providerName)
-	const stateId = randomBytes(24).toString('base64url')
+	const name = resolveProvider(providerName)
 
-	const state: OAuthState = { provider: providerName as OAuthProviderName, ...origin }
-
-	let codeChallenge: string | undefined
-
-	if (provider.usesPkce) {
-		const pkce = generatePkce()
-
-		state.codeVerifier = pkce.verifier
-		codeChallenge = pkce.challenge
-	}
-
-	await redis.set(stateKey(stateId), JSON.stringify(state), 'EX', env.OAUTH_STATE_TTL)
-
-	const url = provider.buildAuthorizeUrl({
-		state: stateId,
-		redirectUri: callbackUrl(providerName),
-		codeChallenge
+	const { url, state, codeVerifier } = await createAuthorization(OAUTH_PROVIDERS[name], {
+		redirectUri: callbackUrl(name).href
 	})
 
+	const session: OAuthSession = { provider: name, codeVerifier, ...origin }
+
+	await redis.set(stateKey(state), JSON.stringify(session), 'EX', env.OAUTH_STATE_TTL)
+
 	return { url }
+}
+
+const takeSession = async (state: string) => {
+	const raw = await redis.get(stateKey(state))
+
+	if (!raw) throw new ForbiddenError('OAuth state expired or already used')
+
+	await redis.del(stateKey(state))
+
+	return JSON.parse(raw) as OAuthSession
+}
+
+const authenticate = async (
+	name: OAuthProviderName,
+	callback: URL,
+	checks: Pick<AuthorizationRequest, 'state' | 'codeVerifier'>
+) => {
+	try {
+		return await completeAuthorization(OAUTH_PROVIDERS[name], callback, checks)
+	} catch (err) {
+		if (!(err instanceof OAuthError)) throw err
+
+		if (!(err instanceof OAuthDeniedError)) {
+			logger.warn(
+				{ context: 'oauth', provider: name, reason: err.name, err: err.cause ?? err },
+				'oauth_authentication_failed'
+			)
+		}
+
+		throw new BadRequestError(err.message)
+	}
 }
 
 const resolveUser = async (provider: AuthProvider, profile: OAuthProfile) => {
@@ -99,44 +121,30 @@ const resolveUser = async (provider: AuthProvider, profile: OAuthProfile) => {
 	return { user, outcome: 'signup' as const }
 }
 
-export const finishOAuth = async (
-	providerName: string,
-	query: Record<string, string | undefined>
-) => {
-	const stateId = query.state
+/** `search` is the raw callback query string, handed to openid-client untouched. */
+export const finishOAuth = async (providerName: string, search: string) => {
+	const name = resolveProvider(providerName)
+	const callback = callbackUrl(name)
 
-	if (!stateId) throw new BadRequestError('Missing OAuth state')
+	callback.search = search
 
-	const raw = await redis.get(stateKey(stateId))
+	const state = callback.searchParams.get('state')
 
-	if (!raw) throw new ForbiddenError('OAuth state expired or already used')
+	if (!state) throw new BadRequestError('Missing OAuth state')
 
-	await redis.del(stateKey(stateId))
+	const session = await takeSession(state)
 
-	const state = JSON.parse(raw) as OAuthState
+	if (session.provider !== name) throw new ForbiddenError('OAuth state does not match provider')
 
-	if (state.provider !== providerName) {
-		throw new ForbiddenError('OAuth state does not match provider')
-	}
-
-	const provider = resolveProvider(providerName)
-
-	const profile = await provider.authenticate({
-		query,
-		redirectUri: callbackUrl(providerName),
-		codeVerifier: state.codeVerifier
+	const profile = await authenticate(name, callback, {
+		state,
+		codeVerifier: session.codeVerifier
 	})
+	const { user, outcome } = await resolveUser(AUTH_PROVIDER[name], profile)
 
-	const { user, outcome } = await resolveUser(provider.provider, profile)
+	extendLogContext({ event: 'oauth_authenticated', provider: name, outcome, userId: user.id })
 
-	extendLogContext({
-		event: 'oauth_authenticated',
-		provider: providerName,
-		outcome,
-		userId: user.id
-	})
-
-	const tokens = await issueTokenPair(user.id, { ip: state.ip, userAgent: state.userAgent })
+	const tokens = await issueTokenPair(user.id, { ip: session.ip, userAgent: session.userAgent })
 
 	return { id: user.id, ...tokens }
 }

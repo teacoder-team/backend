@@ -2,7 +2,7 @@ import { type Static, t } from 'elysia'
 
 import { LessonAccess } from '@prisma/generated/client'
 
-import { PrismaEnum } from '~/shared/api'
+import { PrismaEnum } from '~/lib/utils/schema'
 
 const CourseId = t.String({
 	description: 'Unique identifier of the course.',

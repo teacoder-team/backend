@@ -1,4 +1,4 @@
-import { db } from '~/infra/db'
+import { db } from '~/lib/db'
 
 export const hasActiveSubscription = async (userId: string): Promise<boolean> => {
 	const subscription = await db.subscription.findUnique({ where: { userId } })

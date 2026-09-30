@@ -1,0 +1,16 @@
+{
+	"name": "@teacoder/payments",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"exports": {
+		"./crypto-bot": "./src/crypto-bot.ts",
+		"./heleket": "./src/heleket.ts",
+		"./robokassa": "./src/robokassa.ts",
+		"./telegram-stars": "./src/telegram-stars.ts",
+		"./yookassa": "./src/yookassa.ts"
+	},
+	"dependencies": {
+		"@teacoder/http": "workspace:*"
+	}
+}

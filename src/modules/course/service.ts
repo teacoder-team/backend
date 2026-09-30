@@ -1,15 +1,12 @@
-import { logger } from '~/infra/logger'
-import { redis } from '~/infra/redis'
-import { NotFoundError } from '~/shared/errors'
+import { NotFoundError } from '~/lib/errors'
+import { logger } from '~/lib/logger'
+import { redis } from '~/lib/redis'
 
 import {
-	createCoursePurchase,
-	findCoursePurchase,
 	findPublishedCourseBySlug,
 	findPublishedLessonsForCourse,
 	incrementCourseViews,
-	listPublishedCourses,
-	type NewCoursePurchase
+	listPublishedCourses
 } from './repository'
 
 const VIEW_DEDUP_TTL = 30 * 60
@@ -48,22 +45,4 @@ export const getCourseLessons = async (slug: string) => {
 	if (!course) throw new NotFoundError('Course not found')
 
 	return findPublishedLessonsForCourse(course.id)
-}
-
-export const grantCoursePurchase = async (input: NewCoursePurchase) => {
-	const existing = await findCoursePurchase(input.userId, input.courseId)
-	if (existing) return existing
-
-	const purchase = await createCoursePurchase(input)
-
-	logger.info(
-		{
-			userId: input.userId,
-			courseId: input.courseId,
-			paymentId: input.paymentId
-		},
-		'course_purchase_granted'
-	)
-
-	return purchase
 }

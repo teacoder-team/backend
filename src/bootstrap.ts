@@ -1,12 +1,13 @@
-import { warmDisposableEmails } from '~/infra/datasets/disposable-emails'
-import { warmGeoDatabase } from '~/infra/datasets/geo'
-import { connectDatabase, disconnectDatabase } from '~/infra/db'
-import { logger } from '~/infra/logger'
-import { closeMailTransport, verifyMailTransport } from '~/infra/mail/transport'
-import { QUEUE, queues } from '~/infra/queue/queues'
-import { startWorker } from '~/infra/queue/runner'
-import { connectRedis, disconnectRedis } from '~/infra/redis'
+import { warmDisposableEmails } from '~/lib/datasets/disposable-emails'
+import { warmGeoDatabase } from '~/lib/datasets/geo'
+import { connectDatabase, disconnectDatabase } from '~/lib/db'
+import { logger } from '~/lib/logger'
+import { closeMailTransport, verifyMailTransport } from '~/lib/mail/transport'
+import { QUEUE, queues } from '~/lib/queue/queues'
+import { startWorker } from '~/lib/queue/runner'
+import { connectRedis, disconnectRedis } from '~/lib/redis'
 import { emailJobs } from '~/modules/auth/jobs'
+import { courseEmailJobs } from '~/modules/course/jobs'
 import { maintenanceJobs, scheduleMaintenance } from '~/modules/session/jobs'
 import type { Worker } from 'bullmq'
 
@@ -24,7 +25,7 @@ export const bootstrap = async () => {
 		])
 
 		workers = [
-			startWorker(QUEUE.EMAIL, emailJobs),
+			startWorker(QUEUE.EMAIL, { ...emailJobs, ...courseEmailJobs }),
 			startWorker(QUEUE.MAINTENANCE, maintenanceJobs)
 		]
 

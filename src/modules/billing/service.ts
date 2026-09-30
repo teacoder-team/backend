@@ -2,16 +2,12 @@ import type { PaymentIntent, Prisma } from '@prisma/generated/client'
 import { PaymentMethod, PaymentProvider } from '@prisma/generated/client'
 
 import { env } from '~/config/env'
-import { extendLogContext, logger } from '~/infra/logger'
-import { createInvoice } from '~/infra/payments/crypto-bot'
-import { createInvoice as createHeleketInvoice } from '~/infra/payments/heleket'
-import { createInvoiceUrl } from '~/infra/payments/robokassa'
-import { createInvoiceLink } from '~/infra/payments/telegram-stars'
-import { createPayment as createYookassaPayment } from '~/infra/payments/yookassa'
+import { AppError, BadRequestError, InternalError, NotFoundError } from '~/lib/errors'
+import { extendLogContext, logger } from '~/lib/logger'
+import { cryptoBot, heleket, robokassa, telegramStars, yookassa } from '~/lib/integrations/payments'
 import { getUserEmail } from '~/modules/auth/service'
 import { findPurchasableCourse } from '~/modules/course/repository'
 import { cancelSubscription as cancelSubscriptionRow } from '~/modules/subscription/repository'
-import { AppError, BadRequestError, InternalError, NotFoundError } from '~/shared/errors'
 
 import type { CreatePaymentInput } from './model'
 import {
@@ -29,7 +25,7 @@ const PREMIUM_PLAN = {
 	stars: 150
 } as const
 
-const RETURN_URL = env.APP_PUBLIC_URL
+const RETURN_URL = env.APP_URL
 
 type MethodCategory = 'FIAT' | 'CRYPTO' | 'STARS'
 
@@ -175,7 +171,7 @@ const resolveProduct = async (courseId: string | undefined): Promise<Product> =>
 const startAtProvider = async (payment: PaymentIntent, product: Product, email: string | null) => {
 	switch (payment.provider) {
 		case PaymentProvider.YOOKASSA: {
-			const created = await createYookassaPayment({
+			const created = await yookassa.createPayment({
 				amount: payment.amount,
 				description: product.description,
 				returnUrl: RETURN_URL,
@@ -194,7 +190,7 @@ const startAtProvider = async (payment: PaymentIntent, product: Product, email: 
 		case PaymentProvider.ROBOKASSA: {
 			const recurring = product.kind === 'subscription'
 
-			const url = createInvoiceUrl({
+			const url = robokassa.createInvoiceUrl({
 				invoiceId: payment.invoiceNumber,
 				amount: payment.amount,
 				description: product.description,
@@ -207,7 +203,7 @@ const startAtProvider = async (payment: PaymentIntent, product: Product, email: 
 		}
 
 		case PaymentProvider.CRYPTO_BOT: {
-			const invoice = await createInvoice({
+			const invoice = await cryptoBot.createInvoice({
 				fiat: CURRENCY,
 				amount: payment.amount,
 				description: product.description,
@@ -223,10 +219,11 @@ const startAtProvider = async (payment: PaymentIntent, product: Product, email: 
 		}
 
 		case PaymentProvider.HELEKET: {
-			const invoice = await createHeleketInvoice({
+			const invoice = await heleket.createInvoice({
 				orderId: payment.id,
 				amount: payment.amount,
 				returnUrl: RETURN_URL,
+				callbackUrl: `${env.GATEWAY_URL}/webhook/heleket`,
 				additionalData: product.description
 			})
 
@@ -240,7 +237,7 @@ const startAtProvider = async (payment: PaymentIntent, product: Product, email: 
 				)
 			}
 
-			const url = await createInvoiceLink({
+			const url = await telegramStars.createInvoiceLink({
 				title: 'TeaCoder',
 				description: product.description,
 				payload: payment.id,

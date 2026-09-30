@@ -1,6 +1,6 @@
-import { logger } from '~/infra/logger'
-import { maintenanceQueue } from '~/infra/queue/queues'
-import type { JobHandlers } from '~/infra/queue/runner'
+import { logger } from '~/lib/logger'
+import { maintenanceQueue } from '~/lib/queue/queues'
+import type { JobHandlers } from '~/lib/queue/runner'
 
 import { deleteSessionsDeadBefore } from './repository'
 

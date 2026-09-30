@@ -2,19 +2,13 @@ import { Elysia } from 'elysia'
 
 import { env } from '~/config/env'
 import { API_VERSION } from '~/config/version'
-import { pingDatabase } from '~/infra/db'
-import { OAUTH_PROVIDERS } from '~/infra/oauth/registry'
-import { pingRedis } from '~/infra/redis'
+import { captcha } from '~/lib/integrations/captcha'
+import { pingDatabase } from '~/lib/db'
+import { OAUTH_PROVIDER_NAMES } from '~/lib/integrations/oauth'
+import { pingRedis } from '~/lib/redis'
 import { listAvailablePaymentMethods } from '~/modules/billing/service'
 
 import { HealthResponse, RootResponse } from './model'
-
-const captchaClientKey = (): string | null => {
-	if (env.CAPTCHA_PROVIDER === 'turnstile') return env.TURNSTILE_SITE_KEY || null
-	if (env.CAPTCHA_PROVIDER === 'yandex') return env.YANDEX_CAPTCHA_CLIENT_KEY || null
-
-	return null
-}
 
 export const root = new Elysia({ tags: ['Core'] })
 	.model({ RootResponse, HealthResponse })
@@ -23,15 +17,15 @@ export const root = new Elysia({ tags: ['Core'] })
 		() => ({
 			message: "What's up motherfuckers! 🤘",
 			version: API_VERSION,
-			app: { url: env.APP_PUBLIC_URL },
+			app: { url: env.APP_URL },
 			features: {
 				auth: {
-					providers: Object.keys(OAUTH_PROVIDERS)
+					providers: OAUTH_PROVIDER_NAMES
 				},
 				payments: listAvailablePaymentMethods(),
 				captcha: {
 					provider: env.CAPTCHA_PROVIDER,
-					clientKey: captchaClientKey()
+					key: captcha?.siteKey || null
 				},
 				orion: {
 					url: env.ORION_API_URL
@@ -43,7 +37,7 @@ export const root = new Elysia({ tags: ['Core'] })
 			detail: {
 				summary: 'System greeting',
 				description:
-					'Main API entry point - a greeting plus the config clients need to bootstrap (supported SSO providers, available payment methods, active captcha provider and its public key, Orion base URL).'
+					'Main API entry point - a greeting plus the config clients need to bootstrap.'
 			}
 		}
 	)

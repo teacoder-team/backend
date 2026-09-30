@@ -1,10 +1,10 @@
 import { Elysia } from 'elysia'
 
+import { BadRequestError } from '~/lib/errors'
 import { refreshTokenPair } from '~/modules/session/service'
 import { authCookie, REFRESH_COOKIE } from '~/plugins/auth-cookie'
 import { authGuard } from '~/plugins/auth-guard'
 import { requestContext } from '~/plugins/request-context'
-import { BadRequestError } from '~/shared/errors'
 
 import {
 	AuthResponse,

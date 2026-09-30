@@ -1,4 +1,4 @@
-import { db } from '~/infra/db'
+import { db } from '~/lib/db'
 
 export const findPublishedLessonById = (id: string) =>
 	db.lesson.findUnique({

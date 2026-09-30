@@ -1,10 +1,10 @@
-import { sendMail } from '~/infra/mail/client'
-import EmailChange from '~/infra/mail/templates/EmailChange'
-import PasswordChange from '~/infra/mail/templates/PasswordChange'
-import ResetPassword from '~/infra/mail/templates/ResetPassword'
-import VerificationCode from '~/infra/mail/templates/VerificationCode'
-import { emailQueue } from '~/infra/queue/queues'
-import type { JobHandlers } from '~/infra/queue/runner'
+import { sendMail } from '~/lib/mail/client'
+import EmailChange from '~/lib/mail/templates/EmailChange'
+import PasswordChange from '~/lib/mail/templates/PasswordChange'
+import ResetPassword from '~/lib/mail/templates/ResetPassword'
+import VerificationCode from '~/lib/mail/templates/VerificationCode'
+import { emailQueue } from '~/lib/queue/queues'
+import type { JobHandlers } from '~/lib/queue/runner'
 
 export type EmailJobs = {
 	sendVerificationCode: { email: string; code: string }

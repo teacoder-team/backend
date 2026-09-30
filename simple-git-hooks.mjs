@@ -1,4 +1,4 @@
 export default {
-	'pre-commit': 'yarn lint-staged',
-	'commit-msg': 'yarn commitlint --edit ${1}'
+	'pre-commit': 'bunx lint-staged',
+	'commit-msg': 'bunx commitlint --edit ${1}'
 }

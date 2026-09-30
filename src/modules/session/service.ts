@@ -3,11 +3,11 @@ import { UAParser } from 'ua-parser-js'
 import { randomUUID } from 'node:crypto'
 
 import { env } from '~/config/env'
-import { lookupLocation } from '~/infra/datasets/geo'
-import { extendLogContext, logger } from '~/infra/logger'
-import { NotFoundError, UnauthorizedError } from '~/shared/errors'
-import { signAccessToken } from '~/shared/security/jwt'
-import { generateRefreshToken, hashRefreshToken } from '~/shared/security/refresh-token'
+import { lookupLocation } from '~/lib/datasets/geo'
+import { NotFoundError, UnauthorizedError } from '~/lib/errors'
+import { extendLogContext, logger } from '~/lib/logger'
+import { signAccessToken } from '~/lib/security/jwt'
+import { generateRefreshToken, hashRefreshToken } from '~/lib/security/refresh-token'
 
 import {
 	type CachedSession,

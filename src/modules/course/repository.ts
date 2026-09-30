@@ -1,4 +1,6 @@
-import { db } from '~/infra/db'
+import type { Prisma } from '@prisma/generated/client'
+
+import { db } from '~/lib/db'
 
 export const listPublishedCourses = () =>
 	db.course.findMany({
@@ -62,8 +64,18 @@ export const findPurchasableCourse = (courseId: string) =>
 		}
 	})
 
-export const findCoursePurchase = (userId: string, courseId: string) =>
-	db.coursePurchase.findUnique({
+export const findCourseSummary = (courseId: string) =>
+	db.course.findUnique({
+		where: { id: courseId },
+		select: { title: true, slug: true, thumbnail: true }
+	})
+
+export const findCoursePurchase = (
+	userId: string,
+	courseId: string,
+	client: Prisma.TransactionClient = db
+) =>
+	client.coursePurchase.findUnique({
 		where: { userId_courseId: { userId, courseId } }
 	})
 
@@ -76,4 +88,7 @@ export interface NewCoursePurchase {
 	paymentId?: string
 }
 
-export const createCoursePurchase = (data: NewCoursePurchase) => db.coursePurchase.create({ data })
+export const createCoursePurchase = (
+	data: NewCoursePurchase,
+	client: Prisma.TransactionClient = db
+) => client.coursePurchase.create({ data })

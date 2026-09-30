@@ -1,7 +1,7 @@
 import type { Prisma, RefreshToken, Session } from '@prisma/generated/client'
 
-import { db } from '~/infra/db'
-import { toBytes } from '~/shared/bytes'
+import { toBytes } from '~/lib/utils/bytes'
+import { db } from '~/lib/db'
 
 const active = (now: Date): Prisma.SessionWhereInput => ({
 	revokedAt: null,

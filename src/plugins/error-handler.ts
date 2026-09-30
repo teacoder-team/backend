@@ -1,7 +1,7 @@
 import { Elysia } from 'elysia'
 
-import { extendLogContext } from '~/infra/logger'
-import { AppError } from '~/shared/errors'
+import { extendLogContext } from '~/lib/logger'
+import { AppError } from '~/lib/errors'
 
 interface ErrorBody {
 	status: number

@@ -2,7 +2,7 @@ import { type Static, t } from 'elysia'
 
 import { IntentStatus, PaymentMethod, PaymentProvider } from '@prisma/generated/client'
 
-import { PrismaEnum } from '~/shared/api'
+import { PrismaEnum } from '~/lib/utils/schema'
 
 export const CreatePaymentPayload = t.Object({
 	method: PrismaEnum(PaymentMethod, {

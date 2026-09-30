@@ -1,4 +1,4 @@
-import { db } from '~/infra/db'
+import { db } from '~/lib/db'
 
 export const findUserById = (userId: string) => db.user.findUnique({ where: { id: userId } })
 

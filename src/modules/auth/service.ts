@@ -1,28 +1,28 @@
 import { UserStatus, VerificationPurpose } from '@prisma/generated/client'
 
 import { isProduction } from '~/config/env'
-import { verifyCaptcha } from '~/infra/captcha'
-import { isDisposableEmail } from '~/infra/datasets/disposable-emails'
-import { extendLogContext } from '~/infra/logger'
-import { redis } from '~/infra/redis'
+import { verifyCaptcha } from '~/lib/integrations/captcha'
+import { isDisposableEmail } from '~/lib/datasets/disposable-emails'
+import { normalizeEmail } from '~/lib/utils/email'
+import {
+	BadRequestError,
+	ConflictError,
+	TooManyRequestsError,
+	UnauthorizedError
+} from '~/lib/errors'
+import { extendLogContext } from '~/lib/logger'
+import { redis } from '~/lib/redis'
+import { decryptEmail, encryptEmail, hashEmail } from '~/lib/security/email-crypto'
+import { hashPassword, verifyPassword } from '~/lib/security/hash'
+import { generateOtpCode } from '~/lib/security/otp'
+import { hashVerificationCode, verificationCodeMatches } from '~/lib/security/verification-code'
+import { generateUsername } from '~/lib/utils/username'
 import {
 	issueTokenPair,
 	type RequestOrigin,
 	revokeAllSessions,
 	revokeSession
 } from '~/modules/session/service'
-import { normalizeEmail } from '~/shared/email'
-import {
-	BadRequestError,
-	ConflictError,
-	TooManyRequestsError,
-	UnauthorizedError
-} from '~/shared/errors'
-import { decryptEmail, encryptEmail, hashEmail } from '~/shared/security/email-crypto'
-import { hashPassword, verifyPassword } from '~/shared/security/hash'
-import { generateOtpCode } from '~/shared/security/otp'
-import { hashVerificationCode, verificationCodeMatches } from '~/shared/security/verification-code'
-import { generateUsername } from '~/shared/username'
 
 import { enqueuePasswordResetCode, enqueueVerificationCode } from './jobs'
 import type {

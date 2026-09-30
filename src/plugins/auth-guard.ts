@@ -1,9 +1,9 @@
 import { Elysia } from 'elysia'
 
-import { extendLogContext } from '~/infra/logger'
+import { UnauthorizedError } from '~/lib/errors'
+import { extendLogContext } from '~/lib/logger'
+import { verifyAccessToken } from '~/lib/security/jwt'
 import { resolveSession } from '~/modules/session/service'
-import { UnauthorizedError } from '~/shared/errors'
-import { verifyAccessToken } from '~/shared/security/jwt'
 
 import { ACCESS_COOKIE } from './auth-cookie'
 
