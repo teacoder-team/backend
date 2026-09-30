@@ -1,21 +1,29 @@
-import type { PaymentIntent, Prisma } from '@prisma/generated/client'
-import { PaymentMethod, PaymentProvider } from '@prisma/generated/client'
+import type { PaymentIntent } from '@prisma/generated/client'
+import { PaymentMethod, PaymentProvider, Prisma } from '@prisma/generated/client'
 
 import { env } from '~/config/env'
-import { AppError, BadRequestError, InternalError, NotFoundError } from '~/lib/errors'
-import { extendLogContext, logger } from '~/lib/logger'
+import {
+	AppError,
+	BadRequestError,
+	ConflictError,
+	InternalError,
+	NotFoundError
+} from '~/lib/errors'
 import { cryptoBot, heleket, robokassa, telegramStars, yookassa } from '~/lib/integrations/payments'
+import { LockTakenError, withLock } from '~/lib/lock'
+import { extendLogContext, logger } from '~/lib/logger'
 import { getUserEmail } from '~/modules/auth/service'
-import { findPurchasableCourse } from '~/modules/course/repository'
+import { findCoursePurchase, findPurchasableCourse } from '~/modules/course/repository'
 import { cancelSubscription as cancelSubscriptionRow } from '~/modules/subscription/repository'
 
-import type { CreatePaymentInput } from './model'
 import {
-	attachProviderPayment,
-	createPendingPayment,
-	findPaymentByIdempotencyKey,
-	markPaymentFailed
-} from './repository'
+	CHECKOUT_TTL_SECONDS,
+	type CheckoutRequest,
+	findIdempotentReplay,
+	findReusableCheckout
+} from './checkout'
+import type { CreatePaymentInput } from './model'
+import { attachProviderPayment, createPendingPayment, markPaymentFailed } from './repository'
 
 const CURRENCY = 'RUB'
 
@@ -91,6 +99,18 @@ const METHODS: Record<PaymentMethod, MethodDefinition> = {
 		description: 'Оплата звёздами Telegram, без банковской карты',
 		providers: [PaymentProvider.TELEGRAM]
 	}
+}
+
+export const paymentMethodName = (method: PaymentMethod) => METHODS[method].name
+
+export const PAYMENT_PROVIDER_NAMES: Record<PaymentProvider, string> = {
+	[PaymentProvider.YOOKASSA]: 'ЮKassa',
+	[PaymentProvider.ROBOKASSA]: 'Robokassa',
+	[PaymentProvider.PRODAMUS]: 'Prodamus',
+	[PaymentProvider.HELEKET]: 'Heleket',
+	[PaymentProvider.CRYPTO_BOT]: 'Crypto Bot',
+	[PaymentProvider.CLOUDPAYMENTS]: 'CloudPayments',
+	[PaymentProvider.TELEGRAM]: 'Telegram Stars'
 }
 
 const CATEGORY_ORDER = ['FIAT', 'CRYPTO', 'STARS'] as const
@@ -208,7 +228,8 @@ const startAtProvider = async (payment: PaymentIntent, product: Product, email: 
 				amount: payment.amount,
 				description: product.description,
 				payload: payment.id,
-				returnUrl: RETURN_URL
+				returnUrl: RETURN_URL,
+				expiresIn: CHECKOUT_TTL_SECONDS
 			})
 
 			return {
@@ -224,6 +245,7 @@ const startAtProvider = async (payment: PaymentIntent, product: Product, email: 
 				amount: payment.amount,
 				returnUrl: RETURN_URL,
 				callbackUrl: `${env.GATEWAY_URL}/webhook/heleket`,
+				lifetime: CHECKOUT_TTL_SECONDS,
 				additionalData: product.description
 			})
 
@@ -279,33 +301,28 @@ const toResponse = (payment: ReplayableIntent) => {
 	}
 }
 
-export const createPayment = async (
-	userId: string,
-	input: CreatePaymentInput,
-	idempotencyKey?: string
+const CHECKOUT_LOCK_TTL_MS = 60_000
+
+const checkoutLockKey = ({ userId, courseId }: CheckoutRequest) =>
+	`checkout:${userId}:${courseId ?? 'subscription'}`
+
+const isUniqueViolation = (err: unknown) =>
+	err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2002'
+
+const openCheckout = async (
+	request: CheckoutRequest,
+	provider: PaymentProvider,
+	product: Product,
+	fallbackEmail: string | undefined
 ) => {
-	if (idempotencyKey) {
-		const existing = await findPaymentByIdempotencyKey(userId, idempotencyKey)
-
-		if (existing) {
-			return toResponse(existing)
-		}
-	}
-
-	const provider = resolveProvider(input.method)
-
-	if (!provider) {
-		throw new BadRequestError(`Payment method ${input.method} is not available yet`)
-	}
-
-	const product = await resolveProduct(input.courseId)
-	const email = (await getUserEmail(userId)) ?? input.email ?? null
+	const { userId, idempotencyKey } = request
+	const email = (await getUserEmail(userId)) ?? fallbackEmail ?? null
 
 	const payment = await createPendingPayment({
 		userId,
 		amount: product.amount,
 		currency: CURRENCY,
-		method: input.method,
+		method: request.method,
 		provider,
 		courseId: product.courseId,
 		idempotencyKey,
@@ -314,6 +331,12 @@ export const createPayment = async (
 			description: product.description,
 			...(product.courseId ? { courseId: product.courseId } : {})
 		}
+	}).catch((err: unknown) => {
+		if (isUniqueViolation(err)) {
+			throw new ConflictError('Idempotency-Key is already in use by another request')
+		}
+
+		throw err
 	})
 
 	try {
@@ -359,6 +382,65 @@ export const createPayment = async (
 		}
 
 		throw new BadRequestError('Payment provider is unavailable, try again later')
+	}
+}
+
+const checkout = async (request: CheckoutRequest, fallbackEmail: string | undefined) => {
+	const replay = await findIdempotentReplay(request)
+
+	if (replay) {
+		extendLogContext({ event: 'payment_replayed', userId: request.userId, paymentId: replay.id })
+
+		return toResponse(replay)
+	}
+
+	const provider = resolveProvider(request.method)
+
+	if (!provider) {
+		throw new BadRequestError(`Payment method ${request.method} is not available yet`)
+	}
+
+	const product = await resolveProduct(request.courseId ?? undefined)
+
+	if (product.courseId && (await findCoursePurchase(request.userId, product.courseId))) {
+		throw new ConflictError('Course already purchased')
+	}
+
+	const reusable = await findReusableCheckout(request)
+
+	if (reusable) {
+		extendLogContext({ event: 'payment_reused', userId: request.userId, paymentId: reusable.id })
+
+		return toResponse(reusable)
+	}
+
+	return openCheckout(request, provider, product, fallbackEmail)
+}
+
+export const createPayment = async (
+	userId: string,
+	input: CreatePaymentInput,
+	idempotencyKey?: string
+) => {
+	const request: CheckoutRequest = {
+		userId,
+		method: input.method,
+		courseId: input.courseId ?? null,
+		idempotencyKey
+	}
+
+	try {
+		return await withLock(checkoutLockKey(request), CHECKOUT_LOCK_TTL_MS, () =>
+			checkout(request, input.email)
+		)
+	} catch (err) {
+		if (err instanceof LockTakenError) {
+			throw new ConflictError(
+				'A payment for this product is already being created - retry in a moment'
+			)
+		}
+
+		throw err
 	}
 }
 

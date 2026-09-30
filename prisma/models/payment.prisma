@@ -12,7 +12,7 @@ model PaymentIntent {
     pspPayload  Json            @default("{}") @map("psp_payload")
     failureCode String?         @map("failure_code")
 
-    idempotencyKey String? @unique(map: "uq_payment_intents_idempotency_key") @map("idempotency_key")
+    idempotencyKey String? @map("idempotency_key")
 
     invoiceNumber Int @unique(map: "uq_payment_intents_invoice_number") @default(autoincrement()) @map("invoice_number")
 
@@ -35,10 +35,12 @@ model PaymentIntent {
     createdAt DateTime @default(now()) @map("created_at")
     updatedAt DateTime @updatedAt @map("updated_at")
 
+    @@unique([userId, idempotencyKey], map: "uq_payment_intents_user_id_idempotency_key")
     @@index([status, createdAt(sort: Desc)], map: "ix_payment_intents_status_created_at")
     @@index([subscriptionId], map: "ix_payment_intents_subscription_id")
     @@index([provider, pspIntentId], map: "ix_payment_intents_provider_psp_intent_id")
     @@index([courseId, createdAt(sort: Desc)], map: "ix_payment_intents_course_id_created_at")
+    @@index([userId, courseId, status], map: "ix_payment_intents_user_id_course_id_status")
     @@map("payment_intents")
 }
 

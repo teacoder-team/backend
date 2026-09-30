@@ -1,6 +1,7 @@
 import { IntentStatus, type PaymentProvider } from '@prisma/generated/client'
 
 import { extendLogContext, logger } from '~/lib/logger'
+import { enqueueCoursePurchaseNotification } from '~/modules/admin-bot/jobs'
 import { enqueueCoursePurchaseEmail } from '~/modules/course/jobs'
 
 import {
@@ -59,6 +60,13 @@ const rejectionReason = (intent: FulfillableIntent | null, update: ProviderPayme
 	return null
 }
 
+/** The payment is already settled - a failure here must not undo or fail it. */
+const notifyAdmins = async (paymentId: string) => {
+	await enqueueCoursePurchaseNotification({ paymentId }).catch((err: unknown) => {
+		logger.warn({ context: 'billing', paymentId, err }, 'admin_notification_enqueue_failed')
+	})
+}
+
 const capture = async (
 	intent: FulfillableIntent & { courseId: string }
 ): Promise<FulfillmentResult> => {
@@ -75,7 +83,10 @@ const capture = async (
 	}
 
 	if (result === 'already_owned') {
-		/** Money was taken for a course the user already has - needs a manual refund. */
+		/**
+		 * createPayment refuses owned courses, so this only happens when two invoices were
+		 * opened before either was paid. Money was taken twice - needs a manual refund.
+		 */
 		logger.warn(
 			{
 				context: 'billing',
@@ -97,6 +108,8 @@ const capture = async (
 			)
 		}
 	)
+
+	await notifyAdmins(intent.id)
 
 	return { outcome: 'course_granted', courseId: intent.courseId }
 }

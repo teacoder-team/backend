@@ -22,6 +22,7 @@ packages/            @teacoder/* bun workspaces - framework-agnostic, no build s
   payments/          subpath exports: /yookassa /heleket /crypto-bot /robokassa /telegram-stars
   orion/             Orion file storage client (github.com/teacoder-team/orion)
   npd/               "Мой налог" self-employed tax receipts
+  telegram/          tg`` safe-HTML template, chat targets (id / id:topic), multi-chat notifier on grammY
 prisma/models/*.prisma   multi-file schema; client generated to prisma/generated (import '@prisma/generated/client')
 src/
   main.ts  bootstrap.ts  app.ts     entry, startup/shutdown (db, redis, workers), module mounting + OpenAPI (/docs)
@@ -29,11 +30,12 @@ src/
   plugins/           request-context (requestId, ip, userAgent), auth-guard (auth macro), auth-cookie, error-handler
   lib/
     db.ts redis.ts cache.ts logger.ts errors.ts    infrastructure + the app's error classes
-    integrations/    package instances wired with env: oauth, captcha, payments, orion, npd
+    integrations/    package instances wired with env: oauth, captcha, payments, orion, npd, telegram (admin bot)
     security/        email-crypto, hash (argon2), jwt, otp, refresh-token, verification-code
     queue/ mail/ datasets/   BullMQ, nodemailer + react-email templates, geo/disposable-email data
     utils/           pure helpers, no env: bytes, email, ip, lazy, schema, username
   modules/<feature>/ index.ts controller · service.ts logic · repository.ts Prisma · model.ts schemas · jobs.ts queue
+  modules/admin-bot/ no HTTP: bot.ts (grammY commands, polling lifecycle), jobs.ts, messages.ts (Russian HTML)
 ```
 
 ## Module pattern (feature folders, per Elysia's best-practice guide)
@@ -80,7 +82,8 @@ src/
 - **Auth**: email stored encrypted (`emailCipher`, AES-GCM) + `emailHash` (HMAC) for lookup - look users up with `hashEmail(normalizeEmail(email))`, never by plaintext. Access = JWT (`tc_access` cookie or `Authorization: Bearer`); refresh = opaque token, rotated, reuse revokes the session family (`tc_refresh`, path `/auth/refresh`). One-time codes: `issueVerificationCode` / `verifyCode` in `modules/auth/service.ts` (hashed, attempt-limited) - reuse them, don't hand-roll.
 - **Captcha**: `verifyCaptcha(token, ip)` from `~/lib/integrations/captcha` gates register/login/forgot-password; `CAPTCHA_PROVIDER=none` disables it.
 - **OAuth**: providers in `~/lib/integrations/oauth` (`OAUTH_PROVIDERS`, `AUTH_PROVIDER` maps to the Prisma enum). State + PKCE verifier live in Redis under the state value; accounts are linked by email only when the provider marks it verified.
-- **Payments**: `billing/service.ts` opens a `PaymentIntent` at the provider. Webhooks (`modules/webhook`) authenticate (IP allowlist + signature, or API re-fetch for YooKassa), store raw events in `WebhookEvent` (dedup on `(pspName, pspEventId)`; Heleket key is `uuid:status`), then call `applyPaymentUpdate` (`billing/fulfillment.ts`), which captures + grants the course in one guarded transaction. Subscription payments are intentionally not processed yet - events stay unprocessed. CryptoBot/Robokassa/Stars have no webhook endpoints yet.
+- **Payments**: `billing/service.ts` opens a `PaymentIntent` at the provider; a course the user already owns is refused up front (409), not charged and refunded later. At most one payable invoice per user and product: `billing/checkout.ts` hands back the open one for the same method and refuses (409) a different method until it expires (`CHECKOUT_TTL_SECONDS`, also the invoice lifetime at Heleket/Crypto Bot); the whole decision runs under a per-product Redis lock (`withLock` from `~/lib/lock`). `Idempotency-Key` is unique per user: same key + same params replays, different params -> 422, a failed attempt frees the key. Webhooks (`modules/webhook`) authenticate (IP allowlist + signature, or API re-fetch for YooKassa), store raw events in `WebhookEvent` (dedup on `(pspName, pspEventId)`; Heleket key is `uuid:status`), then call `applyPaymentUpdate` (`billing/fulfillment.ts`), which captures + grants the course in one guarded transaction. Subscription payments are intentionally not processed yet - events stay unprocessed. CryptoBot/Robokassa/Stars have no webhook endpoints yet.
+- **Telegram**: two bots with separate tokens. Public bot (`TELEGRAM_PUBLIC_BOT_*`) - users, Telegram Stars payments. Admin bot (`TELEGRAM_ADMIN_BOT_TOKEN`, empty = off) - staff notifications to `TELEGRAM_ADMIN_CHAT_IDS` (`user`, `-100group`, `-100group:topic`), answers `/start` only there. Notifications go through the `notifications` queue (`enqueueCoursePurchaseNotification`), never sent inline from a request.
 - **IP**: `ip` in handlers comes from `request-context` (faked to a public IP in development for geo lookup). Webhook allowlists use the real forwarded IP via `createIpAllowlist` / `getForwardedIp` in `~/lib/utils/ip`.
 
 ## Gotchas
@@ -88,3 +91,5 @@ src/
 - Windows dev box: the user's `bun --watch` holds folder handles, so renaming a **directory** fails with `Permission denied` - move files one by one (`git mv` per file).
 - In development pino writes through an async worker transport - log lines can lag or be lost if the process is killed.
 - `redirect_uri` for OAuth is derived from `GATEWAY_URL`; provider consoles must register that exact URL.
+- Telegram markup uses the `tg` tag, never one named `html`: prettier formats `html` templates as HTML and collapses the `\n` that Telegram renders literally. Write line breaks as `\n` inside `tg` templates.
+- The admin bot long-polls from the app process: one poller per token. A second instance or environment on the same token gets `409 Conflict` - each environment needs its own admin bot.

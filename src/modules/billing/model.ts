@@ -27,6 +27,22 @@ export const CreatePaymentPayload = t.Object(
 	{ description: 'Что и как оплатить.' }
 )
 
+export const CreatePaymentHeaders = t.Object(
+	{
+		'idempotency-key': t.Optional(
+			t.String({
+				minLength: 1,
+				maxLength: 255,
+				description:
+					'Ключ идемпотентности - любая уникальная для запроса строка, лучше UUID. Повтор с тем же ключом и теми же параметрами вернёт уже созданный платёж; с другими параметрами - ошибку 422.',
+				error: 'Idempotency-Key must be 1-255 characters',
+				examples: ['6f1c2e5a-3b4d-4e8f-9a0b-1c2d3e4f5a6b']
+			})
+		)
+	},
+	{ additionalProperties: true }
+)
+
 export const CreatePaymentResponse = t.Object(
 	{
 		paymentId: t.String({

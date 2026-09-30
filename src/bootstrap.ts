@@ -6,6 +6,8 @@ import { closeMailTransport, verifyMailTransport } from '~/lib/mail/transport'
 import { QUEUE, queues } from '~/lib/queue/queues'
 import { startWorker } from '~/lib/queue/runner'
 import { connectRedis, disconnectRedis } from '~/lib/redis'
+import { startAdminBot, stopAdminBot } from '~/modules/admin-bot/bot'
+import { notificationJobs } from '~/modules/admin-bot/jobs'
 import { emailJobs } from '~/modules/auth/jobs'
 import { courseEmailJobs } from '~/modules/course/jobs'
 import { maintenanceJobs, scheduleMaintenance } from '~/modules/session/jobs'
@@ -26,10 +28,13 @@ export const bootstrap = async () => {
 
 		workers = [
 			startWorker(QUEUE.EMAIL, { ...emailJobs, ...courseEmailJobs }),
-			startWorker(QUEUE.MAINTENANCE, maintenanceJobs)
+			startWorker(QUEUE.MAINTENANCE, maintenanceJobs),
+			startWorker(QUEUE.NOTIFICATIONS, notificationJobs)
 		]
 
 		await scheduleMaintenance()
+
+		startAdminBot()
 
 		verifyMailTransport().catch((err) => {
 			logger.error({ context: 'mail', err }, 'smtp_verification_failed')
@@ -52,6 +57,7 @@ export const shutdown = async () => {
 	logger.info({ context: 'shutdown' }, 'shutting_down')
 
 	await Promise.allSettled([
+		stopAdminBot(),
 		...workers.map((worker) => worker.close()),
 		...queues.map((queue) => queue.close())
 	])

@@ -1,5 +1,8 @@
-import 'dotenv/config'
 import { defineConfig } from 'prisma/config'
+
+try {
+	process.loadEnvFile()
+} catch {}
 
 export default defineConfig({
 	schema: 'prisma/models',

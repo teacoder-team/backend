@@ -28,10 +28,11 @@ export const attachProviderPayment = (
 		data: { pspIntentId, pspPayload }
 	})
 
+/** Frees the idempotency key too - an attempt that never reached the provider mustn't burn it. */
 export const markPaymentFailed = (paymentId: string, failureCode?: string) =>
 	db.paymentIntent.update({
 		where: { id: paymentId },
-		data: { status: IntentStatus.FAILED, failureCode }
+		data: { status: IntentStatus.FAILED, failureCode, idempotencyKey: null }
 	})
 
 export const findPaymentById = (userId: string, paymentId: string) =>
@@ -41,7 +42,25 @@ export const findPaymentByProviderId = (provider: PaymentProvider, pspIntentId: 
 	db.paymentIntent.findFirst({ where: { provider, pspIntentId } })
 
 export const findPaymentByIdempotencyKey = (userId: string, idempotencyKey: string) =>
-	db.paymentIntent.findFirst({ where: { userId, idempotencyKey } })
+	db.paymentIntent.findUnique({ where: { userId_idempotencyKey: { userId, idempotencyKey } } })
+
+/** Unsettled intents for one product - a course, or the subscription when `courseId` is null. */
+export const findOpenCheckouts = (userId: string, courseId: string | null) =>
+	db.paymentIntent.findMany({
+		where: {
+			userId,
+			courseId,
+			status: { in: [IntentStatus.REQUIRES_PAYMENT, IntentStatus.PROCESSING] }
+		},
+		orderBy: { createdAt: 'desc' }
+	})
+
+/** Only still-unpaid ones - a PROCESSING intent has money in flight and is never expired here. */
+export const expireCheckouts = (paymentIds: string[]) =>
+	db.paymentIntent.updateMany({
+		where: { id: { in: paymentIds }, status: IntentStatus.REQUIRES_PAYMENT },
+		data: { status: IntentStatus.EXPIRED, failureCode: 'checkout_expired' }
+	})
 
 export const findPaymentForFulfillment = (paymentId: string) =>
 	db.paymentIntent.findUnique({

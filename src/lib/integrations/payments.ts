@@ -34,7 +34,7 @@ export const robokassa = createRobokassaClient({
 })
 
 export const telegramStars = createTelegramStarsClient({
-	botToken: env.TELEGRAM_BOT_TOKEN,
-	webhookSecret: env.TELEGRAM_WEBHOOK_SECRET,
+	botToken: env.TELEGRAM_PUBLIC_BOT_TOKEN,
+	webhookSecret: env.TELEGRAM_PUBLIC_BOT_WEBHOOK_SECRET,
 	logger
 })

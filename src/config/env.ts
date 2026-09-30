@@ -81,8 +81,17 @@ const envSchema = t.Object({
 	CRYPTO_BOT_TOKEN: t.String(),
 	CRYPTO_BOT_TESTNET: t.Boolean({ default: false }),
 
-	TELEGRAM_BOT_TOKEN: t.String(),
-	TELEGRAM_WEBHOOK_SECRET: t.String({ minLength: 16 }),
+	/** Public bot - what users talk to; takes Telegram Stars payments. */
+	TELEGRAM_PUBLIC_BOT_TOKEN: t.String(),
+	TELEGRAM_PUBLIC_BOT_WEBHOOK_SECRET: t.String({ minLength: 16 }),
+
+	/** Staff-only bot for notifications. Empty disables it. Use a separate bot per environment. */
+	TELEGRAM_ADMIN_BOT_TOKEN: t.String({ default: '' }),
+	/** Comma-separated: `123456789` user, `-1001234567890` group, `-1001234567890:42` topic. */
+	TELEGRAM_ADMIN_CHAT_IDS: t.String({
+		default: '',
+		pattern: '^\\s*$|^\\s*-?\\d+(:\\d+)?(\\s*,\\s*-?\\d+(:\\d+)?)*\\s*$'
+	}),
 
 	OAUTH_STATE_TTL: t.Number({ default: 10 * 60 }),
 
