@@ -13,6 +13,7 @@ import { session } from '~/modules/session'
 import { mfa } from '~/modules/mfa'
 import { users } from '~/modules/users'
 import { webauthn } from '~/modules/webauthn'
+import { cors } from '~/plugins/cors'
 import { errorHandler } from '~/plugins/error-handler'
 import { requestContext, requestLogger } from '~/plugins/request-context'
 
@@ -29,6 +30,7 @@ export const createApp = () =>
 			})
 		)
 		.use(errorHandler)
+		.use(cors)
 		.use(requestContext)
 		.use(requestLogger)
 		.use(root)

@@ -25,3 +25,16 @@ export const cancelSubscription = async (userId: string) => {
 		}
 	})
 }
+
+export const findSubscription = (userId: string) =>
+	db.subscription.findUnique({
+		where: { userId },
+		select: { isActive: true, isAutoBilling: true, startedAt: true, expiresAt: true }
+	})
+
+export const setAutoBilling = (userId: string, isAutoBilling: boolean) =>
+	db.subscription.update({
+		where: { userId },
+		data: { isAutoBilling },
+		select: { isActive: true, isAutoBilling: true, startedAt: true, expiresAt: true }
+	})

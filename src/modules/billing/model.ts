@@ -85,6 +85,36 @@ export const CancelSubscriptionResponse = t.Object(
 	{ description: 'Результат отмены подписки.' }
 )
 
+const Timestamp = (description: string) =>
+	t.Nullable(t.String({ description, examples: ['2026-09-30T14:16:54.000Z'] }))
+
+export const SubscriptionResponse = t.Object(
+	{
+		isActive: t.Boolean({
+			description: 'Действует ли премиум прямо сейчас (с учётом даты окончания).'
+		}),
+		autoRenew: t.Boolean({
+			description: 'Включено ли автопродление. Оплаченный период действует до конца в любом случае.'
+		}),
+		startedAt: Timestamp('Когда подписка оформлена. `null`, если подписки не было.'),
+		expiresAt: Timestamp(
+			'До какого момента оплачен премиум. `null` - подписки нет или она бессрочная (при `isActive: true`).'
+		)
+	},
+	{ description: 'Премиум-подписка. Если её никогда не было - все флаги `false`, даты `null`.' }
+)
+
+export const UpdateSubscriptionPayload = t.Object(
+	{
+		autoRenew: t.Boolean({
+			description: 'Включить или выключить автопродление.',
+			error: 'autoRenew must be a boolean',
+			examples: [false]
+		})
+	},
+	{ description: 'Настройки подписки.' }
+)
+
 const PaymentMethodCategoryId = t.Union(
 	[t.Literal('FIAT'), t.Literal('CRYPTO'), t.Literal('STARS')],
 	{ description: 'Категория: банковские способы, криптовалюта или Telegram Stars.' }
@@ -120,3 +150,4 @@ export const PaymentMethodsResponse = t.Object(
 )
 
 export type CreatePaymentInput = Static<typeof CreatePaymentPayload>
+export type UpdateSubscriptionInput = Static<typeof UpdateSubscriptionPayload>

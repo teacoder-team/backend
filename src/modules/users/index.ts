@@ -12,7 +12,11 @@ import {
 	ChangeEmailPayload,
 	ChangePasswordPayload,
 	ConfirmCodePayload,
+	CourseProgressListResponse,
 	EmailChangeResponse,
+	LeaderListResponse,
+	StatisticsResponse,
+	UpdateProfilePayload,
 	UserResponse
 } from './model'
 import {
@@ -21,8 +25,10 @@ import {
 	getCurrentUser,
 	requestEmailChange,
 	requestPasswordChange,
-	updateAvatar
+	updateAvatar,
+	updateProfile
 } from './service'
+import { getCourseProgress, getLeaders, getStatistics } from './stats'
 
 export const users = new Elysia({ prefix: '/users', tags: [TAG.users] })
 	.use(requestContext)
@@ -30,6 +36,7 @@ export const users = new Elysia({ prefix: '/users', tags: [TAG.users] })
 	.use(authGuard)
 	.model({
 		UserResponse,
+		UpdateProfilePayload,
 		ChangeEmailPayload,
 		ChangePasswordPayload,
 		ConfirmCodePayload,
@@ -37,14 +44,52 @@ export const users = new Elysia({ prefix: '/users', tags: [TAG.users] })
 		AvatarUploadPayload,
 		AvatarResponse,
 		MessageResponse,
-		AccessTokenResponse
+		AccessTokenResponse,
+		StatisticsResponse,
+		CourseProgressListResponse,
+		LeaderListResponse
+	})
+	.get('/leaders', async () => await getLeaders(), {
+		response: 'LeaderListResponse',
+		detail: {
+			tags: [TAG.progress],
+			summary: 'Рейтинг',
+			description:
+				'Топ-15 пользователей по баллам (5 баллов за каждый пройденный урок). При равных баллах выше тот, кто зарегистрировался раньше, а место у них одно. Заблокированные не показываются. Обновляется раз в минуту.'
+		}
 	})
 	.guard({ auth: true, detail: { security: [{ bearerAuth: [] }] } })
+	.get('/@me/statistics', async ({ session }) => await getStatistics(session.userId), {
+		response: 'StatisticsResponse',
+		detail: {
+			tags: [TAG.progress],
+			summary: 'Моя статистика',
+			description:
+				'Баллы, место в рейтинге, пройденные уроки и курсы. Учитываются только опубликованные уроки опубликованных курсов.'
+		}
+	})
+	.get('/@me/progress', async ({ session }) => await getCourseProgress(session.userId), {
+		response: 'CourseProgressListResponse',
+		detail: {
+			tags: [TAG.progress],
+			summary: 'Мои курсы',
+			description:
+				'Курсы, в которых пройден хотя бы один урок: прогресс, урок, с которого продолжить, и когда занимались последний раз. Сначала - недавние.'
+		}
+	})
 	.get('/@me', async ({ session }) => await getCurrentUser(session.userId), {
 		response: 'UserResponse',
 		detail: {
 			summary: 'Текущий пользователь',
 			description: 'Профиль аккаунта, от имени которого сделан запрос.'
+		}
+	})
+	.patch('/@me', async ({ session, body }) => await updateProfile(session.userId, body), {
+		body: 'UpdateProfilePayload',
+		response: 'UserResponse',
+		detail: {
+			summary: 'Изменение профиля',
+			description: 'Меняет отображаемое имя. Возвращает обновлённый профиль.'
 		}
 	})
 	.post('/@me/avatar', async ({ session, body }) => await updateAvatar(session.userId, body), {
@@ -96,9 +141,9 @@ export const users = new Elysia({ prefix: '/users', tags: [TAG.users] })
 			body: 'ChangePasswordPayload',
 			response: 'MessageResponse',
 			detail: {
-				summary: 'Запрос смены пароля',
+				summary: 'Смена или установка пароля',
 				description:
-					'Проверяет текущий пароль и отправляет на почту код подтверждения. Новый пароль применится только после подтверждения кодом.'
+					'Отправляет на почту код подтверждения; новый пароль применится только после `POST /users/@me/password/confirm`. Если пароль у аккаунта уже есть - нужен текущий (иначе 401). Если нет (аккаунт создан через соцсеть, `hasPassword: false`) - текущий не передаётся, и так пароль устанавливается впервые. Нужна почта на аккаунте, иначе 400.'
 			}
 		}
 	)

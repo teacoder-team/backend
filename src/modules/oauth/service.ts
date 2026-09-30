@@ -1,3 +1,5 @@
+import { createHash, randomBytes, timingSafeEqual } from 'node:crypto'
+
 import {
 	type AuthorizationRequest,
 	completeAuthorization,
@@ -19,6 +21,7 @@ import {
 	OAUTH_PROVIDER_NAMES,
 	OAUTH_PROVIDERS,
 	type OAuthProviderName,
+	oauthRedirectUri,
 	providerLabel
 } from '~/lib/integrations/oauth'
 import { extendLogContext, logger } from '~/lib/logger'
@@ -52,8 +55,35 @@ interface LinkRequest {
 /** Parked in Redis under the state value between the redirect out and the callback. */
 interface OAuthState extends RequestOrigin {
 	provider: OAuthProviderName
+	/** Kept rather than recomputed, so an env change mid-flow can't break the token exchange. */
+	redirectUri: string
+	/** SHA-256 of the browser binding cookie. */
+	bindingHash: string
 	codeVerifier?: string
 	link?: LinkRequest
+}
+
+const BINDING_PATTERN = /^[A-Za-z0-9_-]{43}$/
+
+const hashBinding = (binding: string) => createHash('sha256').update(binding).digest()
+
+const ensureBinding = (existing: string | undefined) =>
+	existing && BINDING_PATTERN.test(existing) ? existing : randomBytes(32).toString('base64url')
+
+/**
+ * Stops login CSRF: without it an attacker could start a flow on their own account and hand
+ * the victim the provider's callback URL, silently signing the victim into it.
+ */
+const assertSameBrowser = (state: OAuthState, binding: string | undefined) => {
+	const expected = Buffer.from(state.bindingHash, 'hex')
+
+	if (
+		!binding ||
+		!BINDING_PATTERN.test(binding) ||
+		!timingSafeEqual(hashBinding(binding), expected)
+	) {
+		throw new ForbiddenError('OAuth sign-in must be finished in the browser that started it')
+	}
 }
 
 const isLinked = (accounts: { provider: AuthProvider }[], provider: AuthProvider) =>
@@ -74,34 +104,48 @@ const resolveProvider = (name: string): OAuthProviderName => {
 	return name
 }
 
-/** openid-client derives the token request's redirect_uri from this, minus the query. */
-const callbackUrl = (name: OAuthProviderName) =>
-	new URL(`${env.GATEWAY_URL}/auth/sso/${name}/callback`)
-
-/** Sign-in and linking share one callback URL - the one registered with each provider. */
+/**
+ * Sign-in and linking share one redirect URI - the site's callback page, registered with each
+ * provider. `binding` is the browser's `tc_oauth` cookie, if it already has one.
+ */
 const beginAuthorization = async (
 	name: OAuthProviderName,
 	origin: RequestOrigin,
+	existingBinding: string | undefined,
 	link?: LinkRequest
 ) => {
+	const redirectUri = oauthRedirectUri(name)
+	const binding = ensureBinding(existingBinding)
+
 	const { url, state, codeVerifier } = await createAuthorization(OAUTH_PROVIDERS[name], {
-		redirectUri: callbackUrl(name).href
+		redirectUri
 	})
 
-	const parked: OAuthState = { provider: name, codeVerifier, link, ...origin }
+	const parked: OAuthState = {
+		provider: name,
+		redirectUri,
+		bindingHash: hashBinding(binding).toString('hex'),
+		codeVerifier,
+		link,
+		...origin
+	}
 
 	await redis.set(stateKey(state), JSON.stringify(parked), 'EX', env.OAUTH_STATE_TTL)
 
-	return { url }
+	return { url, binding }
 }
 
-export const startOAuth = async (providerName: string, origin: RequestOrigin) =>
-	await beginAuthorization(resolveProvider(providerName), origin)
+export const startOAuth = async (
+	providerName: string,
+	origin: RequestOrigin,
+	binding: string | undefined
+) => await beginAuthorization(resolveProvider(providerName), origin, binding)
 
 export const startOAuthLink = async (
 	providerName: string,
 	link: LinkRequest,
-	origin: RequestOrigin
+	origin: RequestOrigin,
+	binding: string | undefined
 ) => {
 	const name = resolveProvider(providerName)
 
@@ -109,17 +153,16 @@ export const startOAuthLink = async (
 		throw new BadRequestError(`${providerLabel(AUTH_PROVIDER[name])} is already linked`)
 	}
 
-	return await beginAuthorization(name, origin, link)
+	return await beginAuthorization(name, origin, binding, link)
 }
 
+/** Atomic, so the same state can't be redeemed by two callbacks racing each other. */
 const takeState = async (state: string) => {
-	const raw = await redis.get(stateKey(state))
+	const raw = await redis.getdel(stateKey(state))
 
 	if (!raw) {
 		throw new ForbiddenError('OAuth state expired or already used')
 	}
-
-	await redis.del(stateKey(state))
 
 	return JSON.parse(raw) as OAuthState
 }
@@ -174,7 +217,10 @@ const signUp = async (provider: AuthProvider, profile: OAuthProfile) => {
 }
 
 /** `profile.email` is set only when the provider verified it, so matching by it is safe. */
-const resolveUser = async (provider: AuthProvider, profile: OAuthProfile): Promise<ResolvedUser> => {
+const resolveUser = async (
+	provider: AuthProvider,
+	profile: OAuthProfile
+): Promise<ResolvedUser> => {
 	const existing = await findOAuthAccount(provider, profile.providerAccountId)
 
 	if (existing) {
@@ -242,13 +288,17 @@ const finishLink = async (name: OAuthProviderName, link: LinkRequest, profile: O
 }
 
 /** `search` is the raw callback query string, handed to openid-client untouched. */
-export const finishOAuth = async (providerName: string, search: string) => {
+/**
+ * `query` is the query string the provider appended to the site's callback page, passed on
+ * untouched - openid-client rebuilds the exact redirect_uri from it.
+ */
+export const finishOAuth = async (
+	providerName: string,
+	query: string,
+	binding: string | undefined
+) => {
 	const name = resolveProvider(providerName)
-	const callback = callbackUrl(name)
-
-	callback.search = search
-
-	const stateValue = callback.searchParams.get('state')
+	const stateValue = new URLSearchParams(query).get('state')
 
 	if (!stateValue) {
 		throw new BadRequestError('Missing OAuth state')
@@ -259,6 +309,12 @@ export const finishOAuth = async (providerName: string, search: string) => {
 	if (state.provider !== name) {
 		throw new ForbiddenError('OAuth state does not match provider')
 	}
+
+	assertSameBrowser(state, binding)
+
+	const callback = new URL(state.redirectUri)
+
+	callback.search = query
 
 	const profile = await authenticate(name, callback, {
 		state: stateValue,

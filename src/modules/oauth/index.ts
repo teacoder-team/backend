@@ -9,7 +9,7 @@ import { requestContext } from '~/plugins/request-context'
 
 import {
 	OAuthAccountsResponse,
-	OAuthCallbackQuery,
+	OAuthCallbackPayload,
 	OAuthCallbackResponse,
 	OAuthProviderParams,
 	OAuthStartResponse
@@ -23,7 +23,7 @@ export const oauth = new Elysia({ prefix: '/auth/sso', tags: [TAG.oauth] })
 	.use(fingerprint)
 	.model({
 		OAuthProviderParams,
-		OAuthCallbackQuery,
+		OAuthCallbackPayload,
 		OAuthStartResponse,
 		OAuthCallbackResponse,
 		OAuthAccountsResponse,
@@ -31,8 +31,17 @@ export const oauth = new Elysia({ prefix: '/auth/sso', tags: [TAG.oauth] })
 	})
 	.post(
 		'/:provider/start',
-		async ({ params, ip, userAgent, visitorId }) =>
-			await startOAuth(params.provider, { ip, userAgent, visitorId }),
+		async ({ params, ip, userAgent, visitorId, oauthBinding }) => {
+			const { url, binding } = await startOAuth(
+				params.provider,
+				{ ip, userAgent, visitorId },
+				oauthBinding.read()
+			)
+
+			oauthBinding.set(binding)
+
+			return { url }
+		},
 		{
 			fingerprint: true,
 			params: 'OAuthProviderParams',
@@ -40,14 +49,14 @@ export const oauth = new Elysia({ prefix: '/auth/sso', tags: [TAG.oauth] })
 			detail: {
 				summary: 'Начало входа через соцсеть',
 				description:
-					'Возвращает ссылку на страницу входа провайдера - на неё нужно перенаправить пользователя. Ссылка одноразовая и действует 10 минут; защищена параметром `state` и, где провайдер поддерживает, PKCE.'
+					'Возвращает ссылку на страницу провайдера - на неё нужно перенаправить пользователя. После входа провайдер вернёт его на страницу сайта `/auth/callback/:provider`, а та передаст ответ в `POST /auth/sso/:provider/callback`.\n\nСтавит httpOnly-cookie `tc_oauth`, которая привязывает вход к этому браузеру, поэтому запрос нужно отправлять с `credentials: \'include\'`. Ссылка одноразовая и действует 10 минут; защищена `state` и, где провайдер поддерживает, PKCE.'
 			}
 		}
 	)
-	.get(
+	.post(
 		'/:provider/callback',
-		async ({ params, request, authCookie }) => {
-			const result = await finishOAuth(params.provider, new URL(request.url).search)
+		async ({ params, body, authCookie, oauthBinding }) => {
+			const result = await finishOAuth(params.provider, body.query, oauthBinding.read())
 
 			if (result.intent === 'LINK' || result.mfaRequired) {
 				return result
@@ -57,12 +66,12 @@ export const oauth = new Elysia({ prefix: '/auth/sso', tags: [TAG.oauth] })
 		},
 		{
 			params: 'OAuthProviderParams',
-			query: 'OAuthCallbackQuery',
+			body: 'OAuthCallbackPayload',
 			response: 'OAuthCallbackResponse',
 			detail: {
-				summary: 'Возврат от провайдера',
+				summary: 'Завершение входа через соцсеть',
 				description:
-					'Сюда провайдер возвращает пользователя - и после входа, и после привязки из настроек (`intent` в ответе говорит, что это было).\n\n**Вход** (`intent: SIGN_IN`): находит аккаунт по этой соцсети, иначе по совпадающей подтверждённой почте (и тогда автоматически привязывает соцсеть к нему - см. `linkedProvider`), иначе создаёт новый. Если у аккаунта включена двухфакторная защита, сессия не создаётся - в ответе `mfaToken`, как у `POST /auth/login`, а автоматическая привязка происходит после подтверждения.\n\n**Привязка** (`intent: LINK`): привязывает соцсеть к аккаунту, начавшему привязку; почта соцсети может быть любой. Если этот аккаунт соцсети уже привязан к другому пользователю - 409.\n\nВызывать вручную не нужно.'
+					'Провайдер возвращает пользователя на страницу сайта `/auth/callback/:provider`; страница передаёт сюда свою строку запроса как есть. Вызывать один раз - `state` одноразовый, повторный вызов даст 403. Запрос - с `credentials: \'include\'`: нужна cookie `tc_oauth` из `start`/`link`, без неё (вход начат в другом браузере) - 403.\n\n`intent` в ответе говорит, что это было.\n\n**Вход** (`intent: SIGN_IN`): находит аккаунт по этой соцсети, иначе по совпадающей подтверждённой почте (и тогда автоматически привязывает соцсеть к нему - см. `linkedProvider`), иначе создаёт новый. Если у аккаунта включена двухфакторная защита, сессия не создаётся - в ответе `mfaToken`, как у `POST /auth/login`, а автоматическая привязка происходит после подтверждения. Иначе - access-токен в теле, refresh-токен в httpOnly-cookie `tc_refresh`.\n\n**Привязка** (`intent: LINK`): привязывает соцсеть к аккаунту, начавшему привязку; почта соцсети может быть любой. Если этот аккаунт соцсети уже привязан к другому пользователю - 409.\n\nЕсли пользователь отменил вход у провайдера - 400.'
 			}
 		}
 	)
@@ -77,19 +86,25 @@ export const oauth = new Elysia({ prefix: '/auth/sso', tags: [TAG.oauth] })
 	})
 	.post(
 		'/:provider/link',
-		async ({ session, params, ip, userAgent }) =>
-			await startOAuthLink(
+		async ({ session, params, ip, userAgent, oauthBinding }) => {
+			const { url, binding } = await startOAuthLink(
 				params.provider,
 				{ userId: session.userId, sessionId: session.id },
-				{ ip, userAgent }
-			),
+				{ ip, userAgent },
+				oauthBinding.read()
+			)
+
+			oauthBinding.set(binding)
+
+			return { url }
+		},
 		{
 			params: 'OAuthProviderParams',
 			response: 'OAuthStartResponse',
 			detail: {
 				summary: 'Привязка соцсети',
 				description:
-					'Возвращает ссылку на страницу провайдера, как `POST /auth/sso/:provider/start`, но после возврата соцсеть привязывается к текущему аккаунту, а не выполняется вход. Почта в соцсети может отличаться от почты аккаунта.'
+					'Возвращает ссылку на страницу провайдера, как `POST /auth/sso/:provider/start` (и так же ставит cookie `tc_oauth`), но после возврата соцсеть привязывается к текущему аккаунту, а не выполняется вход. Почта в соцсети может отличаться от почты аккаунта.'
 			}
 		}
 	)

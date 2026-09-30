@@ -7,6 +7,7 @@ import { requestContext } from '~/plugins/request-context'
 
 import {
 	MfaCodePayload,
+	MfaStatusResponse,
 	RecoveryCodesResponse,
 	RecoveryCodesStatusResponse,
 	TotpCodePayload,
@@ -15,6 +16,7 @@ import {
 import {
 	confirmTotp,
 	disableTotp,
+	getMfaStatus,
 	getRecoveryCodesStatus,
 	regenerateRecoveryCodes,
 	setupTotp
@@ -27,11 +29,20 @@ export const mfa = new Elysia({ prefix: '/mfa', tags: [TAG.mfa] })
 		TotpSetupResponse,
 		TotpCodePayload,
 		MfaCodePayload,
+		MfaStatusResponse,
 		RecoveryCodesResponse,
 		RecoveryCodesStatusResponse,
 		MessageResponse
 	})
 	.guard({ auth: true, detail: { security: [{ bearerAuth: [] }] } })
+	.get('/', async ({ session }) => await getMfaStatus(session.userId), {
+		response: 'MfaStatusResponse',
+		detail: {
+			summary: 'Состояние двухфакторной защиты',
+			description:
+				'Возвращает состояние MFA: включена ли защита, какими способами можно подтвердить вход, подключено ли приложение-аутентификатор, сколько ключей и резервных кодов.'
+		}
+	})
 	.post('/totp/setup', async ({ session }) => await setupTotp(session.userId), {
 		response: 'TotpSetupResponse',
 		detail: {

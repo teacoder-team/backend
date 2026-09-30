@@ -151,8 +151,9 @@ const CHECKS: Record<CodeMfaMethod, (userId: string, code: string) => Promise<bo
  * Methods the user can finish sign-in with. Empty means MFA is off. A WebAuthn key counts as a
  * second factor on its own - with one registered, a password alone no longer signs in.
  */
-export const getMfaMethods = async (userId: string): Promise<MfaMethod[]> => {
-	const factors = await findMfaFactors(userId)
+type MfaFactors = Awaited<ReturnType<typeof findMfaFactors>>
+
+const methodsOf = (factors: MfaFactors): MfaMethod[] => {
 	const hasWebAuthn = (factors?._count.webauthnCredentials ?? 0) > 0
 	const hasTotp = Boolean(factors?.totpAuthenticator?.confirmedAt)
 
@@ -175,6 +176,25 @@ export const getMfaMethods = async (userId: string): Promise<MfaMethod[]> => {
 	}
 
 	return methods
+}
+
+export const getMfaMethods = async (userId: string) => methodsOf(await findMfaFactors(userId))
+
+export const getMfaStatus = async (userId: string) => {
+	const [factors, recoveryCodes] = await Promise.all([
+		findMfaFactors(userId),
+		getRecoveryCodesStatus(userId)
+	])
+	const methods = methodsOf(factors)
+	const totpEnabledAt = factors?.totpAuthenticator?.confirmedAt ?? null
+
+	return {
+		enabled: methods.length > 0,
+		methods,
+		totp: { enabled: Boolean(totpEnabledAt), enabledAt: totpEnabledAt?.toISOString() ?? null },
+		webauthn: { credentials: factors?._count.webauthnCredentials ?? 0 },
+		recoveryCodes
+	}
 }
 
 /** The first factor gets a batch of recovery codes, so losing the key or phone isn't a lockout. */

@@ -11,6 +11,7 @@ export const listPublishedCourses = () =>
 			slug: true,
 			shortDescription: true,
 			thumbnail: true,
+			price: true,
 			_count: { select: { lessons: { where: { isPublished: true } } } }
 		},
 		orderBy: { createdAt: 'desc' }
@@ -42,6 +43,7 @@ export const findPublishedLessonsForCourse = (courseId: string) =>
 			id: true,
 			title: true,
 			slug: true,
+			description: true,
 			position: true,
 			access: true
 		},

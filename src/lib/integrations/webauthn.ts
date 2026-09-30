@@ -1,12 +1,7 @@
 import { env } from '~/config/env'
+import { splitList } from '~/lib/utils/origin'
 
 const appUrl = new URL(env.APP_URL)
-
-const splitList = (value: string) =>
-	value
-		.split(',')
-		.map((item) => item.trim())
-		.filter(Boolean)
 
 export const WEBAUTHN_RP = {
 	id: env.WEBAUTHN_RP_ID || appUrl.hostname,

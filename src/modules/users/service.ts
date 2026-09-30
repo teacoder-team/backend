@@ -2,18 +2,18 @@ import { VerificationPurpose } from '@prisma/generated/client'
 
 import { isProduction } from '~/config/env'
 import { isDisposableEmail } from '~/lib/datasets/disposable-emails'
-import { normalizeEmail } from '~/lib/utils/email'
 import { BadRequestError, ConflictError, NotFoundError, UnauthorizedError } from '~/lib/errors'
-import { extendLogContext } from '~/lib/logger'
 import { orion } from '~/lib/integrations/orion'
+import { extendLogContext } from '~/lib/logger'
 import { redis } from '~/lib/redis'
 import { encryptEmail, hashEmail } from '~/lib/security/email-crypto'
 import { hashPassword, verifyPassword } from '~/lib/security/hash'
+import { normalizeEmail } from '~/lib/utils/email'
 import { enqueueEmailChangeCode, enqueuePasswordChangeCode } from '~/modules/auth/jobs'
 import {
 	findPasswordCredential,
 	findUserByEmailHash,
-	updatePasswordHash,
+	savePasswordHash,
 	updateUserEmail
 } from '~/modules/auth/repository'
 import {
@@ -23,14 +23,16 @@ import {
 	verifyCode
 } from '~/modules/auth/service'
 import { issueTokenPair, type RequestOrigin, revokeAllSessions } from '~/modules/session/service'
+import { hasActiveSubscription } from '~/modules/subscription/repository'
 
 import type {
 	AvatarUploadInput,
 	ChangeEmailInput,
 	ChangePasswordInput,
-	ConfirmCodeInput
+	ConfirmCodeInput,
+	UpdateProfileInput
 } from './model'
-import { findUserById, updateAvatar as updateAvatarRecord } from './repository'
+import { findUserById, updateAvatar as updateAvatarRecord, updateDisplayName } from './repository'
 
 const pendingEmailKey = (userId: string) => `pending_email_change:${userId}`
 const pendingPasswordKey = (userId: string) => `pending_password_change:${userId}`
@@ -42,7 +44,10 @@ export const getCurrentUser = async (userId: string) => {
 		throw new NotFoundError('User not found')
 	}
 
-	const email = await getUserEmail(userId)
+	const [email, isPremium] = await Promise.all([
+		getUserEmail(userId),
+		hasActiveSubscription(userId)
+	])
 
 	return {
 		id: user.id,
@@ -52,10 +57,26 @@ export const getCurrentUser = async (userId: string) => {
 		email,
 		role: user.role,
 		status: user.status,
+		hasPassword: Boolean(user.passwordCredential),
 		points: user.points,
+		isPremium,
 		emailVerifiedAt: user.emailVerifiedAt?.toISOString() ?? null,
 		createdAt: user.createdAt.toISOString()
 	}
+}
+
+export const updateProfile = async (userId: string, { displayName }: UpdateProfileInput) => {
+	const trimmed = displayName.trim()
+
+	if (trimmed.length < 2) {
+		throw new BadRequestError('Name must be between 2 and 50 characters')
+	}
+
+	await updateDisplayName(userId, trimmed)
+
+	extendLogContext({ event: 'profile_updated', userId })
+
+	return await getCurrentUser(userId)
 }
 
 export const requestEmailChange = async (userId: string, input: ChangeEmailInput) => {
@@ -108,8 +129,15 @@ export const confirmEmailChange = async (userId: string, input: ConfirmCodeInput
 export const requestPasswordChange = async (userId: string, input: ChangePasswordInput) => {
 	const credential = await findPasswordCredential(userId)
 
-	if (!credential || !(await verifyPassword(input.currentPassword, credential.passwordHash))) {
-		throw new UnauthorizedError('Current password is incorrect')
+	/** No password yet (signed up through a provider): the emailed code alone proves ownership. */
+	if (credential) {
+		const isCorrect = input.currentPassword
+			? await verifyPassword(input.currentPassword, credential.passwordHash)
+			: false
+
+		if (!isCorrect) {
+			throw new UnauthorizedError('Current password is incorrect')
+		}
 	}
 
 	const email = await getUserEmail(userId)
@@ -147,13 +175,15 @@ export const confirmPasswordChange = async (
 		invalid: 'Invalid confirmation code'
 	})
 
-	await updatePasswordHash(userId, newPasswordHash)
+	const hadPassword = Boolean(await findPasswordCredential(userId))
+
+	await savePasswordHash(userId, newPasswordHash)
 	await redis.del(pendingPasswordKey(userId))
 
 	/** Confirmed change to the account's password - every other session should re-authenticate. */
 	await revokeAllSessions(userId)
 
-	extendLogContext({ event: 'password_change_completed', userId })
+	extendLogContext({ event: hadPassword ? 'password_change_completed' : 'password_set', userId })
 
 	return issueTokenPair(userId, origin)
 }

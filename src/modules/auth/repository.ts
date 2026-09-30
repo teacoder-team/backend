@@ -59,6 +59,14 @@ export const updatePasswordHash = (userId: string, passwordHash: string) =>
 		data: { passwordHash, changedAt: new Date() }
 	})
 
+/** Creates the credential for accounts that signed up through a provider and never had a password. */
+export const savePasswordHash = (userId: string, passwordHash: string) =>
+	db.passwordCredential.upsert({
+		where: { userId },
+		create: { userId, passwordHash },
+		update: { passwordHash, changedAt: new Date(), mustChange: false }
+	})
+
 export const findPasswordCredential = (userId: string) =>
 	db.passwordCredential.findUnique({ where: { userId } })
 

@@ -8,9 +8,17 @@ import {
 	CreatePaymentHeaders,
 	CreatePaymentPayload,
 	CreatePaymentResponse,
-	PaymentMethodsResponse
+	PaymentMethodsResponse,
+	SubscriptionResponse,
+	UpdateSubscriptionPayload
 } from './model'
-import { cancelSubscription, createPayment, listPaymentMethods } from './service'
+import {
+	cancelSubscription,
+	createPayment,
+	getSubscription,
+	listPaymentMethods,
+	updateSubscription
+} from './service'
 
 export const billing = new Elysia({ prefix: '/billing', tags: [TAG.billing] })
 	.use(authGuard)
@@ -19,7 +27,9 @@ export const billing = new Elysia({ prefix: '/billing', tags: [TAG.billing] })
 		CreatePaymentPayload,
 		CreatePaymentResponse,
 		CancelSubscriptionResponse,
-		PaymentMethodsResponse
+		PaymentMethodsResponse,
+		SubscriptionResponse,
+		UpdateSubscriptionPayload
 	})
 	.get('/methods', () => listPaymentMethods(), {
 		response: 'PaymentMethodsResponse',
@@ -46,13 +56,38 @@ export const billing = new Elysia({ prefix: '/billing', tags: [TAG.billing] })
 			}
 		}
 	)
+	.get('/subscription', async ({ session }) => await getSubscription(session.userId), {
+		auth: true,
+		response: 'SubscriptionResponse',
+		detail: {
+			summary: 'Премиум-подписка',
+			description:
+				'Действует ли премиум, до какой даты оплачен и включено ли автопродление. Если подписки никогда не было - все флаги `false`.',
+			security: [{ bearerAuth: [] }]
+		}
+	})
+	.patch(
+		'/subscription',
+		async ({ session, body }) => await updateSubscription(session.userId, body),
+		{
+			auth: true,
+			body: 'UpdateSubscriptionPayload',
+			response: 'SubscriptionResponse',
+			detail: {
+				summary: 'Автопродление подписки',
+				description:
+					'Включает или выключает автопродление. Включить можно только при действующей подписке с датой окончания - иначе 409. Выключение всегда проходит, оплаченный период действует до конца. Повторный запрос с тем же значением ничего не меняет.',
+				security: [{ bearerAuth: [] }]
+			}
+		}
+	)
 	.delete('/cancel', async ({ session }) => await cancelSubscription(session.userId), {
 		auth: true,
 		response: 'CancelSubscriptionResponse',
 		detail: {
 			summary: 'Отмена подписки',
 			description:
-				'Отключает автопродление. Уже оплаченный период продолжает действовать до конца.',
+				'Отключает автопродление, как `PATCH /billing/subscription` с `autoRenew: false`. Уже оплаченный период продолжает действовать до конца.',
 			security: [{ bearerAuth: [] }]
 		}
 	})

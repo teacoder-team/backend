@@ -30,6 +30,14 @@ const CourseThumbnail = t.Nullable(
 	})
 )
 
+const CoursePrice = t.Nullable(
+	t.Number({
+		description:
+			'Цена разовой покупки в рублях, если курс платный. `null` - бесплатный курс (платные уроки в нём, если есть, открываются подпиской).',
+		examples: [1990]
+	})
+)
+
 export const CourseListItem = t.Object(
 	{
 		id: CourseId,
@@ -37,6 +45,7 @@ export const CourseListItem = t.Object(
 		slug: CourseSlug,
 		shortDescription: CourseShortDescription,
 		thumbnail: CourseThumbnail,
+		price: CoursePrice,
 		lessons: t.Number({ description: 'Количество опубликованных уроков.', examples: [10] })
 	},
 	{ description: 'Карточка курса в каталоге.' }
@@ -66,13 +75,7 @@ export const CourseResponse = t.Object(
 				examples: ['https://youtube.com/watch?v=...']
 			})
 		),
-		price: t.Nullable(
-			t.Number({
-				description:
-					'Цена разовой покупки в рублях. `null` - курс доступен только по подписке.',
-				examples: [1990]
-			})
-		),
+		price: CoursePrice,
 		views: t.Number({ description: 'Сколько раз открывали страницу курса.', examples: [4213] })
 	},
 	{ description: 'Курс.' }
@@ -89,6 +92,12 @@ export const CourseLessonListItem = t.Object(
 			description: 'Идентификатор урока для URL.',
 			examples: ['peremennye-i-tipy']
 		}),
+		description: t.Nullable(
+			t.String({
+				description: 'Описание урока.',
+				examples: ['Разбираем базовые типы данных на примерах.']
+			})
+		),
 		position: t.Number({ description: 'Порядковый номер в курсе.', examples: [1] }),
 		access: PrismaEnum(LessonAccess, {
 			description:

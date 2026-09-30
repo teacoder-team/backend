@@ -18,17 +18,19 @@ export const OAuthProviderParams = t.Object({
 	})
 })
 
-export const OAuthCallbackQuery = t.Object({
-	state: t.String({ description: 'Значение `state`, выданное при начале входа.' }),
-	code: t.Optional(t.String({ description: 'Код авторизации от провайдера.' })),
-	error: t.Optional(
-		t.String({
+export const OAuthCallbackPayload = t.Object(
+	{
+		query: t.String({
+			minLength: 1,
+			maxLength: 4096,
 			description:
-				'Приходит вместо `code`, если пользователь отменил вход или у провайдера произошла ошибка.'
+				'Строка запроса, с которой провайдер вернул пользователя на страницу сайта (`window.location.search`), - без изменений. В ней `code` и `state` или, если вход отменён, `error`.',
+			error: 'Callback query is required',
+			examples: ['?code=4%2F0AQlEd8x...&state=Zl9kS2...&scope=openid%20email']
 		})
-	),
-	error_description: t.Optional(t.String({ description: 'Пояснение ошибки от провайдера.' }))
-})
+	},
+	{ description: 'Ответ провайдера, переданный сайтом.' }
+)
 
 export const OAuthStartResponse = t.Object(
 	{
@@ -41,7 +43,7 @@ export const OAuthStartResponse = t.Object(
 )
 
 export type OAuthProviderParamsInput = Static<typeof OAuthProviderParams>
-export type OAuthCallbackQueryInput = Static<typeof OAuthCallbackQuery>
+export type OAuthCallbackInput = Static<typeof OAuthCallbackPayload>
 
 const Intent = <const T extends string>(value: T, description: string) =>
 	t.Literal(value, { description })

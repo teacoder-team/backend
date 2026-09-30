@@ -1,3 +1,5 @@
+import type { Prisma } from '@prisma/generated/client'
+
 import { NotFoundError } from '~/lib/errors'
 import { logger } from '~/lib/logger'
 import { redis } from '~/lib/redis'
@@ -10,6 +12,9 @@ import {
 } from './repository'
 
 const VIEW_DEDUP_TTL = 30 * 60
+
+/** Paid courses carry their price; free ones (no price, or 0) report `null`. */
+const toPrice = (price: Prisma.Decimal | null) => (price?.gt(0) ? price.toNumber() : null)
 
 const viewDedupKey = (courseId: string, ip: string) => `course:view:${courseId}:${ip}`
 
@@ -26,7 +31,11 @@ const registerView = async (courseId: string, ip: string) => {
 export const listCourses = async () => {
 	const courses = await listPublishedCourses()
 
-	return courses.map(({ _count, ...course }) => ({ ...course, lessons: _count.lessons }))
+	return courses.map(({ _count, price, ...course }) => ({
+		...course,
+		price: toPrice(price),
+		lessons: _count.lessons
+	}))
 }
 
 export const getCourseBySlug = async (slug: string, ip: string) => {
@@ -40,7 +49,7 @@ export const getCourseBySlug = async (slug: string, ip: string) => {
 		logger.warn({ err, courseId: course.id }, 'course_view_increment_failed')
 	})
 
-	return { ...course, price: course.price ? Number(course.price) : null }
+	return { ...course, price: toPrice(course.price) }
 }
 
 export const getCourseLessons = async (slug: string) => {

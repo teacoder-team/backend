@@ -50,3 +50,8 @@ export const AUTH_PROVIDER_TITLES: Record<AuthProvider, string> = {
 	[AuthProvider.YANDEX]: 'Яндекс',
 	[AuthProvider.TELEGRAM]: 'Telegram'
 }
+
+const CALLBACK_BASE = (env.OAUTH_CALLBACK_URL || `${env.APP_URL}/auth/callback`).replace(/\/+$/, '')
+
+/** The site page a provider returns to - it hands the query to POST /auth/sso/:provider/callback. */
+export const oauthRedirectUri = (name: OAuthProviderName) => `${CALLBACK_BASE}/${name}`

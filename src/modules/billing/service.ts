@@ -14,7 +14,11 @@ import { LockTakenError, withLock } from '~/lib/lock'
 import { extendLogContext, logger } from '~/lib/logger'
 import { getUserEmail } from '~/modules/auth/service'
 import { findCoursePurchase, findPurchasableCourse } from '~/modules/course/repository'
-import { cancelSubscription as cancelSubscriptionRow } from '~/modules/subscription/repository'
+import {
+	cancelSubscription as cancelSubscriptionRow,
+	findSubscription,
+	setAutoBilling
+} from '~/modules/subscription/repository'
 
 import {
 	CHECKOUT_TTL_SECONDS,
@@ -22,7 +26,7 @@ import {
 	findIdempotentReplay,
 	findReusableCheckout
 } from './checkout'
-import type { CreatePaymentInput } from './model'
+import type { CreatePaymentInput, UpdateSubscriptionInput } from './model'
 import { attachProviderPayment, createPendingPayment, markPaymentFailed } from './repository'
 
 const CURRENCY = 'RUB'
@@ -452,4 +456,49 @@ export const cancelSubscription = async (userId: string) => {
 	}
 
 	return { cancelled: Boolean(cancelled) }
+}
+
+type SubscriptionRow = Awaited<ReturnType<typeof findSubscription>>
+
+const isLive = (subscription: SubscriptionRow): subscription is NonNullable<SubscriptionRow> =>
+	Boolean(subscription?.isActive) &&
+	(!subscription?.expiresAt || subscription.expiresAt > new Date())
+
+const toSubscriptionResponse = (subscription: SubscriptionRow) => ({
+	isActive: isLive(subscription),
+	autoRenew: isLive(subscription) && subscription.isAutoBilling,
+	startedAt: subscription?.startedAt.toISOString() ?? null,
+	expiresAt: subscription?.expiresAt?.toISOString() ?? null
+})
+
+export const getSubscription = async (userId: string) =>
+	toSubscriptionResponse(await findSubscription(userId))
+
+export const updateSubscription = async (userId: string, { autoRenew }: UpdateSubscriptionInput) => {
+	const subscription = await findSubscription(userId)
+
+	if (!isLive(subscription)) {
+		if (autoRenew) {
+			throw new ConflictError('No active subscription to renew')
+		}
+
+		return toSubscriptionResponse(subscription)
+	}
+
+	if (autoRenew && !subscription.expiresAt) {
+		throw new ConflictError('Subscription never expires - there is nothing to renew')
+	}
+
+	if (subscription.isAutoBilling === autoRenew) {
+		return toSubscriptionResponse(subscription)
+	}
+
+	const updated = await setAutoBilling(userId, autoRenew)
+
+	extendLogContext({
+		event: autoRenew ? 'subscription_auto_renew_enabled' : 'subscription_auto_renew_disabled',
+		userId
+	})
+
+	return toSubscriptionResponse(updated)
 }

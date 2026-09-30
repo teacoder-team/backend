@@ -54,6 +54,14 @@ const envSchema = t.Object({
 	SESSION_TTL: t.Number({ default: 60 * 60 * 24 * 30 }),
 	SESSION_CACHE_TTL: t.Number({ default: 15 * 60 }),
 
+	/**
+	 * Comma-separated site origins that may call the API from a browser, cookies included.
+	 * `https://*.teacoder.ru` matches any subdomain (not the apex). Empty = the APP_URL origin.
+	 */
+	CORS_ORIGIN: t.String({ default: '' }),
+	/** Seconds a browser may reuse a preflight answer. Chrome caps it at 7200. */
+	CORS_MAX_AGE: t.Number({ default: 7200, minimum: 0 }),
+
 	DATABASE_URL: t.String(),
 	REDIS_URL: t.String(),
 
@@ -93,6 +101,8 @@ const envSchema = t.Object({
 	}),
 
 	OAUTH_STATE_TTL: t.Number({ default: 10 * 60 }),
+	/** Site page providers send users back to, `/<provider>` appended. Empty = APP_URL/auth/callback. */
+	OAUTH_CALLBACK_URL: t.String({ default: '' }),
 
 	GOOGLE_CLIENT_ID: t.String(),
 	GOOGLE_CLIENT_SECRET: t.String(),

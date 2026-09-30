@@ -89,3 +89,39 @@ export const RecoveryCodesStatusResponse = t.Object(
 	},
 	{ description: 'Состояние резервных кодов. Сами коды повторно не показываются.' }
 )
+
+export const MfaStatusResponse = t.Object(
+	{
+		enabled: t.Boolean({
+			description:
+				'Включена ли двухфакторная защита: подключено приложение-аутентификатор или добавлен хотя бы один ключ. Если да, вход по паролю или через соцсеть требует второй фактор.'
+		}),
+		methods: t.Array(MfaMethodSchema, {
+			description: 'Способы, которыми сейчас можно подтвердить вход - как `mfaMethods` в ответе на вход.',
+			examples: [['WEBAUTHN', 'TOTP', 'RECOVERY_CODE']]
+		}),
+		totp: t.Object(
+			{
+				enabled: t.Boolean({ description: 'Подключено ли приложение-аутентификатор.' }),
+				enabledAt: t.Nullable(
+					t.String({
+						description: 'Когда подключено. `null`, если не подключено.',
+						examples: ['2026-09-30T14:16:54.000Z']
+					})
+				)
+			},
+			{ description: 'Приложение-аутентификатор.' }
+		),
+		webauthn: t.Object(
+			{
+				credentials: t.Number({
+					description: 'Сколько ключей добавлено. Список - `GET /auth/webauthn/credentials`.',
+					examples: [2]
+				})
+			},
+			{ description: 'Ключи доступа и аппаратные ключи.' }
+		),
+		recoveryCodes: RecoveryCodesStatusResponse
+	},
+	{ description: 'Состояние двухфакторной защиты аккаунта.' }
+)
