@@ -1,6 +1,11 @@
 import * as client from 'openid-client'
 
-import { OAuthDeniedError, OAuthExchangeError, OAuthProfileError } from './errors'
+import {
+	OAuthDeniedError,
+	OAuthExchangeError,
+	type OAuthExchangeFailure,
+	OAuthProfileError
+} from './errors'
 import type { OAuthProfile, OAuthProvider, OAuthTokens } from './types'
 
 export interface AuthorizationRequest {
@@ -10,6 +15,35 @@ export interface AuthorizationRequest {
 	state: string
 	/** Only when the provider advertises PKCE. Keep it next to `state`. */
 	codeVerifier?: string
+}
+
+/** openid-client codes for "the provider answered, but its tokens didn't pass our checks". */
+const VERIFICATION_CODES = new Set([
+	'OAUTH_INVALID_RESPONSE',
+	'OAUTH_PARSE_ERROR',
+	'OAUTH_JWT_CLAIM_COMPARISON_FAILED',
+	'OAUTH_JWT_TIMESTAMP_CHECK_FAILED',
+	'OAUTH_JSON_ATTRIBUTE_COMPARISON_FAILED',
+	'OAUTH_KEY_SELECTION_FAILED',
+	'OAUTH_UNSUPPORTED_OPERATION'
+])
+
+const exchangeFailure = (err: unknown): OAuthExchangeFailure => {
+	if (err instanceof client.ResponseBodyError) {
+		return 'rejected'
+	}
+
+	const code = (err as { code?: unknown }).code
+
+	if (typeof code === 'string' && VERIFICATION_CODES.has(code)) {
+		return 'invalid_response'
+	}
+
+	if (code === 'OAUTH_TIMEOUT' || err instanceof TypeError) {
+		return 'unreachable'
+	}
+
+	return 'rejected'
 }
 
 export const createAuthorization = async (
@@ -65,7 +99,7 @@ export const completeAuthorization = async (
 			throw new OAuthDeniedError(provider, err.error, { cause: err })
 		}
 
-		throw new OAuthExchangeError(provider, { cause: err })
+		throw new OAuthExchangeError(provider, exchangeFailure(err), { cause: err })
 	}
 
 	try {

@@ -14,7 +14,7 @@ import {
 	matchTotp
 } from '~/lib/security/totp'
 
-import type { MfaCodeInput, MfaMethod, TotpCodeInput } from './model'
+import type { CodeMfaMethod, MfaCodeInput, MfaMethod, TotpCodeInput } from './model'
 import {
 	claimTotpStep,
 	consumeRecoveryCode,
@@ -142,23 +142,57 @@ const checkRecoveryCode = async (userId: string, code: string) => {
 	return used
 }
 
-const CHECKS: Record<MfaMethod, (userId: string, code: string) => Promise<boolean>> = {
+const CHECKS: Record<CodeMfaMethod, (userId: string, code: string) => Promise<boolean>> = {
 	TOTP: checkTotp,
 	RECOVERY_CODE: checkRecoveryCode
 }
 
-/** Methods the user can finish sign-in with. Empty means MFA is off. */
+/**
+ * Methods the user can finish sign-in with. Empty means MFA is off. A WebAuthn key counts as a
+ * second factor on its own - with one registered, a password alone no longer signs in.
+ */
 export const getMfaMethods = async (userId: string): Promise<MfaMethod[]> => {
 	const factors = await findMfaFactors(userId)
+	const hasWebAuthn = (factors?._count.webauthnCredentials ?? 0) > 0
+	const hasTotp = Boolean(factors?.totpAuthenticator?.confirmedAt)
 
-	if (!factors?.totpAuthenticator?.confirmedAt) {
+	if (!hasWebAuthn && !hasTotp) {
 		return []
 	}
 
-	return factors._count.recoveryCodes > 0 ? ['TOTP', 'RECOVERY_CODE'] : ['TOTP']
+	const methods: MfaMethod[] = []
+
+	if (hasWebAuthn) {
+		methods.push('WEBAUTHN')
+	}
+
+	if (hasTotp) {
+		methods.push('TOTP')
+	}
+
+	if ((factors?._count.recoveryCodes ?? 0) > 0) {
+		methods.push('RECOVERY_CODE')
+	}
+
+	return methods
 }
 
-export const verifyMfaCode = async (userId: string, method: MfaMethod, code: string) => {
+/** The first factor gets a batch of recovery codes, so losing the key or phone isn't a lockout. */
+export const issueRecoveryCodesIfMissing = async (userId: string) => {
+	const existing = await listRecoveryCodes(userId)
+
+	if (existing.length > 0) {
+		return null
+	}
+
+	const codes = generateRecoveryCodes()
+
+	await replaceRecoveryCodes(userId, codes.map(hashRecoveryCode))
+
+	return codes
+}
+
+export const verifyMfaCode = async (userId: string, method: CodeMfaMethod, code: string) => {
 	await assertAttemptsLeft(userId)
 
 	if (!(await CHECKS[method](userId, code.trim()))) {
@@ -197,7 +231,7 @@ export const getRecoveryCodesStatus = async (userId: string) => {
 }
 
 export const regenerateRecoveryCodes = async (userId: string, { code }: MfaCodeInput) => {
-	if (!(await findEnabledTotp(userId))) {
+	if ((await getMfaMethods(userId)).length === 0) {
 		throw new BadRequestError('Enable two-factor authentication first')
 	}
 

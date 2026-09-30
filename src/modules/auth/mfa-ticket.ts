@@ -1,14 +1,14 @@
 import { createHash, randomBytes } from 'node:crypto'
 
 import { redis } from '~/lib/redis'
-import type { MfaMethod } from '~/modules/mfa/model'
+import type { CodeMfaMethod } from '~/modules/mfa/model'
 import type { OAuthIdentity } from '~/modules/oauth/accounts'
 
 export const MFA_TICKET_TTL = 5 * 60
 
 export interface MfaChallenge {
 	id: string
-	method: MfaMethod
+	method: CodeMfaMethod
 }
 
 /** First factor passed, second pending. No session or tokens exist until it is confirmed. */

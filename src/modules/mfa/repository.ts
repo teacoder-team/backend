@@ -93,6 +93,8 @@ export const findMfaFactors = (userId: string) =>
 		where: { id: userId },
 		select: {
 			totpAuthenticator: { select: { confirmedAt: true } },
-			_count: { select: { recoveryCodes: { where: { usedAt: null } } } }
+			_count: {
+				select: { recoveryCodes: { where: { usedAt: null } }, webauthnCredentials: true }
+			}
 		}
 	})

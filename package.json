@@ -23,6 +23,7 @@
 		"@prisma/client": "^7.7.0",
 		"@react-email/components": "^1.0.12",
 		"@react-email/render": "^2.0.7",
+		"@simplewebauthn/server": "^14.0.3",
 		"@sinclair/typebox": "^0.34.49",
 		"@teacoder/captcha": "workspace:*",
 		"@teacoder/fingerprint": "workspace:*",

@@ -2,8 +2,10 @@ import {
 	type AuthorizationRequest,
 	completeAuthorization,
 	createAuthorization,
+	describeOAuthFailure,
 	OAuthDeniedError,
 	OAuthError,
+	OAuthExchangeError,
 	type OAuthProfile
 } from '@teacoder/oauth'
 
@@ -136,7 +138,12 @@ const authenticate = async (
 
 		if (!(err instanceof OAuthDeniedError)) {
 			logger.warn(
-				{ context: 'oauth', provider: name, reason: err.name, err: err.cause ?? err },
+				{
+					context: 'oauth',
+					provider: name,
+					reason: err instanceof OAuthExchangeError ? err.reason : 'profile',
+					failure: describeOAuthFailure(err)
+				},
 				'oauth_authentication_failed'
 			)
 		}

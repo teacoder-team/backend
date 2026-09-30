@@ -12,6 +12,7 @@ import { root } from '~/modules/root'
 import { session } from '~/modules/session'
 import { mfa } from '~/modules/mfa'
 import { users } from '~/modules/users'
+import { webauthn } from '~/modules/webauthn'
 import { errorHandler } from '~/plugins/error-handler'
 import { requestContext, requestLogger } from '~/plugins/request-context'
 
@@ -36,6 +37,7 @@ export const createApp = () =>
 		.use(session)
 		.use(users)
 		.use(mfa)
+		.use(webauthn)
 		.use(billing)
 		.use(webhook)
 		.use(course)

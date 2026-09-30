@@ -10,6 +10,7 @@ export const TAG = {
 	sessions: 'Сессии',
 	users: 'Профиль',
 	mfa: 'Двухфакторная аутентификация',
+	webauthn: 'Ключи доступа',
 	courses: 'Курсы',
 	lessons: 'Уроки',
 	progress: 'Прогресс',
@@ -86,6 +87,11 @@ export const documentation: ElysiaOpenAPIConfig['documentation'] = {
 			name: TAG.mfa,
 			description:
 				'Второй фактор входа: приложение-аутентификатор (TOTP) и резервные коды на случай потери телефона.'
+		},
+		{
+			name: TAG.webauthn,
+			description:
+				'WebAuthn: ключи доступа (Touch ID, Face ID, Windows Hello, менеджеры паролей) и аппаратные ключи. Работают и для входа без пароля, и как второй фактор.'
 		},
 		{
 			name: TAG.courses,

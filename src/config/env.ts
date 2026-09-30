@@ -18,9 +18,8 @@ const envSchema = t.Object({
 
 	APP_ADDRESS: t.String({ default: '0.0.0.0' }),
 	APP_PORT: t.Number({ default: 3000 }),
-	/** Public URL of this API - OAuth callbacks and provider webhooks point here. */
+
 	GATEWAY_URL: t.String({ format: 'uri' }),
-	/** Public URL of the website - links in emails and post-payment redirects point here. */
 	APP_URL: t.String({ format: 'uri' }),
 
 	LOG_LEVEL: t.Union(
@@ -45,7 +44,6 @@ const envSchema = t.Object({
 	EMAIL_ENCRYPTION_KEY: t.String(),
 	EMAIL_HASH_KEY: t.String(),
 	VERIFICATION_CODE_HASH_KEY: t.String(),
-	/** 32 bytes, base64. Encrypts TOTP secrets - rotating it disables every authenticator app. */
 	MFA_ENCRYPTION_KEY: t.String(),
 
 	COOKIE_DOMAIN: t.String({ default: 'localhost' }),
@@ -87,9 +85,8 @@ const envSchema = t.Object({
 	TELEGRAM_PUBLIC_BOT_TOKEN: t.String(),
 	TELEGRAM_PUBLIC_BOT_WEBHOOK_SECRET: t.String({ minLength: 16 }),
 
-	/** Staff-only bot for notifications. Empty disables it. Use a separate bot per environment. */
+	/** Staff-only bot for notifications. Empty disables it. */
 	TELEGRAM_ADMIN_BOT_TOKEN: t.String({ default: '' }),
-	/** Comma-separated: `123456789` user, `-1001234567890` group, `-1001234567890:42` topic. */
 	TELEGRAM_ADMIN_CHAT_IDS: t.String({
 		default: '',
 		pattern: '^\\s*$|^\\s*-?\\d+(:\\d+)?(\\s*,\\s*-?\\d+(:\\d+)?)*\\s*$'
@@ -138,21 +135,23 @@ const envSchema = t.Object({
 	NPD_DEVICE_ID: t.String({ default: '' }),
 
 	/** 'none' skips verification entirely - handy for local dev without real captcha keys. */
-	CAPTCHA_PROVIDER: t.Union(
-		[t.Literal('turnstile'), t.Literal('yandex'), t.Literal('none')],
-		{ default: 'none' }
-	),
+	CAPTCHA_PROVIDER: t.Union([t.Literal('turnstile'), t.Literal('yandex'), t.Literal('none')], {
+		default: 'none'
+	}),
 	TURNSTILE_SECRET_KEY: t.String({ default: '' }),
 	YANDEX_CAPTCHA_SECRET_KEY: t.String({ default: '' }),
-	/** Public keys, safe to hand to clients for rendering the widget - see GET /. */
 	TURNSTILE_SITE_KEY: t.String({ default: '' }),
 	YANDEX_CAPTCHA_CLIENT_KEY: t.String({ default: '' }),
 
-	/** Fingerprint Server API secret key. Empty disables visitor identification. */
 	FINGERPRINT_SECRET_KEY: t.String({ default: '' }),
 	FINGERPRINT_REGION: t.Union([t.Literal('global'), t.Literal('eu'), t.Literal('ap')], {
 		default: 'global'
-	})
+	}),
+
+	/** Domain passkeys are bound to. Empty = the APP_URL hostname. Changing it orphans every passkey. */
+	WEBAUTHN_RP_ID: t.String({ default: '' }),
+	/** Comma-separated origins allowed to use passkeys. Empty = the APP_URL origin. */
+	WEBAUTHN_ORIGINS: t.String({ default: '' })
 })
 
 export type Env = Static<typeof envSchema>

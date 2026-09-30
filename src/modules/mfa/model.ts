@@ -1,12 +1,15 @@
 import { type Static, t } from 'elysia'
 
-export const MFA_METHODS = ['TOTP', 'RECOVERY_CODE'] as const
+export const MFA_METHODS = ['WEBAUTHN', 'TOTP', 'RECOVERY_CODE'] as const
 
 export type MfaMethod = (typeof MFA_METHODS)[number]
 
+/** Methods proven by typing a code. WebAuthn signs a challenge instead - see `/auth/webauthn/login`. */
+export type CodeMfaMethod = Exclude<MfaMethod, 'WEBAUTHN'>
+
 export const MfaMethodSchema = t.UnionEnum(MFA_METHODS, {
 	description:
-		'Способ подтверждения: `TOTP` - код из приложения-аутентификатора, `RECOVERY_CODE` - один из резервных кодов.',
+		'Способ подтверждения: `WEBAUTHN` - ключ доступа или аппаратный ключ (через `POST /auth/webauthn/login/options` и `/verify` с `mfaToken`), `TOTP` - код из приложения-аутентификатора, `RECOVERY_CODE` - один из резервных кодов.',
 	error: 'Unknown MFA method',
 	examples: ['TOTP']
 })

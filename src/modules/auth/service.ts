@@ -34,6 +34,7 @@ import { enqueuePasswordResetCode, enqueueVerificationCode } from './jobs'
 import {
 	closeMfaTicket,
 	MFA_TICKET_TTL,
+	type MfaTicket,
 	openMfaTicket,
 	readMfaTicket,
 	setMfaChallenge
@@ -355,7 +356,7 @@ export const completeSignIn = async (
 	}
 }
 
-const takeTicket = async (mfaToken: string) => {
+export const takeTicket = async (mfaToken: string) => {
 	const ticket = await readMfaTicket(mfaToken)
 
 	if (!ticket) {
@@ -371,6 +372,12 @@ export const startMfaChallenge = async ({ mfaToken, method }: MfaChallengeInput)
 
 	if (!methods.includes(method)) {
 		throw new BadRequestError(`MFA method ${method} is not available for this account`)
+	}
+
+	if (method === 'WEBAUTHN') {
+		throw new BadRequestError(
+			'WebAuthn signs its own challenge - use POST /auth/webauthn/login/options with mfaToken'
+		)
 	}
 
 	const challenge = { id: randomUUID(), method }
@@ -396,6 +403,16 @@ export const confirmMfa = async (
 
 	await verifyMfaCode(ticket.userId, ticket.challenge.method, code)
 
+	return await completeMfaSignIn(mfaToken, ticket, ticket.challenge.method, origin)
+}
+
+/** The second factor passed: burn the ticket, apply its pending link and open the session. */
+export const completeMfaSignIn = async (
+	mfaToken: string,
+	ticket: MfaTicket,
+	method: MfaMethod,
+	origin: RequestOrigin
+) => {
 	if (!(await closeMfaTicket(mfaToken))) {
 		throw new UnauthorizedError('MFA session expired - sign in again')
 	}
@@ -409,7 +426,7 @@ export const confirmMfa = async (
 	extendLogContext({
 		event: 'mfa_sign_in_completed',
 		userId: ticket.userId,
-		method: ticket.challenge.method,
+		method,
 		via: ticket.via
 	})
 
