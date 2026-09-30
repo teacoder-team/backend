@@ -7,34 +7,61 @@ import {
 	type OAuthProfile
 } from '@teacoder/oauth'
 
-import type { AuthProvider } from '@prisma/generated/client'
+import { type AuthProvider, UserStatus } from '@prisma/generated/client'
 
 import { env } from '~/config/env'
-import { normalizeEmail } from '~/lib/utils/email'
-import { BadRequestError, ForbiddenError } from '~/lib/errors'
-import { extendLogContext, logger } from '~/lib/logger'
+import { BadRequestError, ForbiddenError, NotFoundError, UnauthorizedError } from '~/lib/errors'
 import {
 	AUTH_PROVIDER,
 	isOAuthProvider,
+	OAUTH_PROVIDER_NAMES,
 	OAUTH_PROVIDERS,
-	type OAuthProviderName
+	type OAuthProviderName,
+	providerLabel
 } from '~/lib/integrations/oauth'
+import { extendLogContext, logger } from '~/lib/logger'
 import { redis } from '~/lib/redis'
 import { encryptEmail, hashEmail } from '~/lib/security/email-crypto'
+import { normalizeEmail } from '~/lib/utils/email'
 import { generateUsername } from '~/lib/utils/username'
 import { enqueueRegistrationNotification } from '~/modules/admin-bot/queue'
-import { findUserByEmailHash } from '~/modules/auth/repository'
+import { deletePendingUser, findUserByEmailHash } from '~/modules/auth/repository'
 import { completeSignIn } from '~/modules/auth/service'
+import { findActiveSession } from '~/modules/session/repository'
 import type { RequestOrigin } from '~/modules/session/service'
 
-import { createOAuthUser, findOAuthAccount, linkOAuthAccount } from './repository'
+import { assertCanAttach, attachOAuthAccount, type OAuthIdentity } from './accounts'
+import {
+	createOAuthUser,
+	findOAuthAccount,
+	findSignInMethods,
+	listUserOAuthAccounts,
+	unlinkOAuthAccount
+} from './repository'
 
 const stateKey = (state: string) => `oauth:state:${state}`
 
+/** Who started a link from the account settings - checked again when the provider returns. */
+interface LinkRequest {
+	userId: string
+	sessionId: string
+}
+
 /** Parked in Redis under the state value between the redirect out and the callback. */
-interface OAuthSession extends RequestOrigin {
+interface OAuthState extends RequestOrigin {
 	provider: OAuthProviderName
 	codeVerifier?: string
+	link?: LinkRequest
+}
+
+const isLinked = (accounts: { provider: AuthProvider }[], provider: AuthProvider) =>
+	accounts.some((account) => account.provider === provider)
+
+/** Password + linked providers - unlinking must never leave an account with none. */
+const countSignInMethods = async (userId: string) => {
+	const methods = await findSignInMethods(userId)
+
+	return (methods?.passwordCredential ? 1 : 0) + (methods?._count.oauthAccounts ?? 0)
 }
 
 const resolveProvider = (name: string): OAuthProviderName => {
@@ -47,23 +74,43 @@ const resolveProvider = (name: string): OAuthProviderName => {
 
 /** openid-client derives the token request's redirect_uri from this, minus the query. */
 const callbackUrl = (name: OAuthProviderName) =>
-	new URL(`${env.GATEWAY_URL}/oauth/${name}/callback`)
+	new URL(`${env.GATEWAY_URL}/auth/sso/${name}/callback`)
 
-export const startOAuth = async (providerName: string, origin: RequestOrigin) => {
-	const name = resolveProvider(providerName)
-
+/** Sign-in and linking share one callback URL - the one registered with each provider. */
+const beginAuthorization = async (
+	name: OAuthProviderName,
+	origin: RequestOrigin,
+	link?: LinkRequest
+) => {
 	const { url, state, codeVerifier } = await createAuthorization(OAUTH_PROVIDERS[name], {
 		redirectUri: callbackUrl(name).href
 	})
 
-	const session: OAuthSession = { provider: name, codeVerifier, ...origin }
+	const parked: OAuthState = { provider: name, codeVerifier, link, ...origin }
 
-	await redis.set(stateKey(state), JSON.stringify(session), 'EX', env.OAUTH_STATE_TTL)
+	await redis.set(stateKey(state), JSON.stringify(parked), 'EX', env.OAUTH_STATE_TTL)
 
 	return { url }
 }
 
-const takeSession = async (state: string) => {
+export const startOAuth = async (providerName: string, origin: RequestOrigin) =>
+	await beginAuthorization(resolveProvider(providerName), origin)
+
+export const startOAuthLink = async (
+	providerName: string,
+	link: LinkRequest,
+	origin: RequestOrigin
+) => {
+	const name = resolveProvider(providerName)
+
+	if (isLinked(await listUserOAuthAccounts(link.userId), AUTH_PROVIDER[name])) {
+		throw new BadRequestError(`${providerLabel(AUTH_PROVIDER[name])} is already linked`)
+	}
+
+	return await beginAuthorization(name, origin, link)
+}
+
+const takeState = async (state: string) => {
 	const raw = await redis.get(stateKey(state))
 
 	if (!raw) {
@@ -72,7 +119,7 @@ const takeSession = async (state: string) => {
 
 	await redis.del(stateKey(state))
 
-	return JSON.parse(raw) as OAuthSession
+	return JSON.parse(raw) as OAuthState
 }
 
 const authenticate = async (
@@ -98,23 +145,12 @@ const authenticate = async (
 	}
 }
 
-const resolveUser = async (provider: AuthProvider, profile: OAuthProfile) => {
-	const existing = await findOAuthAccount(provider, profile.providerAccountId)
+type ResolvedUser =
+	| { outcome: 'login'; userId: string }
+	| { outcome: 'email_match'; userId: string }
+	| { outcome: 'signup'; userId: string }
 
-	if (existing) {
-		return { user: existing.user, outcome: 'login' as const }
-	}
-
-	if (profile.email) {
-		const byEmail = await findUserByEmailHash(hashEmail(normalizeEmail(profile.email)))
-
-		if (byEmail) {
-			await linkOAuthAccount(byEmail.id, provider, profile.providerAccountId)
-
-			return { user: byEmail, outcome: 'linked' as const }
-		}
-	}
-
+const signUp = async (provider: AuthProvider, profile: OAuthProfile) => {
 	const encrypted = profile.email ? encryptEmail(normalizeEmail(profile.email)) : null
 
 	const user = await createOAuthUser({
@@ -127,7 +163,75 @@ const resolveUser = async (provider: AuthProvider, profile: OAuthProfile) => {
 		emailHash: encrypted?.hash ?? null
 	})
 
-	return { user, outcome: 'signup' as const }
+	return user.id
+}
+
+/** `profile.email` is set only when the provider verified it, so matching by it is safe. */
+const resolveUser = async (provider: AuthProvider, profile: OAuthProfile): Promise<ResolvedUser> => {
+	const existing = await findOAuthAccount(provider, profile.providerAccountId)
+
+	if (existing) {
+		return { outcome: 'login', userId: existing.userId }
+	}
+
+	const byEmail = profile.email
+		? await findUserByEmailHash(hashEmail(normalizeEmail(profile.email)))
+		: null
+
+	/**
+	 * An unconfirmed email registration proves nothing about who owns the address - it may be
+	 * a squatter's. The provider just proved ownership, so the pending account gives way.
+	 */
+	if (byEmail?.status === UserStatus.PENDING) {
+		await deletePendingUser(byEmail.id)
+	} else if (byEmail) {
+		return { outcome: 'email_match', userId: byEmail.id }
+	}
+
+	return { outcome: 'signup', userId: await signUp(provider, profile) }
+}
+
+const finishSignIn = async (name: OAuthProviderName, state: OAuthState, profile: OAuthProfile) => {
+	const provider = AUTH_PROVIDER[name]
+	const { outcome, userId } = await resolveUser(provider, profile)
+	const identity: OAuthIdentity = { provider, providerAccountId: profile.providerAccountId }
+
+	if (outcome === 'email_match') {
+		await assertCanAttach(userId, identity)
+	}
+
+	extendLogContext({ event: 'oauth_authenticated', provider: name, outcome, userId })
+
+	const result = await completeSignIn(
+		userId,
+		{ ip: state.ip, userAgent: state.userAgent, visitorId: state.visitorId },
+		name,
+		{ link: outcome === 'email_match' ? identity : undefined }
+	)
+
+	if (outcome === 'signup') {
+		await enqueueRegistrationNotification({ userId, via: provider })
+	}
+
+	return { intent: 'SIGN_IN' as const, ...result }
+}
+
+const finishLink = async (name: OAuthProviderName, link: LinkRequest, profile: OAuthProfile) => {
+	const session = await findActiveSession(link.sessionId)
+
+	if (session?.userId !== link.userId) {
+		throw new UnauthorizedError('Session ended before linking finished - sign in and try again')
+	}
+
+	const provider = AUTH_PROVIDER[name]
+
+	await attachOAuthAccount(
+		link.userId,
+		{ provider, providerAccountId: profile.providerAccountId },
+		false
+	)
+
+	return { intent: 'LINK' as const, provider }
 }
 
 /** `search` is the raw callback query string, handed to openid-client untouched. */
@@ -137,35 +241,71 @@ export const finishOAuth = async (providerName: string, search: string) => {
 
 	callback.search = search
 
-	const state = callback.searchParams.get('state')
+	const stateValue = callback.searchParams.get('state')
 
-	if (!state) {
+	if (!stateValue) {
 		throw new BadRequestError('Missing OAuth state')
 	}
 
-	const session = await takeSession(state)
+	const state = await takeState(stateValue)
 
-	if (session.provider !== name) {
+	if (state.provider !== name) {
 		throw new ForbiddenError('OAuth state does not match provider')
 	}
 
 	const profile = await authenticate(name, callback, {
-		state,
-		codeVerifier: session.codeVerifier
+		state: stateValue,
+		codeVerifier: state.codeVerifier
 	})
-	const { user, outcome } = await resolveUser(AUTH_PROVIDER[name], profile)
 
-	extendLogContext({ event: 'oauth_authenticated', provider: name, outcome, userId: user.id })
-
-	const result = await completeSignIn(
-		user.id,
-		{ ip: session.ip, userAgent: session.userAgent, visitorId: session.visitorId },
-		name
-	)
-
-	if (outcome === 'signup') {
-		await enqueueRegistrationNotification({ userId: user.id, via: AUTH_PROVIDER[name] })
+	if (state.link) {
+		return await finishLink(name, state.link, profile)
 	}
 
-	return result
+	return await finishSignIn(name, state, profile)
+}
+
+export const getOAuthAccounts = async (userId: string) => {
+	const [linked, signInMethods] = await Promise.all([
+		listUserOAuthAccounts(userId),
+		countSignInMethods(userId)
+	])
+	const linkedAt = new Map(linked.map((account) => [account.provider, account.linkedAt]))
+
+	return {
+		accounts: OAUTH_PROVIDER_NAMES.map((slug) => {
+			const provider = AUTH_PROVIDER[slug]
+			const at = linkedAt.get(provider)
+
+			return {
+				provider,
+				slug,
+				linked: Boolean(at),
+				linkedAt: at?.toISOString() ?? null
+			}
+		}),
+		canUnlink: signInMethods > 1
+	}
+}
+
+export const unlinkOAuth = async (userId: string, providerName: string) => {
+	const provider = AUTH_PROVIDER[resolveProvider(providerName)]
+	const [linked, signInMethods] = await Promise.all([
+		listUserOAuthAccounts(userId),
+		countSignInMethods(userId)
+	])
+
+	if (!isLinked(linked, provider)) {
+		throw new NotFoundError(`${providerLabel(provider)} is not linked`)
+	}
+
+	if (signInMethods <= 1) {
+		throw new BadRequestError(
+			'Cannot unlink the only way to sign in - set a password or link another provider first'
+		)
+	}
+
+	await unlinkOAuthAccount(userId, provider)
+
+	extendLogContext({ event: 'oauth_account_unlinked', userId, provider })
 }

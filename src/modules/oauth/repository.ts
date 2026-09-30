@@ -51,3 +51,33 @@ export const createOAuthUser = (input: CreateOAuthUserInput) =>
 
 		return user
 	})
+
+export const findUserOAuthAccount = (userId: string, provider: AuthProvider) =>
+	db.oAuthAccount.findUnique({ where: { userId_provider: { userId, provider } } })
+
+export const listUserOAuthAccounts = (userId: string) =>
+	db.oAuthAccount.findMany({
+		where: { userId },
+		select: { provider: true, linkedAt: true }
+	})
+
+export const unlinkOAuthAccount = async (userId: string, provider: AuthProvider) => {
+	const { count } = await db.oAuthAccount.deleteMany({ where: { userId, provider } })
+
+	return count
+}
+
+export const findSignInMethods = (userId: string) =>
+	db.user.findUnique({
+		where: { id: userId },
+		select: {
+			passwordCredential: { select: { userId: true } },
+			_count: { select: { oauthAccounts: true } }
+		}
+	})
+
+export const findLinkNotificationTarget = (userId: string) =>
+	db.user.findUnique({
+		where: { id: userId },
+		select: { displayName: true, emailCipher: true }
+	})

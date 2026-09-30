@@ -1,19 +1,34 @@
 import { Elysia } from 'elysia'
 
 import { TAG } from '~/config/openapi'
-import { SignInResponse } from '~/modules/auth/model'
+import { MessageResponse } from '~/modules/auth/model'
 import { authCookie } from '~/plugins/auth-cookie'
+import { authGuard } from '~/plugins/auth-guard'
 import { fingerprint } from '~/plugins/fingerprint'
 import { requestContext } from '~/plugins/request-context'
 
-import { OAuthCallbackQuery, OAuthProviderParams, OAuthStartResponse } from './model'
-import { finishOAuth, startOAuth } from './service'
+import {
+	OAuthAccountsResponse,
+	OAuthCallbackQuery,
+	OAuthCallbackResponse,
+	OAuthProviderParams,
+	OAuthStartResponse
+} from './model'
+import { finishOAuth, getOAuthAccounts, startOAuth, startOAuthLink, unlinkOAuth } from './service'
 
-export const oauth = new Elysia({ prefix: '/oauth', tags: [TAG.oauth] })
+export const oauth = new Elysia({ prefix: '/auth/sso', tags: [TAG.oauth] })
 	.use(requestContext)
 	.use(authCookie)
+	.use(authGuard)
 	.use(fingerprint)
-	.model({ OAuthProviderParams, OAuthCallbackQuery, OAuthStartResponse, SignInResponse })
+	.model({
+		OAuthProviderParams,
+		OAuthCallbackQuery,
+		OAuthStartResponse,
+		OAuthCallbackResponse,
+		OAuthAccountsResponse,
+		MessageResponse
+	})
 	.post(
 		'/:provider/start',
 		async ({ params, ip, userAgent, visitorId }) =>
@@ -34,7 +49,7 @@ export const oauth = new Elysia({ prefix: '/oauth', tags: [TAG.oauth] })
 		async ({ params, request, authCookie }) => {
 			const result = await finishOAuth(params.provider, new URL(request.url).search)
 
-			if (result.mfaRequired) {
+			if (result.intent === 'LINK' || result.mfaRequired) {
 				return result
 			}
 
@@ -43,11 +58,55 @@ export const oauth = new Elysia({ prefix: '/oauth', tags: [TAG.oauth] })
 		{
 			params: 'OAuthProviderParams',
 			query: 'OAuthCallbackQuery',
-			response: 'SignInResponse',
+			response: 'OAuthCallbackResponse',
 			detail: {
 				summary: 'Возврат от провайдера',
 				description:
-					'Сюда провайдер возвращает пользователя после входа. Проверяет ответ, находит аккаунт (или привязывает к существующему по подтверждённой почте, или создаёт новый) и открывает сессию. Если у аккаунта включена двухфакторная защита, сессия не создаётся - в ответе `mfaToken`, как у `POST /auth/login`. Вызывать вручную не нужно.'
+					'Сюда провайдер возвращает пользователя - и после входа, и после привязки из настроек (`intent` в ответе говорит, что это было).\n\n**Вход** (`intent: SIGN_IN`): находит аккаунт по этой соцсети, иначе по совпадающей подтверждённой почте (и тогда автоматически привязывает соцсеть к нему - см. `linkedProvider`), иначе создаёт новый. Если у аккаунта включена двухфакторная защита, сессия не создаётся - в ответе `mfaToken`, как у `POST /auth/login`, а автоматическая привязка происходит после подтверждения.\n\n**Привязка** (`intent: LINK`): привязывает соцсеть к аккаунту, начавшему привязку; почта соцсети может быть любой. Если этот аккаунт соцсети уже привязан к другому пользователю - 409.\n\nВызывать вручную не нужно.'
+			}
+		}
+	)
+	.guard({ auth: true, detail: { security: [{ bearerAuth: [] }] } })
+	.get('/accounts', async ({ session }) => await getOAuthAccounts(session.userId), {
+		response: 'OAuthAccountsResponse',
+		detail: {
+			summary: 'Привязанные соцсети',
+			description:
+				'Все поддерживаемые соцсети с отметкой, привязана ли каждая к аккаунту, и можно ли сейчас что-то отвязать.'
+		}
+	})
+	.post(
+		'/:provider/link',
+		async ({ session, params, ip, userAgent }) =>
+			await startOAuthLink(
+				params.provider,
+				{ userId: session.userId, sessionId: session.id },
+				{ ip, userAgent }
+			),
+		{
+			params: 'OAuthProviderParams',
+			response: 'OAuthStartResponse',
+			detail: {
+				summary: 'Привязка соцсети',
+				description:
+					'Возвращает ссылку на страницу провайдера, как `POST /auth/sso/:provider/start`, но после возврата соцсеть привязывается к текущему аккаунту, а не выполняется вход. Почта в соцсети может отличаться от почты аккаунта.'
+			}
+		}
+	)
+	.delete(
+		'/accounts/:provider',
+		async ({ session, params }) => {
+			await unlinkOAuth(session.userId, params.provider)
+
+			return { message: 'Provider unlinked' }
+		},
+		{
+			params: 'OAuthProviderParams',
+			response: 'MessageResponse',
+			detail: {
+				summary: 'Отвязка соцсети',
+				description:
+					'Отвязывает соцсеть от аккаунта. Нельзя отвязать единственный способ входа.'
 			}
 		}
 	)

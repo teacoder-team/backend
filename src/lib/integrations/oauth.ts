@@ -33,3 +33,20 @@ export const AUTH_PROVIDER = {
 
 export const isOAuthProvider = (name: string): name is OAuthProviderName =>
 	Object.hasOwn(OAUTH_PROVIDERS, name)
+
+export const OAUTH_PROVIDER_NAME = Object.fromEntries(
+	Object.entries(AUTH_PROVIDER).map(([name, provider]) => [provider, name])
+) as Record<AuthProvider, OAuthProviderName>
+
+/** "Google", "GitHub", "Яндекс" - for messages shown to users. */
+export const providerLabel = (provider: AuthProvider) =>
+	OAUTH_PROVIDERS[OAUTH_PROVIDER_NAME[provider]].label
+
+/** Russian names for user-facing text (emails, admin bot). */
+export const AUTH_PROVIDER_TITLES: Record<AuthProvider, string> = {
+	[AuthProvider.GOOGLE]: 'Google',
+	[AuthProvider.GITHUB]: 'GitHub',
+	[AuthProvider.DISCORD]: 'Discord',
+	[AuthProvider.YANDEX]: 'Яндекс',
+	[AuthProvider.TELEGRAM]: 'Telegram'
+}

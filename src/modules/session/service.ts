@@ -4,7 +4,7 @@ import { randomUUID } from 'node:crypto'
 
 import { env } from '~/config/env'
 import { lookupLocation } from '~/lib/datasets/geo'
-import { NotFoundError, UnauthorizedError } from '~/lib/errors'
+import { BadRequestError, NotFoundError, UnauthorizedError } from '~/lib/errors'
 import { extendLogContext, logger } from '~/lib/logger'
 import { signAccessToken } from '~/lib/security/jwt'
 import { generateRefreshToken, hashRefreshToken } from '~/lib/security/refresh-token'
@@ -241,13 +241,30 @@ export const revokeSession = async (userId: string, sessionId: string) => {
 	return { revoked }
 }
 
-export const revokeAllSessions = async (userId: string) => {
-	const sessionIds = await listActiveSessionIds(userId)
-	const revoked = await revokeSessionsByUser(userId)
+/** From the sessions list. The current session ends through logout, which also clears the cookie. */
+export const revokeOtherSession = async (
+	userId: string,
+	sessionId: string,
+	currentSessionId: string
+) => {
+	if (sessionId === currentSessionId) {
+		throw new BadRequestError('Cannot revoke the current session - sign out instead')
+	}
+
+	return await revokeSession(userId, sessionId)
+}
+
+/** `exceptSessionId` keeps that session alive - "sign out on all other devices". */
+export const revokeAllSessions = async (userId: string, exceptSessionId?: string) => {
+	const sessionIds = await listActiveSessionIds(userId, exceptSessionId)
+	const revoked = await revokeSessionsByUser(userId, exceptSessionId)
 
 	await dropCachedSessions(...sessionIds)
 
-	extendLogContext({ event: 'all_sessions_revoked', revoked })
+	extendLogContext({
+		event: exceptSessionId ? 'other_sessions_revoked' : 'all_sessions_revoked',
+		revoked
+	})
 
 	return { revoked }
 }

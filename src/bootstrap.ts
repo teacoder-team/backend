@@ -10,6 +10,7 @@ import { startAdminBot, stopAdminBot } from '~/modules/admin-bot/bot'
 import { notificationJobs } from '~/modules/admin-bot/jobs'
 import { emailJobs } from '~/modules/auth/jobs'
 import { courseEmailJobs } from '~/modules/course/jobs'
+import { oauthEmailJobs } from '~/modules/oauth/jobs'
 import { maintenanceJobs, scheduleMaintenance, sessionEmailJobs } from '~/modules/session/jobs'
 import type { Worker } from 'bullmq'
 
@@ -27,7 +28,12 @@ export const bootstrap = async () => {
 		])
 
 		workers = [
-			startWorker(QUEUE.EMAIL, { ...emailJobs, ...courseEmailJobs, ...sessionEmailJobs }),
+			startWorker(QUEUE.EMAIL, {
+				...emailJobs,
+				...courseEmailJobs,
+				...sessionEmailJobs,
+				...oauthEmailJobs
+			}),
 			startWorker(QUEUE.MAINTENANCE, maintenanceJobs),
 			startWorker(QUEUE.NOTIFICATIONS, notificationJobs)
 		]

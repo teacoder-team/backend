@@ -71,7 +71,8 @@ export const documentation: ElysiaOpenAPIConfig['documentation'] = {
 		},
 		{
 			name: TAG.oauth,
-			description: 'Вход через Google, GitHub, Discord, Яндекс и Telegram.'
+			description:
+				'Вход через Google, GitHub, Discord, Яндекс и Telegram, привязка и отвязка соцсетей в настройках аккаунта.'
 		},
 		{
 			name: TAG.sessions,
@@ -114,8 +115,7 @@ export const documentation: ElysiaOpenAPIConfig['documentation'] = {
 				type: 'http',
 				scheme: 'bearer',
 				bearerFormat: 'JWT',
-				description:
-					'Access-токен (`accessToken`) из ответа на вход или `POST /auth/refresh`. Только заголовок - cookie для него нет.'
+				description: 'Access-токен'
 			}
 		}
 	}

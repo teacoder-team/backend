@@ -33,9 +33,10 @@ export const listActiveSessions = (userId: string) =>
 		orderBy: { lastSeenAt: 'desc' }
 	})
 
-export const listActiveSessionIds = async (userId: string) => {
+/** `exceptSessionId` keeps that one session out - "sign out everywhere else". */
+export const listActiveSessionIds = async (userId: string, exceptSessionId?: string) => {
 	const sessions = await db.session.findMany({
-		where: { userId, ...active(new Date()) },
+		where: { userId, id: { not: exceptSessionId }, ...active(new Date()) },
 		select: { id: true }
 	})
 
@@ -51,9 +52,9 @@ export const revokeSessionById = async (userId: string, sessionId: string) => {
 	return count
 }
 
-export const revokeSessionsByUser = async (userId: string) => {
+export const revokeSessionsByUser = async (userId: string, exceptSessionId?: string) => {
 	const { count } = await db.session.updateMany({
-		where: { userId, ...active(new Date()) },
+		where: { userId, id: { not: exceptSessionId }, ...active(new Date()) },
 		data: { revokedAt: new Date() }
 	})
 

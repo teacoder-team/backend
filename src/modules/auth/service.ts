@@ -1,27 +1,28 @@
 import { randomUUID } from 'node:crypto'
 
-import { UserStatus, VerificationPurpose } from '@prisma/generated/client'
+import { type AuthProvider, UserStatus, VerificationPurpose } from '@prisma/generated/client'
 
 import { isProduction } from '~/config/env'
-import { verifyCaptcha } from '~/lib/integrations/captcha'
 import { isDisposableEmail } from '~/lib/datasets/disposable-emails'
-import { normalizeEmail } from '~/lib/utils/email'
 import {
 	BadRequestError,
 	ConflictError,
 	TooManyRequestsError,
 	UnauthorizedError
 } from '~/lib/errors'
+import { verifyCaptcha } from '~/lib/integrations/captcha'
 import { extendLogContext } from '~/lib/logger'
 import { redis } from '~/lib/redis'
 import { decryptEmail, encryptEmail, hashEmail } from '~/lib/security/email-crypto'
 import { hashPassword, verifyPassword } from '~/lib/security/hash'
 import { generateOtpCode } from '~/lib/security/otp'
 import { hashVerificationCode, verificationCodeMatches } from '~/lib/security/verification-code'
+import { normalizeEmail } from '~/lib/utils/email'
 import { generateUsername } from '~/lib/utils/username'
 import { enqueueRegistrationNotification } from '~/modules/admin-bot/queue'
 import type { MfaMethod } from '~/modules/mfa/model'
 import { getMfaMethods, verifyMfaCode } from '~/modules/mfa/service'
+import { attachOAuthAccount, type OAuthIdentity } from '~/modules/oauth/accounts'
 import {
 	issueTokenPair,
 	type RequestOrigin,
@@ -66,7 +67,6 @@ const VERIFICATION_MAX_ATTEMPTS = 5
 const LOGIN_ATTEMPT_MAX = 5
 const LOGIN_ATTEMPT_WINDOW = 15 * 60
 
-/** Generates, hashes, and stores a code for the given purpose. Callers own emailing and logging it. */
 export const issueVerificationCode = async (
 	userId: string,
 	purpose: VerificationPurpose
@@ -187,7 +187,7 @@ export const verifyRegister = async (input: VerifyRegisterInput, origin: Request
 
 	await enqueueRegistrationNotification({ userId: user.id, via: 'EMAIL' })
 
-	return { id: user.id, ...tokens }
+	return { id: user.id, ...tokens, linkedProvider: null }
 }
 
 /** Counted per email, IP and device - a proxy changes the IP but not the Fingerprint visitor. */
@@ -307,30 +307,52 @@ export const resetPassword = async (input: ResetPasswordInput, origin: RequestOr
 }
 
 export type SignInResult =
-	| { mfaRequired: false; mfaToken: null; id: string; accessToken: string; refreshToken: string }
+	| {
+			mfaRequired: false
+			mfaToken: null
+			id: string
+			accessToken: string
+			refreshToken: string
+			linkedProvider: AuthProvider | null
+	  }
 	| { mfaRequired: true; mfaToken: string; mfaMethods: MfaMethod[]; expiresIn: number }
 
-/** The first factor is proven. With MFA on, the session waits in a ticket for the second one. */
+export interface SignInOptions {
+	/** Provider account matched to this user by a verified email - linked as part of the sign-in. */
+	link?: OAuthIdentity
+}
+
 export const completeSignIn = async (
 	userId: string,
 	origin: RequestOrigin,
-	via: string
+	via: string,
+	{ link }: SignInOptions = {}
 ): Promise<SignInResult> => {
 	const mfaMethods = await getMfaMethods(userId)
 
 	if (mfaMethods.length > 0) {
-		const mfaToken = await openMfaTicket(userId, via)
+		const mfaToken = await openMfaTicket(userId, via, link ?? null)
 
 		extendLogContext({ mfaRequired: true })
 
 		return { mfaRequired: true, mfaToken, mfaMethods, expiresIn: MFA_TICKET_TTL }
 	}
 
+	if (link) {
+		await attachOAuthAccount(userId, link, true)
+	}
+
 	await updateLastLogin(userId)
 
 	const tokens = await issueTokenPair(userId, origin)
 
-	return { mfaRequired: false, mfaToken: null, id: userId, ...tokens }
+	return {
+		mfaRequired: false,
+		mfaToken: null,
+		id: userId,
+		...tokens,
+		linkedProvider: link?.provider ?? null
+	}
 }
 
 const takeTicket = async (mfaToken: string) => {
@@ -378,6 +400,10 @@ export const confirmMfa = async (
 		throw new UnauthorizedError('MFA session expired - sign in again')
 	}
 
+	if (ticket.link) {
+		await attachOAuthAccount(ticket.userId, ticket.link, true)
+	}
+
 	await updateLastLogin(ticket.userId)
 
 	extendLogContext({
@@ -389,5 +415,5 @@ export const confirmMfa = async (
 
 	const tokens = await issueTokenPair(ticket.userId, origin)
 
-	return { id: ticket.userId, ...tokens }
+	return { id: ticket.userId, ...tokens, linkedProvider: ticket.link?.provider ?? null }
 }

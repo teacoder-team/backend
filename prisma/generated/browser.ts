@@ -49,17 +49,17 @@ export type CoursePurchase = Prisma.CoursePurchaseModel
 export type Lesson = Prisma.LessonModel
 /**
  * Model TotpAuthenticator
- * Authenticator-app factor (RFC 6238). SHA-1, 6 digits, 30 s - the only parameters every app supports.
+ * 
  */
 export type TotpAuthenticator = Prisma.TotpAuthenticatorModel
 /**
  * Model RecoveryCode
- * Single-use backup codes. Issued as a batch; regenerating replaces the whole batch.
+ * 
  */
 export type RecoveryCode = Prisma.RecoveryCodeModel
 /**
  * Model WebAuthnCredential
- * WebAuthn credential: a passkey or a hardware security key. Challenges live in Redis.
+ * 
  */
 export type WebAuthnCredential = Prisma.WebAuthnCredentialModel
 /**

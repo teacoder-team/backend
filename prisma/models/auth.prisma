@@ -12,7 +12,8 @@ model PasswordCredential {
 }
 
 model OAuthAccount {
-    id                String       @id @default(uuid())
+    id String @id @default(uuid())
+
     provider          AuthProvider
     providerAccountId String       @map("provider_account_id")
 
@@ -22,7 +23,7 @@ model OAuthAccount {
     userId String @map("user_id")
 
     @@unique([provider, providerAccountId], map: "uq_oauth_accounts_provider_account")
-    @@index([userId], map: "ix_oauth_accounts_user_id")
+    @@unique([userId, provider], map: "uq_oauth_accounts_user_id_provider")
     @@map("oauth_accounts")
 }
 

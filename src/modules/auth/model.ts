@@ -1,5 +1,8 @@
 import { type Static, t } from 'elysia'
 
+import { AuthProvider } from '@prisma/generated/client'
+
+import { PrismaEnum } from '~/lib/utils/schema'
 import { MfaMethodSchema } from '~/modules/mfa/model'
 
 const CaptchaToken = t.Optional(
@@ -115,10 +118,19 @@ const AccessToken = t.String({
 	examples: ['eyJhbGciOiJIUzI1NiJ9...']
 })
 
+const LinkedProvider = t.Nullable(
+	PrismaEnum(AuthProvider, {
+		description:
+			'Соцсеть, которую этот вход автоматически привязал к аккаунту: её подтверждённая почта совпала с почтой аккаунта. Привязка уже произошла и отменить её в этом окне нельзя - покажите пользователю уведомление. `null`, если ничего не привязывалось.',
+		examples: [AuthProvider.GITHUB]
+	})
+)
+
 export const AuthResponse = t.Object(
 	{
 		id: UserId,
-		accessToken: AccessToken
+		accessToken: AccessToken,
+		linkedProvider: LinkedProvider
 	},
 	{
 		description:
@@ -135,40 +147,39 @@ const MfaToken = t.String({
 	examples: ['q2fSx1Gd0Yk7uJ9ZlQm3cW8vB4nR6tHpE5aT1oKyL0s']
 })
 
+export const SignInCompletedFields = {
+	mfaRequired: t.Literal(false, { description: 'Второй фактор не нужен.' }),
+	mfaToken: t.Null({ description: 'Всегда `null`, если второй фактор не нужен.' }),
+	id: UserId,
+	accessToken: AccessToken,
+	linkedProvider: LinkedProvider
+}
+
+export const SignInMfaRequiredFields = {
+	mfaRequired: t.Literal(true, {
+		description: 'Включена двухфакторная защита - нужен второй шаг.'
+	}),
+	mfaToken: MfaToken,
+	mfaMethods: t.Array(MfaMethodSchema, {
+		description: 'Способы, которыми можно подтвердить вход.',
+		examples: [['TOTP', 'RECOVERY_CODE']]
+	}),
+	expiresIn: t.Number({
+		description: 'Через сколько секунд `mfaToken` перестанет действовать.',
+		examples: [300]
+	})
+}
+
+export const SIGN_IN_COMPLETED_DESCRIPTION =
+	'Вход выполнен: сессия открыта. Access-токен - в теле, refresh-токен - в httpOnly-cookie `tc_refresh`.'
+
+export const SIGN_IN_MFA_REQUIRED_DESCRIPTION =
+	'Первый фактор принят, но сессия ещё не открыта: нужно подтвердить вход через `POST /auth/mfa/challenge` и `POST /auth/mfa/confirm`. Автоматическая привязка соцсети (если есть) произойдёт после подтверждения - её покажет `linkedProvider` в ответе `confirm`.'
+
 export const SignInResponse = t.Union(
 	[
-		t.Object(
-			{
-				mfaRequired: t.Literal(false, { description: 'Второй фактор не нужен.' }),
-				mfaToken: t.Null({ description: 'Всегда `null`, если второй фактор не нужен.' }),
-				id: UserId,
-				accessToken: AccessToken
-			},
-			{
-				description:
-					'Вход выполнен: сессия открыта. Access-токен - в теле, refresh-токен - в httpOnly-cookie `tc_refresh`.'
-			}
-		),
-		t.Object(
-			{
-				mfaRequired: t.Literal(true, {
-					description: 'Включена двухфакторная защита - нужен второй шаг.'
-				}),
-				mfaToken: MfaToken,
-				mfaMethods: t.Array(MfaMethodSchema, {
-					description: 'Способы, которыми можно подтвердить вход.',
-					examples: [['TOTP', 'RECOVERY_CODE']]
-				}),
-				expiresIn: t.Number({
-					description: 'Через сколько секунд `mfaToken` перестанет действовать.',
-					examples: [300]
-				})
-			},
-			{
-				description:
-					'Пароль (или вход через соцсеть) принят, но сессия ещё не открыта: нужно подтвердить вход через `POST /auth/mfa/challenge` и `POST /auth/mfa/confirm`.'
-			}
-		)
+		t.Object(SignInCompletedFields, { description: SIGN_IN_COMPLETED_DESCRIPTION }),
+		t.Object(SignInMfaRequiredFields, { description: SIGN_IN_MFA_REQUIRED_DESCRIPTION })
 	],
 	{
 		description:

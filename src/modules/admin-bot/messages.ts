@@ -7,9 +7,10 @@ import {
 	tg
 } from '@teacoder/telegram'
 
-import { AuthProvider, UserRole } from '@prisma/generated/client'
+import { UserRole } from '@prisma/generated/client'
 
 import { env } from '~/config/env'
+import { AUTH_PROVIDER_TITLES } from '~/lib/integrations/oauth'
 import { formatDate, formatDateTime } from '~/lib/utils/date'
 import { PAYMENT_PROVIDER_NAMES, paymentMethodName } from '~/modules/billing/service'
 
@@ -24,14 +25,6 @@ import type {
 const DAY_MS = 24 * 60 * 60 * 1000
 
 const relativeFormat = new Intl.RelativeTimeFormat('ru', { numeric: 'auto' })
-
-const SIGN_IN_NAMES: Record<AuthProvider, string> = {
-	[AuthProvider.GOOGLE]: 'Google',
-	[AuthProvider.GITHUB]: 'GitHub',
-	[AuthProvider.DISCORD]: 'Discord',
-	[AuthProvider.YANDEX]: 'Яндекс',
-	[AuthProvider.TELEGRAM]: 'Telegram'
-}
 
 const CHAT_TYPE_NAMES: Record<string, string> = {
 	private: 'личный чат',
@@ -106,7 +99,7 @@ export interface CoursePurchaseMessageInput {
 const signInMethods = (user: PurchaseDetails['user']) => {
 	const methods = [
 		user.passwordCredential ? 'почта и пароль' : null,
-		...user.oauthAccounts.map((account) => SIGN_IN_NAMES[account.provider])
+		...user.oauthAccounts.map((account) => AUTH_PROVIDER_TITLES[account.provider])
 	].filter(Boolean)
 
 	return methods.length ? methods.join(', ') : '—'
@@ -203,7 +196,7 @@ export const registrationMessage = ({ user, email, via, sameDevice }: Registrati
 			section(tg`${EMOJI.user} Пользователь`, [
 				['Имя', user.displayName],
 				['Почта', email],
-				['Способ', via === 'EMAIL' ? 'почта и пароль' : SIGN_IN_NAMES[via]]
+				['Способ', via === 'EMAIL' ? 'почта и пароль' : AUTH_PROVIDER_TITLES[via]]
 			]),
 			session &&
 				section(tg`${EMOJI.device} Устройство`, [
