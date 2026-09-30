@@ -1,10 +1,12 @@
-import { getForwardedIp } from '~/lib/utils/ip'
 import { Elysia, t } from 'elysia'
+
+import { TAG } from '~/config/openapi'
+import { getForwardedIp } from '~/lib/utils/ip'
 
 import { WebhookAckResponse } from './model'
 import { receiveHeleketWebhook, receiveYookassaWebhook } from './service'
 
-export const webhook = new Elysia({ prefix: '/webhook', tags: ['Webhooks'] })
+export const webhook = new Elysia({ prefix: '/webhook', tags: [TAG.webhooks] })
 	.model({ WebhookAckResponse })
 	.post(
 		'/yookassa',
@@ -17,9 +19,9 @@ export const webhook = new Elysia({ prefix: '/webhook', tags: ['Webhooks'] })
 			body: t.Any(),
 			response: 'WebhookAckResponse',
 			detail: {
-				summary: 'YooKassa webhook',
+				summary: 'Уведомления ЮKassa',
 				description:
-					"Only accepted from YooKassa's documented IP ranges. Re-fetches the payment from their API (notifications carry no signature) and applies that authoritative state: a succeeded course payment is captured and the course granted; cancellations move the intent to CANCELLED/EXPIRED. Subscription payments are recorded but not processed yet. Answers 503 when YooKassa's API can't be reached, so they redeliver."
+					'Принимается только с IP-адресов ЮKassa. Уведомления ЮKassa не подписаны, поэтому состояние платежа перезапрашивается из их API и применяется уже оно: успешная оплата курса открывает доступ, отмена переводит платёж в `CANCELLED` или `EXPIRED`. Платежи за подписку сохраняются, но пока не обрабатываются.\n\nЕсли API ЮKassa недоступен, отвечает 503 - ЮKassa повторит уведомление позже.'
 			}
 		}
 	)
@@ -34,9 +36,9 @@ export const webhook = new Elysia({ prefix: '/webhook', tags: ['Webhooks'] })
 			body: t.Any(),
 			response: 'WebhookAckResponse',
 			detail: {
-				summary: 'Heleket webhook',
+				summary: 'Уведомления Heleket',
 				description:
-					"Only accepted from Heleket's documented IP, then signature-verified. A paid course invoice is captured and the course granted; failed/cancelled invoices move the intent accordingly. Subscription payments are recorded but not processed yet."
+					'Принимается только с IP-адреса Heleket и с верной подписью. Оплаченный счёт за курс открывает доступ, неуспешный или отменённый - меняет статус платежа. Платежи за подписку сохраняются, но пока не обрабатываются.'
 			}
 		}
 	)

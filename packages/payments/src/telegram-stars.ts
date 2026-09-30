@@ -93,7 +93,9 @@ export const createTelegramStarsClient = ({
 
 			return envelope.result
 		} catch (err) {
-			if (!(err instanceof HttpError)) throw err
+			if (!(err instanceof HttpError)) {
+				throw err
+			}
 
 			const errorBody = (err.body ?? {}) as Envelope<never>
 
@@ -138,12 +140,16 @@ export const createTelegramStarsClient = ({
 
 	/** Pass the SECRET_TOKEN_HEADER value. */
 	const verifyWebhookSecret = (received: string | undefined): boolean => {
-		if (!received) return false
+		if (!received) {
+			return false
+		}
 
 		const expected = Buffer.from(webhookSecret)
 		const actual = Buffer.from(received)
 
-		if (actual.length !== expected.length) return false
+		if (actual.length !== expected.length) {
+			return false
+		}
 
 		return timingSafeEqual(actual, expected)
 	}

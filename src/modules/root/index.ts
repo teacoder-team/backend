@@ -1,6 +1,7 @@
 import { Elysia } from 'elysia'
 
 import { env } from '~/config/env'
+import { TAG } from '~/config/openapi'
 import { API_VERSION } from '~/config/version'
 import { captcha } from '~/lib/integrations/captcha'
 import { pingDatabase } from '~/lib/db'
@@ -10,7 +11,7 @@ import { listAvailablePaymentMethods } from '~/modules/billing/service'
 
 import { HealthResponse, RootResponse } from './model'
 
-export const root = new Elysia({ tags: ['Core'] })
+export const root = new Elysia({ tags: [TAG.core] })
 	.model({ RootResponse, HealthResponse })
 	.get(
 		'/',
@@ -35,9 +36,9 @@ export const root = new Elysia({ tags: ['Core'] })
 		{
 			response: 'RootResponse',
 			detail: {
-				summary: 'System greeting',
+				summary: 'Конфигурация клиента',
 				description:
-					'Main API entry point - a greeting plus the config clients need to bootstrap.'
+					'Точка входа API. Отдаёт всё, что нужно клиенту при запуске: доступные способы входа и оплаты, активную капчу с публичным ключом виджета, адреса сайта и файлового хранилища.'
 			}
 		}
 	)
@@ -48,7 +49,9 @@ export const root = new Elysia({ tags: ['Core'] })
 
 			const healthy = database && cache
 
-			if (!healthy) set.status = 503
+			if (!healthy) {
+				set.status = 503
+			}
 
 			return {
 				status: healthy ? ('operational' as const) : ('degraded' as const),
@@ -60,8 +63,9 @@ export const root = new Elysia({ tags: ['Core'] })
 		{
 			response: 'HealthResponse',
 			detail: {
-				summary: 'System health check',
-				description: 'Reports whether this instance can reach PostgreSQL and Redis.'
+				summary: 'Проверка работоспособности',
+				description:
+					'Проверяет, что сервис видит PostgreSQL и Redis. Если хотя бы одна из них недоступна - отвечает 503 со статусом `degraded`.'
 			}
 		}
 	)

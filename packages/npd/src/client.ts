@@ -79,7 +79,9 @@ export const createRequest = (session: NpdSession, logger?: HttpLogger) => {
 		try {
 			return await send()
 		} catch (err) {
-			if (!(err instanceof HttpError)) throw err
+			if (!(err instanceof HttpError)) {
+				throw err
+			}
 
 			if (err.status === 401) {
 				session.invalidateAccessToken()

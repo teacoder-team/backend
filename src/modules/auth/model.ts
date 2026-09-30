@@ -2,125 +2,149 @@ import { type Static, t } from 'elysia'
 
 const CaptchaToken = t.Optional(
 	t.String({
-		description: 'Token from the active CAPTCHA widget (Turnstile or Yandex SmartCaptcha).',
+		description:
+			'Токен из виджета капчи (Cloudflare Turnstile или Yandex SmartCaptcha). Обязателен, если капча включена - какая именно, отдаёт `GET /`.',
 		examples: ['0.AAAA-token-from-widget']
 	})
 )
 
-export const RegisterPayload = t.Object({
-	name: t.String({
-		minLength: 2,
-		maxLength: 50,
-		error: 'Name must be between 2 and 50 characters',
-		examples: ['Linus Torvalds']
-	}),
-	email: t.String({
-		format: 'email',
-		error: 'Invalid email format',
-		examples: ['torvalds.l@teacoder.com']
-	}),
-	password: t.String({
-		minLength: 6,
-		error: 'Password must be at least 6 characters',
-		examples: ['securepassword123']
-	}),
-	captchaToken: CaptchaToken
+const Email = t.String({
+	format: 'email',
+	description: 'Адрес электронной почты.',
+	error: 'Invalid email format',
+	examples: ['torvalds.l@teacoder.com']
 })
 
-export const VerifyRegisterPayload = t.Object({
-	email: t.String({
-		format: 'email',
-		error: 'Invalid email format',
-		examples: ['torvalds.l@teacoder.com']
-	}),
-	code: t.String({
-		minLength: 6,
-		maxLength: 6,
-		error: 'Verification code must be exactly 6 characters',
-		examples: ['123456']
-	})
-})
+export const RegisterPayload = t.Object(
+	{
+		name: t.String({
+			minLength: 2,
+			maxLength: 50,
+			description: 'Отображаемое имя, от 2 до 50 символов.',
+			error: 'Name must be between 2 and 50 characters',
+			examples: ['Linus Torvalds']
+		}),
+		email: Email,
+		password: t.String({
+			minLength: 6,
+			description: 'Пароль, не короче 6 символов.',
+			error: 'Password must be at least 6 characters',
+			examples: ['securepassword123']
+		}),
+		captchaToken: CaptchaToken
+	},
+	{ description: 'Данные для регистрации.' }
+)
 
-export const LoginPayload = t.Object({
-	email: t.String({
-		format: 'email',
-		error: 'Invalid email format',
-		examples: ['torvalds.l@teacoder.com']
-	}),
-	password: t.String({
-		minLength: 6,
-		error: 'Password is required',
-		examples: ['securepassword123']
-	}),
-	captchaToken: CaptchaToken
-})
+export const VerifyRegisterPayload = t.Object(
+	{
+		email: Email,
+		code: t.String({
+			minLength: 6,
+			maxLength: 6,
+			description: '6-значный код из письма.',
+			error: 'Verification code must be exactly 6 characters',
+			examples: ['123456']
+		})
+	},
+	{ description: 'Код подтверждения регистрации.' }
+)
 
-export const ForgotPasswordPayload = t.Object({
-	email: t.String({
-		format: 'email',
-		error: 'Invalid email format',
-		examples: ['torvalds.l@teacoder.com']
-	}),
-	captchaToken: CaptchaToken
-})
+export const LoginPayload = t.Object(
+	{
+		email: Email,
+		password: t.String({
+			minLength: 6,
+			description: 'Пароль от аккаунта.',
+			error: 'Password is required',
+			examples: ['securepassword123']
+		}),
+		captchaToken: CaptchaToken
+	},
+	{ description: 'Данные для входа.' }
+)
 
-export const ResetPasswordPayload = t.Object({
-	email: t.String({
-		format: 'email',
-		error: 'Invalid email format',
-		examples: ['torvalds.l@teacoder.com']
-	}),
-	code: t.String({
-		minLength: 6,
-		maxLength: 6,
-		error: 'Reset code must be exactly 6 characters',
-		examples: ['123456']
-	}),
-	newPassword: t.String({
-		minLength: 6,
-		error: 'Password must be at least 6 characters',
-		examples: ['newsecurepassword123']
-	})
-})
+export const ForgotPasswordPayload = t.Object(
+	{
+		email: Email,
+		captchaToken: CaptchaToken
+	},
+	{ description: 'Почта аккаунта, пароль от которого нужно сбросить.' }
+)
 
-export const MessageResponse = t.Object({
-	message: t.String({
-		description: 'Status message indicating the next step.',
-		examples: ['Verification code sent to email']
-	})
-})
+export const ResetPasswordPayload = t.Object(
+	{
+		email: Email,
+		code: t.String({
+			minLength: 6,
+			maxLength: 6,
+			description: '6-значный код из письма.',
+			error: 'Reset code must be exactly 6 characters',
+			examples: ['123456']
+		}),
+		newPassword: t.String({
+			minLength: 6,
+			description: 'Новый пароль, не короче 6 символов.',
+			error: 'Password must be at least 6 characters',
+			examples: ['newsecurepassword123']
+		})
+	},
+	{ description: 'Код из письма и новый пароль.' }
+)
+
+export const MessageResponse = t.Object(
+	{
+		message: t.String({
+			description: 'Что произошло или что делать дальше.',
+			examples: ['Verification code sent to email']
+		})
+	},
+	{ description: 'Текстовый результат операции.' }
+)
 
 const AccessToken = t.String({
-	description: 'Short-lived JWT - send as `Authorization: Bearer <token>`.',
+	description:
+		'Короткоживущий JWT. Передаётся в заголовке `Authorization: Bearer <token>`; браузеру достаточно cookie `tc_access`.',
 	examples: ['eyJhbGciOiJIUzI1NiJ9...']
 })
 
 const RefreshToken = t.String({
-	description: 'Long-lived opaque token - exchange it at /auth/refresh for a new pair.',
+	description:
+		'Долгоживущий токен для получения новой пары через `POST /auth/refresh`. Одноразовый: после обмена становится недействительным.',
 	examples: ['3f8a1c2e9b7d4a51-8c62-1d4e5f6a7b8c...']
 })
 
-export const AuthResponse = t.Object({
-	id: t.String({
-		description: 'Unique identifier of the authenticated user.',
-		examples: ['49003cb8-7f31-4942-abec-ac9e29318681']
-	}),
-	accessToken: AccessToken,
-	refreshToken: RefreshToken
-})
+export const AuthResponse = t.Object(
+	{
+		id: t.String({
+			description: 'Идентификатор пользователя.',
+			examples: ['49003cb8-7f31-4942-abec-ac9e29318681']
+		}),
+		accessToken: AccessToken,
+		refreshToken: RefreshToken
+	},
+	{ description: 'Выполненный вход: пользователь и пара токенов.' }
+)
 
-export const RefreshPayload = t.Object({
-	refreshToken: t.Optional(
-		t.String({
-			description: 'Only needed when not sending the tc_refresh cookie (bearer clients).'
-		})
-	)
-})
+export const RefreshPayload = t.Object(
+	{
+		refreshToken: t.Optional(
+			t.String({
+				description:
+					'Нужен, только если клиент не отправляет cookie `tc_refresh` (например, мобильное приложение).'
+			})
+		)
+	},
+	{ description: 'Refresh-токен для обмена.' }
+)
 
-export const TokenPairResponse = t.Object({
-	accessToken: AccessToken,
-	refreshToken: RefreshToken
-})
+export const TokenPairResponse = t.Object(
+	{
+		accessToken: AccessToken,
+		refreshToken: RefreshToken
+	},
+	{ description: 'Новая пара токенов.' }
+)
 
 export type RegisterInput = Static<typeof RegisterPayload>
 export type VerifyRegisterInput = Static<typeof VerifyRegisterPayload>

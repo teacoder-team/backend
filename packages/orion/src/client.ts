@@ -67,7 +67,9 @@ export const createOrionClient = ({
 				url: fileUrl(tag, response.file_id)
 			}
 		} catch (err) {
-			if (!(err instanceof HttpError)) throw err
+			if (!(err instanceof HttpError)) {
+				throw err
+			}
 
 			const body = err.body as { error?: string } | null
 

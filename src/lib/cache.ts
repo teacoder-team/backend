@@ -16,8 +16,13 @@ const read = async <T>(key: string): Promise<Entry<T>> => {
 	try {
 		const raw = await redis.get(key)
 
-		if (raw === null) return { hit: false }
-		if (raw === TOMBSTONE) return { hit: true, value: null }
+		if (raw === null) {
+			return { hit: false }
+		}
+
+		if (raw === TOMBSTONE) {
+			return { hit: true, value: null }
+		}
 
 		return { hit: true, value: JSON.parse(raw) as T }
 	} catch (err) {
@@ -38,7 +43,9 @@ const store = async (key: string, payload: string, ttl: number) => {
 const write = (key: string, value: unknown, ttl: number) => store(key, JSON.stringify(value), ttl)
 
 const drop = async (...keys: string[]) => {
-	if (!keys.length) return
+	if (!keys.length) {
+		return
+	}
 
 	try {
 		await redis.del(...keys)
@@ -54,7 +61,9 @@ const readThrough = async <T>(
 ): Promise<T | null> => {
 	const entry = await read<T>(key)
 
-	if (entry.hit) return entry.value
+	if (entry.hit) {
+		return entry.value
+	}
 
 	const value = await load()
 

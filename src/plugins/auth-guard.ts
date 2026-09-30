@@ -25,7 +25,9 @@ export const authGuard = new Elysia({ name: 'auth-guard' }).macro({
 				headers.authorization
 			)
 
-			if (!token) throw new UnauthorizedError('Authentication required')
+			if (!token) {
+				throw new UnauthorizedError('Authentication required')
+			}
 
 			const payload = await verifyAccessToken(token)
 			const session = await resolveSession(payload.sid)
@@ -50,13 +52,17 @@ export const optionalAuth = new Elysia({ name: 'optional-auth' }).derive(
 			headers.authorization
 		)
 
-		if (!token) return { optionalSession: null }
+		if (!token) {
+			return { optionalSession: null }
+		}
 
 		try {
 			const payload = await verifyAccessToken(token)
 			const session = await resolveSession(payload.sid)
 
-			if (!session || session.userId !== payload.sub) return { optionalSession: null }
+			if (!session || session.userId !== payload.sub) {
+				return { optionalSession: null }
+			}
 
 			return { optionalSession: session }
 		} catch {

@@ -1,5 +1,6 @@
 import { Elysia } from 'elysia'
 
+import { TAG } from '~/config/openapi'
 import { requestContext } from '~/plugins/request-context'
 
 import {
@@ -10,7 +11,7 @@ import {
 } from './model'
 import { getCourseBySlug, getCourseLessons, listCourses } from './service'
 
-export const course = new Elysia({ prefix: '/courses', tags: ['Courses'] })
+export const course = new Elysia({ prefix: '/courses', tags: [TAG.courses] })
 	.use(requestContext)
 	.model({
 		CourseLessonListResponse,
@@ -21,26 +22,26 @@ export const course = new Elysia({ prefix: '/courses', tags: ['Courses'] })
 	.get('/', async () => await listCourses(), {
 		response: 'CourseListResponse',
 		detail: {
-			summary: 'List courses',
+			summary: 'Каталог курсов',
 			description:
-				'Every published course, newest first - just enough to render a catalog card.'
+				'Все опубликованные курсы, сначала новые. Только данные для карточки в каталоге.'
 		}
 	})
 	.get('/:slug', async ({ params, ip }) => await getCourseBySlug(params.slug, ip), {
 		params: 'CourseSlugParams',
 		response: 'CourseResponse',
 		detail: {
-			summary: 'Get course by slug',
+			summary: 'Страница курса',
 			description:
-				'Full details for a single published course. Bumps its view counter, at most once per IP every 30 minutes.'
+				'Полная информация об опубликованном курсе. Увеличивает счётчик просмотров - не чаще раза в 30 минут для одного IP.'
 		}
 	})
 	.get('/:slug/lessons', async ({ params }) => await getCourseLessons(params.slug), {
 		params: 'CourseSlugParams',
 		response: 'CourseLessonListResponse',
 		detail: {
-			summary: 'List course lessons',
+			summary: 'Программа курса',
 			description:
-				'Every published lesson in a course, in order. Premium lessons are flagged via `access`, but their video only unlocks through GET /lessons/:id for entitled users.'
+				'Опубликованные уроки курса по порядку. Премиум-уроки помечены в `access`; само видео отдаёт `GET /lessons/{id}` и только тем, у кого есть доступ.'
 		}
 	})

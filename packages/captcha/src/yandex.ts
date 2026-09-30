@@ -28,7 +28,9 @@ export const yandexSmartCaptcha = ({
 		async verify(token, { remoteIp } = {}) {
 			const body = new URLSearchParams({ secret: secretKey, token })
 
-			if (remoteIp) body.set('ip', remoteIp)
+			if (remoteIp) {
+				body.set('ip', remoteIp)
+			}
 
 			const result = await http<ValidateResponse>('/validate', {
 				method: 'POST',

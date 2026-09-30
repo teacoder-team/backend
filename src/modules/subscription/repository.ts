@@ -3,7 +3,9 @@ import { db } from '~/lib/db'
 export const hasActiveSubscription = async (userId: string): Promise<boolean> => {
 	const subscription = await db.subscription.findUnique({ where: { userId } })
 
-	if (!subscription?.isActive) return false
+	if (!subscription?.isActive) {
+		return false
+	}
 
 	return !subscription.expiresAt || subscription.expiresAt > new Date()
 }
@@ -11,7 +13,9 @@ export const hasActiveSubscription = async (userId: string): Promise<boolean> =>
 export const cancelSubscription = async (userId: string) => {
 	const subscription = await db.subscription.findUnique({ where: { userId } })
 
-	if (!subscription?.isActive) return null
+	if (!subscription?.isActive) {
+		return null
+	}
 
 	return db.subscription.update({
 		where: { userId },

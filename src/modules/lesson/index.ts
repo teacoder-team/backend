@@ -1,11 +1,12 @@
 import { Elysia } from 'elysia'
 
+import { TAG } from '~/config/openapi'
 import { optionalAuth } from '~/plugins/auth-guard'
 
 import { LessonParams, LessonResponse } from './model'
 import { getLessonById } from './service'
 
-export const lesson = new Elysia({ prefix: '/lessons', tags: ['Lessons'] })
+export const lesson = new Elysia({ prefix: '/lessons', tags: [TAG.lessons] })
 	.use(optionalAuth)
 	.model({ LessonParams, LessonResponse })
 	.get(
@@ -16,9 +17,9 @@ export const lesson = new Elysia({ prefix: '/lessons', tags: ['Lessons'] })
 			params: 'LessonParams',
 			response: 'LessonResponse',
 			detail: {
-				summary: 'Get lesson by id',
+				summary: 'Урок',
 				description:
-					'Free lessons are open to everyone. Premium lessons require an active subscription or a course purchase.'
+					'Содержимое урока вместе с видео. Бесплатные уроки открыты всем, даже без входа. Для премиум-уроков нужна активная подписка или покупка курса, иначе ответ 403. Авторизация необязательна, но без неё доступны только бесплатные уроки.'
 			}
 		}
 	)

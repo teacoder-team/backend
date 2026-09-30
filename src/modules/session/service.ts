@@ -39,7 +39,9 @@ export interface SessionContext {
 }
 
 const friendlyNameFor = (browser: string | null, os: string | null) => {
-	if (browser && os) return `${browser}, ${os}`
+	if (browser && os) {
+		return `${browser}, ${os}`
+	}
 
 	return browser ?? os
 }
@@ -72,7 +74,9 @@ export const createSession = async ({ userId, ip, userAgent }: SessionContext) =
 }
 
 const touchInBackground = (session: CachedSession) => {
-	if (Date.now() - Date.parse(session.lastSeenAt) < TOUCH_INTERVAL_MS) return
+	if (Date.now() - Date.parse(session.lastSeenAt) < TOUCH_INTERVAL_MS) {
+		return
+	}
 
 	const lastSeenAt = new Date()
 
@@ -95,7 +99,9 @@ export const resolveSession = async (sessionId: string) => {
 		return stored ? toCachedSession(stored) : null
 	})
 
-	if (session) touchInBackground(session)
+	if (session) {
+		touchInBackground(session)
+	}
 
 	return session
 }
@@ -138,7 +144,9 @@ export const refreshTokenPair = async (rawToken: string): Promise<TokenPair> => 
 
 	const session = await findActiveSession(existing.sessionId)
 
-	if (!session) throw new UnauthorizedError('Session expired or revoked')
+	if (!session) {
+		throw new UnauthorizedError('Session expired or revoked')
+	}
 
 	if (existing.usedAt) {
 		await revokeSession(session.userId, session.id)

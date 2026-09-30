@@ -16,7 +16,9 @@ const viewDedupKey = (courseId: string, ip: string) => `course:view:${courseId}:
 const registerView = async (courseId: string, ip: string) => {
 	const isFirstSeen = await redis.set(viewDedupKey(courseId, ip), '1', 'EX', VIEW_DEDUP_TTL, 'NX')
 
-	if (!isFirstSeen) return
+	if (!isFirstSeen) {
+		return
+	}
 
 	await incrementCourseViews(courseId)
 }
@@ -30,7 +32,9 @@ export const listCourses = async () => {
 export const getCourseBySlug = async (slug: string, ip: string) => {
 	const course = await findPublishedCourseBySlug(slug)
 
-	if (!course) throw new NotFoundError('Course not found')
+	if (!course) {
+		throw new NotFoundError('Course not found')
+	}
 
 	void registerView(course.id, ip).catch((err) => {
 		logger.warn({ err, courseId: course.id }, 'course_view_increment_failed')
@@ -42,7 +46,9 @@ export const getCourseBySlug = async (slug: string, ip: string) => {
 export const getCourseLessons = async (slug: string) => {
 	const course = await findPublishedCourseBySlug(slug)
 
-	if (!course) throw new NotFoundError('Course not found')
+	if (!course) {
+		throw new NotFoundError('Course not found')
+	}
 
 	return findPublishedLessonsForCourse(course.id)
 }

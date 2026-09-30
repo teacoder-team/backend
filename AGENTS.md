@@ -1,6 +1,6 @@
 # TeaCoder API
 
-Backend of TeaCoder, a Russian dev-education platform: courses/lessons, progress, email+OAuth auth, sessions, payments (course purchases, premium subscription), avatars. Bun + Elysia + Prisma/PostgreSQL + Redis/BullMQ, TypeScript strict. Users are Russian-speaking: user-facing text (emails, payment descriptions) is Russian; API error messages, logs, code and comments are English.
+Backend of TeaCoder, a Russian dev-education platform: courses/lessons, progress, email+OAuth auth, sessions, payments (course purchases, premium subscription), avatars. Bun + Elysia + Prisma/PostgreSQL + Redis/BullMQ, TypeScript strict. Users are Russian-speaking: user-facing text (emails, payment descriptions, the whole OpenAPI docs - tags, `summary`, `description` of routes and schema fields) is Russian; API error messages (including schema `error` strings), logs, code and comments are English.
 
 ## Commands
 
@@ -25,7 +25,7 @@ packages/            @teacoder/* bun workspaces - framework-agnostic, no build s
 prisma/models/*.prisma   multi-file schema; client generated to prisma/generated (import '@prisma/generated/client')
 src/
   main.ts  bootstrap.ts  app.ts     entry, startup/shutdown (db, redis, workers), module mounting + OpenAPI (/docs)
-  config/            env.ts (validated env), paths.ts, version.ts
+  config/            env.ts (validated env), openapi.ts (docs header, TAG sections), paths.ts, version.ts
   plugins/           request-context (requestId, ip, userAgent), auth-guard (auth macro), auth-cookie, error-handler
   lib/
     db.ts redis.ts cache.ts logger.ts errors.ts    infrastructure + the app's error classes
@@ -38,10 +38,10 @@ src/
 
 ## Module pattern (feature folders, per Elysia's best-practice guide)
 
-- `index.ts` - Elysia instance with `prefix` + `tags`. Thin: read input, call a service, set cookies, return. Register schemas with `.model({ XPayload, XResponse })`, reference them by name (`body: 'XPayload'`, `response: 'XResponse'`), always add `detail: { summary, description }`. Protected routes: `.use(authGuard)` + `auth: true` (route or `.guard`) -> `session` in context; also add `detail.security: [{ bearerAuth: [] }]`.
+- `index.ts` - Elysia instance with `prefix` + `tags: [TAG.x]` (`~/config/openapi`; a new section also needs an entry with a description in its `tags` list). Thin: read input, call a service, set cookies, return. Register schemas with `.model({ XPayload, XResponse })`, reference them by name (`body: 'XPayload'`, `response: 'XResponse'`), always add `detail: { summary, description }`. Protected routes: `.use(authGuard)` + `auth: true` (route or `.guard`) -> `session` in context; also add `detail.security: [{ bearerAuth: [] }]`.
 - `service.ts` - plain exported `const` arrow functions (no classes). Business rules live here. Throw `~/lib/errors` classes, never touch HTTP status.
 - `repository.ts` - Prisma only, no logic. Multi-step writes use `db.$transaction` here; functions that must join a caller's transaction take `client: Prisma.TransactionClient = db`.
-- `model.ts` - TypeBox via `t` from `elysia`. Names: `XPayload` (body), `XResponse`, `XParams`/`XQuery`; export `type XInput = Static<typeof XPayload>`. Give fields `examples` (OpenAPI) and a human `error` message. Prisma enums: `PrismaEnum(Enum)` from `~/lib/utils/schema`.
+- `model.ts` - TypeBox via `t` from `elysia`. Names: `XPayload` (body), `XResponse`, `XParams`/`XQuery`; export `type XInput = Static<typeof XPayload>`. Give fields a Russian `description`, `examples`, and an English `error` message; give exported objects a Russian `description` too (`t.Object({...}, { description })`). Enum values in docs are written as the API returns them - Prisma enum keys (`REQUIRES_PAYMENT`), not the lowercase DB mapping. Prisma enums: `PrismaEnum(Enum)` from `~/lib/utils/schema`.
 - `jobs.ts` - BullMQ handlers as `JobHandlers<Jobs>` + `enqueueX` helpers. Email handlers are merged into the one email worker in `bootstrap.ts`. Payloads carry ids, not PII - resolve/decrypt inside the handler.
 
 ## Hard rules
@@ -61,8 +61,6 @@ src/
     	throw new NotFoundError('User not found')
     }
     ```
-
-    Older code still has one-liners: fix them in functions you touch, don't mass-rewrite.
 
 - Find code with **CodeGraph** first (index in `.codegraph/`): the `codegraph_explore` MCP tool, or `codegraph explore "<symbols or question>"`. It returns current source + callers/blast radius in one call. If results look stale: `codegraph sync`.
 

@@ -11,5 +11,7 @@ export const logContext = new AsyncLocalStorage<LogContext>()
 export const extendLogContext = (fields: Record<string, unknown>) => {
 	const store = logContext.getStore()
 
-	if (store) Object.assign(store, fields)
+	if (store) {
+		Object.assign(store, fields)
+	}
 }

@@ -21,7 +21,9 @@ interface ValidationIssue {
 const messageFor = (issue: ValidationIssue) => {
 	const declared = issue.schema?.error
 
-	if (typeof declared === 'string') return declared
+	if (typeof declared === 'string') {
+		return declared
+	}
 
 	return issue.summary ?? issue.message ?? 'Invalid value'
 }

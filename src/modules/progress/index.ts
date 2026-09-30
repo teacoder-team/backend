@@ -1,5 +1,6 @@
 import { Elysia } from 'elysia'
 
+import { TAG } from '~/config/openapi'
 import { authGuard } from '~/plugins/auth-guard'
 
 import {
@@ -10,7 +11,7 @@ import {
 } from './model'
 import { getCourseProgress, updateProgress } from './service'
 
-export const progress = new Elysia({ prefix: '/progress', tags: ['Progress'] })
+export const progress = new Elysia({ prefix: '/progress', tags: [TAG.progress] })
 	.use(authGuard)
 	.guard({ auth: true, detail: { security: [{ bearerAuth: [] }] } })
 	.model({
@@ -26,8 +27,9 @@ export const progress = new Elysia({ prefix: '/progress', tags: ['Progress'] })
 			params: 'CourseIdParams',
 			response: 'CourseProgressResponse',
 			detail: {
-				summary: 'Get course progress',
-				description: 'How far the current user has gotten through a course.'
+				summary: 'Прогресс по курсу',
+				description:
+					'Сколько уроков курса пройдено текущим пользователем и какие именно.'
 			}
 		}
 	)
@@ -35,8 +37,8 @@ export const progress = new Elysia({ prefix: '/progress', tags: ['Progress'] })
 		body: 'UpdateProgressPayload',
 		response: 'UpdateProgressResponse',
 		detail: {
-			summary: 'Update lesson progress',
+			summary: 'Отметка урока',
 			description:
-				'Marks a lesson complete or incomplete, adjusts points, and returns the next lesson to continue with.'
+				'Отмечает урок пройденным или снимает отметку, начисляет или списывает баллы и возвращает следующий урок, с которого стоит продолжить.'
 		}
 	})

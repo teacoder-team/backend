@@ -41,7 +41,9 @@ export const requestLogger = new Elysia({ name: 'request-logger' })
 		const isSlow = duration >= env.LOG_SLOW_REQUEST_MS
 		const sampled = isError || isSlow || Math.random() < env.LOG_SAMPLE_RATE
 
-		if (!sampled) return
+		if (!sampled) {
+			return
+		}
 
 		const level = status >= 500 ? 'error' : status >= 400 ? 'warn' : 'info'
 

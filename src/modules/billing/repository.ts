@@ -79,7 +79,9 @@ export const captureCoursePayment = (intent: CourseCapture) =>
 			data: { status: IntentStatus.CAPTURED, failureCode: null }
 		})
 
-		if (count === 0) return 'already_captured' as const
+		if (count === 0) {
+			return 'already_captured' as const
+		}
 
 		if (await findCoursePurchase(intent.userId, intent.courseId, tx)) {
 			return 'already_owned' as const

@@ -1,5 +1,6 @@
 import { Elysia } from 'elysia'
 
+import { TAG } from '~/config/openapi'
 import { authGuard } from '~/plugins/auth-guard'
 
 import {
@@ -10,7 +11,7 @@ import {
 } from './model'
 import { cancelSubscription, createPayment, listPaymentMethods } from './service'
 
-export const billing = new Elysia({ prefix: '/billing', tags: ['Billing'] })
+export const billing = new Elysia({ prefix: '/billing', tags: [TAG.billing] })
 	.use(authGuard)
 	.model({
 		CreatePaymentPayload,
@@ -21,9 +22,9 @@ export const billing = new Elysia({ prefix: '/billing', tags: ['Billing'] })
 	.get('/methods', () => listPaymentMethods(), {
 		response: 'PaymentMethodsResponse',
 		detail: {
-			summary: 'List payment methods',
+			summary: 'Способы оплаты',
 			description:
-				'Every payment method, grouped by category, with whether it is actually wired up to a working provider right now.'
+				'Все способы оплаты, сгруппированные по категориям, с признаком, работает ли способ прямо сейчас. Плоский список только доступных способов есть в `GET /`.'
 		}
 	})
 	.post(
@@ -35,9 +36,9 @@ export const billing = new Elysia({ prefix: '/billing', tags: ['Billing'] })
 			body: 'CreatePaymentPayload',
 			response: 'CreatePaymentResponse',
 			detail: {
-				summary: 'Create a payment',
+				summary: 'Создание платежа',
 				description:
-					'Records the payment, opens it at the provider chosen by `method`, and returns the URL to send the user to. The payment stays REQUIRES_PAYMENT until the provider confirms it. Send an `Idempotency-Key` header to safely retry without opening a second invoice.',
+					'Создаёт платёж у провайдера, выбранного по `method`, и возвращает ссылку на страницу оплаты - на неё нужно перенаправить пользователя. С `courseId` оплачивается курс, без него - премиум-подписка.\n\nПлатёж остаётся в статусе `REQUIRES_PAYMENT`, пока провайдер не подтвердит оплату; доступ к курсу открывается автоматически после подтверждения. Заголовок `Idempotency-Key` защищает от повторного счёта: запрос с тем же ключом вернёт уже созданный платёж.',
 				security: [{ bearerAuth: [] }]
 			}
 		}
@@ -46,9 +47,9 @@ export const billing = new Elysia({ prefix: '/billing', tags: ['Billing'] })
 		auth: true,
 		response: 'CancelSubscriptionResponse',
 		detail: {
-			summary: 'Cancel the subscription',
+			summary: 'Отмена подписки',
 			description:
-				'Stops future renewal. If a paid period is still running, access continues until it ends.',
+				'Отключает автопродление. Уже оплаченный период продолжает действовать до конца.',
 			security: [{ bearerAuth: [] }]
 		}
 	})

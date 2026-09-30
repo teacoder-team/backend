@@ -15,7 +15,9 @@ export const fetchJson = async <T>(
 		headers ? new Headers(headers) : undefined
 	)
 
-	if (!response.ok) throw new Error(`${url} responded with ${response.status}`)
+	if (!response.ok) {
+		throw new Error(`${url} responded with ${response.status}`)
+	}
 
 	return (await response.json()) as T
 }

@@ -3,7 +3,9 @@ import { hasActiveSubscription } from '~/modules/subscription/repository'
 import { findCoursePurchase } from './repository'
 
 export const canViewCourse = async (userId: string, courseId: string): Promise<boolean> => {
-	if (await findCoursePurchase(userId, courseId)) return true
+	if (await findCoursePurchase(userId, courseId)) {
+		return true
+	}
 
 	return hasActiveSubscription(userId)
 }

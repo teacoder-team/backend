@@ -287,7 +287,9 @@ export const createPayment = async (
 	if (idempotencyKey) {
 		const existing = await findPaymentByIdempotencyKey(userId, idempotencyKey)
 
-		if (existing) return toResponse(existing)
+		if (existing) {
+			return toResponse(existing)
+		}
 	}
 
 	const provider = resolveProvider(input.method)
@@ -352,7 +354,9 @@ export const createPayment = async (
 			errorMessage: err instanceof Error ? err.message : String(err)
 		})
 
-		if (err instanceof AppError) throw err
+		if (err instanceof AppError) {
+			throw err
+		}
 
 		throw new BadRequestError('Payment provider is unavailable, try again later')
 	}
@@ -361,7 +365,9 @@ export const createPayment = async (
 export const cancelSubscription = async (userId: string) => {
 	const cancelled = await cancelSubscriptionRow(userId)
 
-	if (cancelled) logger.info({ userId }, 'subscription_cancelled')
+	if (cancelled) {
+		logger.info({ userId }, 'subscription_cancelled')
+	}
 
 	return { cancelled: Boolean(cancelled) }
 }

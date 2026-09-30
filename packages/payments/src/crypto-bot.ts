@@ -81,7 +81,9 @@ const query = (params: Record<string, Param>) => {
 	const search = new URLSearchParams()
 
 	for (const [name, value] of Object.entries(params)) {
-		if (value !== undefined) search.set(name, String(value))
+		if (value !== undefined) {
+			search.set(name, String(value))
+		}
 	}
 
 	const serialized = search.toString()
@@ -143,7 +145,9 @@ export const createCryptoBotClient = ({
 
 	/** HMAC-SHA256 of the raw body, keyed with SHA256(token). Pass the SIGNATURE_HEADER value. */
 	const verifyWebhookSignature = (rawBody: string, signature: string | undefined): boolean => {
-		if (!signature) return false
+		if (!signature) {
+			return false
+		}
 
 		const secret = createHash('sha256').update(token).digest()
 		const expected = createHmac('sha256', secret).update(rawBody).digest('hex')
@@ -151,7 +155,9 @@ export const createCryptoBotClient = ({
 		const received = Buffer.from(signature, 'hex')
 		const computed = Buffer.from(expected, 'hex')
 
-		if (received.length !== computed.length) return false
+		if (received.length !== computed.length) {
+			return false
+		}
 
 		return timingSafeEqual(received, computed)
 	}

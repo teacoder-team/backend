@@ -1,5 +1,6 @@
 import { Elysia } from 'elysia'
 
+import { TAG } from '~/config/openapi'
 import { BadRequestError } from '~/lib/errors'
 import { refreshTokenPair } from '~/modules/session/service'
 import { authCookie, REFRESH_COOKIE } from '~/plugins/auth-cookie'
@@ -19,7 +20,7 @@ import {
 } from './model'
 import { forgotPassword, login, logout, register, resetPassword, verifyRegister } from './service'
 
-export const auth = new Elysia({ prefix: '/auth', tags: ['Auth'] })
+export const auth = new Elysia({ prefix: '/auth', tags: [TAG.auth] })
 	.use(requestContext)
 	.use(authCookie)
 	.use(authGuard)
@@ -45,8 +46,9 @@ export const auth = new Elysia({ prefix: '/auth', tags: ['Auth'] })
 			body: 'RegisterPayload',
 			response: 'MessageResponse',
 			detail: {
-				summary: 'Initialize register',
-				description: 'Start the process of creating a new user account.'
+				summary: 'Регистрация',
+				description:
+					'Создаёт неподтверждённый аккаунт и отправляет на почту 6-значный код, действующий 15 минут. Повторный запрос для той же почты просто отправит новый код. Требует токен капчи, если она включена.'
 			}
 		}
 	)
@@ -63,8 +65,9 @@ export const auth = new Elysia({ prefix: '/auth', tags: ['Auth'] })
 			body: 'VerifyRegisterPayload',
 			response: 'AuthResponse',
 			detail: {
-				summary: 'Verify register',
-				description: 'Confirm and activate your newly created account.'
+				summary: 'Подтверждение регистрации',
+				description:
+					'Проверяет код из письма, активирует аккаунт и сразу выполняет вход: возвращает пару токенов и ставит cookie. На код даётся 5 попыток.'
 			}
 		}
 	)
@@ -81,8 +84,9 @@ export const auth = new Elysia({ prefix: '/auth', tags: ['Auth'] })
 			body: 'LoginPayload',
 			response: 'AuthResponse',
 			detail: {
-				summary: 'Login with email',
-				description: 'Authenticate and start a new session.'
+				summary: 'Вход по почте и паролю',
+				description:
+					'Открывает новую сессию: возвращает пару токенов и ставит cookie. После 5 неудачных попыток вход для этой почты и этого IP блокируется на 15 минут. Требует токен капчи, если она включена.'
 			}
 		}
 	)
@@ -91,7 +95,9 @@ export const auth = new Elysia({ prefix: '/auth', tags: ['Auth'] })
 		async ({ body, cookie, authCookie }) => {
 			const token = body.refreshToken ?? (cookie[REFRESH_COOKIE]?.value as string | undefined)
 
-			if (!token) throw new BadRequestError('Missing refresh token')
+			if (!token) {
+				throw new BadRequestError('Missing refresh token')
+			}
 
 			const tokens = await refreshTokenPair(token)
 
@@ -103,9 +109,9 @@ export const auth = new Elysia({ prefix: '/auth', tags: ['Auth'] })
 			body: 'RefreshPayload',
 			response: 'TokenPairResponse',
 			detail: {
-				summary: 'Refresh tokens',
+				summary: 'Обновление токенов',
 				description:
-					'Rotates the refresh token and issues a new access token. Reusing an already-rotated refresh token revokes the whole session.'
+					'Обменивает refresh-токен на новую пару. Токен берётся из cookie `tc_refresh` или из тела запроса. Старый refresh-токен после этого недействителен, и его повторное использование считается кражей: вся сессия завершается.'
 			}
 		}
 	)
@@ -120,9 +126,9 @@ export const auth = new Elysia({ prefix: '/auth', tags: ['Auth'] })
 			body: 'ForgotPasswordPayload',
 			response: 'MessageResponse',
 			detail: {
-				summary: 'Request a password reset code',
+				summary: 'Запрос сброса пароля',
 				description:
-					'Always responds the same way, whether or not the email is registered - avoids leaking account existence.'
+					'Отправляет на почту код для сброса пароля. Отвечает одинаково независимо от того, есть ли такой аккаунт, - так нельзя узнать, зарегистрирована ли почта. Требует токен капчи, если она включена.'
 			}
 		}
 	)
@@ -139,9 +145,9 @@ export const auth = new Elysia({ prefix: '/auth', tags: ['Auth'] })
 			body: 'ResetPasswordPayload',
 			response: 'AuthResponse',
 			detail: {
-				summary: 'Reset password',
+				summary: 'Сброс пароля',
 				description:
-					'Confirms the reset code, sets the new password, signs out every other session, and starts a fresh one.'
+					'Проверяет код из письма и устанавливает новый пароль. Все остальные сессии завершаются, а на этом устройстве открывается новая.'
 			}
 		}
 	)
@@ -158,8 +164,8 @@ export const auth = new Elysia({ prefix: '/auth', tags: ['Auth'] })
 			auth: true,
 			response: 'MessageResponse',
 			detail: {
-				summary: 'Logout',
-				description: 'Terminate the current session and clear the cookie.',
+				summary: 'Выход',
+				description: 'Завершает текущую сессию и удаляет cookie с токенами.',
 				security: [{ bearerAuth: [] }]
 			}
 		}

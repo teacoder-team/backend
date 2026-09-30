@@ -36,8 +36,9 @@ interface OAuthSession extends RequestOrigin {
 }
 
 const resolveProvider = (name: string): OAuthProviderName => {
-	if (!isOAuthProvider(name))
+	if (!isOAuthProvider(name)) {
 		throw new BadRequestError(`OAuth provider "${name}" is not supported`)
+	}
 
 	return name
 }
@@ -63,7 +64,9 @@ export const startOAuth = async (providerName: string, origin: RequestOrigin) =>
 const takeSession = async (state: string) => {
 	const raw = await redis.get(stateKey(state))
 
-	if (!raw) throw new ForbiddenError('OAuth state expired or already used')
+	if (!raw) {
+		throw new ForbiddenError('OAuth state expired or already used')
+	}
 
 	await redis.del(stateKey(state))
 
@@ -78,7 +81,9 @@ const authenticate = async (
 	try {
 		return await completeAuthorization(OAUTH_PROVIDERS[name], callback, checks)
 	} catch (err) {
-		if (!(err instanceof OAuthError)) throw err
+		if (!(err instanceof OAuthError)) {
+			throw err
+		}
 
 		if (!(err instanceof OAuthDeniedError)) {
 			logger.warn(
@@ -94,7 +99,9 @@ const authenticate = async (
 const resolveUser = async (provider: AuthProvider, profile: OAuthProfile) => {
 	const existing = await findOAuthAccount(provider, profile.providerAccountId)
 
-	if (existing) return { user: existing.user, outcome: 'login' as const }
+	if (existing) {
+		return { user: existing.user, outcome: 'login' as const }
+	}
 
 	if (profile.email) {
 		const byEmail = await findUserByEmailHash(hashEmail(normalizeEmail(profile.email)))
@@ -130,11 +137,15 @@ export const finishOAuth = async (providerName: string, search: string) => {
 
 	const state = callback.searchParams.get('state')
 
-	if (!state) throw new BadRequestError('Missing OAuth state')
+	if (!state) {
+		throw new BadRequestError('Missing OAuth state')
+	}
 
 	const session = await takeSession(state)
 
-	if (session.provider !== name) throw new ForbiddenError('OAuth state does not match provider')
+	if (session.provider !== name) {
+		throw new ForbiddenError('OAuth state does not match provider')
+	}
 
 	const profile = await authenticate(name, callback, {
 		state,

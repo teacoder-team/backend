@@ -32,7 +32,9 @@ export const getCourseProgress = async (userId: string, courseId: string) => {
 export const updateProgress = async (userId: string, input: UpdateProgressInput) => {
 	const lesson = await findLessonForProgress(input.lessonId)
 
-	if (!lesson) throw new NotFoundError('Lesson not found')
+	if (!lesson) {
+		throw new NotFoundError('Lesson not found')
+	}
 
 	if (lesson.access === LessonAccess.PREMIUM && !(await canViewCourse(userId, lesson.courseId))) {
 		throw new ForbiddenError(

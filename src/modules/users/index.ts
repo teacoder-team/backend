@@ -1,5 +1,6 @@
 import { Elysia } from 'elysia'
 
+import { TAG } from '~/config/openapi'
 import { MessageResponse, TokenPairResponse } from '~/modules/auth/model'
 import { authCookie } from '~/plugins/auth-cookie'
 import { authGuard } from '~/plugins/auth-guard'
@@ -23,7 +24,7 @@ import {
 	updateAvatar
 } from './service'
 
-export const users = new Elysia({ prefix: '/users', tags: ['Users'] })
+export const users = new Elysia({ prefix: '/users', tags: [TAG.users] })
 	.use(requestContext)
 	.use(authCookie)
 	.use(authGuard)
@@ -42,16 +43,17 @@ export const users = new Elysia({ prefix: '/users', tags: ['Users'] })
 	.get('/@me', async ({ session }) => await getCurrentUser(session.userId), {
 		response: 'UserResponse',
 		detail: {
-			summary: 'Get current user',
-			description: 'Profile of the account making the request.'
+			summary: 'Текущий пользователь',
+			description: 'Профиль аккаунта, от имени которого сделан запрос.'
 		}
 	})
 	.post('/@me/avatar', async ({ session, body }) => await updateAvatar(session.userId, body), {
 		body: 'AvatarUploadPayload',
 		response: 'AvatarResponse',
 		detail: {
-			summary: 'Change avatar',
-			description: 'Uploads a new avatar image and sets it as the account avatar.'
+			summary: 'Смена аватара',
+			description:
+				'Загружает изображение в файловое хранилище и делает его аватаром аккаунта. Запрос в формате `multipart/form-data`, картинка до 5 МБ.'
 		}
 	})
 	.post(
@@ -65,9 +67,9 @@ export const users = new Elysia({ prefix: '/users', tags: ['Users'] })
 			body: 'ChangeEmailPayload',
 			response: 'MessageResponse',
 			detail: {
-				summary: 'Request an email change',
+				summary: 'Запрос смены почты',
 				description:
-					'Sends a confirmation code to the new address to prove it is reachable.'
+					'Отправляет код на новый адрес, чтобы убедиться, что он принадлежит пользователю. Почта меняется только после подтверждения кодом.'
 			}
 		}
 	)
@@ -78,8 +80,8 @@ export const users = new Elysia({ prefix: '/users', tags: ['Users'] })
 			body: 'ConfirmCodePayload',
 			response: 'EmailChangeResponse',
 			detail: {
-				summary: 'Confirm an email change',
-				description: 'Applies the pending email change once the code checks out.'
+				summary: 'Подтверждение смены почты',
+				description: 'Проверяет код из письма и меняет почту аккаунта на новую.'
 			}
 		}
 	)
@@ -94,9 +96,9 @@ export const users = new Elysia({ prefix: '/users', tags: ['Users'] })
 			body: 'ChangePasswordPayload',
 			response: 'MessageResponse',
 			detail: {
-				summary: 'Request a password change',
+				summary: 'Запрос смены пароля',
 				description:
-					'Verifies the current password, then emails a confirmation code before applying the new one.'
+					'Проверяет текущий пароль и отправляет на почту код подтверждения. Новый пароль применится только после подтверждения кодом.'
 			}
 		}
 	)
@@ -113,9 +115,9 @@ export const users = new Elysia({ prefix: '/users', tags: ['Users'] })
 			body: 'ConfirmCodePayload',
 			response: 'TokenPairResponse',
 			detail: {
-				summary: 'Confirm a password change',
+				summary: 'Подтверждение смены пароля',
 				description:
-					'Applies the new password, signs out every other session, and starts a fresh one here.'
+					'Проверяет код и устанавливает новый пароль. Все остальные сессии завершаются, а на этом устройстве выдаётся новая пара токенов.'
 			}
 		}
 	)

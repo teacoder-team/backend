@@ -8,7 +8,9 @@ import { findPublishedLessonById } from './repository'
 export const getLessonById = async (id: string, userId: string | null) => {
 	const lesson = await findPublishedLessonById(id)
 
-	if (!lesson) throw new NotFoundError('Lesson not found')
+	if (!lesson) {
+		throw new NotFoundError('Lesson not found')
+	}
 
 	if (lesson.access === LessonAccess.PREMIUM) {
 		const hasAccess = userId ? await canViewCourse(userId, lesson.courseId) : false

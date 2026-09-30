@@ -24,7 +24,9 @@ export const createAuthorization = async (
 		...provider.authorizationParams
 	}
 
-	if (provider.scopes.length) parameters.scope = provider.scopes.join(' ')
+	if (provider.scopes.length) {
+		parameters.scope = provider.scopes.join(' ')
+	}
 
 	let codeVerifier: string | undefined
 

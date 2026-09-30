@@ -109,7 +109,9 @@ export interface WebhookPayload {
 }
 
 const messageFor = (envelope: ErrorEnvelope) => {
-	if (envelope.message) return envelope.message
+	if (envelope.message) {
+		return envelope.message
+	}
 
 	const fieldMessages = Object.values(envelope.errors ?? {})
 		.flat()
@@ -158,7 +160,9 @@ export const createHeleketClient = ({
 
 			return envelope.result
 		} catch (err) {
-			if (!(err instanceof HttpError)) throw err
+			if (!(err instanceof HttpError)) {
+				throw err
+			}
 
 			const errorBody = err.body as Partial<ErrorEnvelope> | null
 
@@ -191,7 +195,9 @@ export const createHeleketClient = ({
 	const verifyWebhookSignature = (payload: Record<string, unknown>): boolean => {
 		const { sign, ...rest } = payload
 
-		if (typeof sign !== 'string') return false
+		if (typeof sign !== 'string') {
+			return false
+		}
 
 		const expected = createHash('md5')
 			.update(Buffer.from(phpCompatibleJson(rest)).toString('base64') + apiKey)

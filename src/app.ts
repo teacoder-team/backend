@@ -1,7 +1,7 @@
 import { openapi } from '@elysiajs/openapi'
 import { Elysia } from 'elysia'
 
-import { API_VERSION } from '~/config/version'
+import { documentation } from '~/config/openapi'
 import { auth } from '~/modules/auth'
 import { billing } from '~/modules/billing'
 import { course } from '~/modules/course'
@@ -23,28 +23,7 @@ export const createApp = () =>
 				provider: 'scalar',
 				path: '/docs',
 				specPath: '/spec.json',
-				documentation: {
-					info: {
-						title: 'TeaCoder API',
-						description: 'API for TeaCoder educational platform',
-						version: API_VERSION,
-						contact: {
-							name: 'TeaCoder Support',
-							email: 'support@teacoder.ru'
-						},
-						termsOfService: 'https://teacoder.ru/documents/terms-of-use'
-					},
-					components: {
-						securitySchemes: {
-							bearerAuth: {
-								type: 'http',
-								scheme: 'bearer',
-								description:
-									'Enter your valid active session token to access protected resources.'
-							}
-						}
-					}
-				}
+				documentation
 			})
 		)
 		.use(errorHandler)

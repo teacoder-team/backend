@@ -38,7 +38,9 @@ const pendingPasswordKey = (userId: string) => `pending_password_change:${userId
 export const getCurrentUser = async (userId: string) => {
 	const user = await findUserById(userId)
 
-	if (!user) throw new NotFoundError('User not found')
+	if (!user) {
+		throw new NotFoundError('User not found')
+	}
 
 	const email = await getUserEmail(userId)
 

@@ -1,5 +1,6 @@
 import { Elysia } from 'elysia'
 
+import { TAG } from '~/config/openapi'
 import { AuthResponse } from '~/modules/auth/model'
 import { authCookie } from '~/plugins/auth-cookie'
 import { requestContext } from '~/plugins/request-context'
@@ -7,7 +8,7 @@ import { requestContext } from '~/plugins/request-context'
 import { OAuthCallbackQuery, OAuthProviderParams, OAuthStartResponse } from './model'
 import { finishOAuth, startOAuth } from './service'
 
-export const oauth = new Elysia({ prefix: '/oauth', tags: ['OAuth'] })
+export const oauth = new Elysia({ prefix: '/oauth', tags: [TAG.oauth] })
 	.use(requestContext)
 	.use(authCookie)
 	.model({ OAuthProviderParams, OAuthCallbackQuery, OAuthStartResponse, AuthResponse })
@@ -18,9 +19,9 @@ export const oauth = new Elysia({ prefix: '/oauth', tags: ['OAuth'] })
 			params: 'OAuthProviderParams',
 			response: 'OAuthStartResponse',
 			detail: {
-				summary: 'Initialize OAuth flow',
+				summary: 'Начало входа через соцсеть',
 				description:
-					'Builds the authorization URL for the given provider and stores state (and a PKCE pair, where applicable) in Redis.'
+					'Возвращает ссылку на страницу входа провайдера - на неё нужно перенаправить пользователя. Ссылка одноразовая и действует 10 минут; защищена параметром `state` и, где провайдер поддерживает, PKCE.'
 			}
 		}
 	)
@@ -38,9 +39,9 @@ export const oauth = new Elysia({ prefix: '/oauth', tags: ['OAuth'] })
 			query: 'OAuthCallbackQuery',
 			response: 'AuthResponse',
 			detail: {
-				summary: 'OAuth callback handler',
+				summary: 'Возврат от провайдера',
 				description:
-					'Verifies the provider response, resolves or creates the user, and starts a session.'
+					'Сюда провайдер возвращает пользователя после входа. Проверяет ответ, находит аккаунт (или привязывает к существующему по подтверждённой почте, или создаёт новый) и открывает сессию. Вызывать вручную не нужно.'
 			}
 		}
 	)

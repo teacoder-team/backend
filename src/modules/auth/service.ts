@@ -256,7 +256,9 @@ export const forgotPassword = async (input: ForgotPasswordInput, ip: string) => 
 	const email = normalizeEmail(input.email)
 	const user = await findUserByEmailHash(hashEmail(email))
 
-	if (!user || user.status !== UserStatus.ACTIVE || !user.passwordCredential) return
+	if (!user || user.status !== UserStatus.ACTIVE || !user.passwordCredential) {
+		return
+	}
 
 	const code = await issueVerificationCode(user.id, VerificationPurpose.PASSWORD_RESET)
 

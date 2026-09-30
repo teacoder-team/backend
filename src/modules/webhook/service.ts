@@ -74,7 +74,9 @@ const settle = async (eventId: string, update: ProviderPaymentUpdate) => {
 	try {
 		const result = await applyPaymentUpdate(update)
 
-		if (result.outcome === 'deferred') return
+		if (result.outcome === 'deferred') {
+			return
+		}
 
 		await markWebhookProcessed(eventId, result.outcome === 'rejected' ? result.reason : null)
 	} catch (err) {
@@ -97,7 +99,9 @@ export const receiveHeleketWebhook = async (
 ) => {
 	assertKnownIp(ip, isHeleketIp, 'Heleket')
 
-	if (!isHeleketPayload(payload)) throw new BadRequestError('Malformed webhook payload')
+	if (!isHeleketPayload(payload)) {
+		throw new BadRequestError('Malformed webhook payload')
+	}
 
 	/** Heleket posts once per status change of the same invoice - uuid alone would drop the "paid" one. */
 	const pspEventId = `${payload.uuid}:${payload.status}`
@@ -137,11 +141,15 @@ export const receiveHeleketWebhook = async (
 		return markWebhookProcessed(event.id, 'invalid_signature')
 	}
 
-	if (payload.type !== 'payment') return markWebhookProcessed(event.id, 'not_an_invoice')
+	if (payload.type !== 'payment') {
+		return markWebhookProcessed(event.id, 'not_an_invoice')
+	}
 
 	const status = HELEKET_STATUSES[payload.status]
 
-	if (!status) return markWebhookProcessed(event.id, `status_not_handled:${payload.status}`)
+	if (!status) {
+		return markWebhookProcessed(event.id, `status_not_handled:${payload.status}`)
+	}
 
 	await settle(event.id, {
 		provider: PaymentProvider.HELEKET,
@@ -166,7 +174,9 @@ export const receiveYookassaWebhook = async (body: YookassaNotification, ip: str
 	const { event, object } = body
 	const objectId = object?.id
 
-	if (!event || !objectId) throw new BadRequestError('Malformed webhook payload')
+	if (!event || !objectId) {
+		throw new BadRequestError('Malformed webhook payload')
+	}
 
 	const pspEventId = `${event}:${objectId}`
 	const existing = await findWebhookEvent(PSP_YOOKASSA, pspEventId)
@@ -230,8 +240,9 @@ export const receiveYookassaWebhook = async (body: YookassaNotification, ip: str
 	const row = await record(true, payment)
 	const paymentId = payment.metadata?.paymentId
 
-	if (typeof paymentId !== 'string')
+	if (typeof paymentId !== 'string') {
 		return markWebhookProcessed(row.id, 'missing_payment_reference')
+	}
 
 	const status =
 		payment.cancellation_details?.reason === 'expired_on_confirmation'

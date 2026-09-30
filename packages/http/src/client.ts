@@ -49,7 +49,9 @@ const mergeHeaders = (...sources: (HeadersInit | undefined)[]) => {
 }
 
 const readBody = async (response: Response) => {
-	if (response.status === 204) return null
+	if (response.status === 204) {
+		return null
+	}
 
 	return response.json().catch(() => null)
 }
@@ -81,11 +83,15 @@ export const createHttpClient = ({
 					signal: AbortSignal.timeout(timeout)
 				})
 
-				if (beforeRequest) request = await beforeRequest(request)
+				if (beforeRequest) {
+					request = await beforeRequest(request)
+				}
 
 				const response = await fetch(request)
 
-				if (response.ok) return (await readBody(response)) as T
+				if (response.ok) {
+					return (await readBody(response)) as T
+				}
 
 				if (attempt < maxAttempts && retryableStatuses.includes(response.status)) {
 					logger?.warn(
@@ -100,11 +106,15 @@ export const createHttpClient = ({
 				throw new HttpError(response.status, await readBody(response), url)
 			} catch (err) {
 				// A non-retryable HTTP status is a final answer, not a glitch.
-				if (err instanceof HttpError) throw err
+				if (err instanceof HttpError) {
+					throw err
+				}
 
 				lastError = err
 
-				if (attempt >= maxAttempts) break
+				if (attempt >= maxAttempts) {
+					break
+				}
 
 				logger?.warn({ context: 'http', url, err, attempt }, 'http_request_retrying')
 

@@ -128,7 +128,9 @@ export const createSession = ({ inn, password, deviceId, logger }: NpdClientOpti
 		getAccountInn: async () => (await current()).profile.inn,
 		/** Forces the next call to renew - used after the API answers 401. */
 		invalidateAccessToken: () => {
-			if (session) session = { ...session, expiresAt: 0 }
+			if (session) {
+				session = { ...session, expiresAt: 0 }
+			}
 		},
 		reset: () => {
 			session = null

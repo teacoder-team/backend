@@ -101,7 +101,9 @@ export const createRobokassaClient = ({
 		const invId = read(data, 'InvId')
 		const signature = read(data, 'SignatureValue')
 
-		if (!outSum || !invId || !signature) return false
+		if (!outSum || !invId || !signature) {
+			return false
+		}
 
 		const expected = signRequest([outSum, invId, password], extractCustomParams(data))
 

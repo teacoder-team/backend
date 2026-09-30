@@ -21,7 +21,9 @@ export const courseEmailJobs: JobHandlers<CourseEmailJobs> = {
 			findCourseSummary(courseId)
 		])
 
-		if (!email || !user || !course) return
+		if (!email || !user || !course) {
+			return
+		}
 
 		await sendMail({
 			to: email,

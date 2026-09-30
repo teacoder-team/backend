@@ -28,9 +28,13 @@ export const captcha = createVerifier()
 
 /** A no-op without a provider. An unreachable provider fails closed. */
 export const verifyCaptcha = async (token: string | undefined, remoteIp: string) => {
-	if (!captcha) return
+	if (!captcha) {
+		return
+	}
 
-	if (!token) throw new BadRequestError('Captcha verification is required')
+	if (!token) {
+		throw new BadRequestError('Captcha verification is required')
+	}
 
 	const result = await captcha.verify(token, { remoteIp }).catch((err: unknown) => {
 		logger.error(
@@ -41,7 +45,9 @@ export const verifyCaptcha = async (token: string | undefined, remoteIp: string)
 		return null
 	})
 
-	if (result?.success) return
+	if (result?.success) {
+		return
+	}
 
 	if (result) {
 		logger.warn(

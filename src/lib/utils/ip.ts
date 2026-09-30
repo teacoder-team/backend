@@ -31,18 +31,24 @@ export const getForwardedIp = (headers: Headers): string | null => {
 		const first = headers.get(header)?.split(',')[0]
 		const address = first ? parseIp(first) : null
 
-		if (address) return address.toString()
+		if (address) {
+			return address.toString()
+		}
 	}
 
 	return null
 }
 
 const toRange = (entry: string): [Address, number] => {
-	if (entry.includes('/')) return ipaddr.parseCIDR(entry)
+	if (entry.includes('/')) {
+		return ipaddr.parseCIDR(entry)
+	}
 
 	const address = parseIp(entry)
 
-	if (!address) throw new Error(`Invalid IP allowlist entry: "${entry}"`)
+	if (!address) {
+		throw new Error(`Invalid IP allowlist entry: "${entry}"`)
+	}
 
 	return [address, address.kind() === 'ipv4' ? 32 : 128]
 }
@@ -57,7 +63,9 @@ export const createIpAllowlist = (entries: readonly string[]) => {
 	return (ip: string | null | undefined): boolean => {
 		const address = ip ? parseIp(ip) : null
 
-		if (!address) return false
+		if (!address) {
+			return false
+		}
 
 		return ranges.some(
 			([range, bits]) => address.kind() === range.kind() && address.match(range, bits)

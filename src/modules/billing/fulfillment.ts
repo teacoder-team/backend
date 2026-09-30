@@ -37,9 +37,13 @@ export type FulfillmentResult =
 const toMinorUnits = (value: string | number) => Math.round(Number(value) * 100)
 
 const rejectionReason = (intent: FulfillableIntent | null, update: ProviderPaymentUpdate) => {
-	if (!intent) return 'unknown_payment'
+	if (!intent) {
+		return 'unknown_payment'
+	}
 
-	if (intent.provider !== update.provider) return 'provider_mismatch'
+	if (intent.provider !== update.provider) {
+		return 'provider_mismatch'
+	}
 
 	if (intent.pspIntentId && intent.pspIntentId !== update.pspIntentId) {
 		return 'psp_intent_mismatch'
@@ -66,7 +70,9 @@ const capture = async (
 		currency: intent.currency
 	})
 
-	if (result === 'already_captured') return { outcome: 'already_captured' }
+	if (result === 'already_captured') {
+		return { outcome: 'already_captured' }
+	}
 
 	if (result === 'already_owned') {
 		/** Money was taken for a course the user already has - needs a manual refund. */
@@ -99,9 +105,13 @@ const applyToCoursePayment = async (
 	intent: FulfillableIntent & { courseId: string },
 	update: ProviderPaymentUpdate
 ): Promise<FulfillmentResult> => {
-	if (update.status === IntentStatus.CAPTURED) return capture(intent)
+	if (update.status === IntentStatus.CAPTURED) {
+		return capture(intent)
+	}
 
-	if (update.status === IntentStatus.REQUIRES_PAYMENT) return { outcome: 'unchanged' }
+	if (update.status === IntentStatus.REQUIRES_PAYMENT) {
+		return { outcome: 'unchanged' }
+	}
 
 	const changed = await transitionPendingPayment(
 		intent.id,
@@ -127,7 +137,9 @@ export const applyPaymentUpdate = async (
 		return { outcome: 'rejected', reason: reason ?? 'unknown_payment' }
 	}
 
-	if (!intent.courseId) return { outcome: 'deferred', reason: 'subscription_not_handled' }
+	if (!intent.courseId) {
+		return { outcome: 'deferred', reason: 'subscription_not_handled' }
+	}
 
 	const result = await applyToCoursePayment({ ...intent, courseId: intent.courseId }, update)
 
