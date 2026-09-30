@@ -3,6 +3,7 @@ FROM oven/bun:1.3.10-slim AS base
 WORKDIR /app
 
 COPY package.json bun.lock ./
+COPY packages ./packages/
 
 RUN --mount=type=cache,id=bun,target=/root/.bun/install/cache \
     bun install --frozen-lockfile
