@@ -96,6 +96,7 @@ src/
 ## Gotchas
 
 - Windows dev box: the user's `bun --watch` holds folder handles, so renaming a **directory** fails with `Permission denied` - move files one by one (`git mv` per file).
+- Docker build: dependencies install from manifests only (`COPY --parents package.json bun.lock packages/*/package.json`), so touching a package's source does not reinstall; the GeoLite2 city database is fetched by `docker-geoip.sh` from the newest `P3TERX/GeoLite.mmdb` release, cached in a build cache mount keyed by release tag, and re-checked only when the repo's release feed changes (`--build-arg GEOLITE_RELEASE=<tag>` pins one). `resources/geo` is dockerignored - the image always takes the downloaded copy.
 - In development pino writes through an async worker transport - log lines can lag or be lost if the process is killed.
 - OAuth routes live under `/auth/sso` (module folder is still `modules/oauth`). Providers redirect to the **site**, not the API: `redirect_uri` = `${OAUTH_CALLBACK_URL}/<provider>` (default `${APP_URL}/auth/callback/<provider>`, kept in the parked state); that page POSTs its query string to `/auth/sso/:provider/callback`. Provider consoles must register that exact URL - changing it breaks sign-in until every console is updated.
 - Telegram markup uses the `tg` tag, never one named `html`: prettier formats `html` templates as HTML and collapses the `\n` that Telegram renders literally. Write line breaks as `\n` inside `tg` templates.

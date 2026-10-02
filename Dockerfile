@@ -1,9 +1,12 @@
+# syntax=docker/dockerfile:1
+
 FROM oven/bun:1.3.10-slim AS base
 
 WORKDIR /app
 
-COPY package.json bun.lock ./
-COPY packages ./packages/
+# Manifests only (`--parents` keeps the workspace layout): editing a package's source
+# must not reinstall every dependency.
+COPY --parents package.json bun.lock packages/*/package.json ./
 
 RUN --mount=type=cache,id=bun,target=/root/.bun/install/cache \
     bun install --frozen-lockfile
@@ -18,6 +21,7 @@ COPY prisma ./prisma/
 
 RUN bunx prisma generate
 
+COPY packages ./packages/
 COPY src ./src/
 
 RUN bun run build
@@ -32,11 +36,16 @@ RUN apt-get update \
         ca-certificates \
         curl \
     && update-ca-certificates \
-    && mkdir -p geo \
-    && curl -fL \
-        "https://github.com/P3TERX/GeoLite.mmdb/releases/download/2026.10.01/GeoLite2-City.mmdb" \
-        -o geo/city.mmdb \
     && rm -rf /var/lib/apt/lists/*
+
+ARG GEOLITE_RELEASE=latest
+
+ADD https://github.com/P3TERX/GeoLite.mmdb/releases.atom /tmp/geolite-releases.atom
+
+COPY docker-geoip.sh ./
+
+RUN --mount=type=cache,id=geoip,target=/cache,sharing=locked \
+    sh ./docker-geoip.sh /tmp/geolite-releases.atom /cache geo/city.mmdb
 
 
 FROM oven/bun:1.3.10-slim AS release
