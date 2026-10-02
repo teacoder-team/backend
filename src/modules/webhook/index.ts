@@ -4,7 +4,7 @@ import { TAG } from '~/config/openapi'
 import { getForwardedIp } from '~/lib/utils/ip'
 
 import { WebhookAckResponse } from './model'
-import { receiveHeleketWebhook, receiveYookassaWebhook } from './service'
+import { receiveHeleketWebhook, receiveResendWebhook, receiveYookassaWebhook } from './service'
 
 export const webhook = new Elysia({ prefix: '/webhook', tags: [TAG.webhooks] })
 	.model({ WebhookAckResponse })
@@ -21,7 +21,7 @@ export const webhook = new Elysia({ prefix: '/webhook', tags: [TAG.webhooks] })
 			detail: {
 				summary: 'Уведомления ЮKassa',
 				description:
-					'Принимается только с IP-адресов ЮKassa. Уведомления ЮKassa не подписаны, поэтому состояние платежа перезапрашивается из их API и применяется уже оно: успешная оплата курса открывает доступ, отмена переводит платёж в `CANCELLED` или `EXPIRED`. Платежи за подписку сохраняются, но пока не обрабатываются.\n\nЕсли API ЮKassa недоступен, отвечает 503 - ЮKassa повторит уведомление позже.'
+					'Принимается только с IP-адресов ЮKassa. Уведомления ЮKassa не подписаны, поэтому состояние платежа перезапрашивается из их API и применяется уже оно: успешная оплата курса открывает доступ, оплата подписки продлевает премиум, отмена переводит платёж в `CANCELLED` или `EXPIRED`.\n\nЕсли API ЮKassa недоступен, отвечает 503 - ЮKassa повторит уведомление позже.'
 			}
 		}
 	)
@@ -38,7 +38,25 @@ export const webhook = new Elysia({ prefix: '/webhook', tags: [TAG.webhooks] })
 			detail: {
 				summary: 'Уведомления Heleket',
 				description:
-					'Принимается только с IP-адреса Heleket и с верной подписью. Оплаченный счёт за курс открывает доступ, неуспешный или отменённый - меняет статус платежа. Платежи за подписку сохраняются, но пока не обрабатываются.'
+					'Принимается только с IP-адреса Heleket и с верной подписью. Оплаченный счёт за курс открывает доступ, за подписку - продлевает премиум; неуспешный или отменённый - меняет статус платежа.'
+			}
+		}
+	)
+	.post(
+		'/resend',
+		async ({ body, request }) => {
+			await receiveResendWebhook(body, request.headers)
+
+			return { received: true }
+		},
+		{
+			parse: 'text',
+			body: t.String(),
+			response: 'WebhookAckResponse',
+			detail: {
+				summary: 'Входящие письма Resend',
+				description:
+					'Событие `email.received` от Resend Inbound. Подпись Svix проверяется по сырому телу запроса, без неё - 401. Письма, адресованные в поддержку, пересылаются уведомлением в админ-бот Telegram; остальные события принимаются и игнорируются.'
 			}
 		}
 	)

@@ -38,6 +38,15 @@ export const LessonAccess = {
 export type LessonAccess = (typeof LessonAccess)[keyof typeof LessonAccess]
 
 
+export const CourseAccessMode = {
+  FREE: 'FREE',
+  PREMIUM: 'PREMIUM',
+  PURCHASE: 'PURCHASE'
+} as const
+
+export type CourseAccessMode = (typeof CourseAccessMode)[keyof typeof CourseAccessMode]
+
+
 export const WebAuthnDeviceType = {
   SINGLE_DEVICE: 'SINGLE_DEVICE',
   MULTI_DEVICE: 'MULTI_DEVICE'

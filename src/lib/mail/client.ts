@@ -1,18 +1,27 @@
-import { env } from '~/config/env'
-import { logger } from '~/lib/logger'
 import { render } from '@react-email/render'
 import type { ReactElement } from 'react'
 
-import { transporter } from './transport'
+import { env } from '~/config/env'
+import { resend } from '~/lib/integrations/resend'
+import { logger } from '~/lib/logger'
 
 export type MailSender = 'hello' | 'noreply'
 
 const SENDERS: Record<MailSender, string> = {
-	hello: `TeaCoder <${env.SMTP_FROM_HELLO}>`,
-	noreply: `TeaCoder <${env.SMTP_FROM_NOREPLY}>`
+	hello: `TeaCoder <${env.MAIL_FROM_HELLO}>`,
+	noreply: `TeaCoder <${env.MAIL_FROM_NOREPLY}>`
 }
 
-const PLAIN_TEXT_FALLBACK = 'Please view this email in an HTML-compatible client.'
+export class MailDeliveryError extends Error {
+	constructor(
+		readonly code: string,
+		readonly statusCode: number | null,
+		message: string
+	) {
+		super(message)
+		this.name = 'MailDeliveryError'
+	}
+}
 
 export interface SendMailOptions {
 	to: string
@@ -21,26 +30,26 @@ export interface SendMailOptions {
 	sender?: MailSender
 }
 
+/** Throws on a refused send - the SDK only reports it - so the email job fails and BullMQ retries. */
 export const sendMail = async ({ to, subject, template, sender = 'noreply' }: SendMailOptions) => {
-	const html = await render(template)
+	const [html, text] = await Promise.all([
+		render(template),
+		render(template, { plainText: true })
+	])
 
-	const info = await transporter.sendMail({
+	const { data, error } = await resend.emails.send({
 		from: SENDERS[sender],
 		to,
 		subject,
 		html,
-		text: PLAIN_TEXT_FALLBACK
+		text
 	})
 
-	logger.info(
-		{
-			context: 'mail',
-			messageId: info.messageId,
-			to,
-			sender
-		},
-		'email_sent'
-	)
+	if (error) {
+		throw new MailDeliveryError(error.name, error.statusCode, error.message)
+	}
 
-	return info
+	logger.info({ context: 'mail', emailId: data.id, sender }, 'email_sent')
+
+	return data
 }

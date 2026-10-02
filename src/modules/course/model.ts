@@ -1,6 +1,6 @@
 import { type Static, t } from 'elysia'
 
-import { LessonAccess } from '@prisma/generated/client'
+import { CourseAccessMode, LessonAccess } from '@prisma/generated/client'
 
 import { PrismaEnum } from '~/lib/utils/schema'
 
@@ -38,6 +38,17 @@ const CoursePrice = t.Nullable(
 	})
 )
 
+const CourseAccessModeSchema = PrismaEnum(CourseAccessMode, {
+	description:
+		'Как открываются закрытые уроки и материалы: `FREE` - курс полностью бесплатный, `PREMIUM` - по премиум-подписке или покупке курса, `PURCHASE` - только покупкой. Купленный курс открыт навсегда в любом режиме.',
+	examples: [CourseAccessMode.PREMIUM]
+})
+
+const HasMaterials = t.Boolean({
+	description:
+		'Есть ли у курса материалы (исходный код). Скачать - `POST /courses/{slug}/materials/link`.'
+})
+
 export const CourseListItem = t.Object(
 	{
 		id: CourseId,
@@ -46,6 +57,8 @@ export const CourseListItem = t.Object(
 		shortDescription: CourseShortDescription,
 		thumbnail: CourseThumbnail,
 		price: CoursePrice,
+		accessMode: CourseAccessModeSchema,
+		hasMaterials: HasMaterials,
 		lessons: t.Number({ description: 'Количество опубликованных уроков.', examples: [10] })
 	},
 	{ description: 'Карточка курса в каталоге.' }
@@ -58,6 +71,25 @@ export const CourseListResponse = t.Array(CourseListItem, {
 export const CourseSlugParams = t.Object({
 	slug: CourseSlug
 })
+
+export const CourseAccessResponse = t.Object(
+	{
+		hasAccess: t.Boolean({
+			description: 'Открыты ли текущему пользователю закрытые уроки и материалы курса.'
+		}),
+		via: t.Nullable(
+			t.UnionEnum(['FREE', 'PURCHASE', 'PREMIUM'], {
+				description:
+					'Почему открыт: `FREE` - курс бесплатный, `PURCHASE` - курс куплен, `PREMIUM` - по подписке. `null` - закрыт.',
+				examples: ['PREMIUM']
+			})
+		)
+	},
+	{
+		description:
+			'Доступ текущего пользователя. Без входа открыт только бесплатный курс (ознакомительные уроки открыты всем в любом случае).'
+	}
+)
 
 export const CourseResponse = t.Object(
 	{
@@ -76,6 +108,9 @@ export const CourseResponse = t.Object(
 			})
 		),
 		price: CoursePrice,
+		accessMode: CourseAccessModeSchema,
+		hasMaterials: HasMaterials,
+		access: CourseAccessResponse,
 		views: t.Number({ description: 'Сколько раз открывали страницу курса.', examples: [4213] })
 	},
 	{ description: 'Курс.' }
@@ -101,8 +136,12 @@ export const CourseLessonListItem = t.Object(
 		position: t.Number({ description: 'Порядковый номер в курсе.', examples: [1] }),
 		access: PrismaEnum(LessonAccess, {
 			description:
-				'`FREE` - открыт всем, `PREMIUM` - нужна подписка или покупка курса.',
+				'`FREE` - ознакомительный, открыт всем. `PREMIUM` - открывается вместе с курсом (см. `accessMode` курса). В бесплатном курсе открыты все уроки.',
 			examples: [LessonAccess.FREE]
+		}),
+		isLocked: t.Boolean({
+			description:
+				'Закрыт ли урок для текущего пользователя - `GET /lessons/{id}` ответит 403. Без входа закрыты все уроки `PREMIUM` платного курса.'
 		})
 	},
 	{ description: 'Урок в программе курса.' }
@@ -113,3 +152,23 @@ export const CourseLessonListResponse = t.Array(CourseLessonListItem, {
 })
 
 export type CourseSlugParamsInput = Static<typeof CourseSlugParams>
+
+export const MaterialsLinkResponse = t.Object(
+	{
+		url: t.String({
+			description:
+				'Ссылка на архив с материалами - откройте её в браузере, начнётся скачивание. Действует 5 минут.',
+			examples: ['https://api.teacoder.ru/downloads/q2fSx1Gd0Yk7uJ9ZlQm3cW8vB4nR6tHpE5aT1oKyL0s']
+		}),
+		expiresIn: t.Number({ description: 'Через сколько секунд ссылка перестанет работать.', examples: [300] })
+	},
+	{ description: 'Временная ссылка на материалы курса.' }
+)
+
+export const DownloadParams = t.Object({
+	token: t.String({
+		pattern: '^[A-Za-z0-9_-]{43}$',
+		description: 'Токен из ссылки на материалы.',
+		error: 'Invalid download token'
+	})
+})

@@ -2,11 +2,12 @@ import { randomUUID } from 'node:crypto'
 
 import { type AuthProvider, UserStatus, VerificationPurpose } from '@prisma/generated/client'
 
-import { isProduction } from '~/config/env'
+import { env, isProduction } from '~/config/env'
 import { isDisposableEmail } from '~/lib/datasets/disposable-emails'
 import {
 	BadRequestError,
 	ConflictError,
+	NotFoundError,
 	TooManyRequestsError,
 	UnauthorizedError
 } from '~/lib/errors'
@@ -30,7 +31,7 @@ import {
 	revokeSession
 } from '~/modules/session/service'
 
-import { enqueuePasswordResetCode, enqueueVerificationCode } from './jobs'
+import { enqueuePasswordResetLink, enqueueVerificationCode } from './jobs'
 import {
 	closeMfaTicket,
 	MFA_TICKET_TTL,
@@ -39,6 +40,7 @@ import {
 	readMfaTicket,
 	setMfaChallenge
 } from './mfa-ticket'
+import { consumePasswordResetToken, issuePasswordResetToken } from './password-reset'
 import type {
 	ForgotPasswordInput,
 	LoginInput,
@@ -172,7 +174,7 @@ export const verifyRegister = async (input: VerifyRegisterInput, origin: Request
 	const user = await findUserByEmailHash(hashEmail(email))
 
 	if (!user || user.status !== UserStatus.PENDING) {
-		throw new BadRequestError('Verification code expired or registration not found')
+		throw new NotFoundError('Verification code expired or registration not found')
 	}
 
 	await verifyCode(user.id, VerificationPurpose.EMAIL_CONFIRM, input.code, {
@@ -242,7 +244,7 @@ export const login = async (input: LoginInput, origin: RequestOrigin) => {
 
 		extendLogContext({ event: 'failed_login_attempt' })
 
-		throw new UnauthorizedError('Invalid email or password')
+		throw new NotFoundError('Invalid email or password')
 	}
 
 	if (user.status !== UserStatus.ACTIVE) {
@@ -274,37 +276,32 @@ export const forgotPassword = async (input: ForgotPasswordInput, ip: string) => 
 		return
 	}
 
-	const code = await issueVerificationCode(user.id, VerificationPurpose.PASSWORD_RESET)
+	const token = await issuePasswordResetToken(user.id)
+	const url = `${env.APP_URL}/auth/recovery/${token}`
 
-	await enqueuePasswordResetCode({ email, code })
+	await enqueuePasswordResetLink({ email, url })
 
 	extendLogContext({
 		event: 'password_reset_requested',
 		userId: user.id,
-		code: isProduction ? undefined : code
+		url: isProduction ? undefined : url
 	})
 }
 
 export const resetPassword = async (input: ResetPasswordInput, origin: RequestOrigin) => {
-	const email = normalizeEmail(input.email)
-	const user = await findUserByEmailHash(hashEmail(email))
+	const userId = await consumePasswordResetToken(input.token)
 
-	if (!user || !user.passwordCredential) {
-		throw new BadRequestError('Reset code expired or invalid')
+	if (!userId) {
+		throw new BadRequestError('Reset link expired or invalid')
 	}
 
-	await verifyCode(user.id, VerificationPurpose.PASSWORD_RESET, input.code, {
-		expired: 'Reset code expired or invalid',
-		invalid: 'Invalid reset code'
-	})
+	await updatePasswordHash(userId, await hashPassword(input.newPassword))
 
-	await updatePasswordHash(user.id, await hashPassword(input.newPassword))
+	await revokeAllSessions(userId)
 
-	await revokeAllSessions(user.id)
+	extendLogContext({ event: 'password_reset_completed', userId })
 
-	extendLogContext({ event: 'password_reset_completed', userId: user.id })
-
-	return await completeSignIn(user.id, origin, 'password_reset')
+	return await completeSignIn(userId, origin, 'password_reset')
 }
 
 export type SignInResult =

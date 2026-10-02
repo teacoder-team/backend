@@ -2,16 +2,17 @@ import { warmDisposableEmails } from '~/lib/datasets/disposable-emails'
 import { warmGeoDatabase } from '~/lib/datasets/geo'
 import { connectDatabase, disconnectDatabase } from '~/lib/db'
 import { logger } from '~/lib/logger'
-import { closeMailTransport, verifyMailTransport } from '~/lib/mail/transport'
 import { QUEUE, queues } from '~/lib/queue/queues'
 import { startWorker } from '~/lib/queue/runner'
 import { connectRedis, disconnectRedis } from '~/lib/redis'
 import { startAdminBot, stopAdminBot } from '~/modules/admin-bot/bot'
 import { notificationJobs } from '~/modules/admin-bot/jobs'
+import { billingJobs, billingMaintenanceJobs, scheduleNightlyBilling } from '~/modules/billing/jobs'
 import { emailJobs } from '~/modules/auth/jobs'
 import { courseEmailJobs } from '~/modules/course/jobs'
 import { oauthEmailJobs } from '~/modules/oauth/jobs'
 import { maintenanceJobs, scheduleMaintenance, sessionEmailJobs } from '~/modules/session/jobs'
+import { subscriptionEmailJobs } from '~/modules/subscription/jobs'
 import type { Worker } from 'bullmq'
 
 let workers: Worker[] = []
@@ -32,19 +33,18 @@ export const bootstrap = async () => {
 				...emailJobs,
 				...courseEmailJobs,
 				...sessionEmailJobs,
-				...oauthEmailJobs
+				...oauthEmailJobs,
+				...subscriptionEmailJobs
 			}),
-			startWorker(QUEUE.MAINTENANCE, maintenanceJobs),
+			startWorker(QUEUE.MAINTENANCE, { ...maintenanceJobs, ...billingMaintenanceJobs }),
+			startWorker(QUEUE.BILLING, billingJobs),
 			startWorker(QUEUE.NOTIFICATIONS, notificationJobs)
 		]
 
 		await scheduleMaintenance()
+		await scheduleNightlyBilling()
 
 		startAdminBot()
-
-		verifyMailTransport().catch((err) => {
-			logger.error({ context: 'mail', err }, 'smtp_verification_failed')
-		})
 
 		logger.info(
 			{
@@ -67,8 +67,6 @@ export const shutdown = async () => {
 		...workers.map((worker) => worker.close()),
 		...queues.map((queue) => queue.close())
 	])
-
-	closeMailTransport()
 
 	await Promise.allSettled([disconnectDatabase(), disconnectRedis()])
 

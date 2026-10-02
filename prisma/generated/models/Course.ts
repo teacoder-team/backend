@@ -46,6 +46,7 @@ export type CourseMinAggregateOutputType = {
   youtubeUrl: string | null
   attachment: string | null
   isPublished: boolean | null
+  accessMode: $Enums.CourseAccessMode | null
   price: runtime.Decimal | null
   views: number | null
   createdAt: Date | null
@@ -62,6 +63,7 @@ export type CourseMaxAggregateOutputType = {
   youtubeUrl: string | null
   attachment: string | null
   isPublished: boolean | null
+  accessMode: $Enums.CourseAccessMode | null
   price: runtime.Decimal | null
   views: number | null
   createdAt: Date | null
@@ -78,6 +80,7 @@ export type CourseCountAggregateOutputType = {
   youtubeUrl: number
   attachment: number
   isPublished: number
+  accessMode: number
   price: number
   views: number
   createdAt: number
@@ -106,6 +109,7 @@ export type CourseMinAggregateInputType = {
   youtubeUrl?: true
   attachment?: true
   isPublished?: true
+  accessMode?: true
   price?: true
   views?: true
   createdAt?: true
@@ -122,6 +126,7 @@ export type CourseMaxAggregateInputType = {
   youtubeUrl?: true
   attachment?: true
   isPublished?: true
+  accessMode?: true
   price?: true
   views?: true
   createdAt?: true
@@ -138,6 +143,7 @@ export type CourseCountAggregateInputType = {
   youtubeUrl?: true
   attachment?: true
   isPublished?: true
+  accessMode?: true
   price?: true
   views?: true
   createdAt?: true
@@ -241,6 +247,7 @@ export type CourseGroupByOutputType = {
   youtubeUrl: string | null
   attachment: string | null
   isPublished: boolean
+  accessMode: $Enums.CourseAccessMode
   price: runtime.Decimal | null
   views: number
   createdAt: Date
@@ -280,6 +287,7 @@ export type CourseWhereInput = {
   youtubeUrl?: Prisma.StringNullableFilter<"Course"> | string | null
   attachment?: Prisma.StringNullableFilter<"Course"> | string | null
   isPublished?: Prisma.BoolFilter<"Course"> | boolean
+  accessMode?: Prisma.EnumCourseAccessModeFilter<"Course"> | $Enums.CourseAccessMode
   price?: Prisma.DecimalNullableFilter<"Course"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   views?: Prisma.IntFilter<"Course"> | number
   createdAt?: Prisma.DateTimeFilter<"Course"> | Date | string
@@ -299,6 +307,7 @@ export type CourseOrderByWithRelationInput = {
   youtubeUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   attachment?: Prisma.SortOrderInput | Prisma.SortOrder
   isPublished?: Prisma.SortOrder
+  accessMode?: Prisma.SortOrder
   price?: Prisma.SortOrderInput | Prisma.SortOrder
   views?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -321,6 +330,7 @@ export type CourseWhereUniqueInput = Prisma.AtLeast<{
   youtubeUrl?: Prisma.StringNullableFilter<"Course"> | string | null
   attachment?: Prisma.StringNullableFilter<"Course"> | string | null
   isPublished?: Prisma.BoolFilter<"Course"> | boolean
+  accessMode?: Prisma.EnumCourseAccessModeFilter<"Course"> | $Enums.CourseAccessMode
   price?: Prisma.DecimalNullableFilter<"Course"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   views?: Prisma.IntFilter<"Course"> | number
   createdAt?: Prisma.DateTimeFilter<"Course"> | Date | string
@@ -340,6 +350,7 @@ export type CourseOrderByWithAggregationInput = {
   youtubeUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   attachment?: Prisma.SortOrderInput | Prisma.SortOrder
   isPublished?: Prisma.SortOrder
+  accessMode?: Prisma.SortOrder
   price?: Prisma.SortOrderInput | Prisma.SortOrder
   views?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -364,6 +375,7 @@ export type CourseScalarWhereWithAggregatesInput = {
   youtubeUrl?: Prisma.StringNullableWithAggregatesFilter<"Course"> | string | null
   attachment?: Prisma.StringNullableWithAggregatesFilter<"Course"> | string | null
   isPublished?: Prisma.BoolWithAggregatesFilter<"Course"> | boolean
+  accessMode?: Prisma.EnumCourseAccessModeWithAggregatesFilter<"Course"> | $Enums.CourseAccessMode
   price?: Prisma.DecimalNullableWithAggregatesFilter<"Course"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   views?: Prisma.IntWithAggregatesFilter<"Course"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Course"> | Date | string
@@ -380,6 +392,7 @@ export type CourseCreateInput = {
   youtubeUrl?: string | null
   attachment?: string | null
   isPublished?: boolean
+  accessMode?: $Enums.CourseAccessMode
   price?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   views?: number
   createdAt?: Date | string
@@ -399,6 +412,7 @@ export type CourseUncheckedCreateInput = {
   youtubeUrl?: string | null
   attachment?: string | null
   isPublished?: boolean
+  accessMode?: $Enums.CourseAccessMode
   price?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   views?: number
   createdAt?: Date | string
@@ -418,6 +432,7 @@ export type CourseUpdateInput = {
   youtubeUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attachment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  accessMode?: Prisma.EnumCourseAccessModeFieldUpdateOperationsInput | $Enums.CourseAccessMode
   price?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   views?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -437,6 +452,7 @@ export type CourseUncheckedUpdateInput = {
   youtubeUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attachment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  accessMode?: Prisma.EnumCourseAccessModeFieldUpdateOperationsInput | $Enums.CourseAccessMode
   price?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   views?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -456,6 +472,7 @@ export type CourseCreateManyInput = {
   youtubeUrl?: string | null
   attachment?: string | null
   isPublished?: boolean
+  accessMode?: $Enums.CourseAccessMode
   price?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   views?: number
   createdAt?: Date | string
@@ -472,6 +489,7 @@ export type CourseUpdateManyMutationInput = {
   youtubeUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attachment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  accessMode?: Prisma.EnumCourseAccessModeFieldUpdateOperationsInput | $Enums.CourseAccessMode
   price?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   views?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -488,6 +506,7 @@ export type CourseUncheckedUpdateManyInput = {
   youtubeUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attachment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  accessMode?: Prisma.EnumCourseAccessModeFieldUpdateOperationsInput | $Enums.CourseAccessMode
   price?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   views?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -504,6 +523,7 @@ export type CourseCountOrderByAggregateInput = {
   youtubeUrl?: Prisma.SortOrder
   attachment?: Prisma.SortOrder
   isPublished?: Prisma.SortOrder
+  accessMode?: Prisma.SortOrder
   price?: Prisma.SortOrder
   views?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -525,6 +545,7 @@ export type CourseMaxOrderByAggregateInput = {
   youtubeUrl?: Prisma.SortOrder
   attachment?: Prisma.SortOrder
   isPublished?: Prisma.SortOrder
+  accessMode?: Prisma.SortOrder
   price?: Prisma.SortOrder
   views?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -541,6 +562,7 @@ export type CourseMinOrderByAggregateInput = {
   youtubeUrl?: Prisma.SortOrder
   attachment?: Prisma.SortOrder
   isPublished?: Prisma.SortOrder
+  accessMode?: Prisma.SortOrder
   price?: Prisma.SortOrder
   views?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -559,6 +581,10 @@ export type CourseScalarRelationFilter = {
 
 export type NullableStringFieldUpdateOperationsInput = {
   set?: string | null
+}
+
+export type EnumCourseAccessModeFieldUpdateOperationsInput = {
+  set?: $Enums.CourseAccessMode
 }
 
 export type NullableDecimalFieldUpdateOperationsInput = {
@@ -621,6 +647,7 @@ export type CourseCreateWithoutPurchasesInput = {
   youtubeUrl?: string | null
   attachment?: string | null
   isPublished?: boolean
+  accessMode?: $Enums.CourseAccessMode
   price?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   views?: number
   createdAt?: Date | string
@@ -639,6 +666,7 @@ export type CourseUncheckedCreateWithoutPurchasesInput = {
   youtubeUrl?: string | null
   attachment?: string | null
   isPublished?: boolean
+  accessMode?: $Enums.CourseAccessMode
   price?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   views?: number
   createdAt?: Date | string
@@ -673,6 +701,7 @@ export type CourseUpdateWithoutPurchasesInput = {
   youtubeUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attachment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  accessMode?: Prisma.EnumCourseAccessModeFieldUpdateOperationsInput | $Enums.CourseAccessMode
   price?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   views?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -691,6 +720,7 @@ export type CourseUncheckedUpdateWithoutPurchasesInput = {
   youtubeUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attachment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  accessMode?: Prisma.EnumCourseAccessModeFieldUpdateOperationsInput | $Enums.CourseAccessMode
   price?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   views?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -709,6 +739,7 @@ export type CourseCreateWithoutLessonsInput = {
   youtubeUrl?: string | null
   attachment?: string | null
   isPublished?: boolean
+  accessMode?: $Enums.CourseAccessMode
   price?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   views?: number
   createdAt?: Date | string
@@ -727,6 +758,7 @@ export type CourseUncheckedCreateWithoutLessonsInput = {
   youtubeUrl?: string | null
   attachment?: string | null
   isPublished?: boolean
+  accessMode?: $Enums.CourseAccessMode
   price?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   views?: number
   createdAt?: Date | string
@@ -761,6 +793,7 @@ export type CourseUpdateWithoutLessonsInput = {
   youtubeUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attachment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  accessMode?: Prisma.EnumCourseAccessModeFieldUpdateOperationsInput | $Enums.CourseAccessMode
   price?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   views?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -779,6 +812,7 @@ export type CourseUncheckedUpdateWithoutLessonsInput = {
   youtubeUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attachment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  accessMode?: Prisma.EnumCourseAccessModeFieldUpdateOperationsInput | $Enums.CourseAccessMode
   price?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   views?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -797,6 +831,7 @@ export type CourseCreateWithoutDownloadLogsInput = {
   youtubeUrl?: string | null
   attachment?: string | null
   isPublished?: boolean
+  accessMode?: $Enums.CourseAccessMode
   price?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   views?: number
   createdAt?: Date | string
@@ -815,6 +850,7 @@ export type CourseUncheckedCreateWithoutDownloadLogsInput = {
   youtubeUrl?: string | null
   attachment?: string | null
   isPublished?: boolean
+  accessMode?: $Enums.CourseAccessMode
   price?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   views?: number
   createdAt?: Date | string
@@ -849,6 +885,7 @@ export type CourseUpdateWithoutDownloadLogsInput = {
   youtubeUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attachment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  accessMode?: Prisma.EnumCourseAccessModeFieldUpdateOperationsInput | $Enums.CourseAccessMode
   price?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   views?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -867,6 +904,7 @@ export type CourseUncheckedUpdateWithoutDownloadLogsInput = {
   youtubeUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attachment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  accessMode?: Prisma.EnumCourseAccessModeFieldUpdateOperationsInput | $Enums.CourseAccessMode
   price?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   views?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -934,6 +972,7 @@ export type CourseSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   youtubeUrl?: boolean
   attachment?: boolean
   isPublished?: boolean
+  accessMode?: boolean
   price?: boolean
   views?: boolean
   createdAt?: boolean
@@ -954,6 +993,7 @@ export type CourseSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   youtubeUrl?: boolean
   attachment?: boolean
   isPublished?: boolean
+  accessMode?: boolean
   price?: boolean
   views?: boolean
   createdAt?: boolean
@@ -970,6 +1010,7 @@ export type CourseSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   youtubeUrl?: boolean
   attachment?: boolean
   isPublished?: boolean
+  accessMode?: boolean
   price?: boolean
   views?: boolean
   createdAt?: boolean
@@ -986,13 +1027,14 @@ export type CourseSelectScalar = {
   youtubeUrl?: boolean
   attachment?: boolean
   isPublished?: boolean
+  accessMode?: boolean
   price?: boolean
   views?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type CourseOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "slug" | "shortDescription" | "fullDescription" | "thumbnail" | "youtubeUrl" | "attachment" | "isPublished" | "price" | "views" | "createdAt" | "updatedAt", ExtArgs["result"]["course"]>
+export type CourseOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "slug" | "shortDescription" | "fullDescription" | "thumbnail" | "youtubeUrl" | "attachment" | "isPublished" | "accessMode" | "price" | "views" | "createdAt" | "updatedAt", ExtArgs["result"]["course"]>
 export type CourseInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   lessons?: boolean | Prisma.Course$lessonsArgs<ExtArgs>
   purchases?: boolean | Prisma.Course$purchasesArgs<ExtArgs>
@@ -1017,8 +1059,15 @@ export type $CoursePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     fullDescription: string | null
     thumbnail: string | null
     youtubeUrl: string | null
+    /**
+     * Source code archive in Orion (`attachments` tag) - handed out only through download links.
+     */
     attachment: string | null
     isPublished: boolean
+    /**
+     * Who opens premium lessons and materials. Purchase always works; see CourseAccessMode.
+     */
+    accessMode: $Enums.CourseAccessMode
     price: runtime.Decimal | null
     views: number
     createdAt: Date
@@ -1458,6 +1507,7 @@ export interface CourseFieldRefs {
   readonly youtubeUrl: Prisma.FieldRef<"Course", 'String'>
   readonly attachment: Prisma.FieldRef<"Course", 'String'>
   readonly isPublished: Prisma.FieldRef<"Course", 'Boolean'>
+  readonly accessMode: Prisma.FieldRef<"Course", 'CourseAccessMode'>
   readonly price: Prisma.FieldRef<"Course", 'Decimal'>
   readonly views: Prisma.FieldRef<"Course", 'Int'>
   readonly createdAt: Prisma.FieldRef<"Course", 'DateTime'>

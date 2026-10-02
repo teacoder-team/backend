@@ -1,18 +1,62 @@
 import type { Html } from '@teacoder/telegram'
 
+import { resend } from '~/lib/integrations/resend'
 import { adminNotifier } from '~/lib/integrations/telegram'
 import type { JobHandlers } from '~/lib/queue/runner'
+import { hashEmail } from '~/lib/security/email-crypto'
+import { normalizeEmail } from '~/lib/utils/email'
+import { displayNameOf, htmlToText, stripQuotedReply } from '~/lib/utils/email-text'
 import { getUserEmail } from '~/modules/auth/service'
 import { hasActiveSubscription } from '~/modules/subscription/repository'
 
-import { coursePurchaseMessage, registrationMessage } from './messages'
+import {
+	coursePurchaseMessage,
+	registrationMessage,
+	subscriptionPurchaseMessage,
+	subscriptionRenewalMessage,
+	type SupportEmail,
+	supportEmailMessage
+} from './messages'
 import type { NotificationJobs } from './queue'
 import {
 	findAccountsOnVisitor,
 	findPurchasedCourse,
 	findPurchaseDetails,
-	findRegistrationDetails
+	findRegistrationDetails,
+	findSupportSender
 } from './repository'
+
+/** Not in the SDK's types yet, but returned by the API. */
+interface WithAuthentication {
+	authentication?: SupportEmail['authentication']
+}
+
+/** Null when Resend no longer has it (kept 30 days) - nothing left to forward. */
+const fetchSupportEmail = async (emailId: string): Promise<SupportEmail | null> => {
+	const { data, error } = await resend.emails.receiving.get(emailId, { html_format: 'cid' })
+
+	if (error) {
+		if (error.statusCode === 404) {
+			return null
+		}
+
+		throw new Error(`Resend refused to return email ${emailId}: ${error.message}`)
+	}
+
+	const text = data.text?.trim() ? data.text : htmlToText(data.html ?? '')
+	const attachments = data.attachments.filter((file) => file.content_disposition !== 'inline')
+
+	return {
+		from: data.from,
+		fromName: displayNameOf(data.headers?.from),
+		replyTo: data.reply_to?.[0] ?? null,
+		subject: data.subject,
+		body: stripQuotedReply(text),
+		receivedAt: new Date(data.created_at),
+		attachments,
+		authentication: (data as WithAuthentication).authentication ?? null
+	}
+}
 
 /** Retry only when no chat got it - retrying a partial success would duplicate the message. */
 const deliver = async (message: Html) => {
@@ -40,6 +84,37 @@ export const notificationJobs: JobHandlers<NotificationJobs> = {
 		await deliver(coursePurchaseMessage({ purchase, course, email, hasPremium }))
 	},
 
+	notifySubscriptionPurchase: async ({ paymentId, months, previousExpiresAt }) => {
+		const purchase = await findPurchaseDetails(paymentId)
+
+		if (!purchase) {
+			return
+		}
+
+		const email = await getUserEmail(purchase.user.id)
+
+		await deliver(
+			subscriptionPurchaseMessage({
+				purchase,
+				email,
+				months,
+				previousExpiresAt: previousExpiresAt ? new Date(previousExpiresAt) : null
+			})
+		)
+	},
+
+	notifySubscriptionRenewal: async ({ paymentId, outcome }) => {
+		const purchase = await findPurchaseDetails(paymentId)
+
+		if (!purchase) {
+			return
+		}
+
+		const email = await getUserEmail(purchase.user.id)
+
+		await deliver(subscriptionRenewalMessage({ purchase, email, outcome }))
+	},
+
 	notifyRegistration: async ({ userId, via }) => {
 		const [user, email] = await Promise.all([
 			findRegistrationDetails(userId),
@@ -54,5 +129,18 @@ export const notificationJobs: JobHandlers<NotificationJobs> = {
 		const sameDevice = visitorId ? await findAccountsOnVisitor(visitorId, userId) : []
 
 		await deliver(registrationMessage({ user, email, via, sameDevice }))
+	}
+,
+
+	notifySupportEmail: async ({ emailId }) => {
+		const email = await fetchSupportEmail(emailId)
+
+		if (!email) {
+			return
+		}
+
+		const sender = await findSupportSender(hashEmail(normalizeEmail(email.from)))
+
+		await deliver(supportEmailMessage({ email, sender }))
 	}
 }

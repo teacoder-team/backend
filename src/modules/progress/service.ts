@@ -1,7 +1,7 @@
 import { LessonAccess } from '@prisma/generated/client'
 
 import { ForbiddenError, NotFoundError } from '~/lib/errors'
-import { canViewCourse } from '~/modules/course/access'
+import { lockedReason, resolveCourseAccess } from '~/modules/course/access'
 
 import type { UpdateProgressInput } from './model'
 import {
@@ -36,10 +36,13 @@ export const updateProgress = async (userId: string, input: UpdateProgressInput)
 		throw new NotFoundError('Lesson not found')
 	}
 
-	if (lesson.access === LessonAccess.PREMIUM && !(await canViewCourse(userId, lesson.courseId))) {
-		throw new ForbiddenError(
-			'This lesson requires TeaCoder Premium or the course to be purchased'
-		)
+	const gated = { id: lesson.courseId, accessMode: lesson.course.accessMode }
+
+	if (
+		lesson.access === LessonAccess.PREMIUM &&
+		!(await resolveCourseAccess(userId, gated)).hasAccess
+	) {
+		throw new ForbiddenError(lockedReason(gated))
 	}
 
 	const progress = await upsertProgressWithPoints(userId, lesson.id, input.isCompleted)

@@ -12,6 +12,7 @@ import { UserRole } from '@prisma/generated/client'
 import { env } from '~/config/env'
 import { AUTH_PROVIDER_TITLES } from '~/lib/integrations/oauth'
 import { formatDate, formatDateTime } from '~/lib/utils/date'
+import { truncateText } from '~/lib/utils/email-text'
 import { PAYMENT_PROVIDER_NAMES, paymentMethodName } from '~/modules/billing/service'
 
 import type { SignUpMethod } from './queue'
@@ -19,6 +20,7 @@ import type {
 	PurchasedCourse,
 	PurchaseDetails,
 	RegistrationDetails,
+	SupportSender,
 	VisitorAccount
 } from './repository'
 
@@ -105,6 +107,163 @@ const signInMethods = (user: PurchaseDetails['user']) => {
 	return methods.length ? methods.join(', ') : '—'
 }
 
+const buyerSection = (user: PurchaseDetails['user'], email: string | null) =>
+	section('👤 Покупатель', [
+		[
+			'Имя',
+			user.role === UserRole.ADMIN
+				? tg`${user.displayName} <i>(администратор)</i>`
+				: user.displayName
+		],
+		['Почта', email],
+		['Вход', signInMethods(user)],
+		['Регистрация', `${formatDate(user.createdAt)} (${formatAge(user.createdAt)})`],
+		['Последний вход', user.lastLoginAt && formatDateTime(user.lastLoginAt)],
+		['Куплено курсов', user._count.coursePurchases]
+	])
+
+const monthsPlural = new Intl.PluralRules('ru')
+
+const MONTH_FORMS: Record<string, string> = {
+	one: 'месяц',
+	few: 'месяца',
+	many: 'месяцев',
+	other: 'месяца'
+}
+
+const formatMonths = (months: number) => `${months} ${MONTH_FORMS[monthsPlural.select(months)]}`
+
+export interface SubscriptionPurchaseMessageInput {
+	purchase: PurchaseDetails
+	email: string | null
+	months: number
+	/** End date before this payment; null when the subscription started afresh. */
+	previousExpiresAt: Date | null
+}
+
+export const subscriptionPurchaseMessage = ({
+	purchase,
+	email,
+	months,
+	previousExpiresAt
+}: SubscriptionPurchaseMessageInput) => {
+	const { user } = purchase
+	const amount = formatMoney(purchase.amount, purchase.currency)
+	const method = paymentMethodName(purchase.method)
+	const subscription = user.subscription
+
+	const heading = previousExpiresAt
+		? tg`🔁 <b>Продление подписки</b>`
+		: tg`💎 <b>Новая подписка</b>`
+
+	const term = section('⭐ Премиум', [
+		['Период', formatMonths(months)],
+		['Действует до', subscription && tg`<b>${formatDate(subscription.expiresAt)}</b>`],
+		['Было до', previousExpiresAt && formatDate(previousExpiresAt)],
+		['Непрерывно с', subscription && formatDate(subscription.startedAt)],
+		['Оплат подписки', user._count.payments]
+	])
+
+	const payment = section('💳 Платёж', [
+		['Сумма', tg`<b>${amount}</b>`],
+		['Способ', method],
+		['Провайдер', PAYMENT_PROVIDER_NAMES[purchase.provider]],
+		['Создан', formatDateTime(purchase.createdAt)],
+		['ID', code(purchase.id)],
+		['У провайдера', code(purchase.pspIntentId)]
+	])
+
+	const tags = [
+		'#подписка',
+		previousExpiresAt ? '#продление' : '#новая',
+		`#${purchase.provider.toLowerCase()}`
+	]
+
+	return joinHtml(
+		[
+			heading,
+			tg`💰 <b>${amount}</b> · ${method}`,
+			term,
+			buyerSection(user, email),
+			payment,
+			tg`🕒 Оплачен ${formatDateTime(purchase.updatedAt)}\n${tags.join(' ')}`
+		],
+		'\n\n'
+	)
+}
+
+/** YooKassa `cancellation_details.reason` in plain words; unknown codes are shown as is. */
+const DECLINE_REASONS: Record<string, string> = {
+	insufficient_funds: 'недостаточно средств',
+	card_expired: 'истёк срок карты',
+	issuer_unavailable: 'банк не ответил',
+	payment_method_limit_exceeded: 'превышен лимит',
+	payment_method_restricted: 'операции по карте запрещены',
+	permission_revoked: 'автоплатежи отозваны пользователем',
+	fraud_suspected: 'подозрение на мошенничество',
+	general_decline: 'отказ без объяснения причин',
+	no_saved_payment_method: 'нет сохранённой карты'
+}
+
+const declineReason = (code: string | null) => (code ? (DECLINE_REASONS[code] ?? code) : '—')
+
+const cardLabel = (method: PurchaseDetails['paymentMethod']) =>
+	method && (method.title ?? (method.last4 ? `карта •••• ${method.last4}` : null))
+
+export interface SubscriptionRenewalMessageInput {
+	purchase: PurchaseDetails
+	email: string | null
+	outcome: 'charged' | 'declined'
+}
+
+export const subscriptionRenewalMessage = ({
+	purchase,
+	email,
+	outcome
+}: SubscriptionRenewalMessageInput) => {
+	const { user } = purchase
+	const amount = formatMoney(purchase.amount, purchase.currency)
+	const charged = outcome === 'charged'
+
+	const result = charged
+		? section('⭐ Премиум', [
+				[
+					'Действует до',
+					user.subscription && tg`<b>${formatDate(user.subscription.expiresAt)}</b>`
+				],
+				['Непрерывно с', user.subscription && formatDate(user.subscription.startedAt)],
+				['Оплат подписки', user._count.payments]
+			])
+		: section('⛔ Итог', [
+				['Причина', declineReason(purchase.failureCode)],
+				['Подписка', 'завершена, автопродление выключено'],
+				['Повторных попыток', 'не будет']
+			])
+
+	const payment = section('💳 Платёж', [
+		['Сумма', tg`<b>${amount}</b>`],
+		['Карта', cardLabel(purchase.paymentMethod)],
+		['Провайдер', PAYMENT_PROVIDER_NAMES[purchase.provider]],
+		['ID', code(purchase.id)],
+		['У провайдера', code(purchase.pspIntentId)]
+	])
+
+	const tags = ['#подписка', '#автосписание', charged ? '#успех' : '#отказ']
+
+	return joinHtml(
+		[
+			charged
+				? tg`🔄 <b>Автосписание за подписку</b>\n💰 <b>${amount}</b>`
+				: tg`❌ <b>Автосписание не прошло</b>\n💸 ${amount} не списано`,
+			result,
+			buyerSection(user, email),
+			payment,
+			tg`🕒 ${formatDateTime(purchase.updatedAt)}\n${tags.join(' ')}`
+		],
+		'\n\n'
+	)
+}
+
 export const coursePurchaseMessage = ({
 	purchase,
 	course,
@@ -120,19 +279,7 @@ export const coursePurchaseMessage = ({
 		? tg`📚 <b><a href="${env.APP_URL}/courses/${course.slug}">${course.title}</a></b>`
 		: tg`📚 <i>Курс удалён</i>`
 
-	const buyer = section('👤 Покупатель', [
-		[
-			'Имя',
-			user.role === UserRole.ADMIN
-				? tg`${user.displayName} <i>(администратор)</i>`
-				: user.displayName
-		],
-		['Почта', email],
-		['Вход', signInMethods(user)],
-		['Регистрация', `${formatDate(user.createdAt)} (${formatAge(user.createdAt)})`],
-		['Последний вход', user.lastLoginAt && formatDateTime(user.lastLoginAt)],
-		['Куплено курсов', user._count.coursePurchases]
-	])
+	const buyer = buyerSection(user, email)
 
 	const payment = section('💳 Платёж', [
 		['Сумма', tg`<b>${amount}</b>`],
@@ -247,3 +394,110 @@ export const accessDeniedMessage = (target: ChatTarget) =>
 		],
 		'\n\n'
 	)
+
+/** Telegram caps a message at 4096 characters - the body gets what the frame leaves. */
+const SUPPORT_BODY_MAX = 2000
+const SUPPORT_SUBJECT_MAX = 200
+const SUPPORT_ATTACHMENTS_SHOWN = 5
+
+const AUTH_CHECKS = ['spf', 'dkim', 'dmarc'] as const
+
+const formatBytes = (bytes: number) => {
+	if (bytes < 1024) {
+		return `${bytes} Б`
+	}
+
+	if (bytes < 1024 * 1024) {
+		return `${Math.round(bytes / 1024)} КБ`
+	}
+
+	return `${(bytes / 1024 / 1024).toFixed(1)} МБ`
+}
+
+export interface SupportEmail {
+	from: string
+	fromName: string | null
+	replyTo: string | null
+	subject: string | null
+	body: string
+	receivedAt: Date
+	attachments: readonly { filename: string | null; size: number }[]
+	/** Null when Resend didn't report it. */
+	authentication: Record<(typeof AUTH_CHECKS)[number], string> | null
+}
+
+export interface SupportEmailMessageInput {
+	email: SupportEmail
+	/** Account registered on the sender address, if any. */
+	sender: SupportSender | null
+}
+
+const senderAccount = (sender: SupportSender | null, verified: boolean) => {
+	if (!sender) {
+		return [['Аккаунт', tg`<i>не найден</i>`]] as const
+	}
+
+	const premium = sender.subscription?.isActive
+		? `до ${formatDate(sender.subscription.expiresAt)}`
+		: 'нет'
+
+	return [
+		[
+			verified ? 'Аккаунт' : 'Аккаунт (адрес не подтверждён)',
+			tg`${sender.displayName} (<code>@${sender.username}</code>)${sender.role === UserRole.ADMIN && tg` <i>(администратор)</i>`}`
+		],
+		['Регистрация', `${formatDate(sender.createdAt)} (${formatAge(sender.createdAt)})`],
+		['Премиум', premium],
+		['Куплено курсов', sender._count.coursePurchases]
+	] as const
+}
+
+const attachmentList = (attachments: SupportEmail['attachments']) => {
+	const shown = attachments.slice(0, SUPPORT_ATTACHMENTS_SHOWN)
+	const rest = attachments.length - shown.length
+	const lines = [
+		...shown.map((file) => `${file.filename ?? 'без имени'} · ${formatBytes(file.size)}`),
+		...(rest > 0 ? [`и ещё ${rest} - смотрите в Resend`] : [])
+	]
+
+	return tg`<b>📎 Вложения (${attachments.length})</b>\n${joinHtml(
+		lines.map((line, index) => tg`${index === lines.length - 1 ? '└' : '├'} ${line}`)
+	)}`
+}
+
+/** SPF/DKIM/DMARC are computed by Resend's server; a DMARC miss means the From may be forged. */
+const spoofWarning = (authentication: SupportEmail['authentication']) => {
+	if (!authentication || authentication.dmarc === 'pass') {
+		return null
+	}
+
+	const checks = AUTH_CHECKS.map((check) => `${check.toUpperCase()} ${authentication[check]}`)
+
+	return tg`⚠️ <b>Отправитель не подтверждён</b> (${checks.join(' · ')}) - адрес может быть подделан, не выдавайте данные аккаунта по этому письму`
+}
+
+export const supportEmailMessage = ({ email, sender }: SupportEmailMessageInput) => {
+	const verified = email.authentication?.dmarc === 'pass'
+	const subject = email.subject?.trim()
+	const body = truncateText(email.body, SUPPORT_BODY_MAX)
+
+	return joinHtml(
+		[
+			tg`📨 <b>Обращение в поддержку</b>`,
+			subject
+				? tg`💬 <b>${truncateText(subject, SUPPORT_SUBJECT_MAX)}</b>`
+				: tg`💬 <i>Без темы</i>`,
+			section('👤 Отправитель', [
+				['Имя', email.fromName],
+				['Почта', code(email.from)],
+				['Ответ на', email.replyTo !== email.from && code(email.replyTo)],
+				...senderAccount(sender, verified)
+			]),
+			body ? tg`<blockquote expandable>${body}</blockquote>` : tg`<i>Письмо без текста</i>`,
+			email.attachments.length > 0 && attachmentList(email.attachments),
+			spoofWarning(email.authentication),
+			tg`🕒 ${formatDateTime(email.receivedAt)}\n#поддержка`
+		],
+		'\n\n'
+	)
+}

@@ -15,6 +15,33 @@ export interface CreatePaymentInput {
 	description: string
 	returnUrl: string
 	metadata?: Record<string, unknown>
+	/** Asks YooKassa to keep the card (or other method) for later charges without the user. */
+	savePaymentMethod?: boolean
+}
+
+export interface RecurringPaymentInput {
+	amount: number
+	description: string
+	/** `payment_method.id` of an earlier payment made with `savePaymentMethod`. */
+	paymentMethodId: string
+	metadata?: Record<string, unknown>
+	/** Same key, same payment - YooKassa dedupes it for 24 hours. */
+	idempotenceKey: string
+}
+
+export interface PaymentMethodDetails {
+	id: string
+	type: string
+	/** True when the method can be charged again without the user. */
+	saved: boolean
+	title?: string
+	card?: {
+		first6?: string
+		last4: string
+		expiry_month?: string
+		expiry_year?: string
+		card_type?: string
+	}
 }
 
 export interface Payment {
@@ -28,6 +55,7 @@ export interface Payment {
 	metadata?: Record<string, unknown>
 	/** Only on canceled payments - `reason` is e.g. expired_on_confirmation, insufficient_funds. */
 	cancellation_details?: { party: string; reason: string }
+	payment_method?: PaymentMethodDetails
 }
 
 /** https://yookassa.ru/developers/api */
@@ -66,6 +94,21 @@ export const createYookassaClient = ({
 				capture: true,
 				confirmation: { type: 'redirect', return_url: input.returnUrl },
 				description: input.description,
+				metadata: input.metadata,
+				...(input.savePaymentMethod ? { save_payment_method: true } : {})
+			})
+		})
+
+	/** A charge with no user present - succeeds or is declined straight away, no confirmation step. */
+	const createRecurringPayment = (input: RecurringPaymentInput) =>
+		http<Payment>('/payments', {
+			method: 'POST',
+			headers: { 'Idempotence-Key': input.idempotenceKey },
+			body: JSON.stringify({
+				amount: { value: input.amount.toFixed(2), currency: CURRENCY },
+				capture: true,
+				payment_method_id: input.paymentMethodId,
+				description: input.description,
 				metadata: input.metadata
 			})
 		})
@@ -73,7 +116,7 @@ export const createYookassaClient = ({
 	const getPayment = (paymentId: string) =>
 		http<Payment>(`/payments/${encodeURIComponent(paymentId)}`)
 
-	return { createPayment, getPayment }
+	return { createPayment, createRecurringPayment, getPayment }
 }
 
 export type YookassaClient = ReturnType<typeof createYookassaClient>

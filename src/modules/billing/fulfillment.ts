@@ -1,13 +1,29 @@
 import { IntentStatus, type PaymentProvider } from '@prisma/generated/client'
 
 import { extendLogContext, logger } from '~/lib/logger'
-import { enqueueCoursePurchaseNotification } from '~/modules/admin-bot/queue'
+import {
+	enqueueCoursePurchaseNotification,
+	enqueueSubscriptionPurchaseNotification,
+	enqueueSubscriptionRenewalNotification
+} from '~/modules/admin-bot/queue'
 import { enqueueCoursePurchaseEmail } from '~/modules/course/jobs'
+import {
+	enqueueSubscriptionPaymentFailedEmail,
+	enqueueSubscriptionPurchaseEmail,
+	enqueueSubscriptionRenewedEmail
+} from '~/modules/subscription/jobs'
+import { PREMIUM_PLAN } from '~/modules/subscription/plan'
+import { endSubscriptionPeriod, setAutoBilling } from '~/modules/subscription/repository'
+import { nextTerm } from '~/modules/subscription/term'
 
 import {
 	captureCoursePayment,
+	captureSubscriptionPayment,
 	findPaymentForFulfillment,
 	type FulfillableIntent,
+	linkPaymentMethod,
+	type SavedPaymentMethod,
+	saveUserPaymentMethod,
 	transitionPendingPayment
 } from './repository'
 
@@ -22,16 +38,17 @@ export interface ProviderPaymentUpdate {
 	amount: string
 	currency: string
 	failureCode?: string
+	/** The method the provider kept for later charges, if it did (YooKassa `save_payment_method`). */
+	savedMethod?: SavedPaymentMethod
 }
 
 export type FulfillmentResult =
 	| { outcome: 'course_granted'; courseId: string }
+	| { outcome: 'subscription_granted'; expiresAt: string; extended: boolean }
 	| { outcome: 'already_owned'; courseId: string }
 	| { outcome: 'already_captured' }
 	| { outcome: 'status_updated'; status: IntentStatus }
 	| { outcome: 'unchanged' }
-	/** Left for a future handler - e.g. subscription payments, which are not processed yet. */
-	| { outcome: 'deferred'; reason: string }
 	/** Will never apply, no point retrying. */
 	| { outcome: 'rejected'; reason: string }
 
@@ -107,12 +124,145 @@ const capture = async (
 	return { outcome: 'course_granted', courseId: intent.courseId }
 }
 
-const applyToCoursePayment = async (
-	intent: FulfillableIntent & { courseId: string },
+/** What the invoice was opened for, as written by checkout or the renewal job. */
+interface SubscriptionInvoice {
+	/** Older invoices without it were the one-month plan. */
+	months: number
+	/** The buyer agreed to have the card kept and charged at the end of each period. */
+	autoRenew: boolean
+	/** Charged by the nightly job, not paid by the user. */
+	renewal: boolean
+	/** End of the period a renewal pays for (ISO). */
+	periodEnd: string | null
+}
+
+const readInvoice = (metadata: unknown): SubscriptionInvoice => {
+	const raw = (metadata ?? {}) as Record<string, unknown>
+	const months = raw.months
+
+	return {
+		months:
+			typeof months === 'number' && Number.isInteger(months) && months > 0
+				? months
+				: PREMIUM_PLAN.months,
+		autoRenew: raw.autoRenew === true,
+		renewal: raw.renewal === true,
+		periodEnd: typeof raw.periodEnd === 'string' ? raw.periodEnd : null
+	}
+}
+
+const warnOnFailure = (paymentId: string, message: string) => (err: unknown) => {
+	logger.warn({ context: 'billing', paymentId, err }, message)
+}
+
+/** Kept for the nightly renewal - only with the buyer's consent (`autoRenew`). */
+const keepPaymentMethod = async (
+	intent: FulfillableIntent,
+	invoice: SubscriptionInvoice,
+	saved: SavedPaymentMethod | undefined
+) => {
+	if (!invoice.autoRenew || invoice.renewal) {
+		return
+	}
+
+	if (!saved) {
+		logger.warn(
+			{ context: 'billing', paymentId: intent.id, userId: intent.userId },
+			'auto_renew_requested_but_method_not_saved'
+		)
+
+		return
+	}
+
+	const method = await saveUserPaymentMethod(intent.userId, saved)
+
+	await linkPaymentMethod(intent.id, method.id)
+	await setAutoBilling(intent.userId, true)
+}
+
+const captureSubscription = async (
+	intent: FulfillableIntent,
+	update: ProviderPaymentUpdate
+): Promise<FulfillmentResult> => {
+	const invoice = readInvoice(intent.metadata)
+	const captured = await captureSubscriptionPayment(intent.id, intent.userId, (current) =>
+		nextTerm(current, invoice.months)
+	)
+
+
+	if (captured.result === 'already_captured') {
+		return { outcome: 'already_captured' }
+	}
+
+	const { term } = captured
+	const extended = term.kind === 'extended'
+
+	await keepPaymentMethod(intent, invoice, update.savedMethod).catch(
+		warnOnFailure(intent.id, 'payment_method_save_failed')
+	)
+
+	if (invoice.renewal) {
+		await enqueueSubscriptionRenewedEmail({ paymentId: intent.id }).catch(
+			warnOnFailure(intent.id, 'subscription_renewed_email_enqueue_failed')
+		)
+		await enqueueSubscriptionRenewalNotification({ paymentId: intent.id, outcome: 'charged' })
+	} else {
+		await enqueueSubscriptionPurchaseEmail({ userId: intent.userId, extended }).catch(
+			warnOnFailure(intent.id, 'subscription_purchase_email_enqueue_failed')
+		)
+		await enqueueSubscriptionPurchaseNotification({
+			paymentId: intent.id,
+			months: invoice.months,
+			previousExpiresAt: term.previousExpiresAt?.toISOString() ?? null
+		})
+	}
+
+	return { outcome: 'subscription_granted', expiresAt: term.expiresAt.toISOString(), extended }
+}
+
+const SETTLED_UNPAID = new Set<IntentStatus>([
+	IntentStatus.FAILED,
+	IntentStatus.CANCELLED,
+	IntentStatus.EXPIRED
+])
+
+type RenewalIntent = Pick<FulfillableIntent, 'id' | 'userId' | 'subscriptionId' | 'metadata'>
+
+/**
+ * A declined renewal ends the subscription for good: no retries on the following nights,
+ * auto-renewal goes off, the user is told. Only the period this charge was for is closed - if a
+ * manual payment extended it in the meantime, that one wins.
+ */
+export const endDeclinedRenewal = async (intent: RenewalIntent) => {
+	const { periodEnd } = readInvoice(intent.metadata)
+
+	if (!intent.subscriptionId || !periodEnd) {
+		return
+	}
+
+	if (!(await endSubscriptionPeriod(intent.subscriptionId, new Date(periodEnd)))) {
+		return
+	}
+
+	logger.info(
+		{ context: 'billing', paymentId: intent.id, userId: intent.userId },
+		'subscription_renewal_declined'
+	)
+
+	await enqueueSubscriptionPaymentFailedEmail({ userId: intent.userId }).catch(
+		warnOnFailure(intent.id, 'subscription_payment_failed_email_enqueue_failed')
+	)
+	await enqueueSubscriptionRenewalNotification({ paymentId: intent.id, outcome: 'declined' })
+}
+
+const applyToPayment = async (
+	intent: FulfillableIntent,
 	update: ProviderPaymentUpdate
 ): Promise<FulfillmentResult> => {
 	if (update.status === IntentStatus.CAPTURED) {
-		return capture(intent)
+		return intent.courseId
+			? capture({ ...intent, courseId: intent.courseId })
+			: captureSubscription(intent, update)
 	}
 
 	if (update.status === IntentStatus.REQUIRES_PAYMENT) {
@@ -125,7 +275,12 @@ const applyToCoursePayment = async (
 		update.failureCode ?? null
 	)
 
-	return changed ? { outcome: 'status_updated', status: update.status } : { outcome: 'unchanged' }
+	if (changed && SETTLED_UNPAID.has(update.status) && readInvoice(intent.metadata).renewal) {
+		await endDeclinedRenewal(intent)
+	}
+
+	return changed
+ ? { outcome: 'status_updated', status: update.status } : { outcome: 'unchanged' }
 }
 
 export const applyPaymentUpdate = async (
@@ -143,11 +298,7 @@ export const applyPaymentUpdate = async (
 		return { outcome: 'rejected', reason: reason ?? 'unknown_payment' }
 	}
 
-	if (!intent.courseId) {
-		return { outcome: 'deferred', reason: 'subscription_not_handled' }
-	}
-
-	const result = await applyToCoursePayment({ ...intent, courseId: intent.courseId }, update)
+	const result = await applyToPayment(intent, update)
 
 	extendLogContext({
 		event: 'payment_update_applied',

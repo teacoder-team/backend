@@ -95,9 +95,8 @@ export const getCourseProgress = async (userId: string) => {
 		.sort((a, b) => (b.lastActivityAt ?? '').localeCompare(a.lastActivityAt ?? ''))
 }
 
-const isPremium = (subscription: { isActive: boolean; expiresAt: Date | null } | null) =>
-	Boolean(subscription?.isActive) &&
-	(!subscription?.expiresAt || subscription.expiresAt > new Date())
+const isPremium = (subscription: { isActive: boolean; expiresAt: Date } | null) =>
+	Boolean(subscription?.isActive && subscription.expiresAt > new Date())
 
 /** Public and identical for everyone - cached briefly instead of hitting the table per visitor. */
 export const getLeaders = async () =>

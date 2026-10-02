@@ -14,11 +14,13 @@ import { LockTakenError, withLock } from '~/lib/lock'
 import { extendLogContext, logger } from '~/lib/logger'
 import { getUserEmail } from '~/modules/auth/service'
 import { findCoursePurchase, findPurchasableCourse } from '~/modules/course/repository'
+import { PREMIUM_PLAN } from '~/modules/subscription/plan'
 import {
 	cancelSubscription as cancelSubscriptionRow,
 	findSubscription,
 	setAutoBilling
 } from '~/modules/subscription/repository'
+import { isLiveSubscription } from '~/modules/subscription/term'
 
 import {
 	CHECKOUT_TTL_SECONDS,
@@ -27,15 +29,14 @@ import {
 	findReusableCheckout
 } from './checkout'
 import type { CreatePaymentInput, UpdateSubscriptionInput } from './model'
-import { attachProviderPayment, createPendingPayment, markPaymentFailed } from './repository'
+import {
+	attachProviderPayment,
+	createPendingPayment,
+	findChargeableMethod,
+	markPaymentFailed
+} from './repository'
 
 const CURRENCY = 'RUB'
-
-const PREMIUM_PLAN = {
-	amount: 449,
-	description: 'Оплата премиум-подписки на 1 месяц',
-	stars: 150
-} as const
 
 const RETURN_URL = env.APP_URL
 
@@ -48,6 +49,7 @@ interface MethodDefinition {
 	providers: PaymentProvider[]
 }
 
+// @ts-ignore
 const METHODS: Record<PaymentMethod, MethodDefinition> = {
 	[PaymentMethod.BANK_CARD]: {
 		category: 'FIAT',
@@ -61,24 +63,24 @@ const METHODS: Record<PaymentMethod, MethodDefinition> = {
 		description: 'Оплата через Систему быстрых платежей',
 		providers: [PaymentProvider.YOOKASSA]
 	},
-	[PaymentMethod.T_PAY]: {
-		category: 'FIAT',
-		name: 'T-Pay',
-		description: 'Оплата через приложение Т-Банка',
-		providers: [PaymentProvider.YOOKASSA]
-	},
-	[PaymentMethod.SBER_PAY]: {
-		category: 'FIAT',
-		name: 'SberPay',
-		description: 'Оплата через приложение СберБанк Онлайн',
-		providers: [PaymentProvider.YOOKASSA]
-	},
-	[PaymentMethod.YOOMONEY]: {
-		category: 'FIAT',
-		name: 'ЮMoney',
-		description: 'Оплата с кошелька ЮMoney',
-		providers: [PaymentProvider.YOOKASSA]
-	},
+	// [PaymentMethod.T_PAY]: {
+	// 	category: 'FIAT',
+	// 	name: 'T-Pay',
+	// 	description: 'Оплата через приложение Т-Банка',
+	// 	providers: [PaymentProvider.YOOKASSA]
+	// },
+	// [PaymentMethod.SBER_PAY]: {
+	// 	category: 'FIAT',
+	// 	name: 'SberPay',
+	// 	description: 'Оплата через приложение СберБанк Онлайн',
+	// 	providers: [PaymentProvider.YOOKASSA]
+	// },
+	// [PaymentMethod.YOOMONEY]: {
+	// 	category: 'FIAT',
+	// 	name: 'ЮMoney',
+	// 	description: 'Оплата с кошелька ЮMoney',
+	// 	providers: [PaymentProvider.YOOKASSA]
+	// },
 	[PaymentMethod.INTERNATIONAL_CARD]: {
 		category: 'FIAT',
 		name: 'Международные карты',
@@ -87,22 +89,22 @@ const METHODS: Record<PaymentMethod, MethodDefinition> = {
 	},
 	[PaymentMethod.CRYPTO_BOT]: {
 		category: 'CRYPTO',
-		name: 'Crypto Bot',
-		description: 'Оплата в криптовалюте через Telegram Crypto Bot - USDT, TON, BTC и другие',
+		name: 'Криптовалюта',
+		description: 'USDT, GRAM, BTC и другие',
 		providers: [PaymentProvider.CRYPTO_BOT]
-	},
-	[PaymentMethod.HELEKET]: {
-		category: 'CRYPTO',
-		name: 'Heleket',
-		description: 'Оплата в криптовалюте через Heleket - USDT, TON, BTC и другие',
-		providers: [PaymentProvider.HELEKET]
-	},
-	[PaymentMethod.TELEGRAM_STARS]: {
-		category: 'STARS',
-		name: 'Telegram Stars',
-		description: 'Оплата звёздами Telegram, без банковской карты',
-		providers: [PaymentProvider.TELEGRAM]
 	}
+	// [PaymentMethod.HELEKET]: {
+	// 	category: 'CRYPTO',
+	// 	name: 'Heleket',
+	// 	description: 'Оплата в криптовалюте через Heleket - USDT, GRAM, BTC и другие',
+	// 	providers: [PaymentProvider.HELEKET]
+	// },
+	// [PaymentMethod.TELEGRAM_STARS]: {
+	// 	category: 'STARS',
+	// 	name: 'Telegram Stars',
+	// 	description: 'Оплата звёздами Telegram, без банковской карты',
+	// 	providers: [PaymentProvider.TELEGRAM]
+	// }
 }
 
 export const paymentMethodName = (method: PaymentMethod) => METHODS[method].name
@@ -165,6 +167,8 @@ interface Product {
 	amount: number
 	description: string
 	courseId?: string
+	/** Paid period, subscription only. */
+	months?: number
 	stars?: number
 }
 
@@ -174,6 +178,7 @@ const resolveProduct = async (courseId: string | undefined): Promise<Product> =>
 			kind: 'subscription',
 			amount: PREMIUM_PLAN.amount,
 			description: PREMIUM_PLAN.description,
+			months: PREMIUM_PLAN.months,
 			stars: PREMIUM_PLAN.stars
 		}
 	}
@@ -199,7 +204,9 @@ const startAtProvider = async (payment: PaymentIntent, product: Product, email: 
 				amount: payment.amount,
 				description: product.description,
 				returnUrl: RETURN_URL,
-				metadata: { paymentId: payment.id }
+				metadata: { paymentId: payment.id },
+				savePaymentMethod:
+					(payment.metadata as { autoRenew?: unknown } | null)?.autoRenew === true
 			})
 
 			const url = created.confirmation?.confirmation_url
@@ -333,7 +340,9 @@ const openCheckout = async (
 		metadata: {
 			email,
 			description: product.description,
-			...(product.courseId ? { courseId: product.courseId } : {})
+			...(product.courseId ? { courseId: product.courseId } : {}),
+			...(product.months ? { months: product.months } : {}),
+			...(request.autoRenew ? { autoRenew: true } : {})
 		}
 	}).catch((err: unknown) => {
 		if (isUniqueViolation(err)) {
@@ -393,7 +402,11 @@ const checkout = async (request: CheckoutRequest, fallbackEmail: string | undefi
 	const replay = await findIdempotentReplay(request)
 
 	if (replay) {
-		extendLogContext({ event: 'payment_replayed', userId: request.userId, paymentId: replay.id })
+		extendLogContext({
+			event: 'payment_replayed',
+			userId: request.userId,
+			paymentId: replay.id
+		})
 
 		return toResponse(replay)
 	}
@@ -410,10 +423,23 @@ const checkout = async (request: CheckoutRequest, fallbackEmail: string | undefi
 		throw new ConflictError('Course already purchased')
 	}
 
+	if (
+		request.autoRenew &&
+		(product.kind !== 'subscription' || provider !== PaymentProvider.YOOKASSA)
+	) {
+		throw new BadRequestError(
+			'Auto-renewal is available only for the premium subscription paid through YooKassa'
+		)
+	}
+
 	const reusable = await findReusableCheckout(request)
 
 	if (reusable) {
-		extendLogContext({ event: 'payment_reused', userId: request.userId, paymentId: reusable.id })
+		extendLogContext({
+			event: 'payment_reused',
+			userId: request.userId,
+			paymentId: reusable.id
+		})
 
 		return toResponse(reusable)
 	}
@@ -430,7 +456,8 @@ export const createPayment = async (
 		userId,
 		method: input.method,
 		courseId: input.courseId ?? null,
-		idempotencyKey
+		idempotencyKey,
+		autoRenew: input.autoRenew ?? false
 	}
 
 	try {
@@ -461,36 +488,52 @@ export const cancelSubscription = async (userId: string) => {
 type SubscriptionRow = Awaited<ReturnType<typeof findSubscription>>
 
 const isLive = (subscription: SubscriptionRow): subscription is NonNullable<SubscriptionRow> =>
-	Boolean(subscription?.isActive) &&
-	(!subscription?.expiresAt || subscription.expiresAt > new Date())
+	isLiveSubscription(subscription)
 
-const toSubscriptionResponse = (subscription: SubscriptionRow) => ({
+type ChargeableMethod = Awaited<ReturnType<typeof findChargeableMethod>>
+
+const toSubscriptionResponse = (subscription: SubscriptionRow, method: ChargeableMethod) => ({
 	isActive: isLive(subscription),
 	autoRenew: isLive(subscription) && subscription.isAutoBilling,
 	startedAt: subscription?.startedAt.toISOString() ?? null,
-	expiresAt: subscription?.expiresAt?.toISOString() ?? null
+	expiresAt: subscription?.expiresAt.toISOString() ?? null,
+	paymentMethod: method && { type: method.type, title: method.title, last4: method.last4 }
 })
 
-export const getSubscription = async (userId: string) =>
-	toSubscriptionResponse(await findSubscription(userId))
+export const getSubscription = async (userId: string) => {
+	const [subscription, method] = await Promise.all([
+		findSubscription(userId),
+		findChargeableMethod(userId)
+	])
 
-export const updateSubscription = async (userId: string, { autoRenew }: UpdateSubscriptionInput) => {
-	const subscription = await findSubscription(userId)
+	return toSubscriptionResponse(subscription, method)
+}
+
+export const updateSubscription = async (
+	userId: string,
+	{ autoRenew }: UpdateSubscriptionInput
+) => {
+	const [subscription, method] = await Promise.all([
+		findSubscription(userId),
+		findChargeableMethod(userId)
+	])
 
 	if (!isLive(subscription)) {
 		if (autoRenew) {
 			throw new ConflictError('No active subscription to renew')
 		}
 
-		return toSubscriptionResponse(subscription)
+		return toSubscriptionResponse(subscription, method)
 	}
 
-	if (autoRenew && !subscription.expiresAt) {
-		throw new ConflictError('Subscription never expires - there is nothing to renew')
+	if (autoRenew && !method) {
+		throw new ConflictError(
+			'No saved payment method - pay for premium through YooKassa with autoRenew to save one'
+		)
 	}
 
 	if (subscription.isAutoBilling === autoRenew) {
-		return toSubscriptionResponse(subscription)
+		return toSubscriptionResponse(subscription, method)
 	}
 
 	const updated = await setAutoBilling(userId, autoRenew)
@@ -500,5 +543,5 @@ export const updateSubscription = async (userId: string, { autoRenew }: UpdateSu
 		userId
 	})
 
-	return toSubscriptionResponse(updated)
+	return toSubscriptionResponse(updated, method)
 }

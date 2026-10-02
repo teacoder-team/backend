@@ -5,7 +5,8 @@ import { queueConnection } from './connection'
 export const QUEUE = {
 	EMAIL: 'email',
 	MAINTENANCE: 'maintenance',
-	NOTIFICATIONS: 'notifications'
+	NOTIFICATIONS: 'notifications',
+	BILLING: 'billing'
 } as const
 
 export type QueueName = (typeof QUEUE)[keyof typeof QUEUE]
@@ -32,4 +33,13 @@ export const notificationsQueue = new Queue(QUEUE.NOTIFICATIONS, {
 	defaultJobOptions
 })
 
-export const queues = [emailQueue, maintenanceQueue, notificationsQueue]
+/**
+ * Money moves here, so no automatic retries: a charge that failed for a technical reason is
+ * picked up again by the next nightly run, after it has checked what actually happened.
+ */
+export const billingQueue = new Queue(QUEUE.BILLING, {
+	connection: queueConnection,
+	defaultJobOptions: { attempts: 1, removeOnComplete: true, removeOnFail: { age: 7 * 24 * 3600 } }
+})
+
+export const queues = [emailQueue, maintenanceQueue, notificationsQueue, billingQueue]

@@ -65,19 +65,21 @@ const envSchema = t.Object({
 	DATABASE_URL: t.String(),
 	REDIS_URL: t.String(),
 
-	SMTP_HOST: t.String(),
-	SMTP_PORT: t.Number({ default: 587 }),
-	SMTP_USERNAME: t.String(),
-	SMTP_PASSWORD: t.String(),
-	SMTP_SECURE: t.Boolean({ default: false }),
+	RESEND_BASE_URL: t.Union([t.Literal(''), t.String({ format: 'uri' })], { default: '' }),
+	RESEND_API_KEY: t.String({ minLength: 1 }),
+	RESEND_WEBHOOK_SECRET: t.String({ default: '' }),
 
-	SMTP_FROM_HELLO: t.String({
+	MAIL_FROM_HELLO: t.String({
 		format: 'email',
 		default: 'hello@teacoder.ru'
 	}),
-	SMTP_FROM_NOREPLY: t.String({
+	MAIL_FROM_NOREPLY: t.String({
 		format: 'email',
 		default: 'no-reply@teacoder.ru'
+	}),
+	SUPPORT_EMAIL: t.String({
+		format: 'email',
+		default: 'support@teacoder.ru'
 	}),
 
 	ORION_API_URL: t.String({ format: 'uri' }),

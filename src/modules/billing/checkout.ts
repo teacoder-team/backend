@@ -12,6 +12,8 @@ export interface CheckoutRequest {
 	method: PaymentMethod
 	courseId: string | null
 	idempotencyKey?: string
+	/** Keep the card and renew the subscription automatically - YooKassa only. */
+	autoRenew: boolean
 }
 
 const checkoutUrl = (intent: PaymentIntent) =>
@@ -19,6 +21,9 @@ const checkoutUrl = (intent: PaymentIntent) =>
 
 const expiresAt = (intent: PaymentIntent) =>
 	new Date(intent.createdAt.getTime() + CHECKOUT_TTL_SECONDS * 1000)
+
+const wantsAutoRenew = (intent: PaymentIntent) =>
+	(intent.metadata as { autoRenew?: unknown } | null)?.autoRenew === true
 
 const productName = (courseId: string | null) => (courseId ? 'course' : 'subscription')
 
@@ -30,7 +35,8 @@ export const findIdempotentReplay = async ({
 	userId,
 	method,
 	courseId,
-	idempotencyKey
+	idempotencyKey,
+	autoRenew
 }: CheckoutRequest) => {
 	if (!idempotencyKey) {
 		return null
@@ -42,7 +48,11 @@ export const findIdempotentReplay = async ({
 		return null
 	}
 
-	if (previous.method !== method || previous.courseId !== courseId) {
+	if (
+		previous.method !== method ||
+		previous.courseId !== courseId ||
+		wantsAutoRenew(previous) !== autoRenew
+	) {
 		throw new ValidationError('Idempotency-Key was already used with different parameters')
 	}
 
@@ -50,7 +60,12 @@ export const findIdempotentReplay = async ({
 }
 
 /** Must run under the checkout lock, or two requests could both see no open invoice. */
-export const findReusableCheckout = async ({ userId, method, courseId }: CheckoutRequest) => {
+export const findReusableCheckout = async ({
+	userId,
+	method,
+	courseId,
+	autoRenew
+}: CheckoutRequest) => {
 	const open = await findOpenCheckouts(userId, courseId)
 	const now = Date.now()
 	const stale = open.filter((intent) => isStale(intent, now))
@@ -67,7 +82,9 @@ export const findReusableCheckout = async ({ userId, method, courseId }: Checkou
 		)
 	}
 
-	const sameMethod = live.find((intent) => intent.method === method)
+	const sameMethod = live.find(
+		(intent) => intent.method === method && wantsAutoRenew(intent) === autoRenew
+	)
 
 	if (sameMethod) {
 		return sameMethod

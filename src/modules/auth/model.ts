@@ -79,13 +79,13 @@ export const ForgotPasswordPayload = t.Object(
 
 export const ResetPasswordPayload = t.Object(
 	{
-		email: Email,
-		code: t.String({
-			minLength: 6,
-			maxLength: 6,
-			description: '6-значный код из письма.',
-			error: 'Reset code must be exactly 6 characters',
-			examples: ['123456']
+		token: t.String({
+			minLength: 32,
+			maxLength: 128,
+			description:
+				'Токен из ссылки в письме (`/auth/recovery/{token}`). Действует 30 минут и срабатывает один раз.',
+			error: 'Reset link is invalid',
+			examples: ['q2fSx1Gd0Yk7uJ9ZlQm3cW8vB4nR6tHpE5aT1oKyL0s']
 		}),
 		newPassword: t.String({
 			minLength: 6,
@@ -94,7 +94,7 @@ export const ResetPasswordPayload = t.Object(
 			examples: ['newsecurepassword123']
 		})
 	},
-	{ description: 'Код из письма и новый пароль.' }
+	{ description: 'Токен из ссылки в письме и новый пароль.' }
 )
 
 export const MessageResponse = t.Object(

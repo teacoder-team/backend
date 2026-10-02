@@ -1,4 +1,7 @@
+import { IntentStatus } from '@prisma/generated/client'
+
 import { db } from '~/lib/db'
+import { toBytes } from '~/lib/utils/bytes'
 
 export const findPurchaseDetails = (paymentId: string) =>
 	db.paymentIntent.findUnique({
@@ -14,6 +17,9 @@ export const findPurchaseDetails = (paymentId: string) =>
 			courseId: true,
 			createdAt: true,
 			updatedAt: true,
+			metadata: true,
+			failureCode: true,
+			paymentMethod: { select: { title: true, last4: true, cardType: true } },
 			user: {
 				select: {
 					id: true,
@@ -23,7 +29,13 @@ export const findPurchaseDetails = (paymentId: string) =>
 					lastLoginAt: true,
 					passwordCredential: { select: { userId: true } },
 					oauthAccounts: { select: { provider: true } },
-					_count: { select: { coursePurchases: true } }
+					subscription: { select: { startedAt: true, expiresAt: true } },
+					_count: {
+						select: {
+							coursePurchases: true,
+							payments: { where: { courseId: null, status: IntentStatus.CAPTURED } }
+						}
+					}
 				}
 			}
 		}
@@ -75,3 +87,18 @@ export const findAccountsOnVisitor = async (visitorId: string, excludeUserId: st
 }
 
 export type VisitorAccount = Awaited<ReturnType<typeof findAccountsOnVisitor>>[number]
+
+export const findSupportSender = (emailHash: Buffer) =>
+	db.user.findUnique({
+		where: { emailHash: toBytes(emailHash) },
+		select: {
+			displayName: true,
+			username: true,
+			role: true,
+			createdAt: true,
+			subscription: { select: { isActive: true, expiresAt: true } },
+			_count: { select: { coursePurchases: true } }
+		}
+	})
+
+export type SupportSender = NonNullable<Awaited<ReturnType<typeof findSupportSender>>>

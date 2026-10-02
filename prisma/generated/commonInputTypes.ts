@@ -208,6 +208,13 @@ export type StringNullableFilter<$PrismaModel = never> = {
   not?: Prisma.NestedStringNullableFilter<$PrismaModel> | string | null
 }
 
+export type EnumCourseAccessModeFilter<$PrismaModel = never> = {
+  equals?: $Enums.CourseAccessMode | Prisma.EnumCourseAccessModeFieldRefInput<$PrismaModel>
+  in?: $Enums.CourseAccessMode[] | Prisma.ListEnumCourseAccessModeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.CourseAccessMode[] | Prisma.ListEnumCourseAccessModeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumCourseAccessModeFilter<$PrismaModel> | $Enums.CourseAccessMode
+}
+
 export type DecimalNullableFilter<$PrismaModel = never> = {
   equals?: runtime.Decimal | runtime.DecimalJsLike | number | string | Prisma.DecimalFieldRefInput<$PrismaModel> | null
   in?: runtime.Decimal[] | runtime.DecimalJsLike[] | number[] | string[] | Prisma.ListDecimalFieldRefInput<$PrismaModel> | null
@@ -235,6 +242,16 @@ export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
   _min?: Prisma.NestedStringNullableFilter<$PrismaModel>
   _max?: Prisma.NestedStringNullableFilter<$PrismaModel>
+}
+
+export type EnumCourseAccessModeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.CourseAccessMode | Prisma.EnumCourseAccessModeFieldRefInput<$PrismaModel>
+  in?: $Enums.CourseAccessMode[] | Prisma.ListEnumCourseAccessModeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.CourseAccessMode[] | Prisma.ListEnumCourseAccessModeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumCourseAccessModeWithAggregatesFilter<$PrismaModel> | $Enums.CourseAccessMode
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumCourseAccessModeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumCourseAccessModeFilter<$PrismaModel>
 }
 
 export type DecimalNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -902,6 +919,13 @@ export type NestedStringNullableFilter<$PrismaModel = never> = {
   not?: Prisma.NestedStringNullableFilter<$PrismaModel> | string | null
 }
 
+export type NestedEnumCourseAccessModeFilter<$PrismaModel = never> = {
+  equals?: $Enums.CourseAccessMode | Prisma.EnumCourseAccessModeFieldRefInput<$PrismaModel>
+  in?: $Enums.CourseAccessMode[] | Prisma.ListEnumCourseAccessModeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.CourseAccessMode[] | Prisma.ListEnumCourseAccessModeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumCourseAccessModeFilter<$PrismaModel> | $Enums.CourseAccessMode
+}
+
 export type NestedDecimalNullableFilter<$PrismaModel = never> = {
   equals?: runtime.Decimal | runtime.DecimalJsLike | number | string | Prisma.DecimalFieldRefInput<$PrismaModel> | null
   in?: runtime.Decimal[] | runtime.DecimalJsLike[] | number[] | string[] | Prisma.ListDecimalFieldRefInput<$PrismaModel> | null
@@ -928,6 +952,16 @@ export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
   _min?: Prisma.NestedStringNullableFilter<$PrismaModel>
   _max?: Prisma.NestedStringNullableFilter<$PrismaModel>
+}
+
+export type NestedEnumCourseAccessModeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.CourseAccessMode | Prisma.EnumCourseAccessModeFieldRefInput<$PrismaModel>
+  in?: $Enums.CourseAccessMode[] | Prisma.ListEnumCourseAccessModeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.CourseAccessMode[] | Prisma.ListEnumCourseAccessModeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumCourseAccessModeWithAggregatesFilter<$PrismaModel> | $Enums.CourseAccessMode
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumCourseAccessModeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumCourseAccessModeFilter<$PrismaModel>
 }
 
 export type NestedDecimalNullableWithAggregatesFilter<$PrismaModel = never> = {

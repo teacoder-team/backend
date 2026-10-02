@@ -4,7 +4,7 @@ import { Elysia } from 'elysia'
 import { documentation } from '~/config/openapi'
 import { auth } from '~/modules/auth'
 import { billing } from '~/modules/billing'
-import { course } from '~/modules/course'
+import { course, downloads } from '~/modules/course'
 import { lesson } from '~/modules/lesson'
 import { oauth } from '~/modules/oauth'
 import { progress } from '~/modules/progress'
@@ -43,6 +43,7 @@ export const createApp = () =>
 		.use(billing)
 		.use(webhook)
 		.use(course)
+		.use(downloads)
 		.use(lesson)
 		.use(progress)
 

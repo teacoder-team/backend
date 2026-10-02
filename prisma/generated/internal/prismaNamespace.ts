@@ -2138,6 +2138,7 @@ export const CourseScalarFieldEnum = {
   youtubeUrl: 'youtubeUrl',
   attachment: 'attachment',
   isPublished: 'isPublished',
+  accessMode: 'accessMode',
   price: 'price',
   views: 'views',
   createdAt: 'createdAt',
@@ -2571,6 +2572,20 @@ export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'In
  * Reference to a field of type 'Int[]'
  */
 export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+/**
+ * Reference to a field of type 'CourseAccessMode'
+ */
+export type EnumCourseAccessModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CourseAccessMode'>
+    
+
+
+/**
+ * Reference to a field of type 'CourseAccessMode[]'
+ */
+export type ListEnumCourseAccessModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CourseAccessMode[]'>
     
 
 

@@ -10,9 +10,13 @@ model Course {
     thumbnail String?
 
     youtubeUrl String? @map("youtube_url")
+    /// Source code archive in Orion (`attachments` tag) - handed out only through download links.
     attachment String?
 
     isPublished Boolean @default(false) @map("is_published")
+
+    /// Who opens premium lessons and materials. Purchase always works; see CourseAccessMode.
+    accessMode CourseAccessMode @default(PREMIUM) @map("access_mode")
 
     price Decimal? @db.Decimal(10, 2)
 
@@ -84,4 +88,14 @@ enum LessonAccess {
     PREMIUM @map("premium")
 
     @@map("lesson_access")
+}
+
+/// FREE - open to everyone, never sold. PREMIUM - premium subscription or a purchase. PURCHASE - a purchase only.
+/// Checked in SQL: FREE has no price, PURCHASE has one.
+enum CourseAccessMode {
+    FREE     @map("free")
+    PREMIUM  @map("premium")
+    PURCHASE @map("purchase")
+
+    @@map("course_access_modes")
 }

@@ -12,6 +12,8 @@ export const listPublishedCourses = () =>
 			shortDescription: true,
 			thumbnail: true,
 			price: true,
+			accessMode: true,
+			attachment: true,
 			_count: { select: { lessons: { where: { isPublished: true } } } }
 		},
 		orderBy: { createdAt: 'desc' }
@@ -29,6 +31,8 @@ export const findPublishedCourseBySlug = (slug: string) =>
 			thumbnail: true,
 			youtubeUrl: true,
 			price: true,
+			accessMode: true,
+			attachment: true,
 			views: true
 		}
 	})
@@ -94,3 +98,19 @@ export const createCoursePurchase = (
 	data: NewCoursePurchase,
 	client: Prisma.TransactionClient = db
 ) => client.coursePurchase.create({ data })
+
+export const findCourseAttachment = (courseId: string) =>
+	db.course.findFirst({
+		where: { id: courseId, isPublished: true, attachment: { not: null } },
+		select: { slug: true, attachment: true }
+	})
+
+export interface NewDownloadLog {
+	token: string
+	userId: string
+	courseId: string
+	ip: string
+	userAgent: string
+}
+
+export const logCourseDownload = (data: NewDownloadLog) => db.downloadLog.create({ data })

@@ -40,10 +40,6 @@ export const SubscriptionPaymentFailedEmail = ({
 				Оформить подписку заново
 			</Button>
 		</Section>
-
-		<Text className="text-sm leading-relaxed text-gray-400 mb-2 tracking-wide">
-			Если возникли вопросы - просто ответьте на это письмо, поможем разобраться.
-		</Text>
 	</EmailLayout>
 )
 

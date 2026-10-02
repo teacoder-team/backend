@@ -17,8 +17,14 @@ export const findCompletedLessonIds = (userId: string, lessonIds: string[]) =>
 
 export const findLessonForProgress = (lessonId: string) =>
 	db.lesson.findUnique({
-		where: { id: lessonId, isPublished: true },
-		select: { id: true, courseId: true, position: true, access: true }
+		where: { id: lessonId, isPublished: true, course: { isPublished: true } },
+		select: {
+			id: true,
+			courseId: true,
+			position: true,
+			access: true,
+			course: { select: { accessMode: true } }
+		}
 	})
 
 export const findNextLessonId = (courseId: string, afterPosition: number) =>

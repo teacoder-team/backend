@@ -8,7 +8,7 @@ import type { JobHandlers } from '~/lib/queue/runner'
 
 export type EmailJobs = {
 	sendVerificationCode: { email: string; code: string }
-	sendPasswordResetCode: { email: string; code: string }
+	sendPasswordResetLink: { email: string; url: string }
 	sendEmailChangeCode: { email: string; code: string }
 	sendPasswordChangeCode: { email: string; code: string }
 }
@@ -22,11 +22,11 @@ export const emailJobs: JobHandlers<EmailJobs> = {
 			sender: 'hello'
 		})
 	},
-	sendPasswordResetCode: async ({ email, code }) => {
+	sendPasswordResetLink: async ({ email, url }) => {
 		await sendMail({
 			to: email,
-			subject: `${code} - код сброса пароля TeaCoder`,
-			template: ResetPassword({ code }),
+			subject: 'Сброс пароля TeaCoder',
+			template: ResetPassword({ url }),
 			sender: 'hello'
 		})
 	},
@@ -51,8 +51,8 @@ export const emailJobs: JobHandlers<EmailJobs> = {
 export const enqueueVerificationCode = (payload: EmailJobs['sendVerificationCode']) =>
 	emailQueue.add('sendVerificationCode', payload)
 
-export const enqueuePasswordResetCode = (payload: EmailJobs['sendPasswordResetCode']) =>
-	emailQueue.add('sendPasswordResetCode', payload)
+export const enqueuePasswordResetLink = (payload: EmailJobs['sendPasswordResetLink']) =>
+	emailQueue.add('sendPasswordResetLink', payload)
 
 export const enqueueEmailChangeCode = (payload: EmailJobs['sendEmailChangeCode']) =>
 	emailQueue.add('sendEmailChangeCode', payload)

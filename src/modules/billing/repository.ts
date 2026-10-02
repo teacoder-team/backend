@@ -1,8 +1,9 @@
 import type { Prisma } from '@prisma/generated/client'
-import { IntentStatus, type PaymentMethod, type PaymentProvider } from '@prisma/generated/client'
+import { IntentStatus, type PaymentMethod, PaymentProvider } from '@prisma/generated/client'
 
 import { db } from '~/lib/db'
 import { createCoursePurchase, findCoursePurchase } from '~/modules/course/repository'
+import type { SubscriptionState, SubscriptionTerm } from '~/modules/subscription/term'
 
 export interface NewPayment {
 	userId: string
@@ -11,6 +12,8 @@ export interface NewPayment {
 	method: PaymentMethod
 	provider: PaymentProvider
 	courseId?: string
+	subscriptionId?: string
+	paymentMethodId?: string
 	idempotencyKey?: string
 	metadata: Prisma.InputJsonValue
 }
@@ -44,12 +47,17 @@ export const findPaymentByProviderId = (provider: PaymentProvider, pspIntentId: 
 export const findPaymentByIdempotencyKey = (userId: string, idempotencyKey: string) =>
 	db.paymentIntent.findUnique({ where: { userId_idempotencyKey: { userId, idempotencyKey } } })
 
-/** Unsettled intents for one product - a course, or the subscription when `courseId` is null. */
+/**
+ * Unsettled intents the user opened for one product - a course, or the subscription when
+ * `courseId` is null. Nightly renewal charges are not checkouts: they carry `subscriptionId` from
+ * the start, a checkout only gets it once paid.
+ */
 export const findOpenCheckouts = (userId: string, courseId: string | null) =>
 	db.paymentIntent.findMany({
 		where: {
 			userId,
 			courseId,
+			subscriptionId: null,
 			status: { in: [IntentStatus.REQUIRES_PAYMENT, IntentStatus.PROCESSING] }
 		},
 		orderBy: { createdAt: 'desc' }
@@ -73,7 +81,9 @@ export const findPaymentForFulfillment = (paymentId: string) =>
 			amount: true,
 			currency: true,
 			status: true,
-			courseId: true
+			courseId: true,
+			subscriptionId: true,
+			metadata: true
 		}
 	})
 
@@ -139,3 +149,81 @@ export const transitionPendingPayment = async (
 
 	return count > 0
 }
+
+export type SubscriptionCapture =
+	| { result: 'already_captured' }
+	| { result: 'granted'; subscriptionId: string; term: SubscriptionTerm }
+
+/**
+ * Flips the intent to CAPTURED and extends premium in one transaction. The conditional update
+ * stops a redelivered webhook from granting twice; the user row lock makes two different
+ * payments stack instead of both extending from the same end date.
+ */
+export const captureSubscriptionPayment = (
+	paymentId: string,
+	userId: string,
+	decide: (current: SubscriptionState | null) => SubscriptionTerm
+) =>
+	db.$transaction(async (tx): Promise<SubscriptionCapture> => {
+		const { count } = await tx.paymentIntent.updateMany({
+			where: { id: paymentId, status: { not: IntentStatus.CAPTURED } },
+			data: { status: IntentStatus.CAPTURED, failureCode: null }
+		})
+
+		if (count === 0) {
+			return { result: 'already_captured' }
+		}
+
+		await tx.$queryRaw`SELECT 1 FROM "users" WHERE "id" = ${userId} FOR UPDATE`
+
+		const current = await tx.subscription.findUnique({
+			where: { userId },
+			select: { id: true, isActive: true, startedAt: true, expiresAt: true }
+		})
+		const term = decide(current)
+
+		const period = { isActive: true, startedAt: term.startedAt, expiresAt: term.expiresAt }
+		const subscription = await tx.subscription.upsert({
+			where: { userId },
+			create: { userId, ...period },
+			update: period,
+			select: { id: true }
+		})
+
+		await tx.paymentIntent.update({
+			where: { id: paymentId },
+			data: { subscriptionId: subscription.id }
+		})
+
+		return { result: 'granted', subscriptionId: subscription.id, term }
+	})
+
+export interface SavedPaymentMethod {
+	providerId: string
+	type: PaymentMethod
+	title: string | null
+	first6: string | null
+	last4: string | null
+	expiryMonth: number | null
+	expiryYear: number | null
+	cardType: string | null
+}
+
+/** Keyed by the provider's id: paying again with the same card refreshes the row instead of adding one. */
+export const saveUserPaymentMethod = (userId: string, method: SavedPaymentMethod) =>
+	db.userPaymentMethod.upsert({
+		where: { providerId: method.providerId },
+		create: { userId, provider: PaymentProvider.YOOKASSA, ...method },
+		update: { ...method, isActive: true },
+		select: { id: true }
+	})
+
+export const linkPaymentMethod = (paymentId: string, paymentMethodId: string) =>
+	db.paymentIntent.update({ where: { id: paymentId }, data: { paymentMethodId } })
+
+export const findChargeableMethod = (userId: string) =>
+	db.userPaymentMethod.findFirst({
+		where: { userId, provider: PaymentProvider.YOOKASSA, isActive: true },
+		orderBy: { updatedAt: 'desc' },
+		select: { id: true, providerId: true, type: true, title: true, last4: true }
+	})

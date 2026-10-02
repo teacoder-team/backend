@@ -5,39 +5,50 @@ import { EmailLayout } from '../components/EmailLayout'
 interface SubscriptionPurchaseEmailProps {
 	username?: string
 	expiresAt: string
-	manageUrl?: string
+	/** Paid while premium was still active - the new period was added on top. */
+	extended?: boolean
+	coursesUrl?: string
 }
 
 export const SubscriptionPurchaseEmail = ({
 	username = 'Elon Mask',
 	expiresAt = '17 октября 2026',
-	manageUrl = 'https://teacoder.ru/courses'
+	extended = false,
+	coursesUrl = 'https://teacoder.ru/courses'
 }: SubscriptionPurchaseEmailProps) => (
-	<EmailLayout preview="Премиум активирован - добро пожаловать в TeaCoder">
+	<EmailLayout
+		preview={
+			extended
+				? `Премиум продлён до ${expiresAt}`
+				: 'Премиум активирован - добро пожаловать в TeaCoder'
+		}
+	>
 		<Heading className="font-serif text-3xl font-medium leading-tight text-black mb-4">
-			Премиум активирован!
+			{extended ? 'Премиум продлён!' : 'Премиум активирован!'}
 		</Heading>
 
 		<Text className="text-base leading-relaxed text-[#606369] mb-6 tracking-wide">
-			Привет, {username}! Теперь Вам доступны все курсы TeaCoder без ограничений.
+			Привет, {username}!{' '}
+			{extended
+				? 'Оплата прошла - новый период добавлен к текущему, оставшиеся дни не сгорают.'
+				: 'Теперь Вам доступны все курсы TeaCoder без ограничений.'}
 		</Text>
 
 		<Text className="text-sm leading-relaxed text-gray-400 mb-8 tracking-wide">
-			Подписка действует до <span className="text-gray-600 font-medium">{expiresAt}</span> и
-			продлевается автоматически.
+			Подписка действует до <span className="text-gray-600 font-medium">{expiresAt}</span>.
 		</Text>
 
 		<Section className="mb-8">
 			<Button
 				className="bg-[#2563EB] rounded-xl text-white text-base font-semibold no-underline text-center px-8 py-4"
-				href={manageUrl}
+				href={coursesUrl}
 			>
 				Перейти к курсам
 			</Button>
 		</Section>
 
 		<Text className="text-sm leading-relaxed text-gray-400 mb-2 tracking-wide">
-			Управлять автопродлением можно в любой момент в настройках аккаунта.
+			Спасибо, что учитесь с TeaCoder!
 		</Text>
 	</EmailLayout>
 )

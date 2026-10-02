@@ -137,6 +137,7 @@ export const CourseScalarFieldEnum = {
   youtubeUrl: 'youtubeUrl',
   attachment: 'attachment',
   isPublished: 'isPublished',
+  accessMode: 'accessMode',
   price: 'price',
   views: 'views',
   createdAt: 'createdAt',

@@ -7,11 +7,22 @@ import type { Payment as YookassaPayment } from '@teacoder/payments/yookassa'
 
 import { IntentStatus, PaymentProvider, type Prisma } from '@prisma/generated/client'
 
-import { AppError, BadRequestError, ForbiddenError } from '~/lib/errors'
+import { env } from '~/config/env'
+import {
+	AppError,
+	BadRequestError,
+	ForbiddenError,
+	NotFoundError,
+	UnauthorizedError
+} from '~/lib/errors'
 import { heleket, yookassa } from '~/lib/integrations/payments'
+import { resend } from '~/lib/integrations/resend'
 import { extendLogContext, logger } from '~/lib/logger'
+import { normalizeEmail } from '~/lib/utils/email'
 import { createIpAllowlist } from '~/lib/utils/ip'
+import { enqueueSupportEmailNotification } from '~/modules/admin-bot/queue'
 import { applyPaymentUpdate, type ProviderPaymentUpdate } from '~/modules/billing/fulfillment'
+import { toSavedMethod } from '~/modules/billing/yookassa-method'
 
 import {
 	createWebhookEvent,
@@ -73,10 +84,6 @@ const assertKnownIp = (
 const settle = async (eventId: string, update: ProviderPaymentUpdate) => {
 	try {
 		const result = await applyPaymentUpdate(update)
-
-		if (result.outcome === 'deferred') {
-			return
-		}
 
 		await markWebhookProcessed(eventId, result.outcome === 'rejected' ? result.reason : null)
 	} catch (err) {
@@ -256,6 +263,78 @@ export const receiveYookassaWebhook = async (body: YookassaNotification, ip: str
 		status,
 		amount: payment.amount.value,
 		currency: payment.amount.currency,
-		failureCode: payment.cancellation_details?.reason
+		failureCode: payment.cancellation_details?.reason,
+		savedMethod: toSavedMethod(payment.payment_method)
 	})
+}
+
+const PSP_RESEND = 'resend'
+
+const SUPPORT_ADDRESS = normalizeEmail(env.SUPPORT_EMAIL)
+
+const isForSupport = (data: { to: string[]; cc?: string[]; received_for?: string[] }) =>
+	[...data.to, ...(data.cc ?? []), ...(data.received_for ?? [])].some(
+		(address) => normalizeEmail(address) === SUPPORT_ADDRESS
+	)
+
+const verifyResendEvent = (payload: string, headers: Headers) => {
+	const id = headers.get('svix-id')
+	const timestamp = headers.get('svix-timestamp')
+	const signature = headers.get('svix-signature')
+
+	if (!env.RESEND_WEBHOOK_SECRET) {
+		throw new NotFoundError('Resend webhook is not configured')
+	}
+
+	if (!id || !timestamp || !signature) {
+		throw new UnauthorizedError('Missing Resend webhook signature')
+	}
+
+	try {
+		const event = resend.webhooks.verify({
+			payload,
+			headers: { id, timestamp, signature },
+			webhookSecret: env.RESEND_WEBHOOK_SECRET
+		})
+
+		return { id, event }
+	} catch {
+		throw new UnauthorizedError('Invalid Resend webhook signature')
+	}
+}
+
+export const receiveResendWebhook = async (payload: string, headers: Headers) => {
+	const { id: pspEventId, event } = verifyResendEvent(payload, headers)
+	const existing = await findWebhookEvent(PSP_RESEND, pspEventId)
+
+	if (existing?.processedAt) {
+		extendLogContext({ event: 'webhook_duplicate', provider: PSP_RESEND, pspEventId })
+
+		return
+	}
+
+	const row =
+		existing ??
+		(await createWebhookEvent({
+			pspName: PSP_RESEND,
+			pspEventId,
+			eventType: event.type,
+			signatureOk: true,
+			payload: event.data as unknown as Prisma.InputJsonValue
+		}))
+
+	extendLogContext({ event: 'webhook_received', provider: PSP_RESEND, eventType: event.type })
+
+	if (event.type !== 'email.received') {
+		return markWebhookProcessed(row.id, 'event_not_handled')
+	}
+
+	if (!isForSupport(event.data)) {
+		return markWebhookProcessed(row.id, 'not_for_support')
+	}
+
+	await enqueueSupportEmailNotification({ emailId: event.data.email_id })
+	await markWebhookProcessed(row.id, null)
+
+	extendLogContext({ event: 'support_email_received', emailId: event.data.email_id })
 }

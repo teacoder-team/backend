@@ -4,41 +4,53 @@ import { EmailLayout } from '../components/EmailLayout'
 
 interface SubscriptionExpiringEmailProps {
 	username?: string
-	/** Whether Robokassa recurring billing will attempt a charge. */
+	/** Whether a charge will be attempted at the end of the period. */
 	isAutoBilling: boolean
-	/** Pre-formatted date and time - either the next charge or the access cutoff. */
-	renewsAt: string
+	/** Moscow date and time - of the nightly charge with auto-renewal, of the access cutoff without. */
+	date: string
+	time: string
 	amount?: number
 	currency?: string
 	manageUrl?: string
+	premiumUrl?: string
 }
 
 export const SubscriptionExpiringEmail = ({
 	username = 'Elon Mask',
 	isAutoBilling = true,
-	renewsAt = '17 октября 2026 в 14:00',
-	amount = 449,
+	date = '17 октября 2026',
+	time = '03:00',
+	amount = 849,
 	currency = 'RUB',
-	manageUrl = 'https://teacoder.ru/account/subscription'
+	manageUrl = 'https://teacoder.ru/account/settings',
+	premiumUrl = 'https://teacoder.ru/premium'
 }: SubscriptionExpiringEmailProps) => (
-	<EmailLayout preview="Подписка на TeaCoder скоро закончится">
-		<Heading className="font-serif text-3xl font-medium leading-tight text-black mb-4">
-			Подписка скоро закончится
-		</Heading>
-
+	<EmailLayout
+		preview={
+			isAutoBilling ? 'Скоро продление подписки на TeaCoder' : 'Подписка на TeaCoder скоро закончится'
+		}
+	>
 		{isAutoBilling ? (
 			<>
+				<Heading className="font-serif text-3xl font-medium leading-tight text-black mb-4">
+					Скоро продление подписки
+				</Heading>
+
 				<Text className="text-base leading-relaxed text-[#606369] mb-6 tracking-wide">
-					Привет, {username}! Через 3 дня, {renewsAt}, мы спишем{' '}
+					Привет, {username}! Ночью{' '}
+					<span className="text-gray-900 font-medium">
+						{date}, около {time} по Москве
+					</span>
+					, мы автоматически спишем{' '}
 					<span className="text-gray-900 font-medium">
 						{amount} {currency}
 					</span>{' '}
-					за продление подписки - доступ к премиум-курсам сохранится, если на карте будет
-					достаточно средств.
+					за следующий месяц премиума.
 				</Text>
 
 				<Text className="text-sm leading-relaxed text-gray-400 mb-8 tracking-wide">
-					Изменить способ оплаты или отключить автопродление можно в настройках аккаунта.
+					Попытка списания будет одна: если оплата не пройдёт, подписка закончится. Отключить
+					автопродление можно в настройках аккаунта.
 				</Text>
 
 				<Section className="mb-8">
@@ -52,31 +64,32 @@ export const SubscriptionExpiringEmail = ({
 			</>
 		) : (
 			<>
+				<Heading className="font-serif text-3xl font-medium leading-tight text-black mb-4">
+					Подписка скоро закончится
+				</Heading>
+
 				<Text className="text-base leading-relaxed text-[#606369] mb-6 tracking-wide">
 					Привет, {username}! Автопродление отключено, поэтому{' '}
-					<span className="text-gray-900 font-medium">{renewsAt}</span> доступ к
-					премиум-курсам будет закрыт.
+					<span className="text-gray-900 font-medium">
+						{date} в {time} по Москве
+					</span>{' '}
+					доступ к премиум-курсам будет закрыт.
 				</Text>
 
 				<Text className="text-sm leading-relaxed text-gray-400 mb-8 tracking-wide">
-					Чтобы не терять доступ, включите автопродление в настройках или продлите подписку
-					вручную.
+					Чтобы не терять доступ, продлите подписку заранее - оставшиеся дни сохранятся.
 				</Text>
 
 				<Section className="mb-8">
 					<Button
 						className="bg-[#2563EB] rounded-xl text-white text-base font-semibold no-underline text-center px-8 py-4"
-						href="https://teacoder.ru/premium"
+						href={premiumUrl}
 					>
 						Продлить подписку
 					</Button>
 				</Section>
 			</>
 		)}
-
-		<Text className="text-sm leading-relaxed text-gray-400 mb-2 tracking-wide">
-			Если вы уже всё решили - просто проигнорируйте это письмо.
-		</Text>
 	</EmailLayout>
 )
 

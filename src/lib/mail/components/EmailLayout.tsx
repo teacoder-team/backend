@@ -14,8 +14,8 @@ import {
 } from '@react-email/components'
 import { Fragment, type ReactNode } from 'react'
 
-/** Read directly rather than via ~/config/env so the `email dev` preview server can render without the app's env. */
 const BASE_URL = process.env.APP_URL ?? 'https://teacoder.ru'
+const SUPPORT_EMAIL = process.env.SUPPORT_EMAIL ?? 'support@teacoder.ru'
 
 const SOCIAL_LINKS = [
 	{ label: 'Telegram', href: 'https://t.me/teacoder_official' },
@@ -63,6 +63,13 @@ export const EmailLayout = ({ preview, children }: EmailLayoutProps) => (
 					<Hr className="border-gray-100 mt-2 mb-6" />
 
 					<Section>
+						<Text className="text-[12px] leading-relaxed text-gray-400 m-0 mb-4 font-sans tracking-wide">
+							Это письмо отправлено автоматически - отвечать на него не нужно, ответ не
+							дойдёт. Если остались вопросы, напишите в поддержку:{' '}
+							<Link href={`mailto:${SUPPORT_EMAIL}`} className="text-gray-500 underline">
+								{SUPPORT_EMAIL}
+							</Link>
+						</Text>
 						<Text className="text-[12px] text-gray-400 m-0 mb-2 font-sans tracking-wide">
 							{SOCIAL_LINKS.map((social, index) => (
 								<Fragment key={social.href}>
