@@ -138,6 +138,6 @@ export const findNewDeviceSession = (sessionId: string) =>
 			browser: true,
 			os: true,
 			createdAt: true,
-			user: { select: { displayName: true, emailCipher: true } }
+			user: { select: { displayName: true, email: true } }
 		}
 	})

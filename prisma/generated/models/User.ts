@@ -36,8 +36,7 @@ export type UserSumAggregateOutputType = {
 
 export type UserMinAggregateOutputType = {
   id: string | null
-  emailCipher: runtime.Bytes | null
-  emailHash: runtime.Bytes | null
+  email: string | null
   username: string | null
   displayName: string | null
   avatar: string | null
@@ -52,8 +51,7 @@ export type UserMinAggregateOutputType = {
 
 export type UserMaxAggregateOutputType = {
   id: string | null
-  emailCipher: runtime.Bytes | null
-  emailHash: runtime.Bytes | null
+  email: string | null
   username: string | null
   displayName: string | null
   avatar: string | null
@@ -68,8 +66,7 @@ export type UserMaxAggregateOutputType = {
 
 export type UserCountAggregateOutputType = {
   id: number
-  emailCipher: number
-  emailHash: number
+  email: number
   username: number
   displayName: number
   avatar: number
@@ -94,8 +91,7 @@ export type UserSumAggregateInputType = {
 
 export type UserMinAggregateInputType = {
   id?: true
-  emailCipher?: true
-  emailHash?: true
+  email?: true
   username?: true
   displayName?: true
   avatar?: true
@@ -110,8 +106,7 @@ export type UserMinAggregateInputType = {
 
 export type UserMaxAggregateInputType = {
   id?: true
-  emailCipher?: true
-  emailHash?: true
+  email?: true
   username?: true
   displayName?: true
   avatar?: true
@@ -126,8 +121,7 @@ export type UserMaxAggregateInputType = {
 
 export type UserCountAggregateInputType = {
   id?: true
-  emailCipher?: true
-  emailHash?: true
+  email?: true
   username?: true
   displayName?: true
   avatar?: true
@@ -229,8 +223,7 @@ export type UserGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
 
 export type UserGroupByOutputType = {
   id: string
-  emailCipher: runtime.Bytes | null
-  emailHash: runtime.Bytes | null
+  email: string | null
   username: string
   displayName: string
   avatar: string | null
@@ -268,8 +261,7 @@ export type UserWhereInput = {
   OR?: Prisma.UserWhereInput[]
   NOT?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
   id?: Prisma.StringFilter<"User"> | string
-  emailCipher?: Prisma.BytesNullableFilter<"User"> | runtime.Bytes | null
-  emailHash?: Prisma.BytesNullableFilter<"User"> | runtime.Bytes | null
+  email?: Prisma.StringNullableFilter<"User"> | string | null
   username?: Prisma.StringFilter<"User"> | string
   displayName?: Prisma.StringFilter<"User"> | string
   avatar?: Prisma.StringNullableFilter<"User"> | string | null
@@ -299,8 +291,7 @@ export type UserWhereInput = {
 
 export type UserOrderByWithRelationInput = {
   id?: Prisma.SortOrder
-  emailCipher?: Prisma.SortOrderInput | Prisma.SortOrder
-  emailHash?: Prisma.SortOrderInput | Prisma.SortOrder
+  email?: Prisma.SortOrderInput | Prisma.SortOrder
   username?: Prisma.SortOrder
   displayName?: Prisma.SortOrder
   avatar?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -330,12 +321,11 @@ export type UserOrderByWithRelationInput = {
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
   id?: string
-  emailHash?: runtime.Bytes
+  email?: string
   username?: string
   AND?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
   OR?: Prisma.UserWhereInput[]
   NOT?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
-  emailCipher?: Prisma.BytesNullableFilter<"User"> | runtime.Bytes | null
   displayName?: Prisma.StringFilter<"User"> | string
   avatar?: Prisma.StringNullableFilter<"User"> | string | null
   status?: Prisma.EnumUserStatusFilter<"User"> | $Enums.UserStatus
@@ -360,12 +350,11 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   coursePurchases?: Prisma.CoursePurchaseListRelationFilter
   userProgresses?: Prisma.UserProgressListRelationFilter
   downloadLogs?: Prisma.DownloadLogListRelationFilter
-}, "id" | "emailHash" | "username">
+}, "id" | "email" | "username">
 
 export type UserOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
-  emailCipher?: Prisma.SortOrderInput | Prisma.SortOrder
-  emailHash?: Prisma.SortOrderInput | Prisma.SortOrder
+  email?: Prisma.SortOrderInput | Prisma.SortOrder
   username?: Prisma.SortOrder
   displayName?: Prisma.SortOrder
   avatar?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -388,8 +377,7 @@ export type UserScalarWhereWithAggregatesInput = {
   OR?: Prisma.UserScalarWhereWithAggregatesInput[]
   NOT?: Prisma.UserScalarWhereWithAggregatesInput | Prisma.UserScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"User"> | string
-  emailCipher?: Prisma.BytesNullableWithAggregatesFilter<"User"> | runtime.Bytes | null
-  emailHash?: Prisma.BytesNullableWithAggregatesFilter<"User"> | runtime.Bytes | null
+  email?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   username?: Prisma.StringWithAggregatesFilter<"User"> | string
   displayName?: Prisma.StringWithAggregatesFilter<"User"> | string
   avatar?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
@@ -404,8 +392,7 @@ export type UserScalarWhereWithAggregatesInput = {
 
 export type UserCreateInput = {
   id?: string
-  emailCipher?: runtime.Bytes | null
-  emailHash?: runtime.Bytes | null
+  email?: string | null
   username: string
   displayName: string
   avatar?: string | null
@@ -435,8 +422,7 @@ export type UserCreateInput = {
 
 export type UserUncheckedCreateInput = {
   id?: string
-  emailCipher?: runtime.Bytes | null
-  emailHash?: runtime.Bytes | null
+  email?: string | null
   username: string
   displayName: string
   avatar?: string | null
@@ -466,8 +452,7 @@ export type UserUncheckedCreateInput = {
 
 export type UserUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  emailCipher?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  emailHash?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   username?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
   avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -497,8 +482,7 @@ export type UserUpdateInput = {
 
 export type UserUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  emailCipher?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  emailHash?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   username?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
   avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -528,8 +512,7 @@ export type UserUncheckedUpdateInput = {
 
 export type UserCreateManyInput = {
   id?: string
-  emailCipher?: runtime.Bytes | null
-  emailHash?: runtime.Bytes | null
+  email?: string | null
   username: string
   displayName: string
   avatar?: string | null
@@ -544,8 +527,7 @@ export type UserCreateManyInput = {
 
 export type UserUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  emailCipher?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  emailHash?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   username?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
   avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -560,8 +542,7 @@ export type UserUpdateManyMutationInput = {
 
 export type UserUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  emailCipher?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  emailHash?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   username?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
   avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -581,8 +562,7 @@ export type UserScalarRelationFilter = {
 
 export type UserCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  emailCipher?: Prisma.SortOrder
-  emailHash?: Prisma.SortOrder
+  email?: Prisma.SortOrder
   username?: Prisma.SortOrder
   displayName?: Prisma.SortOrder
   avatar?: Prisma.SortOrder
@@ -601,8 +581,7 @@ export type UserAvgOrderByAggregateInput = {
 
 export type UserMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  emailCipher?: Prisma.SortOrder
-  emailHash?: Prisma.SortOrder
+  email?: Prisma.SortOrder
   username?: Prisma.SortOrder
   displayName?: Prisma.SortOrder
   avatar?: Prisma.SortOrder
@@ -617,8 +596,7 @@ export type UserMaxOrderByAggregateInput = {
 
 export type UserMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
-  emailCipher?: Prisma.SortOrder
-  emailHash?: Prisma.SortOrder
+  email?: Prisma.SortOrder
   username?: Prisma.SortOrder
   displayName?: Prisma.SortOrder
   avatar?: Prisma.SortOrder
@@ -845,10 +823,6 @@ export type UserUpdateOneRequiredWithoutSubscriptionNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutSubscriptionInput, Prisma.UserUpdateWithoutSubscriptionInput>, Prisma.UserUncheckedUpdateWithoutSubscriptionInput>
 }
 
-export type NullableBytesFieldUpdateOperationsInput = {
-  set?: runtime.Bytes | null
-}
-
 export type EnumUserStatusFieldUpdateOperationsInput = {
   set?: $Enums.UserStatus
 }
@@ -859,8 +833,7 @@ export type EnumUserRoleFieldUpdateOperationsInput = {
 
 export type UserCreateWithoutPasswordCredentialInput = {
   id?: string
-  emailCipher?: runtime.Bytes | null
-  emailHash?: runtime.Bytes | null
+  email?: string | null
   username: string
   displayName: string
   avatar?: string | null
@@ -889,8 +862,7 @@ export type UserCreateWithoutPasswordCredentialInput = {
 
 export type UserUncheckedCreateWithoutPasswordCredentialInput = {
   id?: string
-  emailCipher?: runtime.Bytes | null
-  emailHash?: runtime.Bytes | null
+  email?: string | null
   username: string
   displayName: string
   avatar?: string | null
@@ -935,8 +907,7 @@ export type UserUpdateToOneWithWhereWithoutPasswordCredentialInput = {
 
 export type UserUpdateWithoutPasswordCredentialInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  emailCipher?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  emailHash?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   username?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
   avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -965,8 +936,7 @@ export type UserUpdateWithoutPasswordCredentialInput = {
 
 export type UserUncheckedUpdateWithoutPasswordCredentialInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  emailCipher?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  emailHash?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   username?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
   avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -995,8 +965,7 @@ export type UserUncheckedUpdateWithoutPasswordCredentialInput = {
 
 export type UserCreateWithoutOauthAccountsInput = {
   id?: string
-  emailCipher?: runtime.Bytes | null
-  emailHash?: runtime.Bytes | null
+  email?: string | null
   username: string
   displayName: string
   avatar?: string | null
@@ -1025,8 +994,7 @@ export type UserCreateWithoutOauthAccountsInput = {
 
 export type UserUncheckedCreateWithoutOauthAccountsInput = {
   id?: string
-  emailCipher?: runtime.Bytes | null
-  emailHash?: runtime.Bytes | null
+  email?: string | null
   username: string
   displayName: string
   avatar?: string | null
@@ -1071,8 +1039,7 @@ export type UserUpdateToOneWithWhereWithoutOauthAccountsInput = {
 
 export type UserUpdateWithoutOauthAccountsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  emailCipher?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  emailHash?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   username?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
   avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1101,8 +1068,7 @@ export type UserUpdateWithoutOauthAccountsInput = {
 
 export type UserUncheckedUpdateWithoutOauthAccountsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  emailCipher?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  emailHash?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   username?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
   avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1131,8 +1097,7 @@ export type UserUncheckedUpdateWithoutOauthAccountsInput = {
 
 export type UserCreateWithoutVerificationCodesInput = {
   id?: string
-  emailCipher?: runtime.Bytes | null
-  emailHash?: runtime.Bytes | null
+  email?: string | null
   username: string
   displayName: string
   avatar?: string | null
@@ -1161,8 +1126,7 @@ export type UserCreateWithoutVerificationCodesInput = {
 
 export type UserUncheckedCreateWithoutVerificationCodesInput = {
   id?: string
-  emailCipher?: runtime.Bytes | null
-  emailHash?: runtime.Bytes | null
+  email?: string | null
   username: string
   displayName: string
   avatar?: string | null
@@ -1207,8 +1171,7 @@ export type UserUpdateToOneWithWhereWithoutVerificationCodesInput = {
 
 export type UserUpdateWithoutVerificationCodesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  emailCipher?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  emailHash?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   username?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
   avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1237,8 +1200,7 @@ export type UserUpdateWithoutVerificationCodesInput = {
 
 export type UserUncheckedUpdateWithoutVerificationCodesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  emailCipher?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  emailHash?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   username?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
   avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1267,8 +1229,7 @@ export type UserUncheckedUpdateWithoutVerificationCodesInput = {
 
 export type UserCreateWithoutCoursePurchasesInput = {
   id?: string
-  emailCipher?: runtime.Bytes | null
-  emailHash?: runtime.Bytes | null
+  email?: string | null
   username: string
   displayName: string
   avatar?: string | null
@@ -1297,8 +1258,7 @@ export type UserCreateWithoutCoursePurchasesInput = {
 
 export type UserUncheckedCreateWithoutCoursePurchasesInput = {
   id?: string
-  emailCipher?: runtime.Bytes | null
-  emailHash?: runtime.Bytes | null
+  email?: string | null
   username: string
   displayName: string
   avatar?: string | null
@@ -1343,8 +1303,7 @@ export type UserUpdateToOneWithWhereWithoutCoursePurchasesInput = {
 
 export type UserUpdateWithoutCoursePurchasesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  emailCipher?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  emailHash?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   username?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
   avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1373,8 +1332,7 @@ export type UserUpdateWithoutCoursePurchasesInput = {
 
 export type UserUncheckedUpdateWithoutCoursePurchasesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  emailCipher?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  emailHash?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   username?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
   avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1403,8 +1361,7 @@ export type UserUncheckedUpdateWithoutCoursePurchasesInput = {
 
 export type UserCreateWithoutTotpAuthenticatorInput = {
   id?: string
-  emailCipher?: runtime.Bytes | null
-  emailHash?: runtime.Bytes | null
+  email?: string | null
   username: string
   displayName: string
   avatar?: string | null
@@ -1433,8 +1390,7 @@ export type UserCreateWithoutTotpAuthenticatorInput = {
 
 export type UserUncheckedCreateWithoutTotpAuthenticatorInput = {
   id?: string
-  emailCipher?: runtime.Bytes | null
-  emailHash?: runtime.Bytes | null
+  email?: string | null
   username: string
   displayName: string
   avatar?: string | null
@@ -1479,8 +1435,7 @@ export type UserUpdateToOneWithWhereWithoutTotpAuthenticatorInput = {
 
 export type UserUpdateWithoutTotpAuthenticatorInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  emailCipher?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  emailHash?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   username?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
   avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1509,8 +1464,7 @@ export type UserUpdateWithoutTotpAuthenticatorInput = {
 
 export type UserUncheckedUpdateWithoutTotpAuthenticatorInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  emailCipher?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  emailHash?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   username?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
   avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1539,8 +1493,7 @@ export type UserUncheckedUpdateWithoutTotpAuthenticatorInput = {
 
 export type UserCreateWithoutRecoveryCodesInput = {
   id?: string
-  emailCipher?: runtime.Bytes | null
-  emailHash?: runtime.Bytes | null
+  email?: string | null
   username: string
   displayName: string
   avatar?: string | null
@@ -1569,8 +1522,7 @@ export type UserCreateWithoutRecoveryCodesInput = {
 
 export type UserUncheckedCreateWithoutRecoveryCodesInput = {
   id?: string
-  emailCipher?: runtime.Bytes | null
-  emailHash?: runtime.Bytes | null
+  email?: string | null
   username: string
   displayName: string
   avatar?: string | null
@@ -1615,8 +1567,7 @@ export type UserUpdateToOneWithWhereWithoutRecoveryCodesInput = {
 
 export type UserUpdateWithoutRecoveryCodesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  emailCipher?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  emailHash?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   username?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
   avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1645,8 +1596,7 @@ export type UserUpdateWithoutRecoveryCodesInput = {
 
 export type UserUncheckedUpdateWithoutRecoveryCodesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  emailCipher?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  emailHash?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   username?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
   avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1675,8 +1625,7 @@ export type UserUncheckedUpdateWithoutRecoveryCodesInput = {
 
 export type UserCreateWithoutWebauthnCredentialsInput = {
   id?: string
-  emailCipher?: runtime.Bytes | null
-  emailHash?: runtime.Bytes | null
+  email?: string | null
   username: string
   displayName: string
   avatar?: string | null
@@ -1705,8 +1654,7 @@ export type UserCreateWithoutWebauthnCredentialsInput = {
 
 export type UserUncheckedCreateWithoutWebauthnCredentialsInput = {
   id?: string
-  emailCipher?: runtime.Bytes | null
-  emailHash?: runtime.Bytes | null
+  email?: string | null
   username: string
   displayName: string
   avatar?: string | null
@@ -1751,8 +1699,7 @@ export type UserUpdateToOneWithWhereWithoutWebauthnCredentialsInput = {
 
 export type UserUpdateWithoutWebauthnCredentialsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  emailCipher?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  emailHash?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   username?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
   avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1781,8 +1728,7 @@ export type UserUpdateWithoutWebauthnCredentialsInput = {
 
 export type UserUncheckedUpdateWithoutWebauthnCredentialsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  emailCipher?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  emailHash?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   username?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
   avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1811,8 +1757,7 @@ export type UserUncheckedUpdateWithoutWebauthnCredentialsInput = {
 
 export type UserCreateWithoutRestrictionsInput = {
   id?: string
-  emailCipher?: runtime.Bytes | null
-  emailHash?: runtime.Bytes | null
+  email?: string | null
   username: string
   displayName: string
   avatar?: string | null
@@ -1841,8 +1786,7 @@ export type UserCreateWithoutRestrictionsInput = {
 
 export type UserUncheckedCreateWithoutRestrictionsInput = {
   id?: string
-  emailCipher?: runtime.Bytes | null
-  emailHash?: runtime.Bytes | null
+  email?: string | null
   username: string
   displayName: string
   avatar?: string | null
@@ -1887,8 +1831,7 @@ export type UserUpdateToOneWithWhereWithoutRestrictionsInput = {
 
 export type UserUpdateWithoutRestrictionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  emailCipher?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  emailHash?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   username?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
   avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1917,8 +1860,7 @@ export type UserUpdateWithoutRestrictionsInput = {
 
 export type UserUncheckedUpdateWithoutRestrictionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  emailCipher?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  emailHash?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   username?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
   avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1947,8 +1889,7 @@ export type UserUncheckedUpdateWithoutRestrictionsInput = {
 
 export type UserCreateWithoutPaymentsInput = {
   id?: string
-  emailCipher?: runtime.Bytes | null
-  emailHash?: runtime.Bytes | null
+  email?: string | null
   username: string
   displayName: string
   avatar?: string | null
@@ -1977,8 +1918,7 @@ export type UserCreateWithoutPaymentsInput = {
 
 export type UserUncheckedCreateWithoutPaymentsInput = {
   id?: string
-  emailCipher?: runtime.Bytes | null
-  emailHash?: runtime.Bytes | null
+  email?: string | null
   username: string
   displayName: string
   avatar?: string | null
@@ -2023,8 +1963,7 @@ export type UserUpdateToOneWithWhereWithoutPaymentsInput = {
 
 export type UserUpdateWithoutPaymentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  emailCipher?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  emailHash?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   username?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
   avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2053,8 +1992,7 @@ export type UserUpdateWithoutPaymentsInput = {
 
 export type UserUncheckedUpdateWithoutPaymentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  emailCipher?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  emailHash?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   username?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
   avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2083,8 +2021,7 @@ export type UserUncheckedUpdateWithoutPaymentsInput = {
 
 export type UserCreateWithoutUserPaymentMethodsInput = {
   id?: string
-  emailCipher?: runtime.Bytes | null
-  emailHash?: runtime.Bytes | null
+  email?: string | null
   username: string
   displayName: string
   avatar?: string | null
@@ -2113,8 +2050,7 @@ export type UserCreateWithoutUserPaymentMethodsInput = {
 
 export type UserUncheckedCreateWithoutUserPaymentMethodsInput = {
   id?: string
-  emailCipher?: runtime.Bytes | null
-  emailHash?: runtime.Bytes | null
+  email?: string | null
   username: string
   displayName: string
   avatar?: string | null
@@ -2159,8 +2095,7 @@ export type UserUpdateToOneWithWhereWithoutUserPaymentMethodsInput = {
 
 export type UserUpdateWithoutUserPaymentMethodsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  emailCipher?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  emailHash?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   username?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
   avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2189,8 +2124,7 @@ export type UserUpdateWithoutUserPaymentMethodsInput = {
 
 export type UserUncheckedUpdateWithoutUserPaymentMethodsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  emailCipher?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  emailHash?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   username?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
   avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2219,8 +2153,7 @@ export type UserUncheckedUpdateWithoutUserPaymentMethodsInput = {
 
 export type UserCreateWithoutUserProgressesInput = {
   id?: string
-  emailCipher?: runtime.Bytes | null
-  emailHash?: runtime.Bytes | null
+  email?: string | null
   username: string
   displayName: string
   avatar?: string | null
@@ -2249,8 +2182,7 @@ export type UserCreateWithoutUserProgressesInput = {
 
 export type UserUncheckedCreateWithoutUserProgressesInput = {
   id?: string
-  emailCipher?: runtime.Bytes | null
-  emailHash?: runtime.Bytes | null
+  email?: string | null
   username: string
   displayName: string
   avatar?: string | null
@@ -2295,8 +2227,7 @@ export type UserUpdateToOneWithWhereWithoutUserProgressesInput = {
 
 export type UserUpdateWithoutUserProgressesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  emailCipher?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  emailHash?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   username?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
   avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2325,8 +2256,7 @@ export type UserUpdateWithoutUserProgressesInput = {
 
 export type UserUncheckedUpdateWithoutUserProgressesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  emailCipher?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  emailHash?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   username?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
   avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2355,8 +2285,7 @@ export type UserUncheckedUpdateWithoutUserProgressesInput = {
 
 export type UserCreateWithoutDownloadLogsInput = {
   id?: string
-  emailCipher?: runtime.Bytes | null
-  emailHash?: runtime.Bytes | null
+  email?: string | null
   username: string
   displayName: string
   avatar?: string | null
@@ -2385,8 +2314,7 @@ export type UserCreateWithoutDownloadLogsInput = {
 
 export type UserUncheckedCreateWithoutDownloadLogsInput = {
   id?: string
-  emailCipher?: runtime.Bytes | null
-  emailHash?: runtime.Bytes | null
+  email?: string | null
   username: string
   displayName: string
   avatar?: string | null
@@ -2431,8 +2359,7 @@ export type UserUpdateToOneWithWhereWithoutDownloadLogsInput = {
 
 export type UserUpdateWithoutDownloadLogsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  emailCipher?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  emailHash?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   username?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
   avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2461,8 +2388,7 @@ export type UserUpdateWithoutDownloadLogsInput = {
 
 export type UserUncheckedUpdateWithoutDownloadLogsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  emailCipher?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  emailHash?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   username?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
   avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2491,8 +2417,7 @@ export type UserUncheckedUpdateWithoutDownloadLogsInput = {
 
 export type UserCreateWithoutSessionsInput = {
   id?: string
-  emailCipher?: runtime.Bytes | null
-  emailHash?: runtime.Bytes | null
+  email?: string | null
   username: string
   displayName: string
   avatar?: string | null
@@ -2521,8 +2446,7 @@ export type UserCreateWithoutSessionsInput = {
 
 export type UserUncheckedCreateWithoutSessionsInput = {
   id?: string
-  emailCipher?: runtime.Bytes | null
-  emailHash?: runtime.Bytes | null
+  email?: string | null
   username: string
   displayName: string
   avatar?: string | null
@@ -2567,8 +2491,7 @@ export type UserUpdateToOneWithWhereWithoutSessionsInput = {
 
 export type UserUpdateWithoutSessionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  emailCipher?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  emailHash?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   username?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
   avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2597,8 +2520,7 @@ export type UserUpdateWithoutSessionsInput = {
 
 export type UserUncheckedUpdateWithoutSessionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  emailCipher?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  emailHash?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   username?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
   avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2627,8 +2549,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
 
 export type UserCreateWithoutVisitorsInput = {
   id?: string
-  emailCipher?: runtime.Bytes | null
-  emailHash?: runtime.Bytes | null
+  email?: string | null
   username: string
   displayName: string
   avatar?: string | null
@@ -2657,8 +2578,7 @@ export type UserCreateWithoutVisitorsInput = {
 
 export type UserUncheckedCreateWithoutVisitorsInput = {
   id?: string
-  emailCipher?: runtime.Bytes | null
-  emailHash?: runtime.Bytes | null
+  email?: string | null
   username: string
   displayName: string
   avatar?: string | null
@@ -2703,8 +2623,7 @@ export type UserUpdateToOneWithWhereWithoutVisitorsInput = {
 
 export type UserUpdateWithoutVisitorsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  emailCipher?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  emailHash?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   username?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
   avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2733,8 +2652,7 @@ export type UserUpdateWithoutVisitorsInput = {
 
 export type UserUncheckedUpdateWithoutVisitorsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  emailCipher?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  emailHash?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   username?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
   avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2763,8 +2681,7 @@ export type UserUncheckedUpdateWithoutVisitorsInput = {
 
 export type UserCreateWithoutSubscriptionInput = {
   id?: string
-  emailCipher?: runtime.Bytes | null
-  emailHash?: runtime.Bytes | null
+  email?: string | null
   username: string
   displayName: string
   avatar?: string | null
@@ -2793,8 +2710,7 @@ export type UserCreateWithoutSubscriptionInput = {
 
 export type UserUncheckedCreateWithoutSubscriptionInput = {
   id?: string
-  emailCipher?: runtime.Bytes | null
-  emailHash?: runtime.Bytes | null
+  email?: string | null
   username: string
   displayName: string
   avatar?: string | null
@@ -2839,8 +2755,7 @@ export type UserUpdateToOneWithWhereWithoutSubscriptionInput = {
 
 export type UserUpdateWithoutSubscriptionInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  emailCipher?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  emailHash?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   username?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
   avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2869,8 +2784,7 @@ export type UserUpdateWithoutSubscriptionInput = {
 
 export type UserUncheckedUpdateWithoutSubscriptionInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  emailCipher?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
-  emailHash?: Prisma.NullableBytesFieldUpdateOperationsInput | runtime.Bytes | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   username?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
   avatar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3029,8 +2943,7 @@ export type UserCountOutputTypeCountDownloadLogsArgs<ExtArgs extends runtime.Typ
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  emailCipher?: boolean
-  emailHash?: boolean
+  email?: boolean
   username?: boolean
   displayName?: boolean
   avatar?: boolean
@@ -3061,8 +2974,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
 
 export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  emailCipher?: boolean
-  emailHash?: boolean
+  email?: boolean
   username?: boolean
   displayName?: boolean
   avatar?: boolean
@@ -3077,8 +2989,7 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
 
 export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
-  emailCipher?: boolean
-  emailHash?: boolean
+  email?: boolean
   username?: boolean
   displayName?: boolean
   avatar?: boolean
@@ -3093,8 +3004,7 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
 
 export type UserSelectScalar = {
   id?: boolean
-  emailCipher?: boolean
-  emailHash?: boolean
+  email?: boolean
   username?: boolean
   displayName?: boolean
   avatar?: boolean
@@ -3107,7 +3017,7 @@ export type UserSelectScalar = {
   updatedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "emailCipher" | "emailHash" | "username" | "displayName" | "avatar" | "status" | "emailVerifiedAt" | "lastLoginAt" | "role" | "points" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "username" | "displayName" | "avatar" | "status" | "emailVerifiedAt" | "lastLoginAt" | "role" | "points" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   passwordCredential?: boolean | Prisma.User$passwordCredentialArgs<ExtArgs>
   oauthAccounts?: boolean | Prisma.User$oauthAccountsArgs<ExtArgs>
@@ -3150,8 +3060,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
-    emailCipher: runtime.Bytes | null
-    emailHash: runtime.Bytes | null
+    email: string | null
     username: string
     displayName: string
     avatar: string | null
@@ -3601,8 +3510,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
  */
 export interface UserFieldRefs {
   readonly id: Prisma.FieldRef<"User", 'String'>
-  readonly emailCipher: Prisma.FieldRef<"User", 'Bytes'>
-  readonly emailHash: Prisma.FieldRef<"User", 'Bytes'>
+  readonly email: Prisma.FieldRef<"User", 'String'>
   readonly username: Prisma.FieldRef<"User", 'String'>
   readonly displayName: Prisma.FieldRef<"User", 'String'>
   readonly avatar: Prisma.FieldRef<"User", 'String'>

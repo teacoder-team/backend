@@ -26,11 +26,10 @@ import {
 } from '~/lib/integrations/oauth'
 import { extendLogContext, logger } from '~/lib/logger'
 import { redis } from '~/lib/redis'
-import { encryptEmail, hashEmail } from '~/lib/security/email-crypto'
 import { normalizeEmail } from '~/lib/utils/email'
 import { generateUsername } from '~/lib/utils/username'
 import { enqueueRegistrationNotification } from '~/modules/admin-bot/queue'
-import { deletePendingUser, findUserByEmailHash } from '~/modules/auth/repository'
+import { deletePendingUser, findUserByEmail } from '~/modules/auth/repository'
 import { completeSignIn } from '~/modules/auth/service'
 import { findActiveSession } from '~/modules/session/repository'
 import type { RequestOrigin } from '~/modules/session/service'
@@ -201,16 +200,13 @@ type ResolvedUser =
 	| { outcome: 'signup'; userId: string }
 
 const signUp = async (provider: AuthProvider, profile: OAuthProfile, email: string | null) => {
-	const encrypted = email ? encryptEmail(normalizeEmail(email)) : null
-
 	const user = await createOAuthUser({
 		provider,
 		providerAccountId: profile.providerAccountId,
 		displayName: profile.name,
 		username: generateUsername(),
 		avatar: profile.avatarUrl,
-		emailCipher: encrypted?.cipher ?? null,
-		emailHash: encrypted?.hash ?? null
+		email: email ? normalizeEmail(email) : null
 	})
 
 	return user.id
@@ -227,7 +223,7 @@ const storableUnverifiedEmail = async (profile: OAuthProfile) => {
 
 	const email = normalizeEmail(profile.unverifiedEmail)
 
-	return (await findUserByEmailHash(hashEmail(email))) ? null : email
+	return (await findUserByEmail(email)) ? null : email
 }
 
 /** `profile.email` is set only when the provider verified it, so matching by it is safe. */
@@ -248,7 +244,7 @@ const resolveUser = async (
 		}
 	}
 
-	const byEmail = await findUserByEmailHash(hashEmail(normalizeEmail(profile.email)))
+	const byEmail = await findUserByEmail(normalizeEmail(profile.email))
 
 	/**
 	 * An unconfirmed email registration proves nothing about who owns the address - it may be

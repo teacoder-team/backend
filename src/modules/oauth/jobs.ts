@@ -6,7 +6,6 @@ import { sendMail } from '~/lib/mail/client'
 import AccountLinked from '~/lib/mail/templates/AccountLinked'
 import { emailQueue } from '~/lib/queue/queues'
 import type { JobHandlers } from '~/lib/queue/runner'
-import { decryptEmail } from '~/lib/security/email-crypto'
 import { formatDateTime } from '~/lib/utils/date'
 
 import { findLinkNotificationTarget } from './repository'
@@ -19,14 +18,14 @@ export const oauthEmailJobs: JobHandlers<OAuthEmailJobs> = {
 	sendAccountLinked: async ({ userId, provider, automatic, at }) => {
 		const user = await findLinkNotificationTarget(userId)
 
-		if (!user?.emailCipher) {
+		if (!user?.email) {
 			return
 		}
 
 		const title = AUTH_PROVIDER_TITLES[provider]
 
 		await sendMail({
-			to: decryptEmail(user.emailCipher),
+			to: user.email,
 			subject: `К аккаунту TeaCoder привязан вход через ${title}`,
 			template: AccountLinked({
 				username: user.displayName,

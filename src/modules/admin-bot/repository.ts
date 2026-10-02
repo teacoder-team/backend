@@ -1,7 +1,6 @@
 import { IntentStatus } from '@prisma/generated/client'
 
 import { db } from '~/lib/db'
-import { toBytes } from '~/lib/utils/bytes'
 
 export const findPurchaseDetails = (paymentId: string) =>
 	db.paymentIntent.findUnique({
@@ -88,9 +87,9 @@ export const findAccountsOnVisitor = async (visitorId: string, excludeUserId: st
 
 export type VisitorAccount = Awaited<ReturnType<typeof findAccountsOnVisitor>>[number]
 
-export const findSupportSender = (emailHash: Buffer) =>
+export const findSupportSender = (email: string) =>
 	db.user.findUnique({
-		where: { emailHash: toBytes(emailHash) },
+		where: { email },
 		select: {
 			displayName: true,
 			username: true,

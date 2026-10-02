@@ -1,4 +1,4 @@
-import { randomUUID } from 'node:crypto'
+import { createHash, randomUUID } from 'node:crypto'
 
 import { type AuthProvider, UserStatus, VerificationPurpose } from '@prisma/generated/client'
 
@@ -14,7 +14,6 @@ import {
 import { verifyCaptcha } from '~/lib/integrations/captcha'
 import { extendLogContext } from '~/lib/logger'
 import { redis } from '~/lib/redis'
-import { decryptEmail, encryptEmail, hashEmail } from '~/lib/security/email-crypto'
 import { hashPassword, verifyPassword } from '~/lib/security/hash'
 import { generateOtpCode } from '~/lib/security/otp'
 import { hashVerificationCode, verificationCodeMatches } from '~/lib/security/verification-code'
@@ -56,9 +55,9 @@ import {
 	createPendingUser,
 	createVerificationCode,
 	deletePendingUser,
-	findEmailCipher,
 	findLatestVerificationCode,
-	findUserByEmailHash,
+	findUserByEmail,
+	findUserEmail,
 	incrementVerificationAttempts,
 	updateLastLogin,
 	updatePasswordHash
@@ -137,8 +136,7 @@ export const register = async (input: RegisterInput, ip: string) => {
 		throw new BadRequestError('Temporary email addresses are not allowed')
 	}
 
-	const emailHash = hashEmail(email)
-	const existing = await findUserByEmailHash(emailHash)
+	const existing = await findUserByEmail(email)
 
 	if (existing) {
 		if (existing.status === UserStatus.ACTIVE) {
@@ -156,11 +154,8 @@ export const register = async (input: RegisterInput, ip: string) => {
 		await deletePendingUser(existing.id)
 	}
 
-	const { cipher, hash } = encryptEmail(email)
-
 	const user = await createPendingUser({
-		emailCipher: cipher,
-		emailHash: hash,
+		email,
 		passwordHash: await hashPassword(input.password),
 		displayName: input.name,
 		username: generateUsername()
@@ -171,7 +166,7 @@ export const register = async (input: RegisterInput, ip: string) => {
 
 export const verifyRegister = async (input: VerifyRegisterInput, origin: RequestOrigin) => {
 	const email = normalizeEmail(input.email)
-	const user = await findUserByEmailHash(hashEmail(email))
+	const user = await findUserByEmail(email)
 
 	if (!user || user.status !== UserStatus.PENDING) {
 		throw new NotFoundError('Verification code expired or registration not found')
@@ -193,10 +188,13 @@ export const verifyRegister = async (input: VerifyRegisterInput, origin: Request
 	return { id: user.id, ...tokens, linkedProvider: null }
 }
 
+/** Hashed so Redis keys never carry addresses - a rate-limit bucket needs no secret. */
+const emailBucket = (email: string) => createHash('sha256').update(email).digest('hex')
+
 /** Counted per email, IP and device - a proxy changes the IP but not the Fingerprint visitor. */
-const loginAttemptKeys = (emailHash: Buffer, { ip, visitorId }: RequestOrigin) =>
+const loginAttemptKeys = (email: string, { ip, visitorId }: RequestOrigin) =>
 	[
-		`login_attempts:email:${emailHash.toString('hex')}`,
+		`login_attempts:email:${emailBucket(email)}`,
 		`login_attempts:ip:${ip}`,
 		visitorId && `login_attempts:visitor:${visitorId}`
 	].filter((key): key is string => Boolean(key))
@@ -230,12 +228,11 @@ export const login = async (input: LoginInput, origin: RequestOrigin) => {
 	await verifyCaptcha(input.captchaToken, origin.ip)
 
 	const email = normalizeEmail(input.email)
-	const emailHash = hashEmail(email)
-	const attemptKeys = loginAttemptKeys(emailHash, origin)
+	const attemptKeys = loginAttemptKeys(email, origin)
 
 	await assertNotLockedOut(attemptKeys)
 
-	const user = await findUserByEmailHash(emailHash)
+	const user = await findUserByEmail(email)
 	const passwordHash = user?.passwordCredential?.passwordHash
 	const isCorrect = passwordHash ? await verifyPassword(input.password, passwordHash) : false
 
@@ -260,17 +257,13 @@ export const login = async (input: LoginInput, origin: RequestOrigin) => {
 
 export const logout = (userId: string, sessionId: string) => revokeSession(userId, sessionId)
 
-export const getUserEmail = async (userId: string): Promise<string | null> => {
-	const cipher = await findEmailCipher(userId)
-
-	return cipher ? decryptEmail(cipher) : null
-}
+export const getUserEmail = (userId: string): Promise<string | null> => findUserEmail(userId)
 
 export const forgotPassword = async (input: ForgotPasswordInput, ip: string) => {
 	await verifyCaptcha(input.captchaToken, ip)
 
 	const email = normalizeEmail(input.email)
-	const user = await findUserByEmailHash(hashEmail(email))
+	const user = await findUserByEmail(email)
 
 	if (!user || user.status !== UserStatus.ACTIVE || !user.passwordCredential) {
 		return

@@ -3,7 +3,6 @@ import type { Html } from '@teacoder/telegram'
 import { resend } from '~/lib/integrations/resend'
 import { adminNotifier } from '~/lib/integrations/telegram'
 import type { JobHandlers } from '~/lib/queue/runner'
-import { hashEmail } from '~/lib/security/email-crypto'
 import { normalizeEmail } from '~/lib/utils/email'
 import { displayNameOf, htmlToText, stripQuotedReply } from '~/lib/utils/email-text'
 import { getUserEmail } from '~/modules/auth/service'
@@ -139,7 +138,7 @@ export const notificationJobs: JobHandlers<NotificationJobs> = {
 			return
 		}
 
-		const sender = await findSupportSender(hashEmail(normalizeEmail(email.from)))
+		const sender = await findSupportSender(normalizeEmail(email.from))
 
 		await deliver(supportEmailMessage({ email, sender }))
 	}

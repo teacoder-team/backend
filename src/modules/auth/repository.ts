@@ -3,21 +3,18 @@ import { UserRole, UserStatus, VerificationPurpose } from '@prisma/generated/cli
 import { toBytes } from '~/lib/utils/bytes'
 import { db } from '~/lib/db'
 
-export const findUserByEmailHash = (emailHash: Buffer) =>
-	db.user.findUnique({
-		where: { emailHash: toBytes(emailHash) },
-		include: { passwordCredential: true }
-	})
+/** Always normalized by the caller - the unique index is case-sensitive. */
+export const findUserByEmail = (email: string) =>
+	db.user.findUnique({ where: { email }, include: { passwordCredential: true } })
 
-export const findEmailCipher = async (userId: string) => {
-	const user = await db.user.findUnique({ where: { id: userId }, select: { emailCipher: true } })
+export const findUserEmail = async (userId: string) => {
+	const user = await db.user.findUnique({ where: { id: userId }, select: { email: true } })
 
-	return user?.emailCipher ?? null
+	return user?.email ?? null
 }
 
 export interface CreatePendingUserInput {
-	emailCipher: Buffer
-	emailHash: Buffer
+	email: string
 	passwordHash: string
 	displayName: string
 	username: string
@@ -30,8 +27,7 @@ export const createPendingUser = (input: CreatePendingUserInput) =>
 				username: input.username,
 				displayName: input.displayName,
 				role: UserRole.STUDENT,
-				emailCipher: toBytes(input.emailCipher),
-				emailHash: toBytes(input.emailHash)
+				email: input.email
 			}
 		})
 
@@ -70,14 +66,10 @@ export const savePasswordHash = (userId: string, passwordHash: string) =>
 export const findPasswordCredential = (userId: string) =>
 	db.passwordCredential.findUnique({ where: { userId } })
 
-export const updateUserEmail = (userId: string, emailCipher: Buffer, emailHash: Buffer) =>
+export const updateUserEmail = (userId: string, email: string) =>
 	db.user.update({
 		where: { id: userId },
-		data: {
-			emailCipher: toBytes(emailCipher),
-			emailHash: toBytes(emailHash),
-			emailVerifiedAt: new Date()
-		}
+		data: { email, emailVerifiedAt: new Date() }
 	})
 
 export interface NewVerificationCode {

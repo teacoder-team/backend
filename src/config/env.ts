@@ -41,8 +41,6 @@ const envSchema = t.Object({
 	JWT_SECRET: t.String({ minLength: 32 }),
 	ACCESS_TOKEN_TTL: t.Number({ default: 15 * 60 }),
 
-	EMAIL_ENCRYPTION_KEY: t.String(),
-	EMAIL_HASH_KEY: t.String(),
 	VERIFICATION_CODE_HASH_KEY: t.String(),
 	MFA_ENCRYPTION_KEY: t.String(),
 

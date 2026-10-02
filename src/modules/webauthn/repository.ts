@@ -9,7 +9,7 @@ export const findRegistrationSubject = (userId: string) =>
 		select: {
 			username: true,
 			displayName: true,
-			emailCipher: true,
+			email: true,
 			webauthnCredentials: { select: { credentialId: true, transports: true } }
 		}
 	})

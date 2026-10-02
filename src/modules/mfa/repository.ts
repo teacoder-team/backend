@@ -5,7 +5,7 @@ export const findTotpAuthenticator = (userId: string) =>
 	db.totpAuthenticator.findUnique({ where: { userId } })
 
 export const findAccountLabel = (userId: string) =>
-	db.user.findUnique({ where: { id: userId }, select: { username: true, emailCipher: true } })
+	db.user.findUnique({ where: { id: userId }, select: { username: true, email: true } })
 
 /** Starting over replaces an unfinished enrollment - the old QR code stops working. */
 export const savePendingTotp = (userId: string, secretCipher: Buffer) =>

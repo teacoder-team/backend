@@ -4,13 +4,10 @@ FROM oven/bun:1.3.10-slim AS base
 
 WORKDIR /app
 
-# Manifests only (`--parents` keeps the workspace layout): editing a package's source
-# must not reinstall every dependency.
 COPY --parents package.json bun.lock packages/*/package.json ./
 
 RUN --mount=type=cache,id=bun,target=/root/.bun/install/cache \
     bun install --frozen-lockfile
-
 
 FROM base AS build
 

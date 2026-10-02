@@ -3,7 +3,6 @@ import NewDeviceLogin from '~/lib/mail/templates/NewDeviceLogin'
 import { logger } from '~/lib/logger'
 import { emailQueue, maintenanceQueue } from '~/lib/queue/queues'
 import type { JobHandlers } from '~/lib/queue/runner'
-import { decryptEmail } from '~/lib/security/email-crypto'
 import { formatDateTime } from '~/lib/utils/date'
 
 import { deleteSessionsDeadBefore, findNewDeviceSession } from './repository'
@@ -46,12 +45,12 @@ export const sessionEmailJobs: JobHandlers<SessionEmailJobs> = {
 	sendNewDeviceLogin: async ({ sessionId }) => {
 		const session = await findNewDeviceSession(sessionId)
 
-		if (!session?.user.emailCipher) {
+		if (!session?.user.email) {
 			return
 		}
 
 		await sendMail({
-			to: decryptEmail(session.user.emailCipher),
+			to: session.user.email,
 			subject: 'Вход в аккаунт TeaCoder с нового устройства',
 			template: NewDeviceLogin({
 				username: session.user.displayName,

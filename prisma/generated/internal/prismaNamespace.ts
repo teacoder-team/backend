@@ -2384,8 +2384,7 @@ export type SubscriptionScalarFieldEnum = (typeof SubscriptionScalarFieldEnum)[k
 
 export const UserScalarFieldEnum = {
   id: 'id',
-  emailCipher: 'emailCipher',
-  emailHash: 'emailHash',
+  email: 'email',
   username: 'username',
   displayName: 'displayName',
   avatar: 'avatar',

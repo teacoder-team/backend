@@ -1,8 +1,7 @@
 model User {
     id String @id @default(uuid())
 
-    emailCipher Bytes? @map("email_cipher")
-    emailHash   Bytes? @unique(map: "uq_users_email_hash") @map("email_hash")
+    email String? @unique(map: "uq_users_email")
 
     username    String  @unique(map: "uq_users_username")
     displayName String  @map("display_name")

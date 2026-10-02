@@ -3,7 +3,6 @@ import QRCode from 'qrcode'
 import { BadRequestError, ConflictError, TooManyRequestsError } from '~/lib/errors'
 import { extendLogContext } from '~/lib/logger'
 import { redis } from '~/lib/redis'
-import { decryptEmail } from '~/lib/security/email-crypto'
 import { generateRecoveryCodes, hashRecoveryCode } from '~/lib/security/recovery-code'
 import {
 	buildTotpUri,
@@ -74,7 +73,7 @@ export const setupTotp = async (userId: string) => {
 	const otpauthUrl = buildTotpUri({
 		secret,
 		issuer: TOTP_ISSUER,
-		account: account?.emailCipher ? decryptEmail(account.emailCipher) : `@${account?.username}`
+		account: account?.email ?? `@${account?.username}`
 	})
 
 	const qrCodeUrl = await QRCode.toDataURL(otpauthUrl, {

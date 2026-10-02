@@ -14,7 +14,6 @@ import { BadRequestError, ConflictError, NotFoundError, UnauthorizedError } from
 import { WEBAUTHN_RP } from '~/lib/integrations/webauthn'
 import { extendLogContext, logger } from '~/lib/logger'
 import { redis } from '~/lib/redis'
-import { decryptEmail } from '~/lib/security/email-crypto'
 import { updateLastLogin } from '~/modules/auth/repository'
 import { completeMfaSignIn, takeTicket } from '~/modules/auth/service'
 import { issueRecoveryCodesIfMissing } from '~/modules/mfa/service'
@@ -93,7 +92,7 @@ export const startRegistration = async (userId: string) => {
 		rpName: WEBAUTHN_RP.name,
 		rpID: WEBAUTHN_RP.id,
 		userID: new TextEncoder().encode(userId),
-		userName: subject.emailCipher ? decryptEmail(subject.emailCipher) : `@${subject.username}`,
+		userName: subject.email ?? `@${subject.username}`,
 		userDisplayName: subject.displayName,
 		attestationType: 'none',
 		excludeCredentials: subject.webauthnCredentials.map(toDescriptor),

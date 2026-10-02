@@ -6,13 +6,12 @@ import { BadRequestError, ConflictError, NotFoundError, UnauthorizedError } from
 import { orion } from '~/lib/integrations/orion'
 import { extendLogContext } from '~/lib/logger'
 import { redis } from '~/lib/redis'
-import { encryptEmail, hashEmail } from '~/lib/security/email-crypto'
 import { hashPassword, verifyPassword } from '~/lib/security/hash'
 import { normalizeEmail } from '~/lib/utils/email'
 import { enqueueEmailChangeCode, enqueuePasswordChangeCode } from '~/modules/auth/jobs'
 import {
 	findPasswordCredential,
-	findUserByEmailHash,
+	findUserByEmail,
 	savePasswordHash,
 	updateUserEmail
 } from '~/modules/auth/repository'
@@ -86,7 +85,7 @@ export const requestEmailChange = async (userId: string, input: ChangeEmailInput
 		throw new BadRequestError('Temporary email addresses are not allowed')
 	}
 
-	const existing = await findUserByEmailHash(hashEmail(newEmail))
+	const existing = await findUserByEmail(newEmail)
 
 	if (existing && existing.id !== userId) {
 		throw new ConflictError('Email already in use')
@@ -116,9 +115,7 @@ export const confirmEmailChange = async (userId: string, input: ConfirmCodeInput
 		invalid: 'Invalid confirmation code'
 	})
 
-	const { cipher, hash } = encryptEmail(pendingEmail)
-
-	await updateUserEmail(userId, cipher, hash)
+	await updateUserEmail(userId, pendingEmail)
 	await redis.del(pendingEmailKey(userId))
 
 	extendLogContext({ event: 'email_change_completed', userId })

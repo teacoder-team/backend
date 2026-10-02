@@ -1,6 +1,5 @@
 import { AuthProvider, UserRole, UserStatus } from '@prisma/generated/client'
 
-import { toBytes } from '~/lib/utils/bytes'
 import { db } from '~/lib/db'
 
 export const findOAuthAccount = (provider: AuthProvider, providerAccountId: string) =>
@@ -22,8 +21,7 @@ export interface CreateOAuthUserInput {
 	username: string
 	avatar: string | null
 	/** Present when the provider returned a verified email (not all do, e.g. Telegram). */
-	emailCipher: Buffer | null
-	emailHash: Buffer | null
+	email: string | null
 }
 
 export const createOAuthUser = (input: CreateOAuthUserInput) =>
@@ -35,9 +33,8 @@ export const createOAuthUser = (input: CreateOAuthUserInput) =>
 				avatar: input.avatar,
 				role: UserRole.STUDENT,
 				status: UserStatus.ACTIVE,
-				emailVerifiedAt: input.emailCipher ? new Date() : null,
-				emailCipher: input.emailCipher ? toBytes(input.emailCipher) : null,
-				emailHash: input.emailHash ? toBytes(input.emailHash) : null
+				emailVerifiedAt: input.email ? new Date() : null,
+				email: input.email
 			}
 		})
 
@@ -79,5 +76,5 @@ export const findSignInMethods = (userId: string) =>
 export const findLinkNotificationTarget = (userId: string) =>
 	db.user.findUnique({
 		where: { id: userId },
-		select: { displayName: true, emailCipher: true }
+		select: { displayName: true, email: true }
 	})
