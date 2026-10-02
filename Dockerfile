@@ -23,7 +23,6 @@ COPY src ./src/
 
 RUN bun run build
 
-
 FROM oven/bun:1.3.10-slim AS geo
 
 WORKDIR /resources
