@@ -13,7 +13,7 @@ import {
 	enqueueSubscriptionRenewedEmail
 } from '~/modules/subscription/jobs'
 import { PREMIUM_PLAN } from '~/modules/subscription/plan'
-import { endSubscriptionPeriod, setAutoBilling } from '~/modules/subscription/repository'
+import { endSubscriptionPeriod } from '~/modules/subscription/repository'
 import { nextTerm } from '~/modules/subscription/term'
 
 import {
@@ -128,8 +128,6 @@ const capture = async (
 interface SubscriptionInvoice {
 	/** Older invoices without it were the one-month plan. */
 	months: number
-	/** The buyer agreed to have the card kept and charged at the end of each period. */
-	autoRenew: boolean
 	/** Charged by the nightly job, not paid by the user. */
 	renewal: boolean
 	/** End of the period a renewal pays for (ISO). */
@@ -145,9 +143,8 @@ const readInvoice = (metadata: unknown): SubscriptionInvoice => {
 			typeof months === 'number' && Number.isInteger(months) && months > 0
 				? months
 				: PREMIUM_PLAN.months,
-		autoRenew: raw.autoRenew === true,
-		renewal: raw.renewal === true,
-		periodEnd: typeof raw.periodEnd === 'string' ? raw.periodEnd : null
+			renewal: raw.renewal === true,
+			periodEnd: typeof raw.periodEnd === 'string' ? raw.periodEnd : null
 	}
 }
 
@@ -155,20 +152,20 @@ const warnOnFailure = (paymentId: string, message: string) => (err: unknown) => 
 	logger.warn({ context: 'billing', paymentId, err }, message)
 }
 
-/** Kept for the nightly renewal - only with the buyer's consent (`autoRenew`). */
+/** Kept for the nightly renewal, which the user can enable after the payment is captured. */
 const keepPaymentMethod = async (
 	intent: FulfillableIntent,
 	invoice: SubscriptionInvoice,
 	saved: SavedPaymentMethod | undefined
 ) => {
-	if (!invoice.autoRenew || invoice.renewal) {
+	if (invoice.renewal) {
 		return
 	}
 
 	if (!saved) {
 		logger.warn(
 			{ context: 'billing', paymentId: intent.id, userId: intent.userId },
-			'auto_renew_requested_but_method_not_saved'
+			'payment_method_not_saved'
 		)
 
 		return
@@ -177,7 +174,6 @@ const keepPaymentMethod = async (
 	const method = await saveUserPaymentMethod(intent.userId, saved)
 
 	await linkPaymentMethod(intent.id, method.id)
-	await setAutoBilling(intent.userId, true)
 }
 
 const captureSubscription = async (

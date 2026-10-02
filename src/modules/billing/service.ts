@@ -81,17 +81,17 @@ const METHODS: Record<PaymentMethod, MethodDefinition> = {
 	// 	description: 'Оплата с кошелька ЮMoney',
 	// 	providers: [PaymentProvider.YOOKASSA]
 	// },
-	[PaymentMethod.INTERNATIONAL_CARD]: {
-		category: 'FIAT',
-		name: 'Международные карты',
-		description: 'Оплата картой зарубежных банков',
-		providers: [PaymentProvider.ROBOKASSA, PaymentProvider.PRODAMUS]
-	},
-	[PaymentMethod.CRYPTO_BOT]: {
+	// [PaymentMethod.INTERNATIONAL_CARD]: {
+	// 	category: 'FIAT',
+	// 	name: 'Международные карты',
+	// 	description: 'Оплата картой зарубежных банков',
+	// 	providers: [PaymentProvider.ROBOKASSA, PaymentProvider.PRODAMUS]
+	// },
+	[PaymentMethod.HELEKET]: {
 		category: 'CRYPTO',
 		name: 'Криптовалюта',
 		description: 'USDT, GRAM, BTC и другие',
-		providers: [PaymentProvider.CRYPTO_BOT]
+		providers: [PaymentProvider.HELEKET]
 	}
 	// [PaymentMethod.HELEKET]: {
 	// 	category: 'CRYPTO',
@@ -204,9 +204,10 @@ const startAtProvider = async (payment: PaymentIntent, product: Product, email: 
 				amount: payment.amount,
 				description: product.description,
 				returnUrl: RETURN_URL,
-				metadata: { paymentId: payment.id },
-				savePaymentMethod:
-					(payment.metadata as { autoRenew?: unknown } | null)?.autoRenew === true
+				metadata: {
+					paymentId: payment.id
+				},
+				savePaymentMethod: true
 			})
 
 			const url = created.confirmation?.confirmation_url
@@ -341,8 +342,7 @@ const openCheckout = async (
 			email,
 			description: product.description,
 			...(product.courseId ? { courseId: product.courseId } : {}),
-			...(product.months ? { months: product.months } : {}),
-			...(request.autoRenew ? { autoRenew: true } : {})
+			...(product.months ? { months: product.months } : {})
 		}
 	}).catch((err: unknown) => {
 		if (isUniqueViolation(err)) {
@@ -423,15 +423,6 @@ const checkout = async (request: CheckoutRequest, fallbackEmail: string | undefi
 		throw new ConflictError('Course already purchased')
 	}
 
-	if (
-		request.autoRenew &&
-		(product.kind !== 'subscription' || provider !== PaymentProvider.YOOKASSA)
-	) {
-		throw new BadRequestError(
-			'Auto-renewal is available only for the premium subscription paid through YooKassa'
-		)
-	}
-
 	const reusable = await findReusableCheckout(request)
 
 	if (reusable) {
@@ -456,8 +447,7 @@ export const createPayment = async (
 		userId,
 		method: input.method,
 		courseId: input.courseId ?? null,
-		idempotencyKey,
-		autoRenew: input.autoRenew ?? false
+		idempotencyKey
 	}
 
 	try {
@@ -528,7 +518,7 @@ export const updateSubscription = async (
 
 	if (autoRenew && !method) {
 		throw new ConflictError(
-			'No saved payment method - pay for premium through YooKassa with autoRenew to save one'
+			'No saved payment method - pay for premium through YooKassa to save one'
 		)
 	}
 

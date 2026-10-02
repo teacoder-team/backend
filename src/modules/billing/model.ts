@@ -22,14 +22,6 @@ export const CreatePaymentPayload = t.Object(
 				description: 'Почта для чека. Нужна, только если у аккаунта нет своей почты.',
 				examples: ['torvalds.l@teacoder.com']
 			})
-		),
-		autoRenew: t.Optional(
-			t.Boolean({
-				description:
-					'Согласие на автопродление - только для премиум-подписки через ЮKassa (карта, СБП, T-Pay, SberPay, ЮMoney). ЮKassa сохранит способ оплаты, и в конце каждого периода подписка продлится списанием без участия пользователя. Выключить - `PATCH /billing/subscription`.',
-				error: 'autoRenew must be a boolean',
-				examples: [true]
-			})
 		)
 	},
 	{ description: 'Что и как оплатить.' }
