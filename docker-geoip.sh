@@ -1,12 +1,4 @@
 #!/bin/sh
-# Puts the GeoLite2 City database in place, downloading it only when the cache does not
-# already hold the release being built.
-#
-#   $1  the repository's releases atom feed, fetched by the Dockerfile
-#   $2  cache directory kept between builds
-#   $3  where the database has to end up
-#
-# GEOLITE_RELEASE pins a release tag; `latest` (the default) takes the newest one.
 set -eu
 
 feed="$1"

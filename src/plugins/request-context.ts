@@ -1,15 +1,16 @@
-import { env, isDevelopment } from '~/config/env'
-import { logContext, logger } from '~/lib/logger'
-import { getForwardedIp } from '~/lib/utils/ip'
 import { Elysia } from 'elysia'
 
 import { randomUUID } from 'node:crypto'
+
+import { env, isDevelopment } from '~/config/env'
+import { logContext, logger } from '~/lib/logger'
+import { getForwardedIp } from '~/lib/utils/ip'
 
 const REQUEST_ID_HEADER = 'x-request-id'
 
 const LOOPBACK = '127.0.0.1'
 /** Localhost has no geolocation, so in development requests pose as a real public address. */
-const DEVELOPMENT_IP = '104.28.225.185'
+const DEVELOPMENT_IP = '5.144.116.28'
 
 const clientIp = (headers: Headers) =>
 	isDevelopment ? DEVELOPMENT_IP : (getForwardedIp(headers) ?? LOOPBACK)

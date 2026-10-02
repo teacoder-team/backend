@@ -14,7 +14,8 @@ export const AuthProvider = {
   GITHUB: 'GITHUB',
   DISCORD: 'DISCORD',
   TELEGRAM: 'TELEGRAM',
-  YANDEX: 'YANDEX'
+  YANDEX: 'YANDEX',
+  VK: 'VK'
 } as const
 
 export type AuthProvider = (typeof AuthProvider)[keyof typeof AuthProvider]

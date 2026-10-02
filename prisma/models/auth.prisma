@@ -52,6 +52,7 @@ enum AuthProvider {
     DISCORD  @map("discord")
     TELEGRAM @map("telegram")
     YANDEX   @map("yandex")
+    VK       @map("vk")
 
     @@map("account_providers")
 }

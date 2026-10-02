@@ -121,6 +121,9 @@ const envSchema = t.Object({
 	TELEGRAM_CLIENT_ID: t.String(),
 	TELEGRAM_CLIENT_SECRET: t.String(),
 
+	/** VK ID needs no secret: the flow is a public client with PKCE. */
+	VK_CLIENT_ID: t.String(),
+
 	ROBOKASSA_MERCHANT_LOGIN: t.String(),
 	ROBOKASSA_PASSWORD_1: t.String(),
 	ROBOKASSA_PASSWORD_2: t.String(),

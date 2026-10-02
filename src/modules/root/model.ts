@@ -6,9 +6,17 @@ import { PrismaEnum } from '~/lib/utils/schema'
 
 const AuthFeature = t.Object(
 	{
+		country: t.Nullable(
+			t.String({
+				description:
+					'Код страны по IP (ISO 3166-1 alpha-2), по которому отобран список провайдеров. `null` - страна не определилась.',
+				examples: ['RU']
+			})
+		),
 		providers: t.Array(t.String(), {
-			description: 'Провайдеры, через которые сейчас можно войти.',
-			examples: [['google', 'github', 'discord', 'yandex', 'telegram']]
+			description:
+				'Провайдеры, через которые сейчас можно войти, в порядке показа. Из России - только `yandex` и `vk`, в остальных странах все, а эти два последними.',
+			examples: [['yandex', 'vk']]
 		})
 	},
 	{ description: 'Вход через соцсети.' }

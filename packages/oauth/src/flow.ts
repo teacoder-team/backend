@@ -89,11 +89,16 @@ export const completeAuthorization = async (
 	let tokens: OAuthTokens
 
 	try {
-		tokens = await client.authorizationCodeGrant(provider.config, callbackUrl, {
-			expectedState: state,
-			pkceCodeVerifier: codeVerifier,
-			idTokenExpected: provider.scopes.includes('openid')
-		})
+		tokens = await client.authorizationCodeGrant(
+			provider.config,
+			callbackUrl,
+			{
+				expectedState: state,
+				pkceCodeVerifier: codeVerifier,
+				idTokenExpected: provider.scopes.includes('openid')
+			},
+			provider.tokenParams?.(callbackUrl.searchParams)
+		)
 	} catch (err) {
 		if (err instanceof client.AuthorizationResponseError) {
 			throw new OAuthDeniedError(provider, err.error, { cause: err })

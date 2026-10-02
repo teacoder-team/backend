@@ -1,4 +1,4 @@
-import { discord, github, google, telegram, yandex } from '@teacoder/oauth'
+import { discord, github, google, telegram, vk, yandex } from '@teacoder/oauth'
 
 import { AuthProvider } from '@prisma/generated/client'
 
@@ -9,6 +9,7 @@ export const OAUTH_PROVIDERS = {
 	github: github({ clientId: env.GITHUB_CLIENT_ID, clientSecret: env.GITHUB_CLIENT_SECRET }),
 	discord: discord({ clientId: env.DISCORD_CLIENT_ID, clientSecret: env.DISCORD_CLIENT_SECRET }),
 	yandex: yandex({ clientId: env.YANDEX_CLIENT_ID, clientSecret: env.YANDEX_CLIENT_SECRET }),
+	vk: vk({ clientId: env.VK_CLIENT_ID }),
 	telegram: telegram({
 		clientId: env.TELEGRAM_CLIENT_ID,
 		clientSecret: env.TELEGRAM_CLIENT_SECRET
@@ -22,13 +23,13 @@ export const OAUTH_PROVIDER_NAMES = Object.keys(OAUTH_PROVIDERS) as [
 	...OAuthProviderName[]
 ]
 
-/** How each provider is stored on OAuthAccount rows. */
 export const AUTH_PROVIDER = {
 	google: AuthProvider.GOOGLE,
 	github: AuthProvider.GITHUB,
 	discord: AuthProvider.DISCORD,
+	telegram: AuthProvider.TELEGRAM,
 	yandex: AuthProvider.YANDEX,
-	telegram: AuthProvider.TELEGRAM
+	vk: AuthProvider.VK
 } satisfies Record<OAuthProviderName, AuthProvider>
 
 export const isOAuthProvider = (name: string): name is OAuthProviderName =>
@@ -38,20 +39,18 @@ export const OAUTH_PROVIDER_NAME = Object.fromEntries(
 	Object.entries(AUTH_PROVIDER).map(([name, provider]) => [provider, name])
 ) as Record<AuthProvider, OAuthProviderName>
 
-/** "Google", "GitHub", "Яндекс" - for messages shown to users. */
 export const providerLabel = (provider: AuthProvider) =>
 	OAUTH_PROVIDERS[OAUTH_PROVIDER_NAME[provider]].label
 
-/** Russian names for user-facing text (emails, admin bot). */
 export const AUTH_PROVIDER_TITLES: Record<AuthProvider, string> = {
 	[AuthProvider.GOOGLE]: 'Google',
 	[AuthProvider.GITHUB]: 'GitHub',
 	[AuthProvider.DISCORD]: 'Discord',
+	[AuthProvider.TELEGRAM]: 'Telegram',
 	[AuthProvider.YANDEX]: 'Яндекс',
-	[AuthProvider.TELEGRAM]: 'Telegram'
+	[AuthProvider.VK]: 'ВКонтакте'
 }
 
 const CALLBACK_BASE = (env.OAUTH_CALLBACK_URL || `${env.APP_URL}/auth/callback`).replace(/\/+$/, '')
 
-/** The site page a provider returns to - it hands the query to POST /auth/sso/:provider/callback. */
 export const oauthRedirectUri = (name: OAuthProviderName) => `${CALLBACK_BASE}/${name}`

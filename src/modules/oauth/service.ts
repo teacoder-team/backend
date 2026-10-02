@@ -200,8 +200,8 @@ type ResolvedUser =
 	| { outcome: 'email_match'; userId: string }
 	| { outcome: 'signup'; userId: string }
 
-const signUp = async (provider: AuthProvider, profile: OAuthProfile) => {
-	const encrypted = profile.email ? encryptEmail(normalizeEmail(profile.email)) : null
+const signUp = async (provider: AuthProvider, profile: OAuthProfile, email: string | null) => {
+	const encrypted = email ? encryptEmail(normalizeEmail(email)) : null
 
 	const user = await createOAuthUser({
 		provider,
@@ -216,6 +216,20 @@ const signUp = async (provider: AuthProvider, profile: OAuthProfile) => {
 	return user.id
 }
 
+/**
+ * Worth storing so the account can receive mail, but it proves nothing about who owns the address:
+ * it never claims an existing account, and it is dropped when another account already holds it.
+ */
+const storableUnverifiedEmail = async (profile: OAuthProfile) => {
+	if (!profile.unverifiedEmail) {
+		return null
+	}
+
+	const email = normalizeEmail(profile.unverifiedEmail)
+
+	return (await findUserByEmailHash(hashEmail(email))) ? null : email
+}
+
 /** `profile.email` is set only when the provider verified it, so matching by it is safe. */
 const resolveUser = async (
 	provider: AuthProvider,
@@ -227,9 +241,14 @@ const resolveUser = async (
 		return { outcome: 'login', userId: existing.userId }
 	}
 
-	const byEmail = profile.email
-		? await findUserByEmailHash(hashEmail(normalizeEmail(profile.email)))
-		: null
+	if (!profile.email) {
+		return {
+			outcome: 'signup',
+			userId: await signUp(provider, profile, await storableUnverifiedEmail(profile))
+		}
+	}
+
+	const byEmail = await findUserByEmailHash(hashEmail(normalizeEmail(profile.email)))
 
 	/**
 	 * An unconfirmed email registration proves nothing about who owns the address - it may be
@@ -241,7 +260,7 @@ const resolveUser = async (
 		return { outcome: 'email_match', userId: byEmail.id }
 	}
 
-	return { outcome: 'signup', userId: await signUp(provider, profile) }
+	return { outcome: 'signup', userId: await signUp(provider, profile, profile.email) }
 }
 
 const finishSignIn = async (name: OAuthProviderName, state: OAuthState, profile: OAuthProfile) => {
