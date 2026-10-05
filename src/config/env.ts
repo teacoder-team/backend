@@ -143,6 +143,12 @@ const envSchema = t.Object({
 	HELEKET_MERCHANT_ID: t.String(),
 	HELEKET_PAYMENT_API_KEY: t.String(),
 
+	/** The shop's own payform host - international cards are sold through it. */
+	PRODAMUS_FORM_URL: t.String({ format: 'uri' }),
+	PRODAMUS_SECRET_KEY: t.String(),
+	/** Payform test mode: links open, nothing is charged. */
+	PRODAMUS_DEMO_MODE: t.Boolean({ default: false }),
+
 	NPD_INN: t.String(),
 	NPD_PASSWORD: t.String(),
 	NPD_DEVICE_ID: t.String({ default: '' }),

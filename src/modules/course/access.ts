@@ -48,6 +48,28 @@ export const resolveCourseAccess = async (
 export const isLessonOpen = (access: LessonAccess, entitlement: CourseEntitlement) =>
 	access === LessonAccess.FREE || entitlement.hasAccess
 
+export const resolveLessonAccess = async (
+	userId: string | null,
+	course: GatedCourse,
+	access: LessonAccess
+): Promise<CourseEntitlement> => {
+	if (access === LessonAccess.FREE) {
+		return { hasAccess: true, via: 'FREE' }
+	}
+
+	const entitlement = await resolveCourseAccess(userId, course)
+
+	if (entitlement.hasAccess || !userId) {
+		return entitlement
+	}
+
+	if (access === LessonAccess.PREMIUM && (await hasActiveSubscription(userId))) {
+		return { hasAccess: true, via: 'PREMIUM' }
+	}
+
+	return entitlement
+}
+
 export const lockedReason = (course: GatedCourse) =>
 	course.accessMode === CourseAccessMode.PURCHASE
 		? 'This lesson requires buying the course'

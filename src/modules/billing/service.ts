@@ -1,3 +1,5 @@
+import { INTERNATIONAL_PAYMENT_METHODS } from '@teacoder/payments/prodamus'
+
 import type { PaymentIntent } from '@prisma/generated/client'
 import { PaymentMethod, PaymentProvider, Prisma } from '@prisma/generated/client'
 
@@ -9,7 +11,14 @@ import {
 	InternalError,
 	NotFoundError
 } from '~/lib/errors'
-import { cryptoBot, heleket, robokassa, telegramStars, yookassa } from '~/lib/integrations/payments'
+import {
+	cryptoBot,
+	heleket,
+	prodamus,
+	robokassa,
+	telegramStars,
+	yookassa
+} from '~/lib/integrations/payments'
 import { LockTakenError, withLock } from '~/lib/lock'
 import { extendLogContext, logger } from '~/lib/logger'
 import { getUserEmail } from '~/modules/auth/service'
@@ -49,8 +58,8 @@ interface MethodDefinition {
 	providers: PaymentProvider[]
 }
 
-// @ts-ignore
-const METHODS: Record<PaymentMethod, MethodDefinition> = {
+/** Methods left out are not on sale: `resolveProvider` reports them as unavailable. */
+const METHODS: Partial<Record<PaymentMethod, MethodDefinition>> = {
 	[PaymentMethod.BANK_CARD]: {
 		category: 'FIAT',
 		name: 'Банковская карта',
@@ -81,12 +90,12 @@ const METHODS: Record<PaymentMethod, MethodDefinition> = {
 	// 	description: 'Оплата с кошелька ЮMoney',
 	// 	providers: [PaymentProvider.YOOKASSA]
 	// },
-	// [PaymentMethod.INTERNATIONAL_CARD]: {
-	// 	category: 'FIAT',
-	// 	name: 'Международные карты',
-	// 	description: 'Оплата картой зарубежных банков',
-	// 	providers: [PaymentProvider.ROBOKASSA, PaymentProvider.PRODAMUS]
-	// },
+	[PaymentMethod.INTERNATIONAL_CARD]: {
+		category: 'FIAT',
+		name: 'Иностранные карты',
+		description: 'Оплата картой банка за пределами России',
+		providers: [PaymentProvider.PRODAMUS, PaymentProvider.ROBOKASSA]
+	},
 	[PaymentMethod.HELEKET]: {
 		category: 'CRYPTO',
 		name: 'Криптовалюта',
@@ -107,7 +116,7 @@ const METHODS: Record<PaymentMethod, MethodDefinition> = {
 	// }
 }
 
-export const paymentMethodName = (method: PaymentMethod) => METHODS[method].name
+export const paymentMethodName = (method: PaymentMethod) => METHODS[method]?.name ?? method
 
 export const PAYMENT_PROVIDER_NAMES: Record<PaymentProvider, string> = {
 	[PaymentProvider.YOOKASSA]: 'ЮKassa',
@@ -130,34 +139,37 @@ const CATEGORY_NAMES: Record<MethodCategory, string> = {
 const IMPLEMENTED_PROVIDERS = new Set<PaymentProvider>([
 	PaymentProvider.YOOKASSA,
 	PaymentProvider.ROBOKASSA,
+	PaymentProvider.PRODAMUS,
 	PaymentProvider.CRYPTO_BOT,
 	PaymentProvider.HELEKET,
 	PaymentProvider.TELEGRAM
 ])
 
+const definitions = () => Object.entries(METHODS) as [PaymentMethod, MethodDefinition][]
+
 const resolveProvider = (method: PaymentMethod): PaymentProvider | null =>
-	METHODS[method].providers.find((provider) => IMPLEMENTED_PROVIDERS.has(provider)) ?? null
+	METHODS[method]?.providers.find((provider) => IMPLEMENTED_PROVIDERS.has(provider)) ?? null
 
 export const listPaymentMethods = () => ({
 	categories: CATEGORY_ORDER.map((category) => ({
 		id: category,
 		name: CATEGORY_NAMES[category],
-		methods: Object.entries(METHODS)
+		methods: definitions()
 			.filter(([, definition]) => definition.category === category)
 			.map(([id, definition]) => ({
-				id: id as PaymentMethod,
+				id,
 				name: definition.name,
 				description: definition.description,
-				isAvailable: resolveProvider(id as PaymentMethod) !== null
+				isAvailable: resolveProvider(id) !== null
 			}))
 	}))
 })
 
 export const listAvailablePaymentMethods = () =>
-	Object.entries(METHODS)
-		.filter(([id]) => resolveProvider(id as PaymentMethod) !== null)
+	definitions()
+		.filter(([id]) => resolveProvider(id) !== null)
 		.map(([id, definition]) => ({
-			id: id as PaymentMethod,
+			id,
 			name: definition.name,
 			description: definition.description
 		}))
@@ -232,6 +244,20 @@ const startAtProvider = async (payment: PaymentIntent, product: Product, email: 
 			})
 
 			return { url, pspIntentId: String(payment.invoiceNumber), raw: undefined }
+		}
+
+		case PaymentProvider.PRODAMUS: {
+			const url = prodamus.createPaymentUrl({
+				orderId: payment.id,
+				products: [{ name: product.description, price: payment.amount, quantity: 1 }],
+				customerEmail: email ?? undefined,
+				paymentMethods: INTERNATIONAL_PAYMENT_METHODS,
+				successUrl: `${env.APP_URL}/payment/success`,
+				returnUrl: RETURN_URL,
+				callbackUrl: `${env.GATEWAY_URL}/webhook/prodamus`
+			})
+
+			return { url, pspIntentId: null, raw: undefined }
 		}
 
 		case PaymentProvider.CRYPTO_BOT: {

@@ -1,7 +1,7 @@
 import { LessonAccess } from '@prisma/generated/client'
 
 import { ForbiddenError, NotFoundError } from '~/lib/errors'
-import { lockedReason, resolveCourseAccess } from '~/modules/course/access'
+import { resolveLessonAccess } from '~/modules/course/access'
 
 import { findPublishedLessonById } from './repository'
 
@@ -17,9 +17,9 @@ export const getLessonById = async (id: string, userId: string | null) => {
 
 	if (
 		lesson.access === LessonAccess.PREMIUM &&
-		!(await resolveCourseAccess(userId, gated)).hasAccess
+		!(await resolveLessonAccess(userId, gated, lesson.access)).hasAccess
 	) {
-		throw new ForbiddenError(lockedReason(gated))
+		throw new ForbiddenError('This lesson requires TeaCoder Premium or buying the course')
 	}
 
 	return { ...lesson, course }

@@ -4,7 +4,12 @@ import { TAG } from '~/config/openapi'
 import { getForwardedIp } from '~/lib/utils/ip'
 
 import { WebhookAckResponse } from './model'
-import { receiveHeleketWebhook, receiveResendWebhook, receiveYookassaWebhook } from './service'
+import {
+	receiveHeleketWebhook,
+	receiveProdamusWebhook,
+	receiveResendWebhook,
+	receiveYookassaWebhook
+} from './service'
 
 export const webhook = new Elysia({ prefix: '/webhook', tags: [TAG.webhooks] })
 	.model({ WebhookAckResponse })
@@ -39,6 +44,26 @@ export const webhook = new Elysia({ prefix: '/webhook', tags: [TAG.webhooks] })
 				summary: 'Уведомления Heleket',
 				description:
 					'Принимается только с IP-адреса Heleket и с верной подписью. Оплаченный счёт за курс открывает доступ, за подписку - продлевает премиум; неуспешный или отменённый - меняет статус платежа.'
+			}
+		}
+	)
+	.post(
+		'/prodamus',
+		async ({ body, request }) => {
+			await receiveProdamusWebhook(
+				body as Record<string, unknown>,
+				request.headers.get('sign')
+			)
+
+			return { received: true }
+		},
+		{
+			body: t.Any(),
+			response: 'WebhookAckResponse',
+			detail: {
+				summary: 'Уведомления Prodamus',
+				description:
+					'Платёжная форма присылает уведомление на каждое изменение статуса заказа (`multipart/form-data`, подпись в заголовке `Sign`). У Prodamus нет списка IP-адресов, поэтому подпись - единственная проверка: без неё - 401, и такой запрос не сохраняется.\n\nУспешная оплата (`payment_status: success`) открывает курс или продлевает премиум, отмена и отказ банка переводят платёж в `CANCELLED` или `FAILED`.'
 			}
 		}
 	)

@@ -1,5 +1,6 @@
 import { createCryptoBotClient } from '@teacoder/payments/crypto-bot'
 import { createHeleketClient } from '@teacoder/payments/heleket'
+import { createProdamusClient } from '@teacoder/payments/prodamus'
 import { createRobokassaClient } from '@teacoder/payments/robokassa'
 import { createTelegramStarsClient } from '@teacoder/payments/telegram-stars'
 import { createYookassaClient } from '@teacoder/payments/yookassa'
@@ -17,6 +18,12 @@ export const heleket = createHeleketClient({
 	merchantId: env.HELEKET_MERCHANT_ID,
 	apiKey: env.HELEKET_PAYMENT_API_KEY,
 	logger
+})
+
+export const prodamus = createProdamusClient({
+	formUrl: env.PRODAMUS_FORM_URL,
+	secretKey: env.PRODAMUS_SECRET_KEY,
+	demoMode: env.PRODAMUS_DEMO_MODE
 })
 
 export const cryptoBot = createCryptoBotClient({

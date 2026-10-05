@@ -62,7 +62,6 @@ const MAX_CAUSE_DEPTH = 6
 const isRecord = (value: unknown): value is Record<string, unknown> =>
 	typeof value === 'object' && value !== null && !Array.isArray(value)
 
-/** `{ sub: 'string', aud: 'number' }` - types only, values may be tokens or personal data. */
 const shapeOf = (value: unknown) =>
 	isRecord(value)
 		? Object.fromEntries(
@@ -73,11 +72,16 @@ const shapeOf = (value: unknown) =>
 			)
 		: undefined
 
-/**
- * Why an OAuth flow failed, safe to log: every message and code down the cause chain, plus the
- * shape (never the values) of whatever the provider sent - openid-client's own messages alone
- * ("invalid response encountered") don't say which check failed.
- */
+const ERROR_FIELDS = ['error', 'error_description', 'error_uri'] as const
+
+const pickErrorFields = (body: Record<string, unknown>) =>
+	Object.fromEntries(
+		ERROR_FIELDS.filter((field) => typeof body[field] === 'string').map((field) => [
+			field,
+			body[field]
+		])
+	)
+
 export const describeOAuthFailure = (err: unknown) => {
 	const chain: { name: string; message: string; code?: unknown }[] = []
 	let current: unknown = err
@@ -98,6 +102,7 @@ export const describeOAuthFailure = (err: unknown) => {
 				claimTypes: shapeOf(claims),
 				issuer: isRecord(claims) ? claims.iss : undefined,
 				bodyTypes: shapeOf(body),
+				...(isRecord(body) ? pickErrorFields(body) : {}),
 				expected,
 				reason
 			}

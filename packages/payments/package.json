@@ -6,6 +6,7 @@
 	"exports": {
 		"./crypto-bot": "./src/crypto-bot.ts",
 		"./heleket": "./src/heleket.ts",
+		"./prodamus": "./src/prodamus.ts",
 		"./robokassa": "./src/robokassa.ts",
 		"./telegram-stars": "./src/telegram-stars.ts",
 		"./yookassa": "./src/yookassa.ts"

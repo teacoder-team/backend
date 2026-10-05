@@ -3,6 +3,11 @@ import type {
 	WebhookPayload as HeleketPayload,
 	PaymentStatus as HeleketStatus
 } from '@teacoder/payments/heleket'
+import {
+	parseNotification,
+	type Notification as ProdamusNotification,
+	type PaymentStatus as ProdamusStatus
+} from '@teacoder/payments/prodamus'
 import type { Payment as YookassaPayment } from '@teacoder/payments/yookassa'
 
 import { IntentStatus, PaymentProvider, type Prisma } from '@prisma/generated/client'
@@ -15,7 +20,7 @@ import {
 	NotFoundError,
 	UnauthorizedError
 } from '~/lib/errors'
-import { heleket, yookassa } from '~/lib/integrations/payments'
+import { heleket, prodamus, yookassa } from '~/lib/integrations/payments'
 import { resend } from '~/lib/integrations/resend'
 import { extendLogContext, logger } from '~/lib/logger'
 import { normalizeEmail } from '~/lib/utils/email'
@@ -33,6 +38,7 @@ import {
 } from './repository'
 
 const PSP_HELEKET = 'heleket'
+const PSP_PRODAMUS = 'prodamus'
 const PSP_YOOKASSA = 'yookassa'
 
 /** Documented at https://doc.heleket.com/methods/payments/webhook. */
@@ -337,4 +343,72 @@ export const receiveResendWebhook = async (payload: string, headers: Headers) =>
 	await markWebhookProcessed(row.id, null)
 
 	extendLogContext({ event: 'support_email_received', emailId: event.data.email_id })
+}
+
+const PRODAMUS_STATUSES: Record<ProdamusStatus, IntentStatus> = {
+	success: IntentStatus.CAPTURED,
+	pending: IntentStatus.PROCESSING,
+	order_canceled: IntentStatus.CANCELLED,
+	order_denied: IntentStatus.FAILED
+}
+
+export const receiveProdamusWebhook = async (
+	fields: Record<string, unknown>,
+	signature: string | null
+) => {
+	const payload = parseNotification(fields)
+
+	if (!prodamus.verifyWebhookSignature(payload, signature)) {
+		logger.warn({ context: 'webhook', provider: PSP_PRODAMUS }, 'webhook_signature_invalid')
+
+		throw new UnauthorizedError('Invalid Prodamus signature')
+	}
+
+	const notification = payload as unknown as ProdamusNotification
+	const { order_num: paymentId, payment_status: paymentStatus } = notification
+
+	if (!paymentId || !paymentStatus) {
+		throw new BadRequestError('Malformed webhook payload')
+	}
+
+	const pspEventId = `${paymentId}:${paymentStatus}`
+	const existing = await findWebhookEvent(PSP_PRODAMUS, pspEventId)
+
+	if (existing?.processedAt) {
+		extendLogContext({ event: 'webhook_duplicate', provider: PSP_PRODAMUS, pspEventId })
+
+		return
+	}
+
+	const event =
+		existing ??
+		(await createWebhookEvent({
+			pspName: PSP_PRODAMUS,
+			pspEventId,
+			eventType: paymentStatus,
+			signatureOk: true,
+			payload: payload as Prisma.InputJsonValue
+		}))
+
+	extendLogContext({
+		event: 'webhook_received',
+		provider: PSP_PRODAMUS,
+		eventType: paymentStatus
+	})
+
+	const status = PRODAMUS_STATUSES[paymentStatus]
+
+	if (!status) {
+		return markWebhookProcessed(event.id, `status_not_handled:${paymentStatus}`)
+	}
+
+	await settle(event.id, {
+		provider: PaymentProvider.PRODAMUS,
+		paymentId,
+		pspIntentId: notification.order_id,
+		status,
+		amount: notification.sum,
+		currency: (notification.currency ?? 'rub').toUpperCase(),
+		failureCode: status === IntentStatus.CAPTURED ? undefined : paymentStatus
+	})
 }

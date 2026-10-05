@@ -8,7 +8,7 @@ import { orion } from '~/lib/integrations/orion'
 import { logger } from '~/lib/logger'
 import { redis } from '~/lib/redis'
 
-import { isLessonOpen, resolveCourseAccess } from './access'
+import { isLessonOpen, resolveCourseAccess, resolveLessonAccess } from './access'
 import {
 	findCourseAttachment,
 	findPublishedCourseBySlug,
@@ -22,7 +22,6 @@ const VIEW_DEDUP_TTL = 30 * 60
 const DOWNLOAD_LINK_TTL = 5 * 60
 const UPSTREAM_TIMEOUT_MS = 30_000
 
-/** Paid courses carry their price; free ones (no price, or 0) report `null`. */
 const toPrice = (price: Prisma.Decimal | null) => (price?.gt(0) ? price.toNumber() : null)
 
 const viewDedupKey = (courseId: string, ip: string) => `course:view:${courseId}:${ip}`
@@ -81,10 +80,18 @@ export const getCourseLessons = async (slug: string, userId: string | null) => {
 		resolveCourseAccess(userId, course)
 	])
 
-	return lessons.map((lesson) => ({
-		...lesson,
-		isLocked: !isLessonOpen(lesson.access, entitlement)
-	}))
+	return await Promise.all(
+		lessons.map(async (lesson) => {
+			const lessonEntitlement = isLessonOpen(lesson.access, entitlement)
+				? entitlement
+				: await resolveLessonAccess(userId, course, lesson.access)
+
+			return {
+				...lesson,
+				isLocked: !isLessonOpen(lesson.access, lessonEntitlement)
+			}
+		})
+	)
 }
 
 /** A short-lived link, so the storage address of the archive is never handed out. */
