@@ -39,7 +39,6 @@ import {
 	readMfaTicket,
 	setMfaChallenge
 } from './mfa-ticket'
-import { consumePasswordResetToken, issuePasswordResetToken } from './password-reset'
 import type {
 	ForgotPasswordInput,
 	LoginInput,
@@ -49,6 +48,7 @@ import type {
 	ResetPasswordInput,
 	VerifyRegisterInput
 } from './model'
+import { consumePasswordResetToken, issuePasswordResetToken } from './password-reset'
 import {
 	activateUser,
 	consumeVerificationCode,

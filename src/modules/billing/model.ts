@@ -46,7 +46,8 @@ export const CreatePaymentHeaders = t.Object(
 export const CreatePaymentResponse = t.Object(
 	{
 		paymentId: t.String({
-			description: 'Идентификатор платежа в TeaCoder - его стоит указывать в обращениях в поддержку.',
+			description:
+				'Идентификатор платежа в TeaCoder - его стоит указывать в обращениях в поддержку.',
 			examples: ['0f2a1c3e-9b7d-4a51-8c62-1d4e5f6a7b8c']
 		}),
 		status: PrismaEnum(IntentStatus, {
@@ -98,12 +99,11 @@ export const SubscriptionResponse = t.Object(
 			description: 'Действует ли премиум прямо сейчас (с учётом даты окончания).'
 		}),
 		autoRenew: t.Boolean({
-			description: 'Включено ли автопродление. Оплаченный период действует до конца в любом случае.'
+			description:
+				'Включено ли автопродление. Оплаченный период действует до конца в любом случае.'
 		}),
 		startedAt: Timestamp('Когда подписка оформлена. `null`, если подписки не было.'),
-		expiresAt: Timestamp(
-			'До какого момента оплачен премиум. `null` - подписки не было.'
-		),
+		expiresAt: Timestamp('До какого момента оплачен премиум. `null` - подписки не было.'),
 		paymentMethod: t.Nullable(
 			t.Object(
 				{
@@ -112,7 +112,10 @@ export const SubscriptionResponse = t.Object(
 						examples: [PaymentMethod.BANK_CARD]
 					}),
 					title: t.Nullable(
-						t.String({ description: 'Название от ЮKassa.', examples: ['Bank card *4242'] })
+						t.String({
+							description: 'Название от ЮKassa.',
+							examples: ['Bank card *4242']
+						})
 					),
 					last4: t.Nullable(
 						t.String({ description: 'Последние 4 цифры карты.', examples: ['4242'] })

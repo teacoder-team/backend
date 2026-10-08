@@ -249,7 +249,9 @@ export const createProdamusClient = ({
 	/** No API call: the payform takes signed parameters straight from the query string. */
 	const createPaymentUrl = (input: CreatePaymentInput) => {
 		const fields = toFields(input)
-		const params = new URLSearchParams(flatten({ ...fields, signature: sign(fields, secretKey) }))
+		const params = new URLSearchParams(
+			flatten({ ...fields, signature: sign(fields, secretKey) })
+		)
 
 		return `${base}/?${params.toString()}`
 	}

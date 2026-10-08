@@ -1,6 +1,6 @@
+import { logger } from '~/lib/logger'
 import { sendMail } from '~/lib/mail/client'
 import NewDeviceLogin from '~/lib/mail/templates/NewDeviceLogin'
-import { logger } from '~/lib/logger'
 import { emailQueue, maintenanceQueue } from '~/lib/queue/queues'
 import type { JobHandlers } from '~/lib/queue/runner'
 import { formatDateTime } from '~/lib/utils/date'

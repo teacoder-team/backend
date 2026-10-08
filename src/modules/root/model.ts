@@ -80,7 +80,10 @@ const PremiumFeature = t.Object(
 					examples: [499]
 				})
 			},
-			{ description: 'Цены за один период. Какая применится - решает выбранный способ оплаты.' }
+			{
+				description:
+					'Цены за один период. Какая применится - решает выбранный способ оплаты.'
+			}
 		),
 		stars: t.Number({
 			description: 'Цена в звёздах Telegram, если способ `TELEGRAM_STARS` включён.',

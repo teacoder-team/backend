@@ -5,8 +5,7 @@ export interface OAuthProfile {
 	/** Only set when the provider vouches the address is verified - safe to link accounts by. */
 	email: string | null
 	/** An address the provider gave without vouching for it: usable for mail, never for linking. */
-	unverifiedEmail?: string | null
-| null
+	unverifiedEmail?: string | null | null
 	name: string
 	avatarUrl: string | null
 }

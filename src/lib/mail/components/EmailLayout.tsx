@@ -64,9 +64,12 @@ export const EmailLayout = ({ preview, children }: EmailLayoutProps) => (
 
 					<Section>
 						<Text className="text-[12px] leading-relaxed text-gray-400 m-0 mb-4 font-sans tracking-wide">
-							Это письмо отправлено автоматически - отвечать на него не нужно, ответ не
-							дойдёт. Если остались вопросы, напишите в поддержку:{' '}
-							<Link href={`mailto:${SUPPORT_EMAIL}`} className="text-gray-500 underline">
+							Это письмо отправлено автоматически - отвечать на него не нужно, ответ
+							не дойдёт. Если остались вопросы, напишите в поддержку:{' '}
+							<Link
+								href={`mailto:${SUPPORT_EMAIL}`}
+								className="text-gray-500 underline"
+							>
 								{SUPPORT_EMAIL}
 							</Link>
 						</Text>

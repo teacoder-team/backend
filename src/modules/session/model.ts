@@ -9,7 +9,10 @@ export const SessionResponse = t.Object(
 			description: 'Идентификатор сессии.',
 			examples: ['b3f1c2d4-5e6f-4a7b-8c9d-0e1f2a3b4c5d']
 		}),
-		ip: t.String({ description: 'IP-адрес, с которого выполнен вход.', examples: ['104.28.225.185'] }),
+		ip: t.String({
+			description: 'IP-адрес, с которого выполнен вход.',
+			examples: ['104.28.225.185']
+		}),
 		friendlyName: Detected('Браузер и система, если их удалось определить.', [
 			'Chrome on Windows'
 		]),

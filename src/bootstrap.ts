@@ -1,3 +1,5 @@
+import type { Worker } from 'bullmq'
+
 import { warmDisposableEmails } from '~/lib/datasets/disposable-emails'
 import { warmGeoDatabase } from '~/lib/datasets/geo'
 import { connectDatabase, disconnectDatabase } from '~/lib/db'
@@ -7,13 +9,12 @@ import { startWorker } from '~/lib/queue/runner'
 import { connectRedis, disconnectRedis } from '~/lib/redis'
 import { startAdminBot, stopAdminBot } from '~/modules/admin-bot/bot'
 import { notificationJobs } from '~/modules/admin-bot/jobs'
-import { billingJobs, billingMaintenanceJobs, scheduleNightlyBilling } from '~/modules/billing/jobs'
 import { emailJobs } from '~/modules/auth/jobs'
+import { billingJobs, billingMaintenanceJobs, scheduleNightlyBilling } from '~/modules/billing/jobs'
 import { courseEmailJobs } from '~/modules/course/jobs'
 import { oauthEmailJobs } from '~/modules/oauth/jobs'
 import { maintenanceJobs, scheduleMaintenance, sessionEmailJobs } from '~/modules/session/jobs'
 import { subscriptionEmailJobs } from '~/modules/subscription/jobs'
-import type { Worker } from 'bullmq'
 
 let workers: Worker[] = []
 

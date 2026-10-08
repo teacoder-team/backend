@@ -1,7 +1,7 @@
 import { UserRole, UserStatus, VerificationPurpose } from '@prisma/generated/client'
 
-import { toBytes } from '~/lib/utils/bytes'
 import { db } from '~/lib/db'
+import { toBytes } from '~/lib/utils/bytes'
 
 /** Always normalized by the caller - the unique index is case-sensitive. */
 export const findUserByEmail = (email: string) =>
