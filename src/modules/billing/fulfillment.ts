@@ -143,8 +143,8 @@ const readInvoice = (metadata: unknown): SubscriptionInvoice => {
 			typeof months === 'number' && Number.isInteger(months) && months > 0
 				? months
 				: PREMIUM_PLAN.months,
-			renewal: raw.renewal === true,
-			periodEnd: typeof raw.periodEnd === 'string' ? raw.periodEnd : null
+		renewal: raw.renewal === true,
+		periodEnd: typeof raw.periodEnd === 'string' ? raw.periodEnd : null
 	}
 }
 
@@ -184,7 +184,6 @@ const captureSubscription = async (
 	const captured = await captureSubscriptionPayment(intent.id, intent.userId, (current) =>
 		nextTerm(current, invoice.months)
 	)
-
 
 	if (captured.result === 'already_captured') {
 		return { outcome: 'already_captured' }
@@ -275,8 +274,7 @@ const applyToPayment = async (
 		await endDeclinedRenewal(intent)
 	}
 
-	return changed
- ? { outcome: 'status_updated', status: update.status } : { outcome: 'unchanged' }
+	return changed ? { outcome: 'status_updated', status: update.status } : { outcome: 'unchanged' }
 }
 
 export const applyPaymentUpdate = async (

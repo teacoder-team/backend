@@ -22,8 +22,8 @@ export const SubscriptionExpiredEmail = ({
 		</Text>
 
 		<Text className="text-sm leading-relaxed text-gray-400 mb-8 tracking-wide">
-			Курсы, которые Вы купили отдельно, и весь прогресс остаются с Вами. Вернуть премиум можно в
-			любой момент.
+			Курсы, которые Вы купили отдельно, и весь прогресс остаются с Вами. Вернуть премиум
+			можно в любой момент.
 		</Text>
 
 		<Section className="mb-8">

@@ -128,9 +128,7 @@ export const notificationJobs: JobHandlers<NotificationJobs> = {
 		const sameDevice = visitorId ? await findAccountsOnVisitor(visitorId, userId) : []
 
 		await deliver(registrationMessage({ user, email, via, sameDevice }))
-	}
-,
-
+	},
 	notifySupportEmail: async ({ emailId }) => {
 		const email = await fetchSupportEmail(emailId)
 

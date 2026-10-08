@@ -35,5 +35,10 @@ export const nextTerm = (
 		}
 	}
 
-	return { kind: 'started', startedAt: now, expiresAt: addMonths(now, months), previousExpiresAt: null }
+	return {
+		kind: 'started',
+		startedAt: now,
+		expiresAt: addMonths(now, months),
+		previousExpiresAt: null
+	}
 }

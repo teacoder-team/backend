@@ -1,5 +1,6 @@
-import { createTelegramNotifier, parseChatTargets } from '@teacoder/telegram'
 import { Bot } from 'grammy'
+
+import { createTelegramNotifier, parseChatTargets } from '@teacoder/telegram'
 
 import { env } from '~/config/env'
 import { logger } from '~/lib/logger'

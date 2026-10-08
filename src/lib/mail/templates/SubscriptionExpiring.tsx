@@ -27,7 +27,9 @@ export const SubscriptionExpiringEmail = ({
 }: SubscriptionExpiringEmailProps) => (
 	<EmailLayout
 		preview={
-			isAutoBilling ? 'Скоро продление подписки на TeaCoder' : 'Подписка на TeaCoder скоро закончится'
+			isAutoBilling
+				? 'Скоро продление подписки на TeaCoder'
+				: 'Подписка на TeaCoder скоро закончится'
 		}
 	>
 		{isAutoBilling ? (
@@ -49,8 +51,8 @@ export const SubscriptionExpiringEmail = ({
 				</Text>
 
 				<Text className="text-sm leading-relaxed text-gray-400 mb-8 tracking-wide">
-					Попытка списания будет одна: если оплата не пройдёт, подписка закончится. Отключить
-					автопродление можно в настройках аккаунта.
+					Попытка списания будет одна: если оплата не пройдёт, подписка закончится.
+					Отключить автопродление можно в настройках аккаунта.
 				</Text>
 
 				<Section className="mb-8">

@@ -1,7 +1,7 @@
 import type { WebAuthnDeviceType } from '@prisma/generated/client'
 
-import { toBytes } from '~/lib/utils/bytes'
 import { db } from '~/lib/db'
+import { toBytes } from '~/lib/utils/bytes'
 
 export const findRegistrationSubject = (userId: string) =>
 	db.user.findUnique({

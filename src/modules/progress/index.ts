@@ -28,8 +28,7 @@ export const progress = new Elysia({ prefix: '/progress', tags: [TAG.progress] }
 			response: 'CourseProgressResponse',
 			detail: {
 				summary: 'Прогресс по курсу',
-				description:
-					'Сколько уроков курса пройдено текущим пользователем и какие именно.'
+				description: 'Сколько уроков курса пройдено текущим пользователем и какие именно.'
 			}
 		}
 	)

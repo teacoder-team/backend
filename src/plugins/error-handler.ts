@@ -1,7 +1,7 @@
 import { Elysia } from 'elysia'
 
-import { extendLogContext } from '~/lib/logger'
 import { AppError } from '~/lib/errors'
+import { extendLogContext } from '~/lib/logger'
 
 interface ErrorBody {
 	status: number
@@ -69,7 +69,7 @@ export const errorHandler = new Elysia({ name: 'error-handler' })
 
 		extendLogContext({
 			errorMessage: error instanceof Error ? error.message : String(error),
-			errorStack: error instanceof Error ? error.stack : undefined,
+			errorStack: error instanceof Error ? error.stack : undefined
 		})
 
 		set.status = 500

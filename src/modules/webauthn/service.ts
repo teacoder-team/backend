@@ -212,7 +212,10 @@ const readChallenge = (clientDataJSON: string) => {
 	throw new BadRequestError('Malformed WebAuthn response')
 }
 
-export const finishLogin = async ({ response, mfaToken }: WebAuthnLoginInput, origin: RequestOrigin) => {
+export const finishLogin = async (
+	{ response, mfaToken }: WebAuthnLoginInput,
+	origin: RequestOrigin
+) => {
 	const challenge = readChallenge(response.response.clientDataJSON)
 	const parked = await redis.getdel(loginKey(challenge))
 
@@ -253,7 +256,12 @@ export const finishLogin = async ({ response, mfaToken }: WebAuthnLoginInput, or
 		requireUserVerification: !ticket
 	}).catch((err: unknown) => {
 		logger.warn(
-			{ context: 'webauthn', credentialId: stored.id, userId: stored.userId, reason: describe(err) },
+			{
+				context: 'webauthn',
+				credentialId: stored.id,
+				userId: stored.userId,
+				reason: describe(err)
+			},
 			'webauthn_assertion_rejected'
 		)
 

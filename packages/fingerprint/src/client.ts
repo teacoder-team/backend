@@ -67,7 +67,7 @@ interface ErrorBody {
 	error?: { code?: string; message?: string }
 }
 
-const originOf =(url: string | undefined) => {
+const originOf = (url: string | undefined) => {
 	if (!url) {
 		return null
 	}
@@ -107,7 +107,11 @@ export const createFingerprintClient = ({
 
 			const { error } = (err.body ?? {}) as ErrorBody
 
-			throw new FingerprintError(err.status, error?.code ?? 'unknown', error?.message ?? err.message)
+			throw new FingerprintError(
+				err.status,
+				error?.code ?? 'unknown',
+				error?.message ?? err.message
+			)
 		}
 	}
 

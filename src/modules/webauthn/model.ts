@@ -96,7 +96,10 @@ export const WebAuthnRegisterPayload = t.Object(
 
 export const WebAuthnLoginOptionsPayload = t.Object(
 	{ mfaToken: t.Optional(MfaToken) },
-	{ description: 'Без `mfaToken` (или без тела) - вход по ключу доступа; с `mfaToken` - второй фактор.' }
+	{
+		description:
+			'Без `mfaToken` (или без тела) - вход по ключу доступа; с `mfaToken` - второй фактор.'
+	}
 )
 
 export const WebAuthnLoginPayload = t.Object(

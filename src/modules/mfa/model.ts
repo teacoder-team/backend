@@ -22,13 +22,15 @@ export const TotpSetupResponse = t.Object(
 			examples: ['JBSWY3DPEHPK3PXPJBSWY3DPEHPK3PXP']
 		}),
 		otpauthUrl: t.String({
-			description: 'Ссылка `otpauth://` - то же, что в QR-коде. На телефоне открывает приложение-аутентификатор.',
+			description:
+				'Ссылка `otpauth://` - то же, что в QR-коде. На телефоне открывает приложение-аутентификатор.',
 			examples: [
 				'otpauth://totp/TeaCoder:torvalds.l%40teacoder.com?secret=JBSWY3DPEHPK3PXPJBSWY3DPEHPK3PXP&issuer=TeaCoder&algorithm=SHA1&digits=6&period=30'
 			]
 		}),
 		qrCodeUrl: t.String({
-			description: 'QR-код в виде `data:image/png;base64,...` - можно сразу подставить в `<img src>`.',
+			description:
+				'QR-код в виде `data:image/png;base64,...` - можно сразу подставить в `<img src>`.',
 			examples: ['data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA...']
 		})
 	},
@@ -78,7 +80,10 @@ export const RecoveryCodesResponse = t.Object(
 
 export const RecoveryCodesStatusResponse = t.Object(
 	{
-		total: t.Number({ description: 'Сколько кодов выпущено в текущем наборе.', examples: [10] }),
+		total: t.Number({
+			description: 'Сколько кодов выпущено в текущем наборе.',
+			examples: [10]
+		}),
 		remaining: t.Number({ description: 'Сколько из них ещё не использовано.', examples: [8] }),
 		generatedAt: t.Nullable(
 			t.String({
@@ -97,7 +102,8 @@ export const MfaStatusResponse = t.Object(
 				'Включена ли двухфакторная защита: подключено приложение-аутентификатор или добавлен хотя бы один ключ. Если да, вход по паролю или через соцсеть требует второй фактор.'
 		}),
 		methods: t.Array(MfaMethodSchema, {
-			description: 'Способы, которыми сейчас можно подтвердить вход - как `mfaMethods` в ответе на вход.',
+			description:
+				'Способы, которыми сейчас можно подтвердить вход - как `mfaMethods` в ответе на вход.',
 			examples: [['WEBAUTHN', 'TOTP', 'RECOVERY_CODE']]
 		}),
 		totp: t.Object(
@@ -115,7 +121,8 @@ export const MfaStatusResponse = t.Object(
 		webauthn: t.Object(
 			{
 				credentials: t.Number({
-					description: 'Сколько ключей добавлено. Список - `GET /auth/webauthn/credentials`.',
+					description:
+						'Сколько ключей добавлено. Список - `GET /auth/webauthn/credentials`.',
 					examples: [2]
 				})
 			},

@@ -1,5 +1,6 @@
-import { logger } from '~/lib/logger'
 import { type Job, Worker } from 'bullmq'
+
+import { logger } from '~/lib/logger'
 
 import { queueConnection } from './connection'
 import type { QueueName } from './queues'

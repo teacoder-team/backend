@@ -65,7 +65,9 @@ const decodeQ = (data: string) =>
 	Buffer.from(
 		data
 			.replace(/_/g, ' ')
-			.replace(/=([\da-f]{2})/gi, (_, hex: string) => String.fromCharCode(Number.parseInt(hex, 16))),
+			.replace(/=([\da-f]{2})/gi, (_, hex: string) =>
+				String.fromCharCode(Number.parseInt(hex, 16))
+			),
 		'latin1'
 	)
 
