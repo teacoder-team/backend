@@ -72,12 +72,10 @@ export const findReusableCheckout = async ({ userId, method, courseId }: Checkou
 		return sameMethod
 	}
 
-	const other = live[0]
+	const otherMethods = live.map((intent) => intent.id)
 
-	if (other) {
-		throw new ConflictError(
-			`An unpaid ${other.method} invoice for this ${productName(courseId)} is open until ${expiresAt(other).toISOString()} - pay it or retry after that`
-		)
+	if (otherMethods.length) {
+		await expireCheckouts(otherMethods)
 	}
 
 	return null
