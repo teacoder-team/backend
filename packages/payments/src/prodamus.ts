@@ -2,18 +2,26 @@ import { createHmac, timingSafeEqual } from 'node:crypto'
 
 export type Currency = 'rub' | 'usd' | 'eur' | 'kzt'
 
-/**
- * Acquiring codes for cards issued outside Russia, agreed with Prodamus support per shop.
- * `ACkztjp` is the worldwide one; the rest narrow it to a region or a currency.
- */
+/** Prodamus group for every enabled non-Russian payment method on the payform. */
+export const WORLD_PAYMENT_METHOD_GROUPS = ['world_payments'] as const
+
 export const INTERNATIONAL_PAYMENT_METHODS = [
-	'ACkztjp',
+	'ACkz',
 	'ACf',
 	'ACUSDGTL',
 	'ACEURGTL',
 	'ACBYNGTL',
 	'ACUSDKB',
-	'ACEURKB'
+	'ACEURKB',
+	'monetaworld',
+	'yottapay'
+] as const
+
+export const YANDEX_SPLIT_PAYMENT_METHODS = [
+	'yandex_installment_0_0_2',
+	'yandex_installment_0_0_4',
+	'yandex_installment_0_0_6',
+	'yandex_installment_0_0_12'
 ] as const
 
 export interface ProdamusClientOptions {
@@ -42,8 +50,10 @@ export interface CreatePaymentInput {
 	customerPhone?: string
 	/** Shown to the payer above the products. */
 	customerExtra?: string
-	/** Acquiring codes the payer may choose from - see INTERNATIONAL_PAYMENT_METHODS. */
+	/** Acquiring codes the payer may choose from - see Prodamus payment method codes. */
 	paymentMethods?: readonly string[]
+	/** Prodamus payment method groups, e.g. `world_payments`. */
+	paymentMethodGroups?: readonly string[]
 	/** Where the payform sends the payer after a successful payment. */
 	successUrl?: string
 	/** Where the payform sends a payer who left without paying. */
@@ -207,6 +217,9 @@ export const createProdamusClient = ({
 		...(input.customerExtra ? { customer_extra: input.customerExtra } : {}),
 		...(input.paymentMethods?.length
 			? { available_payment_methods: input.paymentMethods.join('|') }
+			: {}),
+		...(input.paymentMethodGroups?.length
+			? { available_payment_method_groups: input.paymentMethodGroups.join('|') }
 			: {}),
 		...(input.successUrl ? { urlSuccess: input.successUrl } : {}),
 		...(input.returnUrl ? { urlReturn: input.returnUrl } : {}),

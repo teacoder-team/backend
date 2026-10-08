@@ -137,6 +137,7 @@ enum PaymentMethod {
     CRYPTO_BOT         @map("crypto_bot")
     HELEKET            @map("heleket")
     INTERNATIONAL_CARD @map("international_card")
+    YANDEX_SPLIT       @map("yandex_split")
     TELEGRAM_STARS     @map("telegram_stars")
 
     @@map("payment_methods")

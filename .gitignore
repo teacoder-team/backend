@@ -43,3 +43,7 @@ pino-*.log
 prisma/generated/
 
 resources/geo/*.mmdb
+
+# Snapshot of premium subscribers - personal data, generated on demand
+premium-subscribers.json
+premium-subscribers.ts

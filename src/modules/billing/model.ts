@@ -61,7 +61,11 @@ export const CreatePaymentResponse = t.Object(
 			description: 'Выбранный способ оплаты.',
 			examples: [PaymentMethod.BANK_CARD]
 		}),
-		amount: t.Number({ description: 'Сумма к оплате.', examples: [449] }),
+		amount: t.Number({
+			description:
+				'Сумма к оплате. У премиум-подписки зависит от способа: картой зарубежного банка дороже - актуальные цены отдаёт `GET /` в `features.premium.prices`.',
+			examples: [449]
+		}),
 		currency: t.String({ description: 'Валюта суммы.', examples: ['RUB'] }),
 		description: t.String({
 			description: 'Назначение платежа, как его видит плательщик.',

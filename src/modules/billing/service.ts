@@ -1,4 +1,7 @@
-import { INTERNATIONAL_PAYMENT_METHODS } from '@teacoder/payments/prodamus'
+import {
+	WORLD_PAYMENT_METHOD_GROUPS,
+	YANDEX_SPLIT_PAYMENT_METHODS
+} from '@teacoder/payments/prodamus'
 
 import type { PaymentIntent } from '@prisma/generated/client'
 import { PaymentMethod, PaymentProvider, Prisma } from '@prisma/generated/client'
@@ -23,7 +26,7 @@ import { LockTakenError, withLock } from '~/lib/lock'
 import { extendLogContext, logger } from '~/lib/logger'
 import { getUserEmail } from '~/modules/auth/service'
 import { findCoursePurchase, findPurchasableCourse } from '~/modules/course/repository'
-import { PREMIUM_PLAN } from '~/modules/subscription/plan'
+import { PREMIUM_PLAN, premiumAmount } from '~/modules/subscription/plan'
 import {
 	cancelSubscription as cancelSubscriptionRow,
 	findSubscription,
@@ -93,8 +96,14 @@ const METHODS: Partial<Record<PaymentMethod, MethodDefinition>> = {
 	[PaymentMethod.INTERNATIONAL_CARD]: {
 		category: 'FIAT',
 		name: 'Иностранные карты',
-		description: 'Оплата картой банка за пределами России',
+		description: 'Оплата картами банков мира и другими международными способами',
 		providers: [PaymentProvider.PRODAMUS, PaymentProvider.ROBOKASSA]
+	},
+	[PaymentMethod.YANDEX_SPLIT]: {
+		category: 'FIAT',
+		name: 'Яндекс Сплит',
+		description: 'Оплата частями через Яндекс Сплит',
+		providers: [PaymentProvider.PRODAMUS]
 	},
 	[PaymentMethod.HELEKET]: {
 		category: 'CRYPTO',
@@ -184,11 +193,15 @@ interface Product {
 	stars?: number
 }
 
-const resolveProduct = async (courseId: string | undefined): Promise<Product> => {
+/** The premium price depends on the method - only courses are priced in the database. */
+const resolveProduct = async (
+	courseId: string | undefined,
+	method: PaymentMethod
+): Promise<Product> => {
 	if (!courseId) {
 		return {
 			kind: 'subscription',
-			amount: PREMIUM_PLAN.amount,
+			amount: premiumAmount(method),
 			description: PREMIUM_PLAN.description,
 			months: PREMIUM_PLAN.months,
 			stars: PREMIUM_PLAN.stars
@@ -251,7 +264,14 @@ const startAtProvider = async (payment: PaymentIntent, product: Product, email: 
 				orderId: payment.id,
 				products: [{ name: product.description, price: payment.amount, quantity: 1 }],
 				customerEmail: email ?? undefined,
-				paymentMethods: INTERNATIONAL_PAYMENT_METHODS,
+				paymentMethods:
+					payment.method === PaymentMethod.YANDEX_SPLIT
+						? YANDEX_SPLIT_PAYMENT_METHODS
+						: undefined,
+				paymentMethodGroups:
+					payment.method === PaymentMethod.INTERNATIONAL_CARD
+						? WORLD_PAYMENT_METHOD_GROUPS
+						: undefined,
 				successUrl: `${env.APP_URL}/payment/success`,
 				returnUrl: RETURN_URL,
 				callbackUrl: `${env.GATEWAY_URL}/webhook/prodamus`
@@ -443,7 +463,7 @@ const checkout = async (request: CheckoutRequest, fallbackEmail: string | undefi
 		throw new BadRequestError(`Payment method ${request.method} is not available yet`)
 	}
 
-	const product = await resolveProduct(request.courseId ?? undefined)
+	const product = await resolveProduct(request.courseId ?? undefined, request.method)
 
 	if (product.courseId && (await findCoursePurchase(request.userId, product.courseId))) {
 		throw new ConflictError('Course already purchased')

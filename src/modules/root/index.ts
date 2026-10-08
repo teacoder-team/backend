@@ -7,6 +7,7 @@ import { captcha } from '~/lib/integrations/captcha'
 import { pingDatabase } from '~/lib/db'
 import { pingRedis } from '~/lib/redis'
 import { listAvailablePaymentMethods } from '~/modules/billing/service'
+import { PREMIUM_INTERNATIONAL_AMOUNT, PREMIUM_PLAN } from '~/modules/subscription/plan'
 import { requestContext } from '~/plugins/request-context'
 
 import { HealthResponse, RootResponse } from './model'
@@ -30,6 +31,15 @@ export const root = new Elysia({ tags: [TAG.core] })
 						providers: signInProviders(country)
 					},
 					payments: listAvailablePaymentMethods(),
+					premium: {
+						months: PREMIUM_PLAN.months,
+						currency: 'RUB',
+						prices: {
+							standard: PREMIUM_PLAN.amount,
+							international: PREMIUM_INTERNATIONAL_AMOUNT
+						},
+						stars: PREMIUM_PLAN.stars
+					},
 					captcha: {
 						provider: env.CAPTCHA_PROVIDER,
 						key: captcha?.siteKey || null
@@ -45,7 +55,7 @@ export const root = new Elysia({ tags: [TAG.core] })
 			detail: {
 				summary: 'Конфигурация клиента',
 				description:
-					'Точка входа API. Отдаёт всё, что нужно клиенту при запуске: доступные способы входа и оплаты, активную капчу с публичным ключом виджета, адреса сайта и файлового хранилища.'
+					'Точка входа API. Отдаёт всё, что нужно клиенту при запуске: доступные способы входа и оплаты, цены премиум-подписки, активную капчу с публичным ключом виджета, адреса сайта и файлового хранилища.'
 			}
 		}
 	)

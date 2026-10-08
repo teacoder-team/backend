@@ -61,12 +61,42 @@ const OrionFeature = t.Object(
 	{ description: 'Файловое хранилище (аватары, обложки, вложения).' }
 )
 
+const PremiumFeature = t.Object(
+	{
+		months: t.Number({
+			description: 'Длительность одного периода подписки в месяцах.',
+			examples: [1]
+		}),
+		currency: t.String({ description: 'Валюта цен.', examples: ['RUB'] }),
+		prices: t.Object(
+			{
+				standard: t.Number({
+					description: 'Цена для российских способов оплаты и криптовалюты.',
+					examples: [449]
+				}),
+				international: t.Number({
+					description:
+						'Цена при оплате картой зарубежного банка (`INTERNATIONAL_CARD`) - зарубежный эквайринг берёт больше.',
+					examples: [499]
+				})
+			},
+			{ description: 'Цены за один период. Какая применится - решает выбранный способ оплаты.' }
+		),
+		stars: t.Number({
+			description: 'Цена в звёздах Telegram, если способ `TELEGRAM_STARS` включён.',
+			examples: [150]
+		})
+	},
+	{ description: 'Премиум-подписка: период и цены.' }
+)
+
 const Features = t.Object(
 	{
 		auth: AuthFeature,
 		payments: t.Array(PaymentMethodSummary, {
 			description: 'Способы оплаты, которые работают прямо сейчас.'
 		}),
+		premium: PremiumFeature,
 		captcha: CaptchaFeature,
 		orion: OrionFeature
 	},

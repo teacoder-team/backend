@@ -37,7 +37,7 @@ const GIVE_UP_AFTER_MS = 3 * DAY_MS
 /** The reminder goes out three nights before the charge. */
 const REMINDER_AHEAD_MS = 3 * DAY_MS
 
-const RENEWAL_DESCRIPTION = 'Автопродление премиум-подписки TeaCoder на 1 месяц'
+const RENEWAL_DESCRIPTION = 'Автопродление «TeaCoder Premium» на 1 месяц'
 const CURRENCY = 'RUB'
 
 const YOOKASSA_STATUSES: Record<YookassaPayment['status'], IntentStatus> = {
@@ -126,7 +126,12 @@ export const planNightlyBilling = async () => {
 	}
 
 	logger.info(
-		{ context: 'billing', closed, renewals: due.length, reminders: ending.length },
+		{
+			context: 'billing',
+			closed,
+			renewals: due.length,
+			reminders: ending.length
+		},
 		'nightly_billing_planned'
 	)
 }
