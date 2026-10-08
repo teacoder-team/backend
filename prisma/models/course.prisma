@@ -1,0 +1,101 @@
+model Course {
+    id String @id @default(uuid())
+
+    title String
+    slug  String @unique(map: "uq_courses_slug")
+
+    shortDescription String? @map("short_description")
+    fullDescription  String? @map("full_description")
+
+    thumbnail String?
+
+    youtubeUrl String? @map("youtube_url")
+    /// Source code archive in Orion (`attachments` tag) - handed out only through download links.
+    attachment String?
+
+    isPublished Boolean @default(false) @map("is_published")
+
+    /// Who opens premium lessons and materials. Purchase always works; see CourseAccessMode.
+    accessMode CourseAccessMode @default(PREMIUM) @map("access_mode")
+
+    price Decimal? @db.Decimal(10, 2)
+
+    views Int @default(0)
+
+    lessons      Lesson[]
+    purchases    CoursePurchase[]
+    downloadLogs DownloadLog[]
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@index([isPublished, createdAt(sort: Desc)], map: "ix_courses_is_published_created_at")
+    @@map("courses")
+}
+
+model CoursePurchase {
+    id String @id @default(uuid())
+
+    pricePaid Decimal @map("price_paid") @db.Decimal(10, 2)
+    currency  String
+
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId String @map("user_id")
+
+    course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+    courseId String @map("course_id")
+
+    payment   PaymentIntent? @relation(fields: [paymentId], references: [id])
+    paymentId String?        @unique(map: "uq_course_purchases_payment_id") @map("payment_id")
+
+    createdAt DateTime @default(now()) @map("created_at")
+
+    @@unique([userId, courseId], map: "uq_course_purchases_user_id_course_id")
+    @@index([courseId], map: "ix_course_purchases_course_id")
+    @@map("course_purchases")
+}
+
+model Lesson {
+    id String @id @default(uuid())
+
+    title String
+    slug  String @unique(map: "uq_lessons_slug")
+
+    description String?
+    position    Int
+
+    kinescopeId String? @map("kinescope_id")
+
+    access LessonAccess @default(FREE)
+
+    isPublished Boolean @default(false) @map("is_published")
+
+    userProgress UserProgress[]
+
+    course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+    courseId String @map("course_id")
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@index([courseId, isPublished, position], map: "ix_lessons_course_id_is_published_position")
+    @@index([courseId, access], map: "ix_lessons_course_id_access")
+    @@map("lessons")
+}
+
+enum LessonAccess {
+    FREE    @map("free")
+    PREMIUM @map("premium")
+
+    @@map("lesson_access")
+}
+
+/// FREE - open to everyone, never sold. PREMIUM - premium subscription or a purchase. PURCHASE - a purchase only.
+/// Checked in SQL: FREE has no price, PURCHASE has one.
+enum CourseAccessMode {
+    FREE     @map("free")
+    PREMIUM  @map("premium")
+    PURCHASE @map("purchase")
+
+    @@map("course_access_modes")
+}

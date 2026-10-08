@@ -1,47 +1,49 @@
-# compiled output
-/dist
-/node_modules
-
-# Logs
-logs
+.DS_Store
+Thumbs.db
 *.log
-npm-debug.log*
-pnpm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-lerna-debug.log*
+*.tmp
+*.bak
 
-# Yarn
-.yarn/*
-!.yarn/releases
-!.yarn/plugins
-!.yarn/sdks
-!.yarn/versions
+node_modules/
+.npm
+.pnpm-store
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
 .pnp.*
 
-# OS
-.DS_Store
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
-# Tests
-/coverage
-/.nyc_output
+dist/
+out/
+build/
+.tsdown/
+*.tsbuildinfo
 
-# IDEs and editors
-/.idea
-.project
-.classpath
-.c9/
-*.launch
-.settings/
-*.sublime-workspace
+coverage/
+.nyc_output
+.gest/
 
-# IDE - VSCode
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
+.docker/
+docker-compose.override.yml
+*.rendered
 
-# dotenv environment variable files
-.env*
-!.env.example
+logs/
+*.log.json
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pino-*.log
+
+prisma/generated/
+
+resources/geo/*.mmdb
+
+# Snapshot of premium subscribers - personal data, generated on demand
+premium-subscribers.json
+premium-subscribers.ts

@@ -1,0 +1,69 @@
+model TotpAuthenticator {
+    id String @id @default(uuid())
+
+    secretCipher Bytes @map("secret_cipher")
+
+    confirmedAt DateTime? @map("confirmed_at")
+
+    /// Time step of the last accepted code - a code is only valid once, even within its window.
+    lastUsedStep BigInt?   @map("last_used_step")
+    lastUsedAt   DateTime? @map("last_used_at")
+
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId String @unique(map: "uq_totp_authenticators_user_id") @map("user_id")
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@map("totp_authenticators")
+}
+
+model RecoveryCode {
+    id String @id @default(uuid())
+
+    codeHash Bytes     @map("code_hash")
+    usedAt   DateTime? @map("used_at")
+
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId String @map("user_id")
+
+    createdAt DateTime @default(now()) @map("created_at")
+
+    @@unique([userId, codeHash], map: "uq_recovery_codes_user_id_code_hash")
+    @@map("recovery_codes")
+}
+
+model WebAuthnCredential {
+    id String @id @default(uuid())
+
+    credentialId Bytes    @map("credential_id")
+    publicKey    Bytes    @map("public_key")
+    signCount    BigInt   @default(0) @map("sign_count")
+    transports   String[]
+
+    aaguid     String?
+    deviceType WebAuthnDeviceType @map("device_type")
+    backedUp   Boolean            @map("backed_up")
+
+    name       String
+    lastUsedAt DateTime? @map("last_used_at")
+
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId String @map("user_id")
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@unique([credentialId], map: "uq_webauthn_credentials_credential_id")
+    @@index([userId], map: "ix_webauthn_credentials_user_id")
+    @@map("webauthn_credentials")
+}
+
+enum WebAuthnDeviceType {
+    /// Bound to one device - a hardware key or a non-synced platform authenticator.
+    SINGLE_DEVICE @map("single_device")
+    /// Synced across the user's devices (iCloud Keychain, Google Password Manager).
+    MULTI_DEVICE  @map("multi_device")
+
+    @@map("webauthn_device_types")
+}

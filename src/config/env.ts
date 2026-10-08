@@ -1,0 +1,196 @@
+import { FormatRegistry, type Static, Type as t } from '@sinclair/typebox'
+import { Value } from '@sinclair/typebox/value'
+
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+if (!FormatRegistry.Has('email')) {
+	FormatRegistry.Set('email', (value) => EMAIL_PATTERN.test(value))
+}
+
+if (!FormatRegistry.Has('uri')) {
+	FormatRegistry.Set('uri', (value) => URL.canParse(value))
+}
+
+const envSchema = t.Object({
+	NODE_ENV: t.Union([t.Literal('development'), t.Literal('production'), t.Literal('test')], {
+		default: 'development'
+	}),
+
+	APP_ADDRESS: t.String({ default: '0.0.0.0' }),
+	APP_PORT: t.Number({ default: 3000 }),
+
+	GATEWAY_URL: t.String({ format: 'uri' }),
+	APP_URL: t.String({ format: 'uri' }),
+
+	LOG_LEVEL: t.Union(
+		[
+			t.Literal('trace'),
+			t.Literal('debug'),
+			t.Literal('info'),
+			t.Literal('warn'),
+			t.Literal('error'),
+			t.Literal('fatal')
+		],
+		{ default: 'info' }
+	),
+	LOG_SAMPLE_RATE: t.Number({ default: 1, minimum: 0, maximum: 1 }),
+	LOG_SLOW_REQUEST_MS: t.Number({ default: 1000 }),
+
+	RESOURCES_DIR: t.String({ default: './resources' }),
+
+	JWT_SECRET: t.String({ minLength: 32 }),
+	ACCESS_TOKEN_TTL: t.Number({ default: 15 * 60 }),
+
+	VERIFICATION_CODE_HASH_KEY: t.String(),
+	MFA_ENCRYPTION_KEY: t.String(),
+
+	COOKIE_DOMAIN: t.String({ default: 'localhost' }),
+	COOKIE_SECURE: t.Boolean({ default: false }),
+	COOKIE_SAMESITE: t.Union([t.Literal('lax'), t.Literal('strict'), t.Literal('none')], {
+		default: 'lax'
+	}),
+	SESSION_TTL: t.Number({ default: 60 * 60 * 24 * 30 }),
+	SESSION_CACHE_TTL: t.Number({ default: 15 * 60 }),
+
+	/**
+	 * Comma-separated site origins that may call the API from a browser, cookies included.
+	 * `https://*.teacoder.ru` matches any subdomain (not the apex). Empty = the APP_URL origin.
+	 */
+	CORS_ORIGIN: t.String({ default: '' }),
+	/** Seconds a browser may reuse a preflight answer. Chrome caps it at 7200. */
+	CORS_MAX_AGE: t.Number({ default: 7200, minimum: 0 }),
+
+	DATABASE_URL: t.String(),
+	REDIS_URL: t.String(),
+
+	RESEND_BASE_URL: t.Union([t.Literal(''), t.String({ format: 'uri' })], { default: '' }),
+	RESEND_API_KEY: t.String({ minLength: 1 }),
+	RESEND_WEBHOOK_SECRET: t.String({ default: '' }),
+
+	MAIL_FROM_HELLO: t.String({
+		format: 'email',
+		default: 'hello@teacoder.ru'
+	}),
+	MAIL_FROM_NOREPLY: t.String({
+		format: 'email',
+		default: 'no-reply@teacoder.ru'
+	}),
+	SUPPORT_EMAIL: t.String({
+		format: 'email',
+		default: 'support@teacoder.ru'
+	}),
+
+	ORION_API_URL: t.String({ format: 'uri' }),
+	ORION_MASTER_KEY: t.String(),
+
+	YOOKASSA_SHOP_ID: t.String(),
+	YOOKASSA_SECRET_KEY: t.String(),
+
+	CRYPTO_BOT_TOKEN: t.String(),
+	CRYPTO_BOT_TESTNET: t.Boolean({ default: false }),
+
+	/** Public bot - what users talk to; takes Telegram Stars payments. */
+	TELEGRAM_PUBLIC_BOT_TOKEN: t.String(),
+	TELEGRAM_PUBLIC_BOT_WEBHOOK_SECRET: t.String({ minLength: 16 }),
+
+	/** Staff-only bot for notifications. Empty disables it. */
+	TELEGRAM_ADMIN_BOT_TOKEN: t.String({ default: '' }),
+	TELEGRAM_ADMIN_CHAT_IDS: t.String({
+		default: '',
+		pattern: '^\\s*$|^\\s*-?\\d+(:\\d+)?(\\s*,\\s*-?\\d+(:\\d+)?)*\\s*$'
+	}),
+
+	OAUTH_STATE_TTL: t.Number({ default: 10 * 60 }),
+	/** Site page providers send users back to, `/<provider>` appended. Empty = APP_URL/auth/callback. */
+	OAUTH_CALLBACK_URL: t.String({ default: '' }),
+
+	GOOGLE_CLIENT_ID: t.String(),
+	GOOGLE_CLIENT_SECRET: t.String(),
+
+	GITHUB_CLIENT_ID: t.String(),
+	GITHUB_CLIENT_SECRET: t.String(),
+
+	DISCORD_CLIENT_ID: t.String(),
+	DISCORD_CLIENT_SECRET: t.String(),
+
+	YANDEX_CLIENT_ID: t.String(),
+	YANDEX_CLIENT_SECRET: t.String(),
+
+	TELEGRAM_CLIENT_ID: t.String(),
+	TELEGRAM_CLIENT_SECRET: t.String(),
+
+	/** VK ID needs no secret: the flow is a public client with PKCE. */
+	VK_CLIENT_ID: t.String(),
+
+	ROBOKASSA_MERCHANT_LOGIN: t.String(),
+	ROBOKASSA_PASSWORD_1: t.String(),
+	ROBOKASSA_PASSWORD_2: t.String(),
+	ROBOKASSA_TEST_PASSWORD_1: t.String({ default: '' }),
+	ROBOKASSA_TEST_PASSWORD_2: t.String({ default: '' }),
+	ROBOKASSA_TEST_MODE: t.Boolean({ default: false }),
+	ROBOKASSA_HASH_ALGORITHM: t.Union(
+		[
+			t.Literal('md5'),
+			t.Literal('ripemd160'),
+			t.Literal('sha1'),
+			t.Literal('sha256'),
+			t.Literal('sha384'),
+			t.Literal('sha512')
+		],
+		{ default: 'md5' }
+	),
+
+	HELEKET_MERCHANT_ID: t.String(),
+	HELEKET_PAYMENT_API_KEY: t.String(),
+
+	/** The shop's own payform host - international cards are sold through it. */
+	PRODAMUS_FORM_URL: t.String({ format: 'uri' }),
+	PRODAMUS_SECRET_KEY: t.String(),
+	/** Payform test mode: links open, nothing is charged. */
+	PRODAMUS_DEMO_MODE: t.Boolean({ default: false }),
+
+	NPD_INN: t.String(),
+	NPD_PASSWORD: t.String(),
+	NPD_DEVICE_ID: t.String({ default: '' }),
+
+	/** 'none' skips verification entirely - handy for local dev without real captcha keys. */
+	CAPTCHA_PROVIDER: t.Union([t.Literal('turnstile'), t.Literal('yandex'), t.Literal('none')], {
+		default: 'none'
+	}),
+	TURNSTILE_SECRET_KEY: t.String({ default: '' }),
+	YANDEX_CAPTCHA_SECRET_KEY: t.String({ default: '' }),
+	TURNSTILE_SITE_KEY: t.String({ default: '' }),
+	YANDEX_CAPTCHA_CLIENT_KEY: t.String({ default: '' }),
+
+	FINGERPRINT_SECRET_KEY: t.String({ default: '' }),
+	FINGERPRINT_REGION: t.Union([t.Literal('global'), t.Literal('eu'), t.Literal('ap')], {
+		default: 'global'
+	}),
+
+	/** Domain passkeys are bound to. Empty = the APP_URL hostname. Changing it orphans every passkey. */
+	WEBAUTHN_RP_ID: t.String({ default: '' }),
+	/** Comma-separated origins allowed to use passkeys. Empty = the APP_URL origin. */
+	WEBAUTHN_ORIGINS: t.String({ default: '' })
+})
+
+export type Env = Static<typeof envSchema>
+
+const parsed = Value.Convert(
+	envSchema,
+	Value.Default(envSchema, Value.Clean(envSchema, { ...Bun.env }))
+)
+
+if (!Value.Check(envSchema, parsed)) {
+	console.error('Invalid environment variables:')
+
+	for (const error of Value.Errors(envSchema, parsed)) {
+		console.error(`  - ${error.path.slice(1)}: ${error.message}`)
+	}
+
+	process.exit(1)
+}
+
+export const env = parsed
+
+export const isProduction = env.NODE_ENV === 'production'
+export const isDevelopment = env.NODE_ENV === 'development'

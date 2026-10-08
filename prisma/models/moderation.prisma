@@ -1,0 +1,32 @@
+model Restriction {
+    id String @id @default(uuid())
+
+    reason RestrictionReason
+    until  DateTime?
+
+    status RestrictionStatus @default(ACTIVE)
+
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId String @map("user_id")
+
+    createdAt DateTime @default(now()) @map("created_at")
+
+    @@index([userId, status], map: "ix_restrictions_user_id_status")
+    @@map("restrictions")
+}
+
+enum RestrictionReason {
+    INAPPROPRIATE_USERNAME @map("inappropriate_username")
+    SPAM                   @map("spam")
+    OFFENSIVE_BEHAVIOR     @map("offensive_behavior")
+
+    @@map("restriction_reasons")
+}
+
+enum RestrictionStatus {
+    ACTIVE   @map("active")
+    EXPIRED  @map("expired")
+    CANCELED @map("canceled")
+
+    @@map("restriction_statuses")
+}

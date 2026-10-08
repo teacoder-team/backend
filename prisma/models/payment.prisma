@@ -1,0 +1,144 @@
+model PaymentIntent {
+    id String @id @default(uuid())
+
+    amount   Float
+    currency String
+
+    status IntentStatus  @default(REQUIRES_PAYMENT)
+    method PaymentMethod
+
+    provider    PaymentProvider
+    pspIntentId String?         @map("psp_intent_id")
+    pspPayload  Json            @default("{}") @map("psp_payload")
+    failureCode String?         @map("failure_code")
+
+    idempotencyKey String? @map("idempotency_key")
+
+    invoiceNumber Int @unique(map: "uq_payment_intents_invoice_number") @default(autoincrement()) @map("invoice_number")
+
+    courseId String? @map("course_id")
+
+    metadata Json?
+
+    receipts       Receipt[]
+    coursePurchase CoursePurchase?
+
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId String @map("user_id")
+
+    paymentMethod   UserPaymentMethod? @relation(fields: [paymentMethodId], references: [id])
+    paymentMethodId String?            @map("payment_method_id")
+
+    subscription   Subscription? @relation(fields: [subscriptionId], references: [id])
+    subscriptionId String?       @map("subscription_id")
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@unique([userId, idempotencyKey], map: "uq_payment_intents_user_id_idempotency_key")
+    @@index([status, createdAt(sort: Desc)], map: "ix_payment_intents_status_created_at")
+    @@index([subscriptionId], map: "ix_payment_intents_subscription_id")
+    @@index([provider, pspIntentId], map: "ix_payment_intents_provider_psp_intent_id")
+    @@index([courseId, createdAt(sort: Desc)], map: "ix_payment_intents_course_id_created_at")
+    @@index([userId, courseId, status], map: "ix_payment_intents_user_id_course_id_status")
+    @@map("payment_intents")
+}
+
+model Receipt {
+    id String @id @default(uuid())
+
+    status ReceiptStatus @default(PENDING)
+
+    amount Decimal
+    items  Json
+    raw    Json?
+
+    fiscalProviderId String? @map("fiscal_provider_id")
+    errorMessage     String? @map("error_message")
+
+    payment   PaymentIntent @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+    paymentId String        @map("payment_id")
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@index([paymentId], map: "ix_receipts_payment_id")
+    @@map("receipts")
+}
+
+model UserPaymentMethod {
+    id String @id @default(uuid())
+
+    title String?
+
+    type       PaymentMethod
+    provider   PaymentProvider
+    providerId String          @unique(map: "uq_user_payment_methods_provider_id") @map("provider_id")
+
+    last4       String?
+    first6      String?
+    expiryMonth Int?    @map("expiry_month")
+    expiryYear  Int?    @map("expiry_year")
+    cardType    String? @map("card_type")
+
+    isActive Boolean @default(true) @map("is_active")
+
+    metadata Json?
+
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId String @map("user_id")
+
+    payments PaymentIntent[]
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@index([userId, isActive], map: "ix_user_payment_methods_user_id_is_active")
+    @@map("user_payment_methods")
+}
+
+enum IntentStatus {
+    REQUIRES_PAYMENT @map("requires_payment")
+    PROCESSING       @map("processing")
+    CAPTURED         @map("captured")
+    FAILED           @map("failed")
+    EXPIRED          @map("expired")
+    CANCELLED        @map("cancelled")
+
+    @@map("intent_statuses")
+}
+
+enum ReceiptStatus {
+    PENDING @map("pending")
+    SUCCESS @map("success")
+    FAILED  @map("failed")
+
+    @@map("receipt_statuses")
+}
+
+enum PaymentProvider {
+    YOOKASSA      @map("yookassa")
+    ROBOKASSA     @map("robokassa")
+    PRODAMUS      @map("prodamus")
+    HELEKET       @map("heleket")
+    CRYPTO_BOT    @map("crypto_bot")
+    CLOUDPAYMENTS @map("cloudpayments")
+    TELEGRAM      @map("telegram")
+
+    @@map("payment_providers")
+}
+
+enum PaymentMethod {
+    BANK_CARD          @map("bank_card")
+    SBP                @map("sbp")
+    T_PAY              @map("t_pay")
+    SBER_PAY           @map("sber_pay")
+    YOOMONEY           @map("yoomoney")
+    CRYPTO_BOT         @map("crypto_bot")
+    HELEKET            @map("heleket")
+    INTERNATIONAL_CARD @map("international_card")
+    YANDEX_SPLIT       @map("yandex_split")
+    TELEGRAM_STARS     @map("telegram_stars")
+
+    @@map("payment_methods")
+}

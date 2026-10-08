@@ -1,0 +1,55 @@
+model User {
+    id String @id @default(uuid())
+
+    email String? @unique(map: "uq_users_email")
+
+    username    String  @unique(map: "uq_users_username")
+    displayName String  @map("display_name")
+    avatar      String?
+
+    status          UserStatus @default(PENDING)
+    emailVerifiedAt DateTime?  @map("email_verified_at")
+    lastLoginAt     DateTime?  @map("last_login_at")
+
+    role   UserRole @default(STUDENT)
+    points Int      @default(0)
+
+    passwordCredential PasswordCredential?
+    oauthAccounts      OAuthAccount[]
+    verificationCodes  VerificationCode[]
+    sessions           Session[]
+    visitors           UserVisitor[]
+
+    totpAuthenticator   TotpAuthenticator?
+    recoveryCodes       RecoveryCode[]
+    webauthnCredentials WebAuthnCredential[]
+
+    restrictions Restriction[]
+
+    subscription       Subscription?
+    payments           PaymentIntent[]
+    userPaymentMethods UserPaymentMethod[]
+
+    coursePurchases CoursePurchase[]
+    userProgresses  UserProgress[]
+    downloadLogs    DownloadLog[]
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@map("users")
+}
+
+enum UserRole {
+    STUDENT @map("student")
+    ADMIN   @map("admin")
+
+    @@map("user_roles")
+}
+
+enum UserStatus {
+    PENDING @map("pending")
+    ACTIVE  @map("active")
+
+    @@map("user_statuses")
+}

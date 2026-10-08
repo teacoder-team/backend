@@ -5,21 +5,29 @@ updates:
       schedule:
           interval: 'weekly'
           day: 'monday'
-      open-pull-requests-limit: 10
-      labels:
-          - 'dependencies'
-          - 'npm'
+      open-pull-requests-limit: 5
       groups:
           dependencies:
               patterns:
                   - '*'
-              exclude-patterns:
-                  - 'generated/*'
+      labels:
+          - 'dependencies'
+          - 'bun'
+      ignore:
+          - dependency-name: '@types/*'
+            update-types: ['version-update:semver-patch']
+
+    - package-ecosystem: 'docker'
+      directory: '/'
+      schedule:
+          interval: 'monthly'
+      labels:
+          - 'docker'
+          - 'security'
 
     - package-ecosystem: 'github-actions'
       directory: '/'
       schedule:
           interval: 'monthly'
       labels:
-          - 'dependencies'
-          - 'github-actions'
+          - 'ci'

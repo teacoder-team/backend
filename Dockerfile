@@ -1,45 +1,70 @@
-FROM node:22.19.0-alpine AS base
+# syntax=docker/dockerfile:1
 
-RUN corepack enable
-
-FROM base AS builder
+FROM oven/bun:1.3.10-slim AS base
 
 WORKDIR /app
 
-ENV NODE_ENV=development
-ENV YARN_NODE_LINKER=node-modules
+COPY --parents package.json bun.lock packages/*/package.json ./
 
-COPY .yarnrc.yml package.json yarn.lock ./
-COPY .yarn ./.yarn
+RUN --mount=type=cache,id=bun,target=/root/.bun/install/cache \
+    bun install --frozen-lockfile
 
-RUN yarn install --immutable
-
-COPY . .
-
-ENV DATABASE_URL="postgresql://postgres:postgres@localhost:5432/teacoder?schema=public"
-
-RUN yarn prisma generate
-RUN yarn run build
-
-RUN yarn workspaces focus --production
-
-FROM node:22.19.0-alpine AS runner
+FROM base AS build
 
 WORKDIR /app
 
-RUN corepack enable
-RUN apk add --no-cache libc6-compat openssl
+COPY prisma.config.ts tsconfig.json ./
+COPY prisma ./prisma/
+
+RUN bunx prisma generate
+
+COPY packages ./packages/
+COPY src ./src/
+
+RUN bun run build
+
+FROM oven/bun:1.3.10-slim AS geo
+
+WORKDIR /resources
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        ca-certificates \
+        curl \
+    && update-ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+ARG GEOLITE_RELEASE=latest
+
+ADD https://github.com/P3TERX/GeoLite.mmdb/releases.atom /tmp/geolite-releases.atom
+
+COPY docker-geoip.sh ./
+
+RUN --mount=type=cache,id=geoip,target=/cache,sharing=locked \
+    sh ./docker-geoip.sh /tmp/geolite-releases.atom /cache geo/city.mmdb
+
+
+FROM oven/bun:1.3.10-slim AS release
+
+WORKDIR /app
 
 ENV NODE_ENV=production
-ENV YARN_NODE_LINKER=node-modules
+ENV RESOURCES_DIR=/app/resources
 
-RUN chown -R node:node /app
-USER node
+COPY --from=build --chown=bun:bun /app/dist ./dist
+COPY --from=build --chown=bun:bun /app/prisma ./prisma
+COPY --from=build --chown=bun:bun /app/prisma.config.ts ./prisma.config.ts
+COPY --from=build --chown=bun:bun /app/node_modules ./node_modules
 
-COPY --chown=node:node --from=builder /app/package.json ./
-COPY --chown=node:node --from=builder /app/prisma.config.ts ./
-COPY --chown=node:node --from=builder /app/node_modules ./node_modules
-COPY --chown=node:node --from=builder /app/dist ./dist
-COPY --chown=node:node --from=builder /app/prisma ./prisma
+COPY --chown=bun:bun resources ./resources
+COPY --from=geo --chown=bun:bun /resources/geo ./resources/geo
 
-CMD ["node", "dist/main"]
+COPY --chown=bun:bun docker-entrypoint.sh ./docker-entrypoint.sh
+
+RUN chmod +x docker-entrypoint.sh
+
+USER bun
+
+ENTRYPOINT ["./docker-entrypoint.sh"]
+
+CMD ["bun", "run", "dist/main.js"]

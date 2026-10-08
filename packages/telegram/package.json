@@ -1,0 +1,12 @@
+{
+	"name": "@teacoder/telegram",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"exports": {
+		".": "./src/index.ts"
+	},
+	"dependencies": {
+		"grammy": "^1.46.0"
+	}
+}
