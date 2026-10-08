@@ -1,18 +1,32 @@
 {
 	"editor.formatOnSave": true,
-	"editor.formatOnPaste": true,
-	"editor.defaultFormatter": "esbenp.prettier-vscode",
-	"files.associations": {
-		"*.ts": "typescript",
-		"*.tsx": "typescriptreact"
+	"search.exclude": {
+		"**/node_modules": true,
+		"**/dist": true,
+		"**/prisma/generated": true,
+		"**/.yarn": true
 	},
-	"prettier.requireConfig": true,
-	"prettier.useEditorConfig": true,
-	"tailwindCSS.includeLanguages": {
-		"typescript": "javascript",
-		"typescriptreact": "javascriptreact"
+	"terminal.integrated.profiles.windows": {
+		"Bun PowerShell": {
+			"source": "PowerShell",
+			"icon": "terminal-powershell",
+			"color": "terminal.ansiCyan"
+		}
 	},
-	"terminal.integrated.defaultProfile.linux": "bash",
-	"terminal.integrated.defaultProfile.osx": "zsh",
-	"terminal.integrated.defaultProfile.windows": "PowerShell"
+	"terminal.integrated.profiles.osx": {
+		"Bun Zsh": {
+			"path": "zsh",
+			"icon": "terminal-bash"
+		}
+	},
+	"terminal.integrated.profiles.linux": {
+		"Bun Bash": {
+			"path": "bash",
+			"icon": "terminal-linux"
+		}
+	},
+	"terminal.integrated.defaultProfile.windows": "Bun PowerShell",
+	"terminal.integrated.defaultProfile.osx": "Bun Zsh",
+	"terminal.integrated.defaultProfile.linux": "Bun Bash",
+	"postman.settings.dotenv-detection-notification-visibility": false
 }

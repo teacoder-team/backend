@@ -1,0 +1,67 @@
+model PasswordCredential {
+    userId       String @id @map("user_id")
+    passwordHash String @map("password_hash")
+    algorithm    String @default("argon2id")
+
+    mustChange Boolean  @default(false) @map("must_change")
+    changedAt  DateTime @default(now()) @map("changed_at")
+
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@map("password_credentials")
+}
+
+model OAuthAccount {
+    id String @id @default(uuid())
+
+    provider          AuthProvider
+    providerAccountId String       @map("provider_account_id")
+
+    linkedAt DateTime @default(now()) @map("linked_at")
+
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId String @map("user_id")
+
+    @@unique([provider, providerAccountId], map: "uq_oauth_accounts_provider_account")
+    @@unique([userId, provider], map: "uq_oauth_accounts_user_id_provider")
+    @@map("oauth_accounts")
+}
+
+model VerificationCode {
+    id String @id @default(uuid())
+
+    purpose  VerificationPurpose
+    codeHash Bytes               @map("code_hash")
+
+    attempts   Int       @default(0)
+    expiresAt  DateTime  @map("expires_at")
+    consumedAt DateTime? @map("consumed_at")
+
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId String @map("user_id")
+
+    createdAt DateTime @default(now()) @map("created_at")
+
+    @@index([userId, purpose, consumedAt], map: "ix_verification_codes_lookup")
+    @@map("verification_codes")
+}
+
+enum AuthProvider {
+    GOOGLE   @map("google")
+    GITHUB   @map("github")
+    DISCORD  @map("discord")
+    TELEGRAM @map("telegram")
+    YANDEX   @map("yandex")
+    VK       @map("vk")
+
+    @@map("account_providers")
+}
+
+enum VerificationPurpose {
+    EMAIL_CONFIRM   @map("email_confirm")
+    PASSWORD_RESET  @map("password_reset")
+    EMAIL_CHANGE    @map("email_change")
+    PASSWORD_CHANGE @map("password_change")
+
+    @@map("verification_purposes")
+}
