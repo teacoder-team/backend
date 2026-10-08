@@ -99,12 +99,12 @@ const METHODS: Partial<Record<PaymentMethod, MethodDefinition>> = {
 		description: 'Оплата картами банков мира и другими международными способами',
 		providers: [PaymentProvider.PRODAMUS, PaymentProvider.ROBOKASSA]
 	},
-	[PaymentMethod.YANDEX_SPLIT]: {
-		category: 'FIAT',
-		name: 'Яндекс Сплит',
-		description: 'Оплата частями через Яндекс Сплит',
-		providers: [PaymentProvider.PRODAMUS]
-	},
+	// [PaymentMethod.YANDEX_SPLIT]: {
+	// 	category: 'FIAT',
+	// 	name: 'Яндекс Сплит',
+	// 	description: 'Оплата частями через Яндекс Сплит',
+	// 	providers: [PaymentProvider.PRODAMUS]
+	// },
 	[PaymentMethod.HELEKET]: {
 		category: 'CRYPTO',
 		name: 'Криптовалюта',
