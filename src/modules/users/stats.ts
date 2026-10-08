@@ -62,7 +62,9 @@ export const getStatistics = async (userId: string) => {
 /** Courses the user has finished at least one lesson in, most recently studied first. */
 export const getCourseProgress = async (userId: string) => {
 	const activity = await listProgressActivity(userId)
-	const completedIds = new Set(activity.filter((row) => row.isCompleted).map((row) => row.lessonId))
+	const completedIds = new Set(
+		activity.filter((row) => row.isCompleted).map((row) => row.lessonId)
+	)
 	const lastActivity = new Map<string, Date>()
 
 	for (const row of activity) {

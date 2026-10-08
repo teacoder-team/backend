@@ -55,7 +55,10 @@ export const OAuthCallbackResponse = t.Union(
 			{ description: SIGN_IN_COMPLETED_DESCRIPTION }
 		),
 		t.Object(
-			{ intent: Intent('SIGN_IN', 'Это был вход через соцсеть.'), ...SignInMfaRequiredFields },
+			{
+				intent: Intent('SIGN_IN', 'Это был вход через соцсеть.'),
+				...SignInMfaRequiredFields
+			},
 			{ description: SIGN_IN_MFA_REQUIRED_DESCRIPTION }
 		),
 		t.Object(

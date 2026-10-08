@@ -13,8 +13,8 @@ export const VerificationEmail = ({ code = '123456' }: VerificationEmailProps) =
 		</Heading>
 
 		<Text className="text-base leading-relaxed text-[#606369] mb-8 tracking-wide">
-			Введите этот код в приложении, чтобы завершить регистрацию. Код действителен в течение 15
-			минут.
+			Введите этот код в приложении, чтобы завершить регистрацию. Код действителен в течение
+			15 минут.
 		</Text>
 
 		<Section className="bg-[#f3f4f6] rounded-xl py-8 px-4 border border-gray-100 mb-8">

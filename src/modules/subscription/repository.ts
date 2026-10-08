@@ -101,7 +101,11 @@ export const findRenewalReceipt = (paymentId: string) =>
 			amount: true,
 			currency: true,
 			user: {
-				select: { id: true, displayName: true, subscription: { select: { expiresAt: true } } }
+				select: {
+					id: true,
+					displayName: true,
+					subscription: { select: { expiresAt: true } }
+				}
 			}
 		}
 	})

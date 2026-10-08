@@ -158,9 +158,14 @@ export const MaterialsLinkResponse = t.Object(
 		url: t.String({
 			description:
 				'Ссылка на архив с материалами - откройте её в браузере, начнётся скачивание. Действует 5 минут.',
-			examples: ['https://api.teacoder.ru/downloads/q2fSx1Gd0Yk7uJ9ZlQm3cW8vB4nR6tHpE5aT1oKyL0s']
+			examples: [
+				'https://api.teacoder.ru/downloads/q2fSx1Gd0Yk7uJ9ZlQm3cW8vB4nR6tHpE5aT1oKyL0s'
+			]
 		}),
-		expiresIn: t.Number({ description: 'Через сколько секунд ссылка перестанет работать.', examples: [300] })
+		expiresIn: t.Number({
+			description: 'Через сколько секунд ссылка перестанет работать.',
+			examples: [300]
+		})
 	},
 	{ description: 'Временная ссылка на материалы курса.' }
 )

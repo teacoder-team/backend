@@ -28,7 +28,9 @@ export const addMonths = (date: Date, months: number) => {
 	result.setUTCDate(1)
 	result.setUTCMonth(result.getUTCMonth() + months)
 
-	const lastDay = new Date(Date.UTC(result.getUTCFullYear(), result.getUTCMonth() + 1, 0)).getUTCDate()
+	const lastDay = new Date(
+		Date.UTC(result.getUTCFullYear(), result.getUTCMonth() + 1, 0)
+	).getUTCDate()
 
 	result.setUTCDate(Math.min(day, lastDay))
 

@@ -20,7 +20,8 @@ export const session = new Elysia({ prefix: '/sessions', tags: [TAG.sessions] })
 	})
 	.delete(
 		'/:id',
-		async ({ session, params }) => await revokeOtherSession(session.userId, params.id, session.id),
+		async ({ session, params }) =>
+			await revokeOtherSession(session.userId, params.id, session.id),
 		{
 			params: 'SessionParams',
 			response: 'RevokeResponse',

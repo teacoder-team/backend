@@ -1,5 +1,5 @@
-import { toBytes } from '~/lib/utils/bytes'
 import { db } from '~/lib/db'
+import { toBytes } from '~/lib/utils/bytes'
 
 export const findTotpAuthenticator = (userId: string) =>
 	db.totpAuthenticator.findUnique({ where: { userId } })

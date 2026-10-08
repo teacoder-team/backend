@@ -154,13 +154,13 @@ export const openMaterialsDownload = async (token: string, ip: string, userAgent
 		? course.attachment
 		: orion.fileUrl('attachments', course.attachment)
 
-	const upstream = await fetch(source, { signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS) }).catch(
-		(err: unknown) => {
-			logger.error({ context: 'course', courseId, err }, 'course_materials_fetch_failed')
+	const upstream = await fetch(source, {
+		signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS)
+	}).catch((err: unknown) => {
+		logger.error({ context: 'course', courseId, err }, 'course_materials_fetch_failed')
 
-			return null
-		}
-	)
+		return null
+	})
 
 	if (!upstream?.ok || !upstream.body) {
 		logger.error(

@@ -1,5 +1,6 @@
-import { type ChatTarget, isSameTarget } from '@teacoder/telegram'
 import type { Bot } from 'grammy'
+
+import { type ChatTarget, isSameTarget } from '@teacoder/telegram'
 
 import { ADMIN_CHAT_TARGETS, adminBot } from '~/lib/integrations/telegram'
 import { logger } from '~/lib/logger'
@@ -64,7 +65,11 @@ export const startAdminBot = () => {
 			allowed_updates: ['message'],
 			onStart: (me) => {
 				logger.info(
-					{ context: 'admin_bot', username: me.username, chats: ADMIN_CHAT_TARGETS.length },
+					{
+						context: 'admin_bot',
+						username: me.username,
+						chats: ADMIN_CHAT_TARGETS.length
+					},
 					'admin_bot_started'
 				)
 			}

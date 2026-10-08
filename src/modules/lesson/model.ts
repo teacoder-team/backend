@@ -29,8 +29,7 @@ export const LessonResponse = t.Object(
 		),
 		position: t.Number({ description: 'Порядковый номер в курсе.', examples: [1] }),
 		access: PrismaEnum(LessonAccess, {
-			description:
-				'`FREE` - открыт всем, `PREMIUM` - нужна подписка или покупка курса.',
+			description: '`FREE` - открыт всем, `PREMIUM` - нужна подписка или покупка курса.',
 			examples: [LessonAccess.FREE]
 		}),
 		kinescopeId: t.Nullable(
@@ -50,13 +49,20 @@ export const LessonResponse = t.Object(
 					description: 'Идентификатор курса.',
 					examples: ['b3f1c2d4-5e6f-4a7b-8c9d-0e1f2a3b4c5d']
 				}),
-				title: t.String({ description: 'Название курса.', examples: ['Основы TypeScript'] }),
+				title: t.String({
+					description: 'Название курса.',
+					examples: ['Основы TypeScript']
+				}),
 				slug: t.String({
-					description: 'Идентификатор курса для URL - программа курса: `GET /courses/:slug/lessons`.',
+					description:
+						'Идентификатор курса для URL - программа курса: `GET /courses/:slug/lessons`.',
 					examples: ['osnovy-typescript']
 				})
 			},
-			{ description: 'Курс урока - чтобы показать программу и заголовок без лишних запросов.' }
+			{
+				description:
+					'Курс урока - чтобы показать программу и заголовок без лишних запросов.'
+			}
 		)
 	},
 	{ description: 'Урок.' }

@@ -1,6 +1,7 @@
+import { type CityResponse, Reader } from 'maxmind'
+
 import { RESOURCES } from '~/config/paths'
 import { lazy } from '~/lib/utils/lazy'
-import { type CityResponse, Reader } from 'maxmind'
 
 const reader = lazy(async () => {
 	const database = await Bun.file(RESOURCES.geoCity).arrayBuffer()

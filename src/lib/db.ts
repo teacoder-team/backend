@@ -1,8 +1,8 @@
-import { env } from '~/config/env'
-import { logger } from '~/lib/logger'
-
 import { PrismaPg } from '@prisma/adapter-pg'
 import { Prisma, PrismaClient } from '@prisma/generated/client'
+
+import { env } from '~/config/env'
+import { logger } from '~/lib/logger'
 
 export const db = new PrismaClient({
 	adapter: new PrismaPg({ connectionString: env.DATABASE_URL }),
