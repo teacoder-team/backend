@@ -100,8 +100,10 @@ const settle = async (eventId: string, update: ProviderPaymentUpdate) => {
 			await enqueuePaymentErrorNotification({
 				source: 'WEBHOOK',
 				error: new AppError(
-					result.outcome === 'rejected' ? result.reason : 'Captured course payment requires a manual refund',
-				409
+					result.outcome === 'rejected'
+						? result.reason
+						: 'Captured course payment requires a manual refund',
+					409
 				),
 				status: 409,
 				provider: update.provider,
@@ -288,7 +290,10 @@ export const receiveYookassaWebhook = async (body: YookassaNotification, ip: str
 
 		await markWebhookFailed(row.id, 'refetch_failed')
 
-		const failure = new AppError('Could not confirm the payment with YooKassa, retry later', 503)
+		const failure = new AppError(
+			'Could not confirm the payment with YooKassa, retry later',
+			503
+		)
 		failure.cause = err
 
 		throw failure
