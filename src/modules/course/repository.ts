@@ -1,4 +1,4 @@
-import type { Prisma } from '@prisma/generated/client'
+import { CourseAccessMode, type Prisma } from '@prisma/generated/client'
 
 import { db } from '~/lib/db'
 
@@ -58,6 +58,7 @@ export const findPurchasableCourse = (courseId: string) =>
 	db.course.findFirst({
 		where: {
 			id: courseId,
+			accessMode: CourseAccessMode.PURCHASE,
 			isPublished: true,
 			price: {
 				not: null

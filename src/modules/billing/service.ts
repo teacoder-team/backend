@@ -284,7 +284,7 @@ const startAtProvider = async (payment: PaymentIntent, product: Product, email: 
 						: undefined,
 				successUrl: `${env.APP_URL}/payment/success`,
 				returnUrl: RETURN_URL,
-				callbackUrl: `${env.GATEWAY_URL}/webhook/prodamus`
+				callbackUrl: `${env.WEBHOOK_URL}/webhook/prodamus`
 			})
 
 			return { url, pspIntentId: null, raw: undefined }
@@ -312,7 +312,7 @@ const startAtProvider = async (payment: PaymentIntent, product: Product, email: 
 				orderId: payment.id,
 				amount: payment.amount,
 				returnUrl: RETURN_URL,
-				callbackUrl: `${env.GATEWAY_URL}/webhook/heleket`,
+				callbackUrl: `${env.WEBHOOK_URL}/webhook/heleket`,
 				lifetime: CHECKOUT_TTL_SECONDS,
 				additionalData: product.description
 			})
