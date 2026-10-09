@@ -20,6 +20,7 @@ const envSchema = t.Object({
 	APP_PORT: t.Number({ default: 3000 }),
 
 	GATEWAY_URL: t.String({ format: 'uri' }),
+	WEBHOOK_URL: t.String({ format: 'uri' }),
 	APP_URL: t.String({ format: 'uri' }),
 
 	LOG_LEVEL: t.Union(

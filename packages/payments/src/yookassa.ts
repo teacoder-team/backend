@@ -2,6 +2,8 @@ import { createHttpClient, type HttpLogger } from '@teacoder/http'
 
 const CURRENCY = 'RUB'
 
+export type PaymentMethodType = 'bank_card' | 'sbp' | 'tinkoff_bank' | 'yoo_money' | 'sberbank'
+
 export interface YookassaClientOptions {
 	shopId: string
 	secretKey: string
@@ -15,6 +17,7 @@ export interface CreatePaymentInput {
 	description: string
 	returnUrl: string
 	metadata?: Record<string, unknown>
+	paymentMethodType?: PaymentMethodType
 	/** Asks YooKassa to keep the card (or other method) for later charges without the user. */
 	savePaymentMethod?: boolean
 }
@@ -95,6 +98,9 @@ export const createYookassaClient = ({
 				confirmation: { type: 'redirect', return_url: input.returnUrl },
 				description: input.description,
 				metadata: input.metadata,
+				...(input.paymentMethodType
+					? { payment_method_data: { type: input.paymentMethodType } }
+					: {}),
 				...(input.savePaymentMethod ? { save_payment_method: true } : {})
 			})
 		})
