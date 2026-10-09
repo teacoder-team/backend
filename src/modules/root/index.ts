@@ -1,55 +1,17 @@
 import { Elysia } from 'elysia'
 
-import { env } from '~/config/env'
 import { TAG } from '~/config/openapi'
-import { API_VERSION } from '~/config/version'
-import { pingDatabase } from '~/lib/db'
-import { captcha } from '~/lib/integrations/captcha'
-import { pingRedis } from '~/lib/redis'
-import { listAvailablePaymentMethods } from '~/modules/billing/service'
-import { PREMIUM_INTERNATIONAL_AMOUNT, PREMIUM_PLAN } from '~/modules/subscription/plan'
 import { requestContext } from '~/plugins/request-context'
 
 import { HealthResponse, RootResponse } from './model'
-import { resolveCountryCode, signInProviders } from './providers'
+import { getClientConfiguration, getHealth } from './service'
 
 export const root = new Elysia({ tags: [TAG.core] })
 	.use(requestContext)
 	.model({ RootResponse, HealthResponse })
 	.get(
 		'/',
-		async ({ ip }) => {
-			const country = await resolveCountryCode(ip)
-
-			return {
-				message: "What's up motherfuckers! 🤘",
-				version: API_VERSION,
-				app: { url: env.APP_URL },
-				features: {
-					auth: {
-						country,
-						providers: signInProviders(country)
-					},
-					payments: listAvailablePaymentMethods(),
-					premium: {
-						months: PREMIUM_PLAN.months,
-						currency: 'RUB',
-						prices: {
-							standard: PREMIUM_PLAN.amount,
-							international: PREMIUM_INTERNATIONAL_AMOUNT
-						},
-						stars: PREMIUM_PLAN.stars
-					},
-					captcha: {
-						provider: env.CAPTCHA_PROVIDER,
-						key: captcha?.siteKey || null
-					},
-					orion: {
-						url: env.ORION_API_URL
-					}
-				}
-			}
-		},
+		async ({ ip }) => await getClientConfiguration(ip),
 		{
 			response: 'RootResponse',
 			detail: {
@@ -62,20 +24,13 @@ export const root = new Elysia({ tags: [TAG.core] })
 	.get(
 		'/health',
 		async ({ set }) => {
-			const [database, cache] = await Promise.all([pingDatabase(), pingRedis()])
+			const health = await getHealth()
 
-			const healthy = database && cache
-
-			if (!healthy) {
+			if (health.status === 'degraded') {
 				set.status = 503
 			}
 
-			return {
-				status: healthy ? ('operational' as const) : ('degraded' as const),
-				database,
-				cache,
-				timestamp: new Date().toISOString()
-			}
+			return health
 		},
 		{
 			response: 'HealthResponse',

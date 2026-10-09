@@ -33,10 +33,6 @@ export const notificationsQueue = new Queue(QUEUE.NOTIFICATIONS, {
 	defaultJobOptions
 })
 
-/**
- * Money moves here, so no automatic retries: a charge that failed for a technical reason is
- * picked up again by the next nightly run, after it has checked what actually happened.
- */
 export const billingQueue = new Queue(QUEUE.BILLING, {
 	connection: queueConnection,
 	defaultJobOptions: { attempts: 1, removeOnComplete: true, removeOnFail: { age: 7 * 24 * 3600 } }

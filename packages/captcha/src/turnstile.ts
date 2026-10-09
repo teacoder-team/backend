@@ -7,7 +7,6 @@ interface SiteverifyResponse {
 	'error-codes': string[]
 }
 
-/** Cloudflare Turnstile - https://developers.cloudflare.com/turnstile/get-started/server-side-validation/ */
 export const turnstile = ({
 	secretKey,
 	siteKey,

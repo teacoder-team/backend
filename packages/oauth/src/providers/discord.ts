@@ -12,7 +12,6 @@ interface DiscordProfile {
 	avatar: string | null
 }
 
-/** Plain OAuth 2.0 - Discord publishes no discovery document and issues no id_token. */
 export const discord = ({
 	clientId,
 	clientSecret,

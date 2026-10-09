@@ -5,7 +5,7 @@ import { type ChatTarget, isSameTarget } from '@teacoder/telegram'
 import { ADMIN_CHAT_TARGETS, adminBot } from '~/lib/integrations/telegram'
 import { logger } from '~/lib/logger'
 
-import { accessDeniedMessage, startMessage } from './messages'
+import { accessDeniedMessage, startMessage } from './service'
 
 const COMMANDS = [{ command: 'start', description: 'О боте и ID этого чата' }]
 
@@ -42,10 +42,6 @@ const registerCommands = (bot: Bot) => {
 	})
 }
 
-/**
- * Long polling inside the app: no public HTTPS needed, works locally. One poller per token -
- * a second instance or environment on the same token gets 409 Conflict from Telegram.
- */
 export const startAdminBot = () => {
 	if (!adminBot) {
 		logger.info({ context: 'admin_bot' }, 'admin_bot_disabled')

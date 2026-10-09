@@ -20,7 +20,7 @@ export interface CreateOAuthUserInput {
 	displayName: string
 	username: string
 	avatar: string | null
-	/** Present when the provider returned a verified email (not all do, e.g. Telegram). */
+
 	email: string | null
 }
 

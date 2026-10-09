@@ -9,7 +9,7 @@ import { getForwardedIp } from '~/lib/utils/ip'
 const REQUEST_ID_HEADER = 'x-request-id'
 
 const LOOPBACK = '127.0.0.1'
-/** Localhost has no geolocation, so in development requests pose as a real public address. */
+
 const DEVELOPMENT_IP = '5.144.116.28'
 
 const clientIp = (headers: Headers) =>

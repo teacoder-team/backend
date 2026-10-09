@@ -24,10 +24,6 @@ const normalizeTokenResponse: client.CustomFetch = async (url, options) => {
 	return Response.json({ token_type: 'bearer', ...body })
 }
 
-/**
- * VK ID (OAuth 2.1): no discovery document, PKCE is mandatory, and the token request carries no
- * client secret - the verifier plus `device_id` is what VK authenticates the client by.
- */
 export const vk = ({
 	clientId,
 	timeout = 15
@@ -53,7 +49,6 @@ export const vk = ({
 		config,
 		scopes: ['vkid.personal_info', 'email'],
 
-		/** VK ties the code to the device it was issued on and refuses to exchange it without. */
 		tokenParams(query): Record<string, string> {
 			const deviceId = query.get('device_id')
 

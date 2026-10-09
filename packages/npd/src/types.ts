@@ -1,6 +1,5 @@
 export const API_URL = 'https://lknpd.nalog.ru/api/v1'
 
-/** Structurally satisfied by a pino logger. */
 export interface NpdLogger {
 	info: (context: object, message: string) => void
 	warn: (context: object, message: string) => void
@@ -8,13 +7,10 @@ export interface NpdLogger {
 }
 
 export interface NpdClientOptions {
-	/** The self-employed person's INN - also the lknpd.nalog.ru login. */
+
 	inn: string
 	password: string
-	/**
-	 * Leave empty to derive a stable id from the INN. Set it only when several
-	 * deployments share one account - the token is bound to this value.
-	 */
+
 	deviceId?: string
 	logger?: NpdLogger
 }

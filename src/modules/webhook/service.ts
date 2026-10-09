@@ -25,9 +25,9 @@ import { resend } from '~/lib/integrations/resend'
 import { extendLogContext, logger } from '~/lib/logger'
 import { normalizeEmail } from '~/lib/utils/email'
 import { createIpAllowlist } from '~/lib/utils/ip'
-import { enqueueSupportEmailNotification } from '~/modules/admin-bot/queue'
-import { applyPaymentUpdate, type ProviderPaymentUpdate } from '~/modules/billing/fulfillment'
-import { toSavedMethod } from '~/modules/billing/yookassa-method'
+import { enqueueSupportEmailNotification } from '~/modules/admin-bot/service'
+import type { ProviderPaymentUpdate } from '~/modules/billing/model'
+import { applyPaymentUpdate, toSavedMethod } from '~/modules/billing/service'
 
 import {
 	createWebhookEvent,
@@ -41,10 +41,8 @@ const PSP_HELEKET = 'heleket'
 const PSP_PRODAMUS = 'prodamus'
 const PSP_YOOKASSA = 'yookassa'
 
-/** Documented at https://doc.heleket.com/methods/payments/webhook. */
 const isHeleketIp = createIpAllowlist(['31.133.220.8'])
 
-/** Documented at https://yookassa.ru/developers/using-api/webhooks. */
 const isYookassaIp = createIpAllowlist([
 	'185.71.76.0/27',
 	'185.71.77.0/27',
@@ -55,7 +53,6 @@ const isYookassaIp = createIpAllowlist([
 	'2a02:5180::/32'
 ])
 
-/** Refund statuses are left out on purpose - refunds are not handled yet. */
 const HELEKET_STATUSES: Partial<Record<HeleketStatus, IntentStatus>> = {
 	confirm_check: IntentStatus.PROCESSING,
 	paid: IntentStatus.CAPTURED,
@@ -83,10 +80,6 @@ const assertKnownIp = (
 	}
 }
 
-/**
- * Applies an authenticated update and records the outcome on the event. A thrown
- * error leaves the event unprocessed and surfaces as a 5xx, so the provider retries.
- */
 const settle = async (eventId: string, update: ProviderPaymentUpdate) => {
 	try {
 		const result = await applyPaymentUpdate(update)
@@ -116,7 +109,6 @@ export const receiveHeleketWebhook = async (
 		throw new BadRequestError('Malformed webhook payload')
 	}
 
-	/** Heleket posts once per status change of the same invoice - uuid alone would drop the "paid" one. */
 	const pspEventId = `${payload.uuid}:${payload.status}`
 	const existing = await findWebhookEvent(PSP_HELEKET, pspEventId)
 
@@ -216,14 +208,12 @@ export const receiveYookassaWebhook = async (body: YookassaNotification, ip: str
 
 	extendLogContext({ event: 'webhook_received', provider: PSP_YOOKASSA, eventType: event })
 
-	/** Refunds, payouts and deals are not payments we can re-fetch - not handled yet. */
 	if (!event.startsWith('payment.')) {
 		const row = await record(false, object)
 
 		return markWebhookProcessed(row.id, 'event_not_handled')
 	}
 
-	/** YooKassa notifications carry no signature - the API's own answer is the only trusted source. */
 	let payment: YookassaPayment
 
 	try {

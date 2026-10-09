@@ -7,7 +7,7 @@ export type PaymentMethodType = 'bank_card' | 'sbp' | 'tinkoff_bank' | 'yoo_mone
 export interface YookassaClientOptions {
 	shopId: string
 	secretKey: string
-	/** Milliseconds. Default 7000. */
+
 	timeout?: number
 	logger?: HttpLogger
 }
@@ -18,24 +18,24 @@ export interface CreatePaymentInput {
 	returnUrl: string
 	metadata?: Record<string, unknown>
 	paymentMethodType?: PaymentMethodType
-	/** Asks YooKassa to keep the card (or other method) for later charges without the user. */
+
 	savePaymentMethod?: boolean
 }
 
 export interface RecurringPaymentInput {
 	amount: number
 	description: string
-	/** `payment_method.id` of an earlier payment made with `savePaymentMethod`. */
+
 	paymentMethodId: string
 	metadata?: Record<string, unknown>
-	/** Same key, same payment - YooKassa dedupes it for 24 hours. */
+
 	idempotenceKey: string
 }
 
 export interface PaymentMethodDetails {
 	id: string
 	type: string
-	/** True when the method can be charged again without the user. */
+
 	saved: boolean
 	title?: string
 	card?: {
@@ -56,12 +56,11 @@ export interface Payment {
 	created_at: string
 	description?: string
 	metadata?: Record<string, unknown>
-	/** Only on canceled payments - `reason` is e.g. expired_on_confirmation, insufficient_funds. */
+
 	cancellation_details?: { party: string; reason: string }
 	payment_method?: PaymentMethodDetails
 }
 
-/** https://yookassa.ru/developers/api */
 export const createYookassaClient = ({
 	shopId,
 	secretKey,
@@ -79,7 +78,7 @@ export const createYookassaClient = ({
 			'Content-Type': 'application/json'
 		},
 		retry: { retries: 3, minTimeout: 400, factor: 2 },
-		/** Retries of the same POST must reuse one key, or YooKassa opens a second payment. */
+
 		beforeRequest: (request) => {
 			if (request.method === 'POST' && !request.headers.has('Idempotence-Key')) {
 				request.headers.set('Idempotence-Key', crypto.randomUUID())
@@ -105,7 +104,6 @@ export const createYookassaClient = ({
 			})
 		})
 
-	/** A charge with no user present - succeeds or is declined straight away, no confirmation step. */
 	const createRecurringPayment = (input: RecurringPaymentInput) =>
 		http<Payment>('/payments', {
 			method: 'POST',

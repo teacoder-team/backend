@@ -7,7 +7,6 @@ export interface GeneratedRefreshToken {
 	hash: Buffer
 }
 
-/** Unkeyed SHA-256 is fine here - the token is already high-entropy random data. */
 export const hashRefreshToken = (token: string): Buffer =>
 	createHash('sha256').update(token).digest()
 

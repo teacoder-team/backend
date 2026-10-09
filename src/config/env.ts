@@ -53,12 +53,8 @@ const envSchema = t.Object({
 	SESSION_TTL: t.Number({ default: 60 * 60 * 24 * 30 }),
 	SESSION_CACHE_TTL: t.Number({ default: 15 * 60 }),
 
-	/**
-	 * Comma-separated site origins that may call the API from a browser, cookies included.
-	 * `https://*.teacoder.ru` matches any subdomain (not the apex). Empty = the APP_URL origin.
-	 */
 	CORS_ORIGIN: t.String({ default: '' }),
-	/** Seconds a browser may reuse a preflight answer. Chrome caps it at 7200. */
+
 	CORS_MAX_AGE: t.Number({ default: 7200, minimum: 0 }),
 
 	DATABASE_URL: t.String(),
@@ -90,11 +86,9 @@ const envSchema = t.Object({
 	CRYPTO_BOT_TOKEN: t.String(),
 	CRYPTO_BOT_TESTNET: t.Boolean({ default: false }),
 
-	/** Public bot - what users talk to; takes Telegram Stars payments. */
 	TELEGRAM_PUBLIC_BOT_TOKEN: t.String(),
 	TELEGRAM_PUBLIC_BOT_WEBHOOK_SECRET: t.String({ minLength: 16 }),
 
-	/** Staff-only bot for notifications. Empty disables it. */
 	TELEGRAM_ADMIN_BOT_TOKEN: t.String({ default: '' }),
 	TELEGRAM_ADMIN_CHAT_IDS: t.String({
 		default: '',
@@ -102,7 +96,7 @@ const envSchema = t.Object({
 	}),
 
 	OAUTH_STATE_TTL: t.Number({ default: 10 * 60 }),
-	/** Site page providers send users back to, `/<provider>` appended. Empty = APP_URL/auth/callback. */
+
 	OAUTH_CALLBACK_URL: t.String({ default: '' }),
 
 	GOOGLE_CLIENT_ID: t.String(),
@@ -120,7 +114,6 @@ const envSchema = t.Object({
 	TELEGRAM_CLIENT_ID: t.String(),
 	TELEGRAM_CLIENT_SECRET: t.String(),
 
-	/** VK ID needs no secret: the flow is a public client with PKCE. */
 	VK_CLIENT_ID: t.String(),
 
 	ROBOKASSA_MERCHANT_LOGIN: t.String(),
@@ -144,17 +137,15 @@ const envSchema = t.Object({
 	HELEKET_MERCHANT_ID: t.String(),
 	HELEKET_PAYMENT_API_KEY: t.String(),
 
-	/** The shop's own payform host - international cards are sold through it. */
 	PRODAMUS_FORM_URL: t.String({ format: 'uri' }),
 	PRODAMUS_SECRET_KEY: t.String(),
-	/** Payform test mode: links open, nothing is charged. */
+
 	PRODAMUS_DEMO_MODE: t.Boolean({ default: false }),
 
 	NPD_INN: t.String(),
 	NPD_PASSWORD: t.String(),
 	NPD_DEVICE_ID: t.String({ default: '' }),
 
-	/** 'none' skips verification entirely - handy for local dev without real captcha keys. */
 	CAPTCHA_PROVIDER: t.Union([t.Literal('turnstile'), t.Literal('yandex'), t.Literal('none')], {
 		default: 'none'
 	}),
@@ -168,9 +159,8 @@ const envSchema = t.Object({
 		default: 'global'
 	}),
 
-	/** Domain passkeys are bound to. Empty = the APP_URL hostname. Changing it orphans every passkey. */
 	WEBAUTHN_RP_ID: t.String({ default: '' }),
-	/** Comma-separated origins allowed to use passkeys. Empty = the APP_URL origin. */
+
 	WEBAUTHN_ORIGINS: t.String({ default: '' })
 })
 

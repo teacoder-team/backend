@@ -22,21 +22,21 @@ export interface FingerprintEvent {
 }
 
 export interface FingerprintClientOptions {
-	/** Server API secret key - never the public one the browser agent uses. */
+
 	secretKey: string
-	/** Must match the workspace region, events are not visible from the others. Default `global`. */
+
 	region?: FingerprintRegion
-	/** Milliseconds. Default 5000. */
+
 	timeout?: number
 	logger?: HttpLogger
 }
 
 export interface IdentifyOptions {
-	/** Oldest identification accepted, in milliseconds. */
+
 	maxAgeMs: number
-	/** Origins the identification may come from. Empty accepts any. */
+
 	allowedOrigins?: readonly string[]
-	/** 0..1, the lowest `confidence.score` accepted. */
+
 	minConfidence?: number
 }
 
@@ -51,7 +51,6 @@ export type Identification =
 	| { verified: true; visitorId: string; confidence: number | null }
 	| { verified: false; reason: IdentifyRejection }
 
-/** `code` is Fingerprint's own, e.g. `wrong_region` or `secret_api_key_not_found`. */
 export class FingerprintError extends Error {
 	constructor(
 		readonly status: number,
@@ -92,7 +91,6 @@ export const createFingerprintClient = ({
 		headers: { Authorization: `Bearer ${secretKey}` }
 	})
 
-	/** Null for an id the workspace doesn't know - including a malformed one. */
 	const getEvent = async (eventId: string) => {
 		try {
 			return await http<FingerprintEvent>(`/events/${encodeURIComponent(eventId)}`)
@@ -115,7 +113,6 @@ export const createFingerprintClient = ({
 		}
 	}
 
-	/** The browser-sent id proves nothing by itself - trust only the event re-read from the API. */
 	const identify = async (
 		eventId: string,
 		{ maxAgeMs, allowedOrigins = [], minConfidence = 0 }: IdentifyOptions

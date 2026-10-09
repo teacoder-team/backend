@@ -9,10 +9,9 @@ import { emailQueue } from '~/lib/queue/queues'
 import type { JobHandlers } from '~/lib/queue/runner'
 import { formatDate, formatTime } from '~/lib/utils/date'
 import { getUserEmail } from '~/modules/auth/service'
-import { plannedChargeAt } from '~/modules/billing/schedule'
 
-import { PREMIUM_PLAN } from './plan'
 import { findRenewalMailTarget, findRenewalReceipt, findSubscriptionMailTarget } from './repository'
+import { plannedChargeAt, PREMIUM_PLAN } from './service'
 
 const COURSES_URL = `${env.APP_URL}/courses`
 const PREMIUM_URL = `${env.APP_URL}/premium`
@@ -169,7 +168,6 @@ export const enqueueSubscriptionExpiredEmail = (
 	payload: SubscriptionEmailJobs['sendSubscriptionExpired']
 ) => emailQueue.add('sendSubscriptionExpired', payload)
 
-/** One reminder per period: the job id carries the end date. */
 export const enqueueSubscriptionExpiringEmail = (
 	payload: SubscriptionEmailJobs['sendSubscriptionExpiring']
 ) =>

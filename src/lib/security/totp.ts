@@ -7,7 +7,7 @@ import { loadKey, open, seal } from './aes-gcm'
 const SECRET_BYTES = 20
 const DIGITS = 6
 const PERIOD_SECONDS = 30
-/** Steps accepted on each side of now - tolerates a phone clock that is up to 30 s off. */
+
 const DRIFT_STEPS = 1
 
 const BASE32_ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567'
@@ -60,7 +60,6 @@ const base32Decode = (encoded: string) => {
 	return Buffer.from(bytes)
 }
 
-/** Base32 without padding - the form authenticator apps expect. */
 export const generateTotpSecret = () => base32Encode(randomBytes(SECRET_BYTES))
 
 export const encryptTotpSecret = (secret: string) => seal(encryptionKey, secret)
@@ -69,7 +68,6 @@ export const decryptTotpSecret = (packed: Uint8Array) => open(encryptionKey, pac
 
 export const totpStep = (at = Date.now()) => Math.floor(at / 1000 / PERIOD_SECONDS)
 
-/** RFC 4226 HOTP value for one counter. */
 const hotp = (key: Buffer, counter: number) => {
 	const message = Buffer.alloc(8)
 
@@ -84,10 +82,6 @@ const hotp = (key: Buffer, counter: number) => {
 
 export const isTotpCode = (code: string) => new RegExp(`^\\d{${DIGITS}}$`).test(code)
 
-/**
- * The time step the code belongs to, or null. Steps at or before `lastUsedStep` never match,
- * so a code (even an earlier one from the drift window) works only once.
- */
 export const matchTotp = (
 	secret: string,
 	code: string,
@@ -121,7 +115,6 @@ export interface TotpUriInput {
 	account: string
 }
 
-/** Key URI format understood by Google Authenticator, 1Password, Aegis and the rest. */
 export const buildTotpUri = ({ secret, issuer, account }: TotpUriInput) => {
 	const label = `${encodeURIComponent(issuer)}:${encodeURIComponent(account)}`
 	const params = new URLSearchParams({

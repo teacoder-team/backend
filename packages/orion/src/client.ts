@@ -1,6 +1,5 @@
 import { createHttpClient, HttpError, type HttpLogger } from '@teacoder/http'
 
-/** The folders Orion's /upload handler recognizes - any other tag lands in "misc". */
 export type OrionTag = 'avatars' | 'courses' | 'attachments'
 
 export class OrionError extends Error {
@@ -15,11 +14,11 @@ export class OrionError extends Error {
 }
 
 export interface OrionClientOptions {
-	/** Orion's public origin - also the base of every file URL it serves. */
+
 	baseUrl: string
-	/** Sent as X-Upload-Secret. */
+
 	masterKey: string
-	/** Milliseconds. Default 15000. */
+
 	timeout?: number
 	logger?: HttpLogger
 }
@@ -27,7 +26,7 @@ export interface OrionClientOptions {
 export interface UploadedFile {
 	fileId: string
 	filename: string
-	/** Public, unauthenticated URL Orion serves the file at. */
+
 	url: string
 }
 
@@ -37,7 +36,6 @@ interface UploadResponse {
 	filename: string
 }
 
-/** Client for https://github.com/teacoder-team/orion */
 export const createOrionClient = ({
 	baseUrl,
 	masterKey,

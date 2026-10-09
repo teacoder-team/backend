@@ -5,7 +5,7 @@ import { EmailLayout } from '../components/EmailLayout'
 interface SubscriptionPurchaseEmailProps {
 	username?: string
 	expiresAt: string
-	/** Paid while premium was still active - the new period was added on top. */
+
 	extended?: boolean
 	coursesUrl?: string
 }

@@ -14,10 +14,8 @@ export const updateAvatar = (userId: string, avatarUrl: string) =>
 export const updateDisplayName = (userId: string, displayName: string) =>
 	db.user.update({ where: { id: userId }, data: { displayName } })
 
-/** Only lessons a student can actually reach count toward progress and totals. */
 const reachableLesson = { isPublished: true, course: { isPublished: true } } as const
 
-/** A ban hides the user from the leaderboard and from everyone else's rank. */
 const notBanned = (now: Date) => ({
 	restrictions: {
 		none: { status: RestrictionStatus.ACTIVE, OR: [{ until: null }, { until: { gt: now } }] }

@@ -1,6 +1,6 @@
-import { createHash, randomUUID } from 'node:crypto'
+import { createHash, randomBytes, randomUUID } from 'node:crypto'
 
-import { type AuthProvider, UserStatus, VerificationPurpose } from '@prisma/generated/client'
+import { UserStatus, VerificationPurpose } from '@prisma/generated/client'
 
 import { env, isProduction } from '~/config/env'
 import { isDisposableEmail } from '~/lib/datasets/disposable-emails'
@@ -19,36 +19,29 @@ import { generateOtpCode } from '~/lib/security/otp'
 import { hashVerificationCode, verificationCodeMatches } from '~/lib/security/verification-code'
 import { normalizeEmail } from '~/lib/utils/email'
 import { generateUsername } from '~/lib/utils/username'
-import { enqueueRegistrationNotification } from '~/modules/admin-bot/queue'
+import { enqueueRegistrationNotification } from '~/modules/admin-bot/service'
 import type { MfaMethod } from '~/modules/mfa/model'
 import { getMfaMethods, verifyMfaCode } from '~/modules/mfa/service'
-import { attachOAuthAccount, type OAuthIdentity } from '~/modules/oauth/accounts'
-import {
-	issueTokenPair,
-	type RequestOrigin,
-	revokeAllSessions,
-	revokeSession
-} from '~/modules/session/service'
+import type { OAuthIdentity } from '~/modules/oauth/model'
+import { attachOAuthAccount } from '~/modules/oauth/service'
+import type { RequestOrigin } from '~/modules/session/model'
+import { issueTokenPair, revokeAllSessions, revokeSession } from '~/modules/session/service'
 
 import { enqueuePasswordResetLink, enqueueVerificationCode } from './jobs'
-import {
-	closeMfaTicket,
-	MFA_TICKET_TTL,
-	type MfaTicket,
-	openMfaTicket,
-	readMfaTicket,
-	setMfaChallenge
-} from './mfa-ticket'
 import type {
 	ForgotPasswordInput,
 	LoginInput,
+	MfaChallenge,
 	MfaChallengeInput,
 	MfaConfirmInput,
+	MfaTicket,
 	RegisterInput,
 	ResetPasswordInput,
+	SignInOptions,
+	SignInResult,
+	VerifyCodeMessages,
 	VerifyRegisterInput
 } from './model'
-import { consumePasswordResetToken, issuePasswordResetToken } from './password-reset'
 import {
 	activateUser,
 	consumeVerificationCode,
@@ -83,11 +76,6 @@ export const issueVerificationCode = async (
 	})
 
 	return code
-}
-
-interface VerifyCodeMessages {
-	expired?: string
-	invalid?: string
 }
 
 export const verifyCode = async (
@@ -188,10 +176,8 @@ export const verifyRegister = async (input: VerifyRegisterInput, origin: Request
 	return { id: user.id, ...tokens, linkedProvider: null }
 }
 
-/** Hashed so Redis keys never carry addresses - a rate-limit bucket needs no secret. */
 const emailBucket = (email: string) => createHash('sha256').update(email).digest('hex')
 
-/** Counted per email, IP and device - a proxy changes the IP but not the Fingerprint visitor. */
 const loginAttemptKeys = (email: string, { ip, visitorId }: RequestOrigin) =>
 	[
 		`login_attempts:email:${emailBucket(email)}`,
@@ -297,22 +283,6 @@ export const resetPassword = async (input: ResetPasswordInput, origin: RequestOr
 	return await completeSignIn(userId, origin, 'password_reset')
 }
 
-export type SignInResult =
-	| {
-			mfaRequired: false
-			mfaToken: null
-			id: string
-			accessToken: string
-			refreshToken: string
-			linkedProvider: AuthProvider | null
-	  }
-	| { mfaRequired: true; mfaToken: string; mfaMethods: MfaMethod[]; expiresIn: number }
-
-export interface SignInOptions {
-	/** Provider account matched to this user by a verified email - linked as part of the sign-in. */
-	link?: OAuthIdentity
-}
-
 export const completeSignIn = async (
 	userId: string,
 	origin: RequestOrigin,
@@ -396,7 +366,6 @@ export const confirmMfa = async (
 	return await completeMfaSignIn(mfaToken, ticket, ticket.challenge.method, origin)
 }
 
-/** The second factor passed: burn the ticket, apply its pending link and open the session. */
 export const completeMfaSignIn = async (
 	mfaToken: string,
 	ticket: MfaTicket,
@@ -424,3 +393,85 @@ export const completeMfaSignIn = async (
 
 	return { id: ticket.userId, ...tokens, linkedProvider: ticket.link?.provider ?? null }
 }
+
+const PASSWORD_RESET_TTL = 30 * 60
+
+const TOKEN_BYTES = 32
+
+const hashToken = (token: string) => createHash('sha256').update(token).digest('hex')
+
+const tokenKey = (hash: string) => `password-reset:token:${hash}`
+
+const userKey = (userId: string) => `password-reset:user:${userId}`
+
+export const issuePasswordResetToken = async (userId: string) => {
+	const token = randomBytes(TOKEN_BYTES).toString('base64url')
+	const hash = hashToken(token)
+
+	const previous = await redis.get(userKey(userId))
+	const transaction = redis.multi()
+
+	if (previous) {
+		transaction.del(tokenKey(previous))
+	}
+
+	await transaction
+		.set(tokenKey(hash), userId, 'EX', PASSWORD_RESET_TTL)
+		.set(userKey(userId), hash, 'EX', PASSWORD_RESET_TTL)
+		.exec()
+
+	return token
+}
+
+export const consumePasswordResetToken = async (token: string) => {
+	const userId = await redis.getdel(tokenKey(hashToken(token)))
+
+	if (!userId) {
+		return null
+	}
+
+	await redis.del(userKey(userId))
+
+	return userId
+}
+
+export const MFA_TICKET_TTL = 5 * 60
+
+const ticketKey = (token: string) =>
+	`mfa:ticket:${createHash('sha256').update(token).digest('base64url')}`
+
+const openMfaTicket = async (
+	userId: string,
+	via: string,
+	link: OAuthIdentity | null = null
+) => {
+	const token = randomBytes(32).toString('base64url')
+	const ticket: MfaTicket = { userId, via, challenge: null, link }
+
+	await redis.set(ticketKey(token), JSON.stringify(ticket), 'EX', MFA_TICKET_TTL)
+
+	return token
+}
+
+export const readMfaTicket = async (token: string) => {
+	const raw = await redis.get(ticketKey(token))
+
+	return raw ? (JSON.parse(raw) as MfaTicket) : null
+}
+
+const setMfaChallenge = async (
+	token: string,
+	ticket: MfaTicket,
+	challenge: MfaChallenge
+) => {
+	const saved = await redis.set(
+		ticketKey(token),
+		JSON.stringify({ ...ticket, challenge }),
+		'KEEPTTL',
+		'XX'
+	)
+
+	return saved === 'OK'
+}
+
+const closeMfaTicket = async (token: string) => (await redis.del(ticketKey(token))) === 1

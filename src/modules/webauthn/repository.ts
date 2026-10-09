@@ -50,7 +50,6 @@ export const listWebAuthnCredentials = (userId: string) =>
 		orderBy: { createdAt: 'asc' }
 	})
 
-/** Compare-and-set, so a cloned key racing the real one can't slip a stale counter past the check. */
 export const recordWebAuthnUse = async (
 	id: string,
 	previousCount: bigint,
@@ -65,7 +64,6 @@ export const recordWebAuthnUse = async (
 	return count === 1
 }
 
-/** Recovery codes go too once no second factor is left to recover. */
 export const deleteWebAuthnCredential = (userId: string, id: string) =>
 	db.$transaction(async (tx) => {
 		const { count } = await tx.webAuthnCredential.deleteMany({ where: { id, userId } })

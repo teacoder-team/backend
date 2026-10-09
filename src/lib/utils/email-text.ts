@@ -25,7 +25,6 @@ const decodeEntities = (value: string) =>
 		return ENTITIES[entity.toLowerCase()] ?? match
 	})
 
-/** Good enough to read a support request, not a general HTML renderer. */
 export const htmlToText = (html: string) =>
 	decodeEntities(
 		html
@@ -48,7 +47,6 @@ const isQuoteStart = (line: string) => {
 	return trimmed.startsWith('>') || QUOTE_HEADERS.some((pattern) => pattern.test(trimmed))
 }
 
-/** The new part of a reply: everything before the quoted history. */
 export const stripQuotedReply = (text: string) => {
 	const lines = text.replace(/\r\n?/g, '\n').split('\n')
 	const end = lines.findIndex(isQuoteStart)
@@ -81,11 +79,9 @@ const decodeWord = (match: string, charset: string, kind: string, data: string) 
 	}
 }
 
-/** RFC 2047 encoded words, e.g. `=?UTF-8?B?0JjQstCw0L0=?=`. */
 const decodeMimeWords = (value: string) =>
 	value.replace(/\?=\s+=\?/g, '?==?').replace(/=\?([^?]+)\?([BQ])\?([^?]*)\?=/gi, decodeWord)
 
-/** Display name from a `From` header (`"Иван" <ivan@mail.ru>`); null when there is none. */
 export const displayNameOf = (header: string | undefined) => {
 	const name = header?.match(/^\s*(.*?)\s*<[^>]*>\s*$/)?.[1]
 
@@ -100,7 +96,6 @@ export const displayNameOf = (header: string | undefined) => {
 	)
 }
 
-/** Cuts at a word boundary and marks the cut. */
 export const truncateText = (text: string, max: number) => {
 	if (text.length <= max) {
 		return text

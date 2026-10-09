@@ -9,9 +9,9 @@ export const SECRET_TOKEN_HEADER = 'x-telegram-bot-api-secret-token'
 
 export interface TelegramStarsClientOptions {
 	botToken: string
-	/** Telegram echoes it back in SECRET_TOKEN_HEADER on every webhook call. */
+
 	webhookSecret: string
-	/** Milliseconds. Default 7000. */
+
 	timeout?: number
 	logger?: HttpLogger
 }
@@ -61,7 +61,6 @@ export class TelegramApiError extends Error {
 	}
 }
 
-/** Telegram Bot API payments in Stars - https://core.telegram.org/bots/payments-stars */
 export const createTelegramStarsClient = ({
 	botToken,
 	webhookSecret,
@@ -138,7 +137,6 @@ export const createTelegramStarsClient = ({
 			allowed_updates: ['pre_checkout_query', 'message']
 		})
 
-	/** Pass the SECRET_TOKEN_HEADER value. */
 	const verifyWebhookSecret = (received: string | undefined): boolean => {
 		if (!received) {
 			return false

@@ -2,11 +2,6 @@ import { Button, Heading, Link, Section, Text } from '@react-email/components'
 
 import { EmailLayout } from '../components/EmailLayout'
 
-/**
- * `disabled` - we switched auto-renewal off ourselves, so nothing is charged at the new price;
- * `active` - it stays on and the next period costs more (clause 10.5 asks us to warn exactly these
- * users); `off` - the account never had it.
- */
 type AutoRenewal = 'disabled' | 'active' | 'off'
 
 interface SubscriptionPriceChangeEmailProps {
@@ -14,11 +9,11 @@ interface SubscriptionPriceChangeEmailProps {
 	currentAmount?: number
 	newAmount?: number
 	currency?: string
-	/** When the new price starts applying. */
+
 	effectiveFrom?: string
-	/** Shown only when it changes too - the price differs by payment method (clause 9.3). */
+
 	internationalAmount?: number
-	/** End of the period already paid for - its price never changes. */
+
 	expiresAt?: string
 	autoRenewal?: AutoRenewal
 	premiumUrl?: string

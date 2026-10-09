@@ -30,7 +30,6 @@ model Session {
 
 model RefreshToken {
     id        String @id @default(uuid())
-    /// Groups a rotation chain - reusing an already-rotated token revokes the whole family.
     familyId  String @map("family_id")
     tokenHash Bytes  @map("token_hash")
 
@@ -52,7 +51,6 @@ model RefreshToken {
     @@map("refresh_tokens")
 }
 
-/// Devices (Fingerprint visitor ids) a user has signed in from. Outlives sessions, which get pruned.
 model UserVisitor {
     id        String @id @default(uuid())
     visitorId String @map("visitor_id")

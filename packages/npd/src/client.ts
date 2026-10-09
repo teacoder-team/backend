@@ -41,11 +41,10 @@ const toNpdError = (err: HttpError) => {
 export interface RequestOptions {
 	method?: 'GET' | 'POST'
 	body?: unknown
-	/** Writes are never retried: the API has no idempotency key, a repeat files twice. */
+
 	retryable?: boolean
 }
 
-/** Authenticated requests that re-authenticate once on a 401. */
 export const createRequest = (session: NpdSession, logger?: HttpLogger) => {
 	const readClient = createHttpClient({
 		baseURL: API_URL,

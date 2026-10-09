@@ -4,7 +4,6 @@ export const MFA_METHODS = ['WEBAUTHN', 'TOTP', 'RECOVERY_CODE'] as const
 
 export type MfaMethod = (typeof MFA_METHODS)[number]
 
-/** Methods proven by typing a code. WebAuthn signs a challenge instead - see `/auth/webauthn/login`. */
 export type CodeMfaMethod = Exclude<MfaMethod, 'WEBAUTHN'>
 
 export const MfaMethodSchema = t.UnionEnum(MFA_METHODS, {

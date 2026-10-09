@@ -2,7 +2,7 @@ import { type Static, t } from 'elysia'
 
 import { AuthProvider } from '@prisma/generated/client'
 
-import { OAUTH_PROVIDER_NAMES } from '~/lib/integrations/oauth'
+import { OAUTH_PROVIDER_NAMES, type OAuthProviderName } from '~/lib/integrations/oauth'
 import { PrismaEnum } from '~/lib/utils/schema'
 import {
 	SIGN_IN_COMPLETED_DESCRIPTION,
@@ -10,6 +10,7 @@ import {
 	SignInCompletedFields,
 	SignInMfaRequiredFields
 } from '~/modules/auth/model'
+import type { RequestOrigin } from '~/modules/session/model'
 
 export const OAuthProviderParams = t.Object({
 	provider: t.UnionEnum(OAUTH_PROVIDER_NAMES, {
@@ -110,3 +111,28 @@ export const OAuthAccountsResponse = t.Object(
 	},
 	{ description: 'Соцсети, через которые можно входить в аккаунт.' }
 )
+
+export interface LinkRequest {
+	userId: string
+	sessionId: string
+}
+
+export interface OAuthState extends RequestOrigin {
+	provider: OAuthProviderName
+
+	redirectUri: string
+
+	bindingHash: string
+	codeVerifier?: string
+	link?: LinkRequest
+}
+
+export type ResolvedUser =
+	| { outcome: 'login'; userId: string }
+	| { outcome: 'email_match'; userId: string }
+	| { outcome: 'signup'; userId: string }
+
+export interface OAuthIdentity {
+	provider: AuthProvider
+	providerAccountId: string
+}

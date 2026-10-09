@@ -7,7 +7,6 @@ import { formatDateTime } from '~/lib/utils/date'
 
 import { deleteSessionsDeadBefore, findNewDeviceSession } from './repository'
 
-/** How long a dead session stays readable as account history. */
 const RETENTION_DAYS = 30
 
 const DAY_MS = 24 * 60 * 60 * 1000
@@ -63,7 +62,6 @@ export const sessionEmailJobs: JobHandlers<SessionEmailJobs> = {
 	}
 }
 
-/** Best-effort: a failed alert must not fail the sign-in it is about. */
 export const enqueueNewDeviceLogin = async (payload: SessionEmailJobs['sendNewDeviceLogin']) => {
 	try {
 		await emailQueue.add('sendNewDeviceLogin', payload)

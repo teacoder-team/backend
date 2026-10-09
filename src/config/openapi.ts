@@ -2,7 +2,6 @@ import type { ElysiaOpenAPIConfig } from '@elysiajs/openapi'
 
 import { API_VERSION } from './version'
 
-/** Section names in the docs. Always reference these - a typo would silently open a new section. */
 export const TAG = {
 	core: 'Система',
 	auth: 'Аутентификация',

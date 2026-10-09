@@ -2,7 +2,6 @@ import * as client from 'openid-client'
 
 import type { OAuthClientCredentials, OAuthProvider } from '../types'
 
-/** OpenID Connect. Metadata mirrors https://accounts.google.com/.well-known/openid-configuration */
 export const google = ({
 	clientId,
 	clientSecret,

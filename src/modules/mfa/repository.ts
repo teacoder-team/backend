@@ -7,7 +7,6 @@ export const findTotpAuthenticator = (userId: string) =>
 export const findAccountLabel = (userId: string) =>
 	db.user.findUnique({ where: { id: userId }, select: { username: true, email: true } })
 
-/** Starting over replaces an unfinished enrollment - the old QR code stops working. */
 export const savePendingTotp = (userId: string, secretCipher: Buffer) =>
 	db.totpAuthenticator.upsert({
 		where: { userId },
@@ -39,7 +38,6 @@ export const enableTotp = (userId: string, step: number, recoveryCodeHashes: Buf
 		return true
 	})
 
-/** Compare-and-set on the step: of two requests racing with one code, only one wins. */
 export const claimTotpStep = async (userId: string, step: number) => {
 	const { count } = await db.totpAuthenticator.updateMany({
 		where: {
@@ -53,7 +51,6 @@ export const claimTotpStep = async (userId: string, step: number) => {
 	return count === 1
 }
 
-/** Recovery codes go too unless another factor still needs them. */
 export const removeTotp = (userId: string) =>
 	db.$transaction(async (tx) => {
 		await tx.totpAuthenticator.delete({ where: { userId } })

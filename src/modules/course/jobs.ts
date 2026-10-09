@@ -8,7 +8,6 @@ import { findUserById } from '~/modules/users/repository'
 
 import { findCourseSummary } from './repository'
 
-/** Ids only - the address is decrypted at send time rather than parked in Redis. */
 export type CourseEmailJobs = {
 	sendCoursePurchase: { userId: string; courseId: string }
 }

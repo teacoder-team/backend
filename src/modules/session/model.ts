@@ -45,3 +45,26 @@ export const RevokeResponse = t.Object(
 export const SessionParams = t.Object({
 	id: t.String({ description: 'Идентификатор сессии, которую нужно завершить.' })
 })
+
+export interface RequestOrigin {
+	ip: string
+	userAgent: string
+
+	visitorId?: string | null
+}
+
+export interface SessionContext extends RequestOrigin {
+	userId: string
+}
+
+export interface TokenPair {
+	accessToken: string
+	refreshToken: string
+}
+
+export interface CachedSession {
+	id: string
+	userId: string
+	expiresAt: string
+	lastSeenAt: string
+}

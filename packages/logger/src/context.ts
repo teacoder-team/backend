@@ -5,7 +5,6 @@ export interface LogContext {
 	[key: string]: unknown
 }
 
-/** Fields stored here are merged into every log line written inside the same async flow. */
 export const logContext = new AsyncLocalStorage<LogContext>()
 
 export const extendLogContext = (fields: Record<string, unknown>) => {

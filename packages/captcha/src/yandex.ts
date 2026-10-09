@@ -8,7 +8,6 @@ interface ValidateResponse {
 	host?: string
 }
 
-/** Yandex SmartCaptcha - https://yandex.cloud/en/docs/smartcaptcha/quickstart */
 export const yandexSmartCaptcha = ({
 	secretKey,
 	siteKey,

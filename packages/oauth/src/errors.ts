@@ -10,7 +10,6 @@ export class OAuthError extends Error {
 	}
 }
 
-/** The provider redirected back with `error=...` - usually the user pressed "cancel". */
 export class OAuthDeniedError extends OAuthError {
 	constructor(
 		provider: OAuthProvider,
@@ -35,11 +34,6 @@ const EXCHANGE_MESSAGES: Record<OAuthExchangeFailure, (label: string) => string>
 	unreachable: (label) => `${label} could not be reached`
 }
 
-/**
- * The code was not turned into trusted tokens: `rejected` - the provider refused it (expired,
- * replayed, misconfigured client); `invalid_response` - it answered, but the tokens or ID token
- * failed validation; `unreachable` - network error or timeout.
- */
 export class OAuthExchangeError extends OAuthError {
 	constructor(
 		provider: OAuthProvider,
@@ -50,7 +44,6 @@ export class OAuthExchangeError extends OAuthError {
 	}
 }
 
-/** Tokens were issued but the user's profile could not be read. */
 export class OAuthProfileError extends OAuthError {
 	constructor(provider: OAuthProvider, options?: ErrorOptions) {
 		super(provider, `Failed to fetch ${provider.label} profile`, options)

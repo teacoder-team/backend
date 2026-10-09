@@ -177,3 +177,16 @@ export const DownloadParams = t.Object({
 		error: 'Invalid download token'
 	})
 })
+
+export type CourseAccessSource = 'FREE' | 'PURCHASE' | 'PREMIUM'
+
+export interface CourseEntitlement {
+	hasAccess: boolean
+
+	via: CourseAccessSource | null
+}
+
+export interface GatedCourse {
+	id: string
+	accessMode: CourseAccessMode
+}

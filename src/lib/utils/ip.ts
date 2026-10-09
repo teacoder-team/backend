@@ -2,7 +2,6 @@ import ipaddr from 'ipaddr.js'
 
 type Address = ipaddr.IPv4 | ipaddr.IPv6
 
-/** Checked in order - the first header carrying a valid address wins. */
 const IP_HEADERS = [
 	'cf-connecting-ip',
 	'true-client-ip',
@@ -11,10 +10,6 @@ const IP_HEADERS = [
 	'x-forwarded-for'
 ] as const
 
-/**
- * Strict parse: four-part IPv4 or IPv6 only - ipaddr's lenient forms like "127.1" are refused.
- * IPv4-mapped IPv6 ("::ffff:1.2.3.4") comes back as plain IPv4, so one client has one identity.
- */
 export const parseIp = (value: string): Address | null => {
 	const candidate = value.trim()
 
@@ -25,7 +20,6 @@ export const parseIp = (value: string): Address | null => {
 	return ipaddr.process(candidate)
 }
 
-/** The client address proxies report, normalized. Invalid header values are skipped, not trusted. */
 export const getForwardedIp = (headers: Headers): string | null => {
 	for (const header of IP_HEADERS) {
 		const first = headers.get(header)?.split(',')[0]
@@ -53,10 +47,6 @@ const toRange = (entry: string): [Address, number] => {
 	return [address, address.kind() === 'ipv4' ? 32 : 128]
 }
 
-/**
- * Compiles exact addresses and CIDR ranges once, up front - a malformed entry throws at
- * startup instead of silently never matching.
- */
 export const createIpAllowlist = (entries: readonly string[]) => {
 	const ranges = entries.map(toRange)
 

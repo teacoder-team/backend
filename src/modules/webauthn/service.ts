@@ -17,7 +17,8 @@ import { redis } from '~/lib/redis'
 import { updateLastLogin } from '~/modules/auth/repository'
 import { completeMfaSignIn, takeTicket } from '~/modules/auth/service'
 import { issueRecoveryCodesIfMissing } from '~/modules/mfa/service'
-import { issueTokenPair, type RequestOrigin } from '~/modules/session/service'
+import type { RequestOrigin } from '~/modules/session/model'
+import { issueTokenPair } from '~/modules/session/service'
 
 import type { WebAuthnLoginInput, WebAuthnLoginOptionsInput, WebAuthnRegisterInput } from './model'
 import {
@@ -31,13 +32,11 @@ import {
 
 const CHALLENGE_TTL = 5 * 60
 
-/** Authenticators without attestation report an all-zero AAGUID - it says nothing. */
 const EMPTY_AAGUID = '00000000-0000-0000-0000-000000000000'
 
 const registrationKey = (userId: string) => `webauthn:register:${userId}`
 const loginKey = (challenge: string) => `webauthn:login:${challenge}`
 
-/** Parked under the challenge: whose second factor this is, or null for a passwordless login. */
 interface LoginChallenge {
 	userId: string | null
 }
@@ -61,7 +60,6 @@ const toCredentialResponse = (credential: StoredCredential) => ({
 	createdAt: credential.createdAt.toISOString()
 })
 
-/** "Chrome, macOS" for passkeys; hardware keys don't belong to the browser that added them. */
 const defaultName = (transports: string[], userAgent: string) => {
 	const isHardwareKey =
 		!transports.includes('internal') && transports.some((transport) => transport !== 'hybrid')
@@ -206,7 +204,7 @@ const readChallenge = (clientDataJSON: string) => {
 			return clientData.challenge
 		}
 	} catch {
-		/** Falls through to the error below. */
+
 	}
 
 	throw new BadRequestError('Malformed WebAuthn response')
@@ -233,7 +231,6 @@ export const finishLogin = async (
 	const stored = await findWebAuthnCredential(Buffer.from(response.id, 'base64url'))
 	const userHandle = response.response.userHandle
 
-	/** One answer for "no such key", "someone else's key" and "wrong user handle" - no probing. */
 	if (
 		!stored ||
 		(ticket && stored.userId !== ticket.userId) ||
