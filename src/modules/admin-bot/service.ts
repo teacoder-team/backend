@@ -105,15 +105,17 @@ export const enqueuePaymentErrorNotification = async (context: PaymentErrorConte
 			occurredAt: new Date().toISOString()
 		}
 		const fingerprint = createHash('sha256')
-			.update(JSON.stringify([
-				payload.source,
-				payload.provider,
-				payload.paymentId ?? payload.userId,
-				payload.status,
-				payload.errorName,
-				payload.errorCode,
-				payload.reason
-			]))
+			.update(
+				JSON.stringify([
+					payload.source,
+					payload.provider,
+					payload.paymentId ?? payload.userId,
+					payload.status,
+					payload.errorName,
+					payload.errorCode,
+					payload.reason
+				])
+			)
 			.digest('hex')
 		const key = `admin-alert:payment:${fingerprint}`
 		const claim = randomUUID()
@@ -212,26 +214,29 @@ const EMOJI = {
 const code = (value: string | null | undefined) => value && tg`<code>${value}</code>`
 
 export const paymentErrorMessage = (failure: PaymentErrorNotification) =>
-	joinHtml([
-		tg`🚨 <b>${failure.source === 'CREATE_PAYMENT' ? 'Ошибка создания платежа' : 'Ошибка обработки вебхука'}</b>`,
-		section('Контекст', [
-			['Среда', env.NODE_ENV],
-			['Провайдер', failure.provider],
-			['Маршрут', code(failure.path)],
-			['Платёж', code(failure.paymentId)],
-			['ID провайдера', code(failure.pspIntentId)],
-			['Вебхук', code(failure.webhookId)],
-			['Пользователь', code(failure.userId)],
-			['Request ID', code(failure.requestId)]
-		]),
-		section('Ошибка', [
-			['HTTP-статус', failure.status],
-			['Тип', failure.errorName],
-			['Код', failure.errorCode],
-			['Причина', failure.reason]
-		]),
-		tg`${formatDateTime(new Date(failure.occurredAt))}\n#платежи #ошибка`
-	], '\n\n')
+	joinHtml(
+		[
+			tg`🚨 <b>${failure.source === 'CREATE_PAYMENT' ? 'Ошибка создания платежа' : 'Ошибка обработки вебхука'}</b>`,
+			section('Контекст', [
+				['Среда', env.NODE_ENV],
+				['Провайдер', failure.provider],
+				['Маршрут', code(failure.path)],
+				['Платёж', code(failure.paymentId)],
+				['ID провайдера', code(failure.pspIntentId)],
+				['Вебхук', code(failure.webhookId)],
+				['Пользователь', code(failure.userId)],
+				['Request ID', code(failure.requestId)]
+			]),
+			section('Ошибка', [
+				['HTTP-статус', failure.status],
+				['Тип', failure.errorName],
+				['Код', failure.errorCode],
+				['Причина', failure.reason]
+			]),
+			tg`${formatDateTime(new Date(failure.occurredAt))}\n#платежи #ошибка`
+		],
+		'\n\n'
+	)
 
 export interface CoursePurchaseMessageInput {
 	purchase: PurchaseDetails
