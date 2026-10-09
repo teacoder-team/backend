@@ -150,6 +150,9 @@ const openCheckout = async (
 	fallbackEmail: string | undefined
 ) => {
 	const { userId, idempotencyKey } = request
+
+	extendLogContext({ provider, userId, product: product.kind })
+
 	const email = (await getUserEmail(userId)) ?? fallbackEmail ?? null
 
 	const payment = await createPendingPayment({
@@ -173,6 +176,8 @@ const openCheckout = async (
 
 		throw err
 	})
+
+	extendLogContext({ paymentId: payment.id })
 
 	try {
 		const { url, pspIntentId, raw } = await createProviderCheckout(
@@ -207,8 +212,6 @@ const openCheckout = async (
 			url
 		}
 	} catch (err) {
-		await markPaymentFailed(payment.id)
-
 		extendLogContext({
 			event: 'payment_initialization_failed',
 			userId,
@@ -217,11 +220,16 @@ const openCheckout = async (
 			errorMessage: err instanceof Error ? err.message : String(err)
 		})
 
+		await markPaymentFailed(payment.id)
+
 		if (err instanceof AppError) {
 			throw err
 		}
 
-		throw new BadRequestError('Payment provider is unavailable, try again later')
+		const failure = new BadRequestError('Payment provider is unavailable, try again later')
+		failure.cause = err
+
+		throw failure
 	}
 }
 
@@ -276,6 +284,8 @@ export const createPayment = async (
 		courseId: input.courseId ?? null,
 		idempotencyKey
 	}
+
+	extendLogContext({ userId, provider: PAYMENT_METHODS[input.method]?.provider })
 
 	try {
 		return await withLock(checkoutLockKey(request), CHECKOUT_LOCK_TTL_MS, () =>

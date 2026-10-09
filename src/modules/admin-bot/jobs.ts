@@ -18,6 +18,7 @@ import {
 } from './repository'
 import {
 	coursePurchaseMessage,
+	paymentErrorMessage,
 	registrationMessage,
 	subscriptionPurchaseMessage,
 	subscriptionRenewalMessage,
@@ -63,6 +64,9 @@ const deliver = async (message: Html) => {
 }
 
 export const notificationJobs: JobHandlers<NotificationJobs> = {
+	notifyPaymentError: async (failure) => {
+		await deliver(paymentErrorMessage(failure))
+	},
 	notifyCoursePurchase: async ({ paymentId }) => {
 		const purchase = await findPurchaseDetails(paymentId)
 

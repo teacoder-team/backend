@@ -25,7 +25,10 @@ import { resend } from '~/lib/integrations/resend'
 import { extendLogContext, logger } from '~/lib/logger'
 import { normalizeEmail } from '~/lib/utils/email'
 import { createIpAllowlist } from '~/lib/utils/ip'
-import { enqueueSupportEmailNotification } from '~/modules/admin-bot/service'
+import {
+	enqueuePaymentErrorNotification,
+	enqueueSupportEmailNotification
+} from '~/modules/admin-bot/service'
 import type { ProviderPaymentUpdate } from '~/modules/billing/model'
 import { applyPaymentUpdate, toSavedMethod } from '~/modules/billing/service'
 
@@ -81,10 +84,32 @@ const assertKnownIp = (
 }
 
 const settle = async (eventId: string, update: ProviderPaymentUpdate) => {
+	extendLogContext({
+		webhookId: eventId,
+		paymentId: update.paymentId,
+		pspIntentId: update.pspIntentId,
+		provider: update.provider
+	})
+
 	try {
 		const result = await applyPaymentUpdate(update)
 
 		await markWebhookProcessed(eventId, result.outcome === 'rejected' ? result.reason : null)
+
+		if (result.outcome === 'rejected' || result.outcome === 'already_owned') {
+			await enqueuePaymentErrorNotification({
+				source: 'WEBHOOK',
+				error: new AppError(
+					result.outcome === 'rejected' ? result.reason : 'Captured course payment requires a manual refund',
+				409
+				),
+				status: 409,
+				provider: update.provider,
+				paymentId: update.paymentId,
+				pspIntentId: update.pspIntentId,
+				webhookId: eventId
+			})
+		}
 	} catch (err) {
 		await markWebhookFailed(eventId, err instanceof Error ? err.message : String(err))
 
@@ -103,6 +128,8 @@ export const receiveHeleketWebhook = async (
 	payload: Record<string, unknown>,
 	ip: string | null
 ) => {
+	extendLogContext({ provider: PSP_HELEKET })
+
 	assertKnownIp(ip, isHeleketIp, 'Heleket')
 
 	if (!isHeleketPayload(payload)) {
@@ -110,6 +137,9 @@ export const receiveHeleketWebhook = async (
 	}
 
 	const pspEventId = `${payload.uuid}:${payload.status}`
+
+	extendLogContext({ pspIntentId: payload.uuid })
+
 	const existing = await findWebhookEvent(PSP_HELEKET, pspEventId)
 
 	if (existing?.processedAt) {
@@ -143,6 +173,13 @@ export const receiveHeleketWebhook = async (
 			'webhook_signature_invalid'
 		)
 
+		await enqueuePaymentErrorNotification({
+			source: 'WEBHOOK',
+			error: new UnauthorizedError('Invalid Heleket signature'),
+			status: 401,
+			provider: PSP_HELEKET
+		})
+
 		return markWebhookProcessed(event.id, 'invalid_signature')
 	}
 
@@ -174,6 +211,8 @@ interface YookassaNotification {
 }
 
 export const receiveYookassaWebhook = async (body: YookassaNotification, ip: string | null) => {
+	extendLogContext({ provider: PSP_YOOKASSA })
+
 	assertKnownIp(ip, isYookassaIp, 'YooKassa')
 
 	const { event, object } = body
@@ -184,6 +223,9 @@ export const receiveYookassaWebhook = async (body: YookassaNotification, ip: str
 	}
 
 	const pspEventId = `${event}:${objectId}`
+
+	extendLogContext({ pspIntentId: objectId })
+
 	const existing = await findWebhookEvent(PSP_YOOKASSA, pspEventId)
 
 	if (existing?.processedAt) {
@@ -227,6 +269,15 @@ export const receiveYookassaWebhook = async (body: YookassaNotification, ip: str
 				'webhook_unknown_payment'
 			)
 
+			await enqueuePaymentErrorNotification({
+				source: 'WEBHOOK',
+				error: err,
+				status: 404,
+				provider: PSP_YOOKASSA,
+				pspIntentId: objectId,
+				webhookId: row.id
+			})
+
 			return markWebhookProcessed(row.id, 'payment_not_found')
 		}
 
@@ -237,7 +288,10 @@ export const receiveYookassaWebhook = async (body: YookassaNotification, ip: str
 
 		await markWebhookFailed(row.id, 'refetch_failed')
 
-		throw new AppError('Could not confirm the payment with YooKassa, retry later', 503)
+		const failure = new AppError('Could not confirm the payment with YooKassa, retry later', 503)
+		failure.cause = err
+
+		throw failure
 	}
 
 	const row = await record(true, payment)
@@ -300,6 +354,8 @@ const verifyResendEvent = (payload: string, headers: Headers) => {
 }
 
 export const receiveResendWebhook = async (payload: string, headers: Headers) => {
+	extendLogContext({ provider: PSP_RESEND })
+
 	const { id: pspEventId, event } = verifyResendEvent(payload, headers)
 	const existing = await findWebhookEvent(PSP_RESEND, pspEventId)
 
@@ -346,6 +402,8 @@ export const receiveProdamusWebhook = async (
 	fields: Record<string, unknown>,
 	signature: string | null
 ) => {
+	extendLogContext({ provider: PSP_PRODAMUS })
+
 	const payload = parseNotification(fields)
 
 	if (!prodamus.verifyWebhookSignature(payload, signature)) {
@@ -362,6 +420,9 @@ export const receiveProdamusWebhook = async (
 	}
 
 	const pspEventId = `${paymentId}:${paymentStatus}`
+
+	extendLogContext({ paymentId, pspIntentId: notification.order_id })
+
 	const existing = await findWebhookEvent(PSP_PRODAMUS, pspEventId)
 
 	if (existing?.processedAt) {
