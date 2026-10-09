@@ -103,9 +103,9 @@ const settle = async (eventId: string, update: ProviderPaymentUpdate) => {
 					result.outcome === 'rejected'
 						? result.reason
 						: 'Captured course payment requires a manual refund',
-					409
+					result.outcome === 'rejected' ? 422 : 500
 				),
-				status: 409,
+				status: result.outcome === 'rejected' ? 422 : 500,
 				provider: update.provider,
 				paymentId: update.paymentId,
 				pspIntentId: update.pspIntentId,
