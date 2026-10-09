@@ -71,7 +71,6 @@ export interface Invoice {
 }
 
 export interface CreateInvoiceInput {
-
 	orderId: string
 	amount: number
 

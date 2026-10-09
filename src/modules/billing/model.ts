@@ -233,11 +233,9 @@ export type FulfillmentResult =
 	| { outcome: 'already_captured' }
 	| { outcome: 'status_updated'; status: IntentStatus }
 	| { outcome: 'unchanged' }
-
 	| { outcome: 'rejected'; reason: string }
 
 export interface SubscriptionInvoice {
-
 	months: number
 
 	renewal: boolean

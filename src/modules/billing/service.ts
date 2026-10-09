@@ -175,7 +175,12 @@ const openCheckout = async (
 	})
 
 	try {
-		const { url, pspIntentId, raw } = await createProviderCheckout(payment, product, email, CHECKOUT_TTL_SECONDS)
+		const { url, pspIntentId, raw } = await createProviderCheckout(
+			payment,
+			product,
+			email,
+			CHECKOUT_TTL_SECONDS
+		)
 
 		await attachProviderPayment(payment.id, pspIntentId, {
 			url,
@@ -399,7 +404,6 @@ const capture = async (
 	}
 
 	if (result === 'already_owned') {
-
 		logger.warn(
 			{
 				context: 'billing',

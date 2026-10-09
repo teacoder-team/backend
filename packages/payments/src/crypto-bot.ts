@@ -10,7 +10,6 @@ const DEFAULT_EXPIRES_IN = 60 * 60
 export const SIGNATURE_HEADER = 'crypto-pay-api-signature'
 
 export interface CryptoBotClientOptions {
-
 	token: string
 	testnet?: boolean
 

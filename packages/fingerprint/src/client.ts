@@ -22,7 +22,6 @@ export interface FingerprintEvent {
 }
 
 export interface FingerprintClientOptions {
-
 	secretKey: string
 
 	region?: FingerprintRegion
@@ -32,7 +31,6 @@ export interface FingerprintClientOptions {
 }
 
 export interface IdentifyOptions {
-
 	maxAgeMs: number
 
 	allowedOrigins?: readonly string[]

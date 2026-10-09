@@ -51,7 +51,6 @@ const validate = (services: ServiceItem[], client: IncomeClient) => {
 }
 
 export interface IssueReceiptInput {
-
 	services: ServiceItem[]
 
 	client?: Partial<IncomeClient>

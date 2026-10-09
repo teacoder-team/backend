@@ -1,24 +1,37 @@
+import { env } from '~/config/env'
 import { sendMail } from '~/lib/mail/client'
 import EmailChange from '~/lib/mail/templates/EmailChange'
+import EmailVerification from '~/lib/mail/templates/EmailVerification'
 import PasswordChange from '~/lib/mail/templates/PasswordChange'
 import ResetPassword from '~/lib/mail/templates/ResetPassword'
-import VerificationCode from '~/lib/mail/templates/VerificationCode'
 import { emailQueue } from '~/lib/queue/queues'
 import type { JobHandlers } from '~/lib/queue/runner'
+import { issueEmailToken } from '~/lib/security/email-token'
+
+import { findEmailVerificationTarget } from './repository'
 
 export type EmailJobs = {
-	sendVerificationCode: { email: string; code: string }
+	sendEmailVerificationLink: { userId: string }
 	sendPasswordResetLink: { email: string; url: string }
 	sendEmailChangeCode: { email: string; code: string }
 	sendPasswordChangeCode: { email: string; code: string }
 }
 
 export const emailJobs: JobHandlers<EmailJobs> = {
-	sendVerificationCode: async ({ email, code }) => {
+	sendEmailVerificationLink: async ({ userId }) => {
+		const user = await findEmailVerificationTarget(userId)
+
+		if (!user?.email || user.emailVerifiedAt) {
+			return
+		}
+
+		const token = await issueEmailToken('email-verification', { userId, email: user.email })
+		const url = `${env.APP_URL}/auth/verify/${token}`
+
 		await sendMail({
-			to: email,
-			subject: `${code} - код подтверждения TeaCoder`,
-			template: VerificationCode({ code }),
+			to: user.email,
+			subject: 'Подтвердите почту TeaCoder',
+			template: EmailVerification({ url, username: user.displayName }),
 			sender: 'hello'
 		})
 	},
@@ -48,8 +61,8 @@ export const emailJobs: JobHandlers<EmailJobs> = {
 	}
 }
 
-export const enqueueVerificationCode = (payload: EmailJobs['sendVerificationCode']) =>
-	emailQueue.add('sendVerificationCode', payload)
+export const enqueueEmailVerificationLink = (payload: EmailJobs['sendEmailVerificationLink']) =>
+	emailQueue.add('sendEmailVerificationLink', payload)
 
 export const enqueuePasswordResetLink = (payload: EmailJobs['sendPasswordResetLink']) =>
 	emailQueue.add('sendPasswordResetLink', payload)

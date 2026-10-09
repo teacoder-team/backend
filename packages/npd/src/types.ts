@@ -7,7 +7,6 @@ export interface NpdLogger {
 }
 
 export interface NpdClientOptions {
-
 	inn: string
 	password: string
 

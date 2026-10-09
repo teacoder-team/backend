@@ -7,7 +7,6 @@ export interface CaptchaResult {
 }
 
 export interface CaptchaVerifyOptions {
-
 	remoteIp?: string
 }
 

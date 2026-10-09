@@ -104,7 +104,6 @@ export const createHttpClient = ({
 
 				throw new HttpError(response.status, await readBody(response), url)
 			} catch (err) {
-
 				if (err instanceof HttpError) {
 					throw err
 				}

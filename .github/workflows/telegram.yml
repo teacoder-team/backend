@@ -1,0 +1,215 @@
+name: Telegram notifications
+
+on:
+    push:
+        branches: ['**']
+    pull_request_target:
+        types: [opened, reopened, closed]
+    issues:
+        types: [opened]
+    workflow_run:
+        workflows: [CI, CD]
+        types: [completed]
+    workflow_dispatch:
+
+permissions: {}
+
+jobs:
+    notify:
+        name: Notify Telegram
+        if: >-
+            github.event_name != 'pull_request_target' ||
+            github.event.action != 'closed' ||
+            github.event.pull_request.merged == true
+        runs-on: ubuntu-latest
+        timeout-minutes: 2
+        steps:
+            - name: Send notification
+              uses: actions/github-script@v9
+              env:
+                  TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+                  TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+                  TELEGRAM_MESSAGE_THREAD_ID: ${{ vars.TELEGRAM_MESSAGE_THREAD_ID }}
+              with:
+                  script: |
+                      const token = process.env.TELEGRAM_BOT_TOKEN?.trim()
+                      const chatId = process.env.TELEGRAM_CHAT_ID?.trim()
+                      const threadId = process.env.TELEGRAM_MESSAGE_THREAD_ID?.trim()
+
+                      if (!token || !chatId) {
+                          core.notice('Telegram notifications skipped: configure TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID')
+
+                          return
+                      }
+
+                      if (threadId && !/^[1-9]\d*$/.test(threadId)) {
+                          core.setFailed('TELEGRAM_MESSAGE_THREAD_ID must be a positive integer')
+
+                          return
+                      }
+
+                      const escape = (value) => String(value ?? '')
+                          .replaceAll('&', '&amp;')
+                          .replaceAll('<', '&lt;')
+                          .replaceAll('>', '&gt;')
+                          .replaceAll('"', '&quot;')
+
+                      const shorten = (value, limit = 240) => {
+                          const text = String(value ?? '').replace(/\s+/g, ' ').trim()
+
+                          return text.length > limit ? `${text.slice(0, limit - 1)}…` : text
+                      }
+
+                      const link = (url, label) => `<a href="${escape(url)}">${escape(label)}</a>`
+                      const payload = context.payload
+                      const repository = payload.repository
+                      const repositoryUrl = repository.html_url
+                      const repositoryLink = link(repositoryUrl, repository.full_name)
+                      const eventActor = payload.workflow_run?.triggering_actor
+                          ?? payload.workflow_run?.actor
+                          ?? payload.sender
+                      let actorName = eventActor?.name
+
+                      if (!actorName && eventActor?.login) {
+                          try {
+                              const profile = await github.rest.users.getByUsername({
+                                  username: eventActor.login,
+                                  request: { timeout: 5_000 }
+                              })
+                              actorName = profile.data.name
+                          } catch {
+                              core.info('GitHub actor profile unavailable; using login')
+                          }
+                      }
+
+                      const actorLink = (user) => {
+                          const login = user?.login ?? context.actor
+                          const name = login === eventActor?.login ? actorName : user?.name
+                          const label = name && name !== login ? `${shorten(name, 100)} (${login})` : login
+
+                          return link(user?.html_url ?? `${context.serverUrl}/${login}`, label)
+                      }
+
+                      const branchLink = (name, url = repositoryUrl) => link(
+                          `${url}/commits/${encodeURIComponent(name)}`,
+                          shorten(name, 160)
+                      )
+
+                      const elapsed = (start, end) => {
+                          const seconds = Math.max(0, Math.floor((Date.parse(end) - Date.parse(start)) / 1000))
+                          const minutes = Math.floor(seconds / 60)
+
+                          return `${String(minutes).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`
+                      }
+
+                      let text
+
+                      switch (context.eventName) {
+                          case 'push': {
+                              if (!payload.ref.startsWith('refs/heads/')) {
+                                  return
+                              }
+
+                              const branch = payload.ref.slice('refs/heads/'.length)
+                              const actor = actorLink(payload.sender)
+
+                              if (payload.deleted) {
+                                  text = `${actor} deleted branch <b>${escape(shorten(branch, 160))}</b> in ${repositoryLink}`
+                              } else if (payload.created) {
+                                  text = `${actor} pushed new branch ${branchLink(branch)} to ${repositoryLink}`
+                              } else {
+                                  const action = payload.forced ? 'force-pushed to branch' : 'pushed to branch'
+                                  text = `${actor} ${action} ${branchLink(branch)} of ${repositoryLink}`
+                              }
+
+                              if (!payload.deleted && payload.compare) {
+                                  text += ` (${link(payload.compare, 'Compare changes')})`
+                              }
+
+                              break
+                          }
+
+                          case 'pull_request_target': {
+                              const request = payload.pull_request
+                              const actor = actorLink(payload.sender)
+                              const action = request.merged
+                                  ? 'merged pull request'
+                                  : payload.action === 'reopened' ? 'reopened pull request' : 'opened pull request'
+                              const title = link(request.html_url, `#${request.number} ${shorten(request.title)}`)
+                              const source = branchLink(request.head.ref, request.head.repo?.html_url ?? repositoryUrl)
+                              const target = branchLink(request.base.ref)
+
+                              text = `${actor} ${action} <b>${title}</b> in ${repositoryLink}\n${source} → ${target}`
+
+                              break
+                          }
+
+                          case 'issues': {
+                              const issue = payload.issue
+                              const title = link(issue.html_url, `#${issue.number} ${shorten(issue.title)}`)
+
+                              text = `${actorLink(payload.sender)} opened issue <b>${title}</b> in ${repositoryLink}`
+
+                              break
+                          }
+
+                          case 'workflow_run': {
+                              const run = payload.workflow_run
+                              const outcomes = {
+                                  success: '✅ has passed',
+                                  failure: '❌ has failed',
+                                  cancelled: '⏹ was cancelled',
+                                  timed_out: '⏱ has timed out',
+                                  action_required: '⚠️ requires action',
+                                  neutral: '➖ completed with a neutral result',
+                                  skipped: '⏭ was skipped',
+                                  stale: '⌛ became stale',
+                                  startup_failure: '❌ failed to start'
+                              }
+                              const outcome = outcomes[run.conclusion] ?? `completed with status ${escape(run.conclusion)}`
+                              const duration = elapsed(run.run_started_at ?? run.created_at, run.updated_at)
+                              const attempt = run.run_attempt > 1 ? `, attempt ${run.run_attempt}` : ''
+                              const pipeline = link(run.html_url, `${run.name} #${run.run_number}${attempt}`)
+                              const branch = branchLink(run.head_branch, run.head_repository?.html_url ?? repositoryUrl)
+                              const actor = actorLink(run.triggering_actor ?? run.actor)
+
+                              text = `${repositoryLink}: Pipeline ${pipeline} of branch ${branch} by ${actor} ${outcome} in <code>${duration}</code>`
+
+                              break
+                          }
+
+                          case 'workflow_dispatch': {
+                              text = `Telegram notifications for ${repositoryLink} are connected. Test triggered by ${actorLink(payload.sender)}`
+
+                              break
+                          }
+
+                          default:
+                              return
+                      }
+
+                      try {
+                          const response = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+                              method: 'POST',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({
+                                  chat_id: chatId,
+                                  ...(threadId ? { message_thread_id: Number(threadId) } : {}),
+                                  text,
+                                  parse_mode: 'HTML',
+                                  link_preview_options: { is_disabled: true }
+                              }),
+                              signal: AbortSignal.timeout(15_000)
+                          })
+                          const result = await response.json()
+
+                          if (!response.ok || !result.ok) {
+                              core.setFailed(`Telegram rejected the notification (code ${result.error_code ?? response.status})`)
+
+                              return
+                          }
+
+                          core.info('Telegram notification sent')
+                      } catch {
+                          core.setFailed('Could not send the Telegram notification')
+                      }

@@ -24,7 +24,6 @@ export const YANDEX_SPLIT_PAYMENT_METHODS = [
 ] as const
 
 export interface ProdamusClientOptions {
-
 	formUrl: string
 
 	secretKey: string
@@ -40,7 +39,6 @@ export interface ProdamusProduct {
 }
 
 export interface CreatePaymentInput {
-
 	orderId: string
 	products: ProdamusProduct[]
 

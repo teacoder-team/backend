@@ -9,7 +9,6 @@ import {
 import type { OAuthProfile, OAuthProvider, OAuthTokens } from './types'
 
 export interface AuthorizationRequest {
-
 	url: string
 
 	state: string
