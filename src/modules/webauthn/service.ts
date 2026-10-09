@@ -203,9 +203,7 @@ const readChallenge = (clientDataJSON: string) => {
 		if (typeof clientData.challenge === 'string') {
 			return clientData.challenge
 		}
-	} catch {
-
-	}
+	} catch {}
 
 	throw new BadRequestError('Malformed WebAuthn response')
 }

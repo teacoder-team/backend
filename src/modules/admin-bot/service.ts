@@ -1,3 +1,6 @@
+import { createHash, randomUUID } from 'node:crypto'
+
+import { HttpError } from '@teacoder/http'
 import {
 	type ChatTarget,
 	customEmoji,
@@ -11,14 +14,22 @@ import { UserRole } from '@prisma/generated/client'
 
 import { env } from '~/config/env'
 import { PAYMENT_METHODS, PAYMENT_PROVIDER_NAMES } from '~/config/payments'
+import { AppError } from '~/lib/errors'
 import { AUTH_PROVIDER_TITLES } from '~/lib/integrations/oauth'
 import { adminNotifier } from '~/lib/integrations/telegram'
-import { logger } from '~/lib/logger'
+import { logContext, logger } from '~/lib/logger'
 import { notificationsQueue } from '~/lib/queue/queues'
+import { redis } from '~/lib/redis'
 import { formatDate, formatDateTime } from '~/lib/utils/date'
 import { truncateText } from '~/lib/utils/email-text'
 
-import type { NotificationJobs, SignUpMethod, SupportEmail } from './model'
+import type {
+	NotificationJobs,
+	PaymentErrorContext,
+	PaymentErrorNotification,
+	SignUpMethod,
+	SupportEmail
+} from './model'
 import type {
 	PurchasedCourse,
 	PurchaseDetails,
@@ -57,6 +68,83 @@ export const enqueueSubscriptionRenewalNotification = (
 
 export const enqueueSupportEmailNotification = (payload: NotificationJobs['notifySupportEmail']) =>
 	enqueue('notifySupportEmail', payload)
+
+const errorDetails = (error: unknown) => {
+	const cause = error instanceof Error && error.cause instanceof Error ? error.cause : error
+	const errorName = cause instanceof Error ? cause.name : 'UnknownError'
+	const errorCode =
+		cause instanceof Error && 'code' in cause && typeof cause.code === 'string'
+			? truncateText(cause.code, 40)
+			: undefined
+
+	if (cause instanceof HttpError) {
+		const host = URL.canParse(cause.url) ? new URL(cause.url).hostname : 'payment provider'
+
+		return { errorName, errorCode, reason: `HTTP ${cause.status} from ${host}` }
+	}
+
+	if (cause instanceof AppError) {
+		return { errorName, errorCode, reason: truncateText(cause.message, 500) }
+	}
+
+	return { errorName, errorCode, reason: 'Internal error; check the request logs' }
+}
+
+export const enqueuePaymentErrorNotification = async (context: PaymentErrorContext) => {
+	if (!adminNotifier) {
+		return
+	}
+
+	try {
+		const { error, ...fields } = context
+		const details = errorDetails(error)
+		const payload: PaymentErrorNotification = {
+			...fields,
+			requestId: context.requestId ?? logContext.getStore()?.requestId,
+			...details,
+			occurredAt: new Date().toISOString()
+		}
+		const fingerprint = createHash('sha256')
+			.update(JSON.stringify([
+				payload.source,
+				payload.provider,
+				payload.paymentId ?? payload.userId,
+				payload.status,
+				payload.errorName,
+				payload.errorCode,
+				payload.reason
+			]))
+			.digest('hex')
+		const key = `admin-alert:payment:${fingerprint}`
+		const claim = randomUUID()
+		const claimed = await redis.set(key, claim, 'EX', 60, 'NX')
+
+		if (!claimed) {
+			return
+		}
+
+		try {
+			await notificationsQueue.add('notifyPaymentError', payload)
+		} catch (err) {
+			await redis.eval(
+				`if redis.call('GET', KEYS[1]) == ARGV[1] then
+    return redis.call('DEL', KEYS[1])
+end
+return 0`,
+				1,
+				key,
+				claim
+			)
+
+			throw err
+		}
+	} catch (err) {
+		logger.warn(
+			{ context: 'admin_bot', source: context.source, err },
+			'payment_error_notification_enqueue_failed'
+		)
+	}
+}
 
 const DAY_MS = 24 * 60 * 60 * 1000
 
@@ -122,6 +210,28 @@ const EMOJI = {
 }
 
 const code = (value: string | null | undefined) => value && tg`<code>${value}</code>`
+
+export const paymentErrorMessage = (failure: PaymentErrorNotification) =>
+	joinHtml([
+		tg`🚨 <b>${failure.source === 'CREATE_PAYMENT' ? 'Ошибка создания платежа' : 'Ошибка обработки вебхука'}</b>`,
+		section('Контекст', [
+			['Среда', env.NODE_ENV],
+			['Провайдер', failure.provider],
+			['Маршрут', code(failure.path)],
+			['Платёж', code(failure.paymentId)],
+			['ID провайдера', code(failure.pspIntentId)],
+			['Вебхук', code(failure.webhookId)],
+			['Пользователь', code(failure.userId)],
+			['Request ID', code(failure.requestId)]
+		]),
+		section('Ошибка', [
+			['HTTP-статус', failure.status],
+			['Тип', failure.errorName],
+			['Код', failure.errorCode],
+			['Причина', failure.reason]
+		]),
+		tg`${formatDateTime(new Date(failure.occurredAt))}\n#платежи #ошибка`
+	], '\n\n')
 
 export interface CoursePurchaseMessageInput {
 	purchase: PurchaseDetails

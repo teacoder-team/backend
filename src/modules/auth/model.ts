@@ -44,16 +44,16 @@ export const RegisterPayload = t.Object(
 
 export const VerifyRegisterPayload = t.Object(
 	{
-		email: Email,
-		code: t.String({
-			minLength: 6,
-			maxLength: 6,
-			description: '6-значный код из письма.',
-			error: 'Verification code must be exactly 6 characters',
-			examples: ['123456']
+		token: t.String({
+			minLength: 43,
+			maxLength: 43,
+			pattern: '^[A-Za-z0-9_-]{43}$',
+			description: 'Одноразовый токен из ссылки подтверждения почты. Действует 30 минут.',
+			error: 'Invalid email verification token',
+			examples: ['q2fSx1Gd0Yk7uJ9ZlQm3cW8vB4nR6tHpE5aT1oKyL0s']
 		})
 	},
-	{ description: 'Код подтверждения регистрации.' }
+	{ description: 'Токен подтверждения почты и входа в аккаунт.' }
 )
 
 export const LoginPayload = t.Object(
@@ -188,6 +188,28 @@ export const SignInResponse = t.Union(
 	}
 )
 
+export const EmailVerificationRequiredResponse = t.Object(
+	{
+		emailVerificationRequired: t.Literal(true, {
+			description: 'Нужно подтвердить почту по ссылке из письма; сессия ещё не создана.'
+		}),
+		message: t.String({
+			description: 'Сообщение о необходимости проверить почту.',
+			examples: ['Check your email for the verification link']
+		}),
+		resendAfter: t.Number({
+			minimum: 0,
+			description: 'Через сколько секунд можно повторно запросить письмо через вход.',
+			examples: [60]
+		})
+	},
+	{ description: 'Пароль принят, но для входа нужно подтвердить почту.' }
+)
+
+export const LoginResponse = t.Union([SignInResponse, EmailVerificationRequiredResponse], {
+	description: 'Результат входа: сессия, запрос второго фактора или подтверждения почты.'
+})
+
 export const MfaChallengePayload = t.Object(
 	{
 		mfaToken: MfaToken,
@@ -265,7 +287,6 @@ export type SignInResult =
 	| { mfaRequired: true; mfaToken: string; mfaMethods: MfaMethod[]; expiresIn: number }
 
 export interface SignInOptions {
-
 	link?: OAuthIdentity
 }
 

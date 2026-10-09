@@ -14,7 +14,6 @@ export class OrionError extends Error {
 }
 
 export interface OrionClientOptions {
-
 	baseUrl: string
 
 	masterKey: string

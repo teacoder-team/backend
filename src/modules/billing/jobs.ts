@@ -232,7 +232,6 @@ export const renewSubscription = async (job: RenewalJob) => {
 			idempotenceKey: intent.id
 		})
 	} catch (err) {
-
 		if (err instanceof HttpError && err.status >= 400 && err.status < 500) {
 			return declineWithoutCharge(intent, `yookassa_rejected_${err.status}`)
 		}

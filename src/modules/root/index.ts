@@ -9,18 +9,14 @@ import { getClientConfiguration, getHealth } from './service'
 export const root = new Elysia({ tags: [TAG.core] })
 	.use(requestContext)
 	.model({ RootResponse, HealthResponse })
-	.get(
-		'/',
-		async ({ ip }) => await getClientConfiguration(ip),
-		{
-			response: 'RootResponse',
-			detail: {
-				summary: 'Конфигурация клиента',
-				description:
-					'Точка входа API. Отдаёт всё, что нужно клиенту при запуске: доступные способы входа и оплаты, цены премиум-подписки, активную капчу с публичным ключом виджета, адреса сайта и файлового хранилища.'
-			}
+	.get('/', async ({ ip }) => await getClientConfiguration(ip), {
+		response: 'RootResponse',
+		detail: {
+			summary: 'Конфигурация клиента',
+			description:
+				'Точка входа API. Отдаёт всё, что нужно клиенту при запуске: доступные способы входа и оплаты, цены премиум-подписки, активную капчу с публичным ключом виджета, адреса сайта и файлового хранилища.'
 		}
-	)
+	})
 	.get(
 		'/health',
 		async ({ set }) => {

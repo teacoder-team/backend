@@ -13,6 +13,7 @@ import {
 	AuthResponse,
 	ForgotPasswordPayload,
 	LoginPayload,
+	LoginResponse,
 	MessageResponse,
 	MfaChallengePayload,
 	MfaChallengeResponse,
@@ -42,6 +43,7 @@ export const auth = new Elysia({ prefix: '/auth', tags: [TAG.auth] })
 		RegisterPayload,
 		VerifyRegisterPayload,
 		LoginPayload,
+		LoginResponse,
 		ForgotPasswordPayload,
 		ResetPasswordPayload,
 		MessageResponse,
@@ -57,7 +59,7 @@ export const auth = new Elysia({ prefix: '/auth', tags: [TAG.auth] })
 		async ({ body, ip }) => {
 			await register(body, ip)
 
-			return { message: 'Verification code sent to email' }
+			return { message: 'Check your email for the verification link' }
 		},
 		{
 			body: 'RegisterPayload',
@@ -65,7 +67,7 @@ export const auth = new Elysia({ prefix: '/auth', tags: [TAG.auth] })
 			detail: {
 				summary: 'Регистрация',
 				description:
-					'Создаёт неподтверждённый аккаунт и отправляет на почту 6-значный код, действующий 15 минут. Повторный запрос для той же почты просто отправит новый код. Требует токен капчи, если она включена.'
+					'Создаёт неподтверждённый аккаунт и отправляет ссылку `{APP_URL}/auth/verify/{token}`. Ссылка одноразовая и действует 30 минут; новая ссылка отменяет предыдущую. Повторная регистрация неподтверждённой почты отправляет письмо для существующего аккаунта, не меняя пароль. Письма отправляются не чаще раза в минуту. Требует токен капчи, если она включена.'
 			}
 		}
 	)
@@ -74,16 +76,20 @@ export const auth = new Elysia({ prefix: '/auth', tags: [TAG.auth] })
 		async ({ body, ip, userAgent, visitorId, authCookie }) => {
 			const result = await verifyRegister(body, { ip, userAgent, visitorId })
 
+			if (result.mfaRequired) {
+				return result
+			}
+
 			return authCookie.issue(result)
 		},
 		{
 			body: 'VerifyRegisterPayload',
 			fingerprint: true,
-			response: 'AuthResponse',
+			response: 'SignInResponse',
 			detail: {
 				summary: 'Подтверждение регистрации',
 				description:
-					'Проверяет код из письма, активирует аккаунт и сразу выполняет вход: access-токен в теле, refresh-токен в httpOnly-cookie `tc_refresh`. На код даётся 5 попыток.'
+					'Принимает только `{ token }` из ссылки в письме. Подтверждает привязанную к токену почту и активирует аккаунт. Без MFA сразу открывает сессию: access-токен в теле, refresh-токен в httpOnly-cookie `tc_refresh`. При включённой MFA возвращает билет второго шага без создания сессии. Ссылка действует 30 минут и срабатывает один раз; повторный, просроченный или заменённый токен вернёт 400. Фронтенд должен отправить токен POST-запросом после открытия страницы, сам переход по ссылке его не расходует.'
 			}
 		}
 	)
@@ -92,7 +98,7 @@ export const auth = new Elysia({ prefix: '/auth', tags: [TAG.auth] })
 		async ({ body, ip, userAgent, visitorId, authCookie }) => {
 			const result = await login(body, { ip, userAgent, visitorId })
 
-			if (result.mfaRequired) {
+			if ('emailVerificationRequired' in result || result.mfaRequired) {
 				return result
 			}
 
@@ -101,11 +107,11 @@ export const auth = new Elysia({ prefix: '/auth', tags: [TAG.auth] })
 		{
 			body: 'LoginPayload',
 			fingerprint: true,
-			response: 'SignInResponse',
+			response: 'LoginResponse',
 			detail: {
 				summary: 'Вход по почте и паролю',
 				description:
-					'Проверяет пароль. Если двухфакторная защита выключена - открывает сессию: access-токен в теле, refresh-токен в httpOnly-cookie `tc_refresh`. Если включена - сессия не создаётся: в ответе `mfaRequired: true` и `mfaToken` для `POST /auth/mfa/challenge` и `POST /auth/mfa/confirm`. После 5 неудачных попыток вход блокируется на 15 минут для этой почты, этого IP и этого устройства (если передан `X-Fingerprint-Event`). Вход с устройства, которого аккаунт раньше не видел, присылает владельцу письмо. Требует токен капчи, если она включена.'
+					'Проверяет пароль. Если почта не подтверждена, отправляет ссылку подтверждения и возвращает `emailVerificationRequired: true` с `resendAfter` в секундах; сессия и токены не создаются. Повторные письма ограничены одним в минуту, неверный пароль письмо не отправляет. При подтверждённой почте без MFA открывает сессию: access-токен в теле, refresh-токен в httpOnly-cookie `tc_refresh`. При включённой MFA возвращает `mfaRequired: true` и билет второго шага без сессии. После 5 неверных паролей вход блокируется на 15 минут для почты, IP и устройства. Вход с нового устройства присылает владельцу письмо. Требует токен капчи, если она включена.'
 			}
 		}
 	)

@@ -17,6 +17,27 @@ export type NotificationJobs = {
 	notifyRegistration: { userId: string; via: SignUpMethod }
 
 	notifySupportEmail: { emailId: string }
+	notifyPaymentError: PaymentErrorNotification
+}
+
+export interface PaymentErrorContext {
+	source: 'CREATE_PAYMENT' | 'WEBHOOK'
+	error: unknown
+	status: number
+	provider?: string
+	path?: string
+	paymentId?: string
+	webhookId?: string
+	pspIntentId?: string
+	requestId?: string
+	userId?: string
+}
+
+export interface PaymentErrorNotification extends Omit<PaymentErrorContext, 'error'> {
+	errorName: string
+	errorCode?: string
+	reason: string
+	occurredAt: string
 }
 
 export interface SupportEmail {

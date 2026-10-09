@@ -39,9 +39,15 @@ export const createPendingUser = (input: CreatePendingUserInput) =>
 
 export const deletePendingUser = (userId: string) => db.user.delete({ where: { id: userId } })
 
-export const activateUser = (userId: string) =>
-	db.user.update({
+export const findEmailVerificationTarget = (userId: string) =>
+	db.user.findUnique({
 		where: { id: userId },
+		select: { id: true, email: true, displayName: true, status: true, emailVerifiedAt: true }
+	})
+
+export const confirmUserEmail = (userId: string, email: string) =>
+	db.user.updateMany({
+		where: { id: userId, email, emailVerifiedAt: null },
 		data: { status: UserStatus.ACTIVE, emailVerifiedAt: new Date() }
 	})
 

@@ -2,7 +2,7 @@ import { createHash, randomBytes, randomUUID } from 'node:crypto'
 
 import { UserStatus, VerificationPurpose } from '@prisma/generated/client'
 
-import { env, isProduction } from '~/config/env'
+import { env } from '~/config/env'
 import { isDisposableEmail } from '~/lib/datasets/disposable-emails'
 import {
 	BadRequestError,
@@ -14,6 +14,7 @@ import {
 import { verifyCaptcha } from '~/lib/integrations/captcha'
 import { extendLogContext } from '~/lib/logger'
 import { redis } from '~/lib/redis'
+import { consumeEmailToken, issueEmailToken } from '~/lib/security/email-token'
 import { hashPassword, verifyPassword } from '~/lib/security/hash'
 import { generateOtpCode } from '~/lib/security/otp'
 import { hashVerificationCode, verificationCodeMatches } from '~/lib/security/verification-code'
@@ -27,7 +28,7 @@ import { attachOAuthAccount } from '~/modules/oauth/service'
 import type { RequestOrigin } from '~/modules/session/model'
 import { issueTokenPair, revokeAllSessions, revokeSession } from '~/modules/session/service'
 
-import { enqueuePasswordResetLink, enqueueVerificationCode } from './jobs'
+import { enqueueEmailVerificationLink, enqueuePasswordResetLink } from './jobs'
 import type {
 	ForgotPasswordInput,
 	LoginInput,
@@ -43,11 +44,11 @@ import type {
 	VerifyRegisterInput
 } from './model'
 import {
-	activateUser,
+	confirmUserEmail,
 	consumeVerificationCode,
 	createPendingUser,
 	createVerificationCode,
-	deletePendingUser,
+	findEmailVerificationTarget,
 	findLatestVerificationCode,
 	findUserByEmail,
 	findUserEmail,
@@ -61,6 +62,8 @@ const VERIFICATION_MAX_ATTEMPTS = 5
 
 const LOGIN_ATTEMPT_MAX = 5
 const LOGIN_ATTEMPT_WINDOW = 15 * 60
+
+const EMAIL_VERIFICATION_RESEND_INTERVAL = 60
 
 export const issueVerificationCode = async (
 	userId: string,
@@ -103,16 +106,35 @@ export const verifyCode = async (
 	await consumeVerificationCode(verification.id)
 }
 
-const issueRegistrationCode = async (userId: string, email: string) => {
-	const code = await issueVerificationCode(userId, VerificationPurpose.EMAIL_CONFIRM)
+const requestEmailVerification = async (userId: string) => {
+	const key = `email-verification:cooldown:${userId}`
+	const requestId = randomUUID()
+	const claimed = await redis.set(key, requestId, 'EX', EMAIL_VERIFICATION_RESEND_INTERVAL, 'NX')
 
-	await enqueueVerificationCode({ email, code })
+	if (claimed) {
+		try {
+			await enqueueEmailVerificationLink({ userId })
+		} catch (err) {
+			await redis.eval(
+				`if redis.call('GET', KEYS[1]) == ARGV[1] then
+    return redis.call('DEL', KEYS[1])
+end
+return 0`,
+				1,
+				key,
+				requestId
+			)
+
+			throw err
+		}
+	}
 
 	extendLogContext({
-		event: 'registration_started',
-		userId,
-		code: isProduction ? undefined : code
+		event: claimed ? 'email_verification_requested' : 'email_verification_throttled',
+		userId
 	})
+
+	return Math.max(0, await redis.ttl(key))
 }
 
 export const register = async (input: RegisterInput, ip: string) => {
@@ -131,15 +153,9 @@ export const register = async (input: RegisterInput, ip: string) => {
 			throw new ConflictError('User already exists')
 		}
 
-		const isRecent = Date.now() - existing.createdAt.getTime() < VERIFICATION_TTL * 1000
+		await requestEmailVerification(existing.id)
 
-		if (isRecent) {
-			await issueRegistrationCode(existing.id, email)
-
-			return
-		}
-
-		await deletePendingUser(existing.id)
+		return
 	}
 
 	const user = await createPendingUser({
@@ -149,31 +165,35 @@ export const register = async (input: RegisterInput, ip: string) => {
 		username: generateUsername()
 	})
 
-	await issueRegistrationCode(user.id, email)
+	await requestEmailVerification(user.id)
 }
 
 export const verifyRegister = async (input: VerifyRegisterInput, origin: RequestOrigin) => {
-	const email = normalizeEmail(input.email)
-	const user = await findUserByEmail(email)
+	const identity = await consumeEmailToken('email-verification', input.token)
 
-	if (!user || user.status !== UserStatus.PENDING) {
-		throw new NotFoundError('Verification code expired or registration not found')
+	if (!identity?.email) {
+		throw new BadRequestError('Verification link expired or invalid')
 	}
 
-	await verifyCode(user.id, VerificationPurpose.EMAIL_CONFIRM, input.code, {
-		expired: 'Verification code expired or registration not found',
-		invalid: 'Invalid verification code'
-	})
+	const user = await findEmailVerificationTarget(identity.userId)
 
-	await activateUser(user.id)
+	if (!user || user.email !== identity.email || user.emailVerifiedAt) {
+		throw new BadRequestError('Verification link expired or invalid')
+	}
 
-	extendLogContext({ event: 'registration_completed', userId: user.id })
+	const confirmed = await confirmUserEmail(user.id, identity.email)
 
-	const tokens = await issueTokenPair(user.id, origin)
+	if (confirmed.count === 0) {
+		throw new BadRequestError('Verification link expired or invalid')
+	}
 
-	await enqueueRegistrationNotification({ userId: user.id, via: 'EMAIL' })
+	extendLogContext({ event: 'email_verified', userId: user.id })
 
-	return { id: user.id, ...tokens, linkedProvider: null }
+	if (user.status === UserStatus.PENDING) {
+		await enqueueRegistrationNotification({ userId: user.id, via: 'EMAIL' })
+	}
+
+	return await completeSignIn(user.id, origin, 'email_verification')
 }
 
 const emailBucket = (email: string) => createHash('sha256').update(email).digest('hex')
@@ -230,11 +250,17 @@ export const login = async (input: LoginInput, origin: RequestOrigin) => {
 		throw new NotFoundError('Invalid email or password')
 	}
 
-	if (user.status !== UserStatus.ACTIVE) {
-		throw new BadRequestError('Please verify your email before logging in')
-	}
-
 	await recordLoginAttempt(attemptKeys, true)
+
+	if (!user.emailVerifiedAt || user.status !== UserStatus.ACTIVE) {
+		const resendAfter = await requestEmailVerification(user.id)
+
+		return {
+			emailVerificationRequired: true as const,
+			message: 'Check your email for the verification link',
+			resendAfter
+		}
+	}
 
 	extendLogContext({ event: 'user_logged_in', userId: user.id })
 
@@ -262,8 +288,7 @@ export const forgotPassword = async (input: ForgotPasswordInput, ip: string) => 
 
 	extendLogContext({
 		event: 'password_reset_requested',
-		userId: user.id,
-		url: isProduction ? undefined : url
+		userId: user.id
 	})
 }
 
@@ -394,45 +419,13 @@ export const completeMfaSignIn = async (
 	return { id: ticket.userId, ...tokens, linkedProvider: ticket.link?.provider ?? null }
 }
 
-const PASSWORD_RESET_TTL = 30 * 60
-
-const TOKEN_BYTES = 32
-
-const hashToken = (token: string) => createHash('sha256').update(token).digest('hex')
-
-const tokenKey = (hash: string) => `password-reset:token:${hash}`
-
-const userKey = (userId: string) => `password-reset:user:${userId}`
-
-export const issuePasswordResetToken = async (userId: string) => {
-	const token = randomBytes(TOKEN_BYTES).toString('base64url')
-	const hash = hashToken(token)
-
-	const previous = await redis.get(userKey(userId))
-	const transaction = redis.multi()
-
-	if (previous) {
-		transaction.del(tokenKey(previous))
-	}
-
-	await transaction
-		.set(tokenKey(hash), userId, 'EX', PASSWORD_RESET_TTL)
-		.set(userKey(userId), hash, 'EX', PASSWORD_RESET_TTL)
-		.exec()
-
-	return token
-}
+export const issuePasswordResetToken = (userId: string) =>
+	issueEmailToken('password-reset', { userId })
 
 export const consumePasswordResetToken = async (token: string) => {
-	const userId = await redis.getdel(tokenKey(hashToken(token)))
+	const identity = await consumeEmailToken('password-reset', token)
 
-	if (!userId) {
-		return null
-	}
-
-	await redis.del(userKey(userId))
-
-	return userId
+	return identity?.userId ?? null
 }
 
 export const MFA_TICKET_TTL = 5 * 60
@@ -440,11 +433,7 @@ export const MFA_TICKET_TTL = 5 * 60
 const ticketKey = (token: string) =>
 	`mfa:ticket:${createHash('sha256').update(token).digest('base64url')}`
 
-const openMfaTicket = async (
-	userId: string,
-	via: string,
-	link: OAuthIdentity | null = null
-) => {
+const openMfaTicket = async (userId: string, via: string, link: OAuthIdentity | null = null) => {
 	const token = randomBytes(32).toString('base64url')
 	const ticket: MfaTicket = { userId, via, challenge: null, link }
 
@@ -459,11 +448,7 @@ export const readMfaTicket = async (token: string) => {
 	return raw ? (JSON.parse(raw) as MfaTicket) : null
 }
 
-const setMfaChallenge = async (
-	token: string,
-	ticket: MfaTicket,
-	challenge: MfaChallenge
-) => {
+const setMfaChallenge = async (token: string, ticket: MfaTicket, challenge: MfaChallenge) => {
 	const saved = await redis.set(
 		ticketKey(token),
 		JSON.stringify({ ...ticket, challenge }),
