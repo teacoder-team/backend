@@ -65,6 +65,10 @@ const deliver = async (message: Html) => {
 
 export const notificationJobs: JobHandlers<NotificationJobs> = {
 	notifyPaymentError: async (failure) => {
+		if (failure.status === 409) {
+			return
+		}
+
 		await deliver(paymentErrorMessage(failure))
 	},
 	notifyCoursePurchase: async ({ paymentId }) => {

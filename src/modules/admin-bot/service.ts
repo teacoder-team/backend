@@ -91,7 +91,7 @@ const errorDetails = (error: unknown) => {
 }
 
 export const enqueuePaymentErrorNotification = async (context: PaymentErrorContext) => {
-	if (!adminNotifier) {
+	if (!adminNotifier || context.status === 409) {
 		return
 	}
 
