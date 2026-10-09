@@ -2,6 +2,7 @@ import {
 	WORLD_PAYMENT_METHOD_GROUPS,
 	YANDEX_SPLIT_PAYMENT_METHODS
 } from '@teacoder/payments/prodamus'
+import type { PaymentMethodType } from '@teacoder/payments/yookassa'
 
 import type { PaymentIntent } from '@prisma/generated/client'
 import { PaymentMethod, PaymentProvider, Prisma } from '@prisma/generated/client'
@@ -125,6 +126,14 @@ const METHODS: Partial<Record<PaymentMethod, MethodDefinition>> = {
 	// }
 }
 
+const YOOKASSA_PAYMENT_METHOD_TYPES: Partial<Record<PaymentMethod, PaymentMethodType>> = {
+	[PaymentMethod.BANK_CARD]: 'bank_card',
+	[PaymentMethod.SBP]: 'sbp',
+	[PaymentMethod.T_PAY]: 'tinkoff_bank',
+	[PaymentMethod.YOOMONEY]: 'yoo_money',
+	[PaymentMethod.SBER_PAY]: 'sberbank'
+}
+
 export const paymentMethodName = (method: PaymentMethod) => METHODS[method]?.name ?? method
 
 export const PAYMENT_PROVIDER_NAMES: Record<PaymentProvider, string> = {
@@ -232,6 +241,7 @@ const startAtProvider = async (payment: PaymentIntent, product: Product, email: 
 				metadata: {
 					paymentId: payment.id
 				},
+				paymentMethodType: YOOKASSA_PAYMENT_METHOD_TYPES[payment.method],
 				savePaymentMethod: true
 			})
 
