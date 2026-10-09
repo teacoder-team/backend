@@ -13,10 +13,6 @@ interface YandexProfile {
 	is_avatar_empty?: boolean
 }
 
-/**
- * Plain OAuth 2.0 - Yandex ID publishes no discovery document and issues no id_token.
- * PKCE is left unadvertised, so the flow relies on state alone.
- */
 export const yandex = ({
 	clientId,
 	clientSecret,
@@ -38,7 +34,7 @@ export const yandex = ({
 		name: 'yandex',
 		label: 'Yandex',
 		config,
-		/** Scopes are configured on the Yandex OAuth app itself. */
+
 		scopes: [],
 
 		async fetchProfile({ access_token }) {

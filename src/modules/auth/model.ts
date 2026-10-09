@@ -3,7 +3,8 @@ import { type Static, t } from 'elysia'
 import { AuthProvider } from '@prisma/generated/client'
 
 import { PrismaEnum } from '~/lib/utils/schema'
-import { MfaMethodSchema } from '~/modules/mfa/model'
+import { type CodeMfaMethod, type MfaMethod, MfaMethodSchema } from '~/modules/mfa/model'
+import type { OAuthIdentity } from '~/modules/oauth/model'
 
 const CaptchaToken = t.Optional(
 	t.String({
@@ -246,3 +247,38 @@ export type ForgotPasswordInput = Static<typeof ForgotPasswordPayload>
 export type ResetPasswordInput = Static<typeof ResetPasswordPayload>
 export type MfaChallengeInput = Static<typeof MfaChallengePayload>
 export type MfaConfirmInput = Static<typeof MfaConfirmPayload>
+
+export interface VerifyCodeMessages {
+	expired?: string
+	invalid?: string
+}
+
+export type SignInResult =
+	| {
+			mfaRequired: false
+			mfaToken: null
+			id: string
+			accessToken: string
+			refreshToken: string
+			linkedProvider: AuthProvider | null
+	  }
+	| { mfaRequired: true; mfaToken: string; mfaMethods: MfaMethod[]; expiresIn: number }
+
+export interface SignInOptions {
+
+	link?: OAuthIdentity
+}
+
+export interface MfaChallenge {
+	id: string
+	method: CodeMfaMethod
+}
+
+export interface MfaTicket {
+	userId: string
+
+	via: string
+	challenge: MfaChallenge | null
+
+	link: OAuthIdentity | null
+}

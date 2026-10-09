@@ -4,9 +4,9 @@ import { EmailLayout } from '../components/EmailLayout'
 
 interface SubscriptionExpiringEmailProps {
 	username?: string
-	/** Whether a charge will be attempted at the end of the period. */
+
 	isAutoBilling: boolean
-	/** Moscow date and time - of the nightly charge with auto-renewal, of the access cutoff without. */
+
 	date: string
 	time: string
 	amount?: number

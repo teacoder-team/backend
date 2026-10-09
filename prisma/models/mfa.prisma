@@ -5,7 +5,6 @@ model TotpAuthenticator {
 
     confirmedAt DateTime? @map("confirmed_at")
 
-    /// Time step of the last accepted code - a code is only valid once, even within its window.
     lastUsedStep BigInt?   @map("last_used_step")
     lastUsedAt   DateTime? @map("last_used_at")
 
@@ -60,9 +59,7 @@ model WebAuthnCredential {
 }
 
 enum WebAuthnDeviceType {
-    /// Bound to one device - a hardware key or a non-synced platform authenticator.
     SINGLE_DEVICE @map("single_device")
-    /// Synced across the user's devices (iCloud Keychain, Google Password Manager).
     MULTI_DEVICE  @map("multi_device")
 
     @@map("webauthn_device_types")

@@ -7,9 +7,9 @@ const secret = new TextEncoder().encode(env.JWT_SECRET)
 
 export interface AccessTokenPayload {
 	[claim: string]: unknown
-	/** User id. */
+
 	sub: string
-	/** Session id. */
+
 	sid: string
 }
 

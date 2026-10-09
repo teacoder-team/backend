@@ -36,7 +36,6 @@ export const findNextLessonId = (courseId: string, afterPosition: number) =>
 		})
 		.then((row) => row?.id ?? null)
 
-/** Atomically flips completion and awards/revokes points for it - never one without the other. */
 export const upsertProgressWithPoints = (userId: string, lessonId: string, isCompleted: boolean) =>
 	db.$transaction(async (tx) => {
 		const existing = await tx.userProgress.findUnique({

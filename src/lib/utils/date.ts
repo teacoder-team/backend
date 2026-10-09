@@ -13,14 +13,12 @@ const timeFormat = new Intl.DateTimeFormat('ru-RU', {
 	minute: '2-digit'
 })
 
-/** ICU writes "30 сентября 2026 г." - the trailing "г." is noise in a message. */
 export const formatDate = (date: Date) => dateFormat.format(date).replace(/\s*г\.$/, '')
 
 export const formatTime = (date: Date) => timeFormat.format(date)
 
 export const formatDateTime = (date: Date) => `${formatDate(date)}, ${formatTime(date)} МСК`
 
-/** Calendar months, clamped like Postgres `interval '1 month'`: Jan 31 + 1 month = Feb 28/29. */
 export const addMonths = (date: Date, months: number) => {
 	const result = new Date(date)
 	const day = result.getUTCDate()

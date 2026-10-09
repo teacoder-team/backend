@@ -1,7 +1,7 @@
 import { LessonAccess } from '@prisma/generated/client'
 
 import { ForbiddenError, NotFoundError } from '~/lib/errors'
-import { resolveLessonAccess } from '~/modules/course/access'
+import { resolveLessonAccess } from '~/modules/course/service'
 
 import { findPublishedLessonById } from './repository'
 

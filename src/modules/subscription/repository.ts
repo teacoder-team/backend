@@ -40,14 +40,12 @@ export const findSubscriptionMailTarget = (userId: string) =>
 		select: { displayName: true, subscription: { select: { expiresAt: true } } }
 	})
 
-/** Auto-renewing subscriptions whose period ends before `until` - charged ahead of the end. */
 export const findDueRenewals = (after: Date, until: Date) =>
 	db.subscription.findMany({
 		where: { isActive: true, isAutoBilling: true, expiresAt: { gt: after, lte: until } },
 		select: { id: true, expiresAt: true }
 	})
 
-/** Ended without renewal: cancelled ones past their end, and auto-renewals stuck past the grace. */
 export const findLapsedSubscriptions = (now: Date, giveUpBefore: Date) =>
 	db.subscription.findMany({
 		where: {
@@ -72,10 +70,6 @@ export const findSubscriptionById = (id: string) =>
 		select: { id: true, userId: true, isActive: true, isAutoBilling: true, expiresAt: true }
 	})
 
-/**
- * Closes the period read earlier - but only if it hasn't moved since: a payment that extended
- * it in between wins. True when this call ended it.
- */
 export const endSubscriptionPeriod = async (id: string, expiresAt: Date) => {
 	const { count } = await db.subscription.updateMany({
 		where: { id, isActive: true, expiresAt },

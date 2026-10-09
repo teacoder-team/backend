@@ -33,7 +33,6 @@ export const listActiveSessions = (userId: string) =>
 		orderBy: { lastSeenAt: 'desc' }
 	})
 
-/** `exceptSessionId` keeps that one session out - "sign out everywhere else". */
 export const listActiveSessionIds = async (userId: string, exceptSessionId?: string) => {
 	const sessions = await db.session.findMany({
 		where: { userId, id: { not: exceptSessionId }, ...active(new Date()) },
@@ -110,7 +109,6 @@ export const deleteRefreshTokenFamily = async (familyId: string) => {
 	return count
 }
 
-/** True when the pair was not known yet. */
 export const addUserVisitor = async (userId: string, visitorId: string) => {
 	const { count } = await db.userVisitor.createMany({
 		data: [{ userId, visitorId }],

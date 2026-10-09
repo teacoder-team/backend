@@ -25,6 +25,5 @@ export const lookupLocation = async (ip: string): Promise<Location> => {
 	}
 }
 
-/** ISO 3166-1 alpha-2, e.g. `RU`. Null for an address the database does not know. */
 export const lookupCountryCode = async (ip: string) =>
 	(await reader()).get(ip)?.country?.iso_code ?? null

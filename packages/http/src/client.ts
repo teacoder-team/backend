@@ -1,7 +1,6 @@
 const DEFAULT_TIMEOUT = 10_000
 const DEFAULT_RETRYABLE_STATUSES = [408, 429, 500, 502, 503, 504]
 
-/** Structurally satisfied by a pino logger - anything with a `warn(context, message)` works. */
 export interface HttpLogger {
 	warn: (context: object, message: string) => void
 }
@@ -17,9 +16,9 @@ export interface HttpClientOptions extends Omit<RequestInit, 'signal'> {
 	baseURL?: string
 	timeout?: number
 	retry?: RetryPolicy
-	/** Runs on every outgoing request. */
+
 	beforeRequest?: (request: Request) => Request | Promise<Request>
-	/** Told about retries, which callers would otherwise never see. */
+
 	logger?: HttpLogger
 }
 
@@ -105,7 +104,7 @@ export const createHttpClient = ({
 
 				throw new HttpError(response.status, await readBody(response), url)
 			} catch (err) {
-				// A non-retryable HTTP status is a final answer, not a glitch.
+
 				if (err instanceof HttpError) {
 					throw err
 				}

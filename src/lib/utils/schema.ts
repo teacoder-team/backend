@@ -1,6 +1,5 @@
 import { t } from 'elysia'
 
-/** A TypeBox union of a Prisma enum's values, with a readable error listing them. */
 export const PrismaEnum = <const T extends Record<string, string>>(
 	values: T,
 	options?: Parameters<typeof t.UnionEnum>[1]

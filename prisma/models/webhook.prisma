@@ -1,4 +1,3 @@
-/// Raw capture of every inbound provider notification, before we trust or act on it.
 model WebhookEvent {
     id String @id @default(uuid())
 
@@ -16,8 +15,6 @@ model WebhookEvent {
     @@map("webhook_events")
 }
 
-/// Result of a nightly PSP-statement-vs-ledger diff. Schema only for now - nothing populates
-/// this yet, since no provider integration can fetch settlement statements today.
 model ReconciliationRun {
     id String @id @default(uuid())
 

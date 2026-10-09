@@ -1,22 +1,10 @@
-import type { Prisma } from '@prisma/generated/client'
-import { IntentStatus, type PaymentMethod, PaymentProvider } from '@prisma/generated/client'
+import { IntentStatus, PaymentProvider, type Prisma } from '@prisma/generated/client'
 
 import { db } from '~/lib/db'
 import { createCoursePurchase, findCoursePurchase } from '~/modules/course/repository'
-import type { SubscriptionState, SubscriptionTerm } from '~/modules/subscription/term'
+import type { SubscriptionState, SubscriptionTerm } from '~/modules/subscription/model'
 
-export interface NewPayment {
-	userId: string
-	amount: number
-	currency: string
-	method: PaymentMethod
-	provider: PaymentProvider
-	courseId?: string
-	subscriptionId?: string
-	paymentMethodId?: string
-	idempotencyKey?: string
-	metadata: Prisma.InputJsonValue
-}
+import type { CourseCapture, NewPayment, SavedPaymentMethod } from './model'
 
 export const createPendingPayment = (data: NewPayment) =>
 	db.paymentIntent.create({ data: { ...data, status: IntentStatus.REQUIRES_PAYMENT } })
@@ -31,7 +19,6 @@ export const attachProviderPayment = (
 		data: { pspIntentId, pspPayload }
 	})
 
-/** Frees the idempotency key too - an attempt that never reached the provider mustn't burn it. */
 export const markPaymentFailed = (paymentId: string, failureCode?: string) =>
 	db.paymentIntent.update({
 		where: { id: paymentId },
@@ -47,11 +34,6 @@ export const findPaymentByProviderId = (provider: PaymentProvider, pspIntentId: 
 export const findPaymentByIdempotencyKey = (userId: string, idempotencyKey: string) =>
 	db.paymentIntent.findUnique({ where: { userId_idempotencyKey: { userId, idempotencyKey } } })
 
-/**
- * Unsettled intents the user opened for one product - a course, or the subscription when
- * `courseId` is null. Nightly renewal charges are not checkouts: they carry `subscriptionId` from
- * the start, a checkout only gets it once paid.
- */
 export const findOpenCheckouts = (userId: string, courseId: string | null) =>
 	db.paymentIntent.findMany({
 		where: {
@@ -63,7 +45,6 @@ export const findOpenCheckouts = (userId: string, courseId: string | null) =>
 		orderBy: { createdAt: 'desc' }
 	})
 
-/** Only still-unpaid ones - a PROCESSING intent has money in flight and is never expired here. */
 export const expireCheckouts = (paymentIds: string[]) =>
 	db.paymentIntent.updateMany({
 		where: { id: { in: paymentIds }, status: IntentStatus.REQUIRES_PAYMENT },
@@ -89,18 +70,6 @@ export const findPaymentForFulfillment = (paymentId: string) =>
 
 export type FulfillableIntent = NonNullable<Awaited<ReturnType<typeof findPaymentForFulfillment>>>
 
-export interface CourseCapture {
-	id: string
-	userId: string
-	courseId: string
-	amount: number
-	currency: string
-}
-
-/**
- * Flips the intent to CAPTURED and grants the course in one transaction. The
- * conditional update is the concurrency guard - only one caller ever gets past it.
- */
 export const captureCoursePayment = (intent: CourseCapture) =>
 	db.$transaction(async (tx) => {
 		const { count } = await tx.paymentIntent.updateMany({
@@ -130,7 +99,6 @@ export const captureCoursePayment = (intent: CourseCapture) =>
 		return 'granted' as const
 	})
 
-/** Moves a still-pending intent forward. Settled intents never regress on late or out-of-order events. */
 export const transitionPendingPayment = async (
 	paymentId: string,
 	status: IntentStatus,
@@ -154,11 +122,6 @@ export type SubscriptionCapture =
 	| { result: 'already_captured' }
 	| { result: 'granted'; subscriptionId: string; term: SubscriptionTerm }
 
-/**
- * Flips the intent to CAPTURED and extends premium in one transaction. The conditional update
- * stops a redelivered webhook from granting twice; the user row lock makes two different
- * payments stack instead of both extending from the same end date.
- */
 export const captureSubscriptionPayment = (
 	paymentId: string,
 	userId: string,
@@ -198,18 +161,6 @@ export const captureSubscriptionPayment = (
 		return { result: 'granted', subscriptionId: subscription.id, term }
 	})
 
-export interface SavedPaymentMethod {
-	providerId: string
-	type: PaymentMethod
-	title: string | null
-	first6: string | null
-	last4: string | null
-	expiryMonth: number | null
-	expiryYear: number | null
-	cardType: string | null
-}
-
-/** Keyed by the provider's id: paying again with the same card refreshes the row instead of adding one. */
 export const saveUserPaymentMethod = (userId: string, method: SavedPaymentMethod) =>
 	db.userPaymentMethod.upsert({
 		where: { providerId: method.providerId },

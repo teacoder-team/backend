@@ -8,15 +8,7 @@ import { displayNameOf, htmlToText, stripQuotedReply } from '~/lib/utils/email-t
 import { getUserEmail } from '~/modules/auth/service'
 import { hasActiveSubscription } from '~/modules/subscription/repository'
 
-import {
-	coursePurchaseMessage,
-	registrationMessage,
-	subscriptionPurchaseMessage,
-	subscriptionRenewalMessage,
-	type SupportEmail,
-	supportEmailMessage
-} from './messages'
-import type { NotificationJobs } from './queue'
+import type { NotificationJobs, SupportEmail } from './model'
 import {
 	findAccountsOnVisitor,
 	findPurchasedCourse,
@@ -24,13 +16,18 @@ import {
 	findRegistrationDetails,
 	findSupportSender
 } from './repository'
+import {
+	coursePurchaseMessage,
+	registrationMessage,
+	subscriptionPurchaseMessage,
+	subscriptionRenewalMessage,
+	supportEmailMessage
+} from './service'
 
-/** Not in the SDK's types yet, but returned by the API. */
 interface WithAuthentication {
 	authentication?: SupportEmail['authentication']
 }
 
-/** Null when Resend no longer has it (kept 30 days) - nothing left to forward. */
 const fetchSupportEmail = async (emailId: string): Promise<SupportEmail | null> => {
 	const { data, error } = await resend.emails.receiving.get(emailId, { html_format: 'cid' })
 
@@ -57,7 +54,6 @@ const fetchSupportEmail = async (emailId: string): Promise<SupportEmail | null> 
 	}
 }
 
-/** Retry only when no chat got it - retrying a partial success would duplicate the message. */
 const deliver = async (message: Html) => {
 	const report = await adminNotifier?.send(message)
 

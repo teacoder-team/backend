@@ -11,10 +11,16 @@ import {
 	type OAuthProfile
 } from '@teacoder/oauth'
 
-import { type AuthProvider, UserStatus } from '@prisma/generated/client'
+import { type AuthProvider, Prisma, UserStatus } from '@prisma/generated/client'
 
 import { env } from '~/config/env'
-import { BadRequestError, ForbiddenError, NotFoundError, UnauthorizedError } from '~/lib/errors'
+import {
+	BadRequestError,
+	ConflictError,
+	ForbiddenError,
+	NotFoundError,
+	UnauthorizedError
+} from '~/lib/errors'
 import {
 	AUTH_PROVIDER,
 	isOAuthProvider,
@@ -28,39 +34,25 @@ import { extendLogContext, logger } from '~/lib/logger'
 import { redis } from '~/lib/redis'
 import { normalizeEmail } from '~/lib/utils/email'
 import { generateUsername } from '~/lib/utils/username'
-import { enqueueRegistrationNotification } from '~/modules/admin-bot/queue'
+import { enqueueRegistrationNotification } from '~/modules/admin-bot/service'
 import { deletePendingUser, findUserByEmail } from '~/modules/auth/repository'
 import { completeSignIn } from '~/modules/auth/service'
+import type { RequestOrigin } from '~/modules/session/model'
 import { findActiveSession } from '~/modules/session/repository'
-import type { RequestOrigin } from '~/modules/session/service'
 
-import { assertCanAttach, attachOAuthAccount, type OAuthIdentity } from './accounts'
+import { enqueueAccountLinked } from './jobs'
+import type { LinkRequest, OAuthIdentity, OAuthState, ResolvedUser } from './model'
 import {
 	createOAuthUser,
 	findOAuthAccount,
 	findSignInMethods,
+	findUserOAuthAccount,
+	linkOAuthAccount,
 	listUserOAuthAccounts,
 	unlinkOAuthAccount
 } from './repository'
 
 const stateKey = (state: string) => `oauth:state:${state}`
-
-/** Who started a link from the account settings - checked again when the provider returns. */
-interface LinkRequest {
-	userId: string
-	sessionId: string
-}
-
-/** Parked in Redis under the state value between the redirect out and the callback. */
-interface OAuthState extends RequestOrigin {
-	provider: OAuthProviderName
-	/** Kept rather than recomputed, so an env change mid-flow can't break the token exchange. */
-	redirectUri: string
-	/** SHA-256 of the browser binding cookie. */
-	bindingHash: string
-	codeVerifier?: string
-	link?: LinkRequest
-}
 
 const BINDING_PATTERN = /^[A-Za-z0-9_-]{43}$/
 
@@ -69,10 +61,6 @@ const hashBinding = (binding: string) => createHash('sha256').update(binding).di
 const ensureBinding = (existing: string | undefined) =>
 	existing && BINDING_PATTERN.test(existing) ? existing : randomBytes(32).toString('base64url')
 
-/**
- * Stops login CSRF: without it an attacker could start a flow on their own account and hand
- * the victim the provider's callback URL, silently signing the victim into it.
- */
 const assertSameBrowser = (state: OAuthState, binding: string | undefined) => {
 	const expected = Buffer.from(state.bindingHash, 'hex')
 
@@ -88,7 +76,6 @@ const assertSameBrowser = (state: OAuthState, binding: string | undefined) => {
 const isLinked = (accounts: { provider: AuthProvider }[], provider: AuthProvider) =>
 	accounts.some((account) => account.provider === provider)
 
-/** Password + linked providers - unlinking must never leave an account with none. */
 const countSignInMethods = async (userId: string) => {
 	const methods = await findSignInMethods(userId)
 
@@ -103,10 +90,6 @@ const resolveProvider = (name: string): OAuthProviderName => {
 	return name
 }
 
-/**
- * Sign-in and linking share one redirect URI - the site's callback page, registered with each
- * provider. `binding` is the browser's `tc_oauth` cookie, if it already has one.
- */
 const beginAuthorization = async (
 	name: OAuthProviderName,
 	origin: RequestOrigin,
@@ -155,7 +138,6 @@ export const startOAuthLink = async (
 	return await beginAuthorization(name, origin, binding, link)
 }
 
-/** Atomic, so the same state can't be redeemed by two callbacks racing each other. */
 const takeState = async (state: string) => {
 	const raw = await redis.getdel(stateKey(state))
 
@@ -194,11 +176,6 @@ const authenticate = async (
 	}
 }
 
-type ResolvedUser =
-	| { outcome: 'login'; userId: string }
-	| { outcome: 'email_match'; userId: string }
-	| { outcome: 'signup'; userId: string }
-
 const signUp = async (provider: AuthProvider, profile: OAuthProfile, email: string | null) => {
 	const user = await createOAuthUser({
 		provider,
@@ -212,10 +189,6 @@ const signUp = async (provider: AuthProvider, profile: OAuthProfile, email: stri
 	return user.id
 }
 
-/**
- * Worth storing so the account can receive mail, but it proves nothing about who owns the address:
- * it never claims an existing account, and it is dropped when another account already holds it.
- */
 const storableUnverifiedEmail = async (profile: OAuthProfile) => {
 	if (!profile.unverifiedEmail) {
 		return null
@@ -226,7 +199,6 @@ const storableUnverifiedEmail = async (profile: OAuthProfile) => {
 	return (await findUserByEmail(email)) ? null : email
 }
 
-/** `profile.email` is set only when the provider verified it, so matching by it is safe. */
 const resolveUser = async (
 	provider: AuthProvider,
 	profile: OAuthProfile
@@ -246,10 +218,6 @@ const resolveUser = async (
 
 	const byEmail = await findUserByEmail(normalizeEmail(profile.email))
 
-	/**
-	 * An unconfirmed email registration proves nothing about who owns the address - it may be
-	 * a squatter's. The provider just proved ownership, so the pending account gives way.
-	 */
 	if (byEmail?.status === UserStatus.PENDING) {
 		await deletePendingUser(byEmail.id)
 	} else if (byEmail) {
@@ -302,11 +270,6 @@ const finishLink = async (name: OAuthProviderName, link: LinkRequest, profile: O
 	return { intent: 'LINK' as const, provider }
 }
 
-/** `search` is the raw callback query string, handed to openid-client untouched. */
-/**
- * `query` is the query string the provider appended to the site's callback page, passed on
- * untouched - openid-client rebuilds the exact redirect_uri from it.
- */
 export const finishOAuth = async (
 	providerName: string,
 	query: string,
@@ -386,4 +349,65 @@ export const unlinkOAuth = async (userId: string, providerName: string) => {
 	await unlinkOAuthAccount(userId, provider)
 
 	extendLogContext({ event: 'oauth_account_unlinked', userId, provider })
+}
+
+export const assertCanAttach = async (
+	userId: string,
+	{ provider, providerAccountId }: OAuthIdentity
+) => {
+	const [owner, sameProvider] = await Promise.all([
+		findOAuthAccount(provider, providerAccountId),
+		findUserOAuthAccount(userId, provider)
+	])
+	const label = providerLabel(provider)
+
+	if (owner?.userId === userId) {
+		throw new ConflictError(`This ${label} account is already linked to your profile`)
+	}
+
+	if (owner) {
+		throw new ConflictError(
+			`This ${label} account is already linked to another TeaCoder account`
+		)
+	}
+
+	if (sameProvider) {
+		throw new ConflictError(`Another ${label} account is already linked - unlink it first`)
+	}
+}
+
+const isUniqueViolation = (err: unknown) =>
+	err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2002'
+
+export const attachOAuthAccount = async (
+	userId: string,
+	identity: OAuthIdentity,
+	automatic: boolean
+) => {
+	await assertCanAttach(userId, identity)
+
+	try {
+		await linkOAuthAccount(userId, identity.provider, identity.providerAccountId)
+	} catch (err) {
+		if (isUniqueViolation(err)) {
+			throw new ConflictError(
+				`This ${providerLabel(identity.provider)} account is already linked`
+			)
+		}
+
+		throw err
+	}
+
+	extendLogContext({
+		event: automatic ? 'oauth_account_auto_linked' : 'oauth_account_linked',
+		userId,
+		provider: identity.provider
+	})
+
+	await enqueueAccountLinked({
+		userId,
+		provider: identity.provider,
+		automatic,
+		at: new Date().toISOString()
+	})
 }

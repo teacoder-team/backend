@@ -1,6 +1,11 @@
 import { Elysia } from 'elysia'
 
 import { TAG } from '~/config/openapi'
+import {
+	cancelSubscription,
+	getSubscription,
+	updateSubscription
+} from '~/modules/subscription/service'
 import { authGuard } from '~/plugins/auth-guard'
 
 import {
@@ -12,13 +17,7 @@ import {
 	SubscriptionResponse,
 	UpdateSubscriptionPayload
 } from './model'
-import {
-	cancelSubscription,
-	createPayment,
-	getSubscription,
-	listPaymentMethods,
-	updateSubscription
-} from './service'
+import { createPayment, listPaymentMethods } from './service'
 
 export const billing = new Elysia({ prefix: '/billing', tags: [TAG.billing] })
 	.use(authGuard)

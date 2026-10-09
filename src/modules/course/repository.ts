@@ -89,7 +89,7 @@ export const findCoursePurchase = (
 export interface NewCoursePurchase {
 	userId: string
 	courseId: string
-	/** Frozen at what was actually paid - Course.price can move later. */
+
 	pricePaid: number
 	currency: string
 	paymentId?: string

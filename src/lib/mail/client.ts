@@ -30,7 +30,6 @@ export interface SendMailOptions {
 	sender?: MailSender
 }
 
-/** Throws on a refused send - the SDK only reports it - so the email job fails and BullMQ retries. */
 export const sendMail = async ({ to, subject, template, sender = 'noreply' }: SendMailOptions) => {
 	const [html, text] = await Promise.all([
 		render(template),

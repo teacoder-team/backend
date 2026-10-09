@@ -1,6 +1,12 @@
 import { type Static, t } from 'elysia'
 
-import { IntentStatus, PaymentMethod, PaymentProvider } from '@prisma/generated/client'
+import {
+	IntentStatus,
+	type PaymentIntent,
+	PaymentMethod,
+	PaymentProvider,
+	type Prisma
+} from '@prisma/generated/client'
 
 import { PrismaEnum } from '~/lib/utils/schema'
 
@@ -178,3 +184,101 @@ export const PaymentMethodsResponse = t.Object(
 
 export type CreatePaymentInput = Static<typeof CreatePaymentPayload>
 export type UpdateSubscriptionInput = Static<typeof UpdateSubscriptionPayload>
+
+export type MethodCategory = 'FIAT' | 'CRYPTO' | 'STARS'
+
+export interface MethodDefinition {
+	category: MethodCategory
+	name: string
+	description: string
+	provider: PaymentProvider
+}
+
+export interface ReplayableIntent {
+	id: string
+	status: PaymentIntent['status']
+	provider: PaymentProvider
+	method: PaymentMethod
+	amount: number
+	currency: string
+	metadata: unknown
+	pspPayload: unknown
+}
+
+export interface CheckoutRequest {
+	userId: string
+	method: PaymentMethod
+	courseId: string | null
+	idempotencyKey?: string
+}
+
+export interface ProviderPaymentUpdate {
+	provider: PaymentProvider
+
+	paymentId: string
+	pspIntentId: string
+	status: IntentStatus
+
+	amount: string
+	currency: string
+	failureCode?: string
+
+	savedMethod?: SavedPaymentMethod
+}
+
+export type FulfillmentResult =
+	| { outcome: 'course_granted'; courseId: string }
+	| { outcome: 'subscription_granted'; expiresAt: string; extended: boolean }
+	| { outcome: 'already_owned'; courseId: string }
+	| { outcome: 'already_captured' }
+	| { outcome: 'status_updated'; status: IntentStatus }
+	| { outcome: 'unchanged' }
+
+	| { outcome: 'rejected'; reason: string }
+
+export interface SubscriptionInvoice {
+
+	months: number
+
+	renewal: boolean
+
+	periodEnd: string | null
+}
+
+export interface RenewalJob {
+	subscriptionId: string
+
+	periodEnd: string
+}
+
+export interface NewPayment {
+	userId: string
+	amount: number
+	currency: string
+	method: PaymentMethod
+	provider: PaymentProvider
+	courseId?: string
+	subscriptionId?: string
+	paymentMethodId?: string
+	idempotencyKey?: string
+	metadata: Prisma.InputJsonValue
+}
+
+export interface CourseCapture {
+	id: string
+	userId: string
+	courseId: string
+	amount: number
+	currency: string
+}
+
+export interface SavedPaymentMethod {
+	providerId: string
+	type: PaymentMethod
+	title: string | null
+	first6: string | null
+	last4: string | null
+	expiryMonth: number | null
+	expiryYear: number | null
+	cardType: string | null
+}

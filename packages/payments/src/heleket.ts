@@ -6,9 +6,9 @@ const CURRENCY = 'RUB'
 
 export interface HeleketClientOptions {
 	merchantId: string
-	/** The payment API key - signs requests and verifies webhooks. */
+
 	apiKey: string
-	/** Milliseconds. Default 7000. */
+
 	timeout?: number
 	logger?: HttpLogger
 }
@@ -71,24 +71,23 @@ export interface Invoice {
 }
 
 export interface CreateInvoiceInput {
-	/** Our own reference - must be unique across every invoice we've ever created. */
+
 	orderId: string
 	amount: number
-	/** Where the "back to the shop" button on the hosted page goes. */
+
 	returnUrl?: string
-	/** Where the hosted page redirects to once payment is confirmed. */
+
 	successUrl?: string
-	/** Server-to-server notification endpoint - see verifyWebhookSignature. */
+
 	callbackUrl?: string
-	/** Seconds the invoice stays payable. Heleket accepts 300–43200. */
+
 	lifetime?: number
-	/** Ours to keep - not shown to the payer, echoed back on the webhook. */
+
 	additionalData?: string
 }
 
 export type PaymentIdentifier = { uuid: string } | { orderId: string }
 
-/** Sent on every status change of an invoice - https://doc.heleket.com/methods/payments/webhook */
 export interface WebhookPayload {
 	type: string
 	uuid: string
@@ -120,10 +119,8 @@ const messageFor = (envelope: ErrorEnvelope) => {
 	return fieldMessages || 'Unknown error'
 }
 
-/** Heleket signs webhooks over PHP's json_encode, which escapes forward slashes. */
 const phpCompatibleJson = (value: unknown): string => JSON.stringify(value).replace(/\//g, '\\/')
 
-/** https://doc.heleket.com */
 export const createHeleketClient = ({
 	merchantId,
 	apiKey,

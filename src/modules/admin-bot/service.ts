@@ -10,12 +10,15 @@ import {
 import { UserRole } from '@prisma/generated/client'
 
 import { env } from '~/config/env'
+import { PAYMENT_METHODS, PAYMENT_PROVIDER_NAMES } from '~/config/payments'
 import { AUTH_PROVIDER_TITLES } from '~/lib/integrations/oauth'
+import { adminNotifier } from '~/lib/integrations/telegram'
+import { logger } from '~/lib/logger'
+import { notificationsQueue } from '~/lib/queue/queues'
 import { formatDate, formatDateTime } from '~/lib/utils/date'
 import { truncateText } from '~/lib/utils/email-text'
-import { PAYMENT_PROVIDER_NAMES, paymentMethodName } from '~/modules/billing/service'
 
-import type { SignUpMethod } from './queue'
+import type { NotificationJobs, SignUpMethod, SupportEmail } from './model'
 import type {
 	PurchasedCourse,
 	PurchaseDetails,
@@ -23,6 +26,37 @@ import type {
 	SupportSender,
 	VisitorAccount
 } from './repository'
+
+const enqueue = async <Name extends keyof NotificationJobs>(
+	name: Name,
+	payload: NotificationJobs[Name]
+) => {
+	if (!adminNotifier) {
+		return
+	}
+
+	await notificationsQueue.add(name, payload).catch((err: unknown) => {
+		logger.warn({ context: 'admin_bot', job: name, err }, 'admin_notification_enqueue_failed')
+	})
+}
+
+export const enqueueCoursePurchaseNotification = (
+	payload: NotificationJobs['notifyCoursePurchase']
+) => enqueue('notifyCoursePurchase', payload)
+
+export const enqueueRegistrationNotification = (payload: NotificationJobs['notifyRegistration']) =>
+	enqueue('notifyRegistration', payload)
+
+export const enqueueSubscriptionPurchaseNotification = (
+	payload: NotificationJobs['notifySubscriptionPurchase']
+) => enqueue('notifySubscriptionPurchase', payload)
+
+export const enqueueSubscriptionRenewalNotification = (
+	payload: NotificationJobs['notifySubscriptionRenewal']
+) => enqueue('notifySubscriptionRenewal', payload)
+
+export const enqueueSupportEmailNotification = (payload: NotificationJobs['notifySupportEmail']) =>
+	enqueue('notifySupportEmail', payload)
 
 const DAY_MS = 24 * 60 * 60 * 1000
 
@@ -35,7 +69,6 @@ const CHAT_TYPE_NAMES: Record<string, string> = {
 	channel: 'канал'
 }
 
-/** "сегодня", "вчера", "5 дней назад", "3 месяца назад", "2 года назад". */
 const formatAge = (date: Date, now = new Date()) => {
 	const days = Math.max(0, Math.floor((now.getTime() - date.getTime()) / DAY_MS))
 
@@ -68,7 +101,6 @@ type Row = readonly [label: string, value: HtmlValue]
 const isShown = (value: HtmlValue) =>
 	value !== null && value !== undefined && value !== false && value !== ''
 
-/** "├ label: value" rows, "└" on the last. Rows without a value are left out. */
 const tree = (rows: readonly Row[]) => {
 	const shown = rows.filter(([, value]) => isShown(value))
 
@@ -137,7 +169,7 @@ export interface SubscriptionPurchaseMessageInput {
 	purchase: PurchaseDetails
 	email: string | null
 	months: number
-	/** End date before this payment; null when the subscription started afresh. */
+
 	previousExpiresAt: Date | null
 }
 
@@ -149,7 +181,7 @@ export const subscriptionPurchaseMessage = ({
 }: SubscriptionPurchaseMessageInput) => {
 	const { user } = purchase
 	const amount = formatMoney(purchase.amount, purchase.currency)
-	const method = paymentMethodName(purchase.method)
+	const method = PAYMENT_METHODS[purchase.method]?.name ?? purchase.method
 	const subscription = user.subscription
 
 	const heading = previousExpiresAt
@@ -192,7 +224,6 @@ export const subscriptionPurchaseMessage = ({
 	)
 }
 
-/** YooKassa `cancellation_details.reason` in plain words; unknown codes are shown as is. */
 const DECLINE_REASONS: Record<string, string> = {
 	insufficient_funds: 'недостаточно средств',
 	card_expired: 'истёк срок карты',
@@ -272,7 +303,7 @@ export const coursePurchaseMessage = ({
 }: CoursePurchaseMessageInput) => {
 	const { user } = purchase
 	const amount = formatMoney(purchase.amount, purchase.currency)
-	const method = paymentMethodName(purchase.method)
+	const method = PAYMENT_METHODS[purchase.method]?.name ?? purchase.method
 	const coursePrice = course && course.price !== null ? Number(course.price) : null
 
 	const courseLine = course
@@ -314,7 +345,7 @@ export interface RegistrationMessageInput {
 	user: RegistrationDetails
 	email: string | null
 	via: SignUpMethod
-	/** Other accounts already seen on the same Fingerprint visitor. */
+
 	sameDevice: readonly VisitorAccount[]
 }
 
@@ -364,7 +395,7 @@ export const registrationMessage = ({ user, email, via, sameDevice }: Registrati
 export interface StartMessageInput {
 	target: ChatTarget
 	chatType: string
-	/** This exact chat (and topic) is a notification target. */
+
 	delivers: boolean
 }
 
@@ -395,7 +426,6 @@ export const accessDeniedMessage = (target: ChatTarget) =>
 		'\n\n'
 	)
 
-/** Telegram caps a message at 4096 characters - the body gets what the frame leaves. */
 const SUPPORT_BODY_MAX = 2000
 const SUPPORT_SUBJECT_MAX = 200
 const SUPPORT_ATTACHMENTS_SHOWN = 5
@@ -414,21 +444,9 @@ const formatBytes = (bytes: number) => {
 	return `${(bytes / 1024 / 1024).toFixed(1)} МБ`
 }
 
-export interface SupportEmail {
-	from: string
-	fromName: string | null
-	replyTo: string | null
-	subject: string | null
-	body: string
-	receivedAt: Date
-	attachments: readonly { filename: string | null; size: number }[]
-	/** Null when Resend didn't report it. */
-	authentication: Record<(typeof AUTH_CHECKS)[number], string> | null
-}
-
 export interface SupportEmailMessageInput {
 	email: SupportEmail
-	/** Account registered on the sender address, if any. */
+
 	sender: SupportSender | null
 }
 
@@ -465,7 +483,6 @@ const attachmentList = (attachments: SupportEmail['attachments']) => {
 	)}`
 }
 
-/** SPF/DKIM/DMARC are computed by Resend's server; a DMARC miss means the From may be forged. */
 const spoofWarning = (authentication: SupportEmail['authentication']) => {
 	if (!authentication || authentication.dmarc === 'pass') {
 		return null

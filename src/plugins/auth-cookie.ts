@@ -41,7 +41,7 @@ export const authCookie = new Elysia({ name: 'auth-cookie' }).derive(
 				cookie[REFRESH_COOKIE].set({ value: '', maxAge: 0, ...REFRESH_OPTIONS })
 			}
 		},
-		/** Ties an OAuth flow to the browser that started it - see `oauth/service.ts`. */
+
 		oauthBinding: {
 			read: () => cookie[OAUTH_BINDING_COOKIE]?.value as string | undefined,
 			set: (value: string) => {

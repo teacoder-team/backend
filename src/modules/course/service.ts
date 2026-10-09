@@ -1,16 +1,18 @@
 import { randomBytes } from 'node:crypto'
 
-import { CourseAccessMode, type Prisma } from '@prisma/generated/client'
+import { CourseAccessMode, LessonAccess, type Prisma } from '@prisma/generated/client'
 
 import { env } from '~/config/env'
 import { ForbiddenError, InternalError, NotFoundError } from '~/lib/errors'
 import { orion } from '~/lib/integrations/orion'
 import { logger } from '~/lib/logger'
 import { redis } from '~/lib/redis'
+import { hasActiveSubscription } from '~/modules/subscription/repository'
 
-import { isLessonOpen, resolveCourseAccess, resolveLessonAccess } from './access'
+import type { CourseEntitlement, GatedCourse } from './model'
 import {
 	findCourseAttachment,
+	findCoursePurchase,
 	findPublishedCourseBySlug,
 	findPublishedLessonsForCourse,
 	incrementCourseViews,
@@ -94,7 +96,6 @@ export const getCourseLessons = async (slug: string, userId: string | null) => {
 	)
 }
 
-/** A short-lived link, so the storage address of the archive is never handed out. */
 export const createMaterialsLink = async (slug: string, userId: string) => {
 	const course = await findCourse(slug)
 
@@ -132,10 +133,6 @@ const archiveName = (slug: string, attachment: string, contentType: string | nul
 	return `${slug}${extension}`
 }
 
-/**
- * The link stays valid for its whole lifetime rather than one request - browsers and download
- * managers retry and resume. Every request is logged.
- */
 export const openMaterialsDownload = async (token: string, ip: string, userAgent: string) => {
 	const parked = await redis.get(downloadKey(token))
 
@@ -184,3 +181,56 @@ export const openMaterialsDownload = async (token: string, ip: string, userAgent
 		filename: archiveName(course.slug, course.attachment, contentType)
 	}
 }
+
+export const resolveCourseAccess = async (
+	userId: string | null,
+	course: GatedCourse
+): Promise<CourseEntitlement> => {
+	if (course.accessMode === CourseAccessMode.FREE) {
+		return { hasAccess: true, via: 'FREE' }
+	}
+
+	if (!userId) {
+		return { hasAccess: false, via: null }
+	}
+
+	if (await findCoursePurchase(userId, course.id)) {
+		return { hasAccess: true, via: 'PURCHASE' }
+	}
+
+	if (course.accessMode === CourseAccessMode.PREMIUM && (await hasActiveSubscription(userId))) {
+		return { hasAccess: true, via: 'PREMIUM' }
+	}
+
+	return { hasAccess: false, via: null }
+}
+
+export const isLessonOpen = (access: LessonAccess, entitlement: CourseEntitlement) =>
+	access === LessonAccess.FREE || entitlement.hasAccess
+
+export const resolveLessonAccess = async (
+	userId: string | null,
+	course: GatedCourse,
+	access: LessonAccess
+): Promise<CourseEntitlement> => {
+	if (access === LessonAccess.FREE) {
+		return { hasAccess: true, via: 'FREE' }
+	}
+
+	const entitlement = await resolveCourseAccess(userId, course)
+
+	if (entitlement.hasAccess || !userId) {
+		return entitlement
+	}
+
+	if (access === LessonAccess.PREMIUM && (await hasActiveSubscription(userId))) {
+		return { hasAccess: true, via: 'PREMIUM' }
+	}
+
+	return entitlement
+}
+
+export const lockedReason = (course: GatedCourse) =>
+	course.accessMode === CourseAccessMode.PURCHASE
+		? 'This lesson requires buying the course'
+		: 'This lesson requires TeaCoder Premium or buying the course'

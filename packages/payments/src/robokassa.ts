@@ -9,15 +9,15 @@ export type RobokassaHashAlgorithm = 'md5' | 'ripemd160' | 'sha1' | 'sha256' | '
 
 export interface RobokassaClientOptions {
 	merchantLogin: string
-	/** Password #1 - signs payment links and redirect-back URLs. */
+
 	password1: string
-	/** Password #2 - signs the server-to-server ResultURL notification. */
+
 	password2: string
-	/** Must match the algorithm chosen in the Robokassa merchant settings. */
+
 	hashAlgorithm: RobokassaHashAlgorithm
-	/** Sends IsTest=1. Pass the test passwords alongside it. */
+
 	testMode?: boolean
-	/** Milliseconds, for recurring charges. Default 15000. */
+
 	timeout?: number
 }
 
@@ -82,7 +82,6 @@ const extractCustomParams = (data: Params): Record<string, string> => {
 const read = (data: Params, key: string) =>
 	data instanceof URLSearchParams ? data.get(key) : data[key]
 
-/** https://docs.robokassa.ru */
 export const createRobokassaClient = ({
 	merchantLogin,
 	password1,
@@ -138,17 +137,13 @@ export const createRobokassaClient = ({
 		return `${PAYMENT_URL}?${params.toString()}`
 	}
 
-	/** The server-to-server ResultURL notification - signed with password #2. */
 	const verifyResultSignature = (body: Params) => verifySignature(body, password2)
 
-	/** The SuccessURL/FailURL redirect back to the site - signed with password #1. */
 	const verifyRedirectSignature = (query: Params) => verifySignature(query, password1)
 
 	const chargeRecurring = async (input: ChargeRecurringInput): Promise<void> => {
 		const outSum = input.amount.toFixed(2)
 
-		// PreviousInvoiceID deliberately does not take part in the signature —
-		// confirmed explicitly in Robokassa's own docs for this endpoint.
 		const signature = signRequest([merchantLogin, outSum, input.invoiceId, password1])
 
 		const body = new URLSearchParams({

@@ -14,7 +14,6 @@ export const loadKey = (base64: string, name: string) => {
 	return key
 }
 
-/** Packed as iv | authTag | ciphertext. */
 export const seal = (key: Buffer, plaintext: string): Buffer => {
 	const iv = randomBytes(IV_LENGTH)
 	const cipher = createCipheriv(ALGORITHM, key, iv)

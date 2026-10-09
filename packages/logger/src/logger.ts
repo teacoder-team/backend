@@ -4,7 +4,7 @@ import { logContext } from './context'
 
 export interface LoggerOptions {
 	level: Level
-	/** Colorized, human-readable output through pino-pretty - meant for local development. */
+
 	pretty?: boolean
 }
 

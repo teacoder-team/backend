@@ -146,10 +146,6 @@ const CHECKS: Record<CodeMfaMethod, (userId: string, code: string) => Promise<bo
 	RECOVERY_CODE: checkRecoveryCode
 }
 
-/**
- * Methods the user can finish sign-in with. Empty means MFA is off. A WebAuthn key counts as a
- * second factor on its own - with one registered, a password alone no longer signs in.
- */
 type MfaFactors = Awaited<ReturnType<typeof findMfaFactors>>
 
 const methodsOf = (factors: MfaFactors): MfaMethod[] => {
@@ -196,7 +192,6 @@ export const getMfaStatus = async (userId: string) => {
 	}
 }
 
-/** The first factor gets a batch of recovery codes, so losing the key or phone isn't a lockout. */
 export const issueRecoveryCodesIfMissing = async (userId: string) => {
 	const existing = await listRecoveryCodes(userId)
 
@@ -223,7 +218,6 @@ export const verifyMfaCode = async (userId: string, method: CodeMfaMethod, code:
 	await redis.del(attemptKey(userId))
 }
 
-/** For forms with one input: the format tells an authenticator code from a recovery code. */
 export const verifySecondFactor = (userId: string, code: string) =>
 	verifyMfaCode(userId, isTotpCode(code.trim()) ? 'TOTP' : 'RECOVERY_CODE', code)
 

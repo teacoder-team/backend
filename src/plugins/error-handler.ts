@@ -17,7 +17,6 @@ interface ValidationIssue {
 	schema?: { error?: unknown }
 }
 
-/** A schema-declared `error` string wins — it was written for the caller. */
 const messageFor = (issue: ValidationIssue) => {
 	const declared = issue.schema?.error
 
@@ -28,7 +27,6 @@ const messageFor = (issue: ValidationIssue) => {
 	return issue.summary ?? issue.message ?? 'Invalid value'
 }
 
-/** "email: Invalid email format" — keeps which field failed as plain text, no separate property. */
 const describe = (issue: ValidationIssue) => {
 	const field = issue.path?.replace(/^\//, '').replace(/\//g, '.')
 	const message = messageFor(issue)
@@ -36,10 +34,6 @@ const describe = (issue: ValidationIssue) => {
 	return field ? `${field}: ${message}` : message
 }
 
-/**
- * The single place where an error becomes an HTTP response, and the single
- * place errors are logged — services throw and stay quiet.
- */
 export const errorHandler = new Elysia({ name: 'error-handler' })
 	.error({ APP_ERROR: AppError })
 	.onError({ as: 'global' }, ({ code, error, set, path }) => {

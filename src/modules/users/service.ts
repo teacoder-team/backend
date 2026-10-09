@@ -1,6 +1,7 @@
 import { VerificationPurpose } from '@prisma/generated/client'
 
 import { isProduction } from '~/config/env'
+import { cache } from '~/lib/cache'
 import { isDisposableEmail } from '~/lib/datasets/disposable-emails'
 import { BadRequestError, ConflictError, NotFoundError, UnauthorizedError } from '~/lib/errors'
 import { orion } from '~/lib/integrations/orion'
@@ -21,7 +22,8 @@ import {
 	VERIFICATION_TTL,
 	verifyCode
 } from '~/modules/auth/service'
-import { issueTokenPair, type RequestOrigin, revokeAllSessions } from '~/modules/session/service'
+import type { RequestOrigin } from '~/modules/session/model'
+import { issueTokenPair, revokeAllSessions } from '~/modules/session/service'
 import { hasActiveSubscription } from '~/modules/subscription/repository'
 
 import type {
@@ -31,7 +33,18 @@ import type {
 	ConfirmCodeInput,
 	UpdateProfileInput
 } from './model'
-import { findUserById, updateAvatar as updateAvatarRecord, updateDisplayName } from './repository'
+import {
+	countLessonsPerCourse,
+	countUsersAhead,
+	findCoursesWithLessons,
+	findUserById,
+	findUserPoints,
+	listCompletedLessons,
+	listLeaders,
+	listProgressActivity,
+	updateAvatar as updateAvatarRecord,
+	updateDisplayName
+} from './repository'
 
 const pendingEmailKey = (userId: string) => `pending_email_change:${userId}`
 const pendingPasswordKey = (userId: string) => `pending_password_change:${userId}`
@@ -126,7 +139,6 @@ export const confirmEmailChange = async (userId: string, input: ConfirmCodeInput
 export const requestPasswordChange = async (userId: string, input: ChangePasswordInput) => {
 	const credential = await findPasswordCredential(userId)
 
-	/** No password yet (signed up through a provider): the emailed code alone proves ownership. */
 	if (credential) {
 		const isCorrect = input.currentPassword
 			? await verifyPassword(input.currentPassword, credential.passwordHash)
@@ -177,7 +189,6 @@ export const confirmPasswordChange = async (
 	await savePasswordHash(userId, newPasswordHash)
 	await redis.del(pendingPasswordKey(userId))
 
-	/** Confirmed change to the account's password - every other session should re-authenticate. */
 	await revokeAllSessions(userId)
 
 	extendLogContext({ event: hadPassword ? 'password_change_completed' : 'password_set', userId })
@@ -194,3 +205,102 @@ export const updateAvatar = async (userId: string, input: AvatarUploadInput) => 
 
 	return { avatar }
 }
+
+const LEADERS_LIMIT = 15
+const LEADERS_CACHE_TTL = 60
+const LEADERS_CACHE_KEY = 'users:leaders'
+
+const percent = (part: number, whole: number) => (whole > 0 ? Math.round((part / whole) * 100) : 0)
+
+export const getStatistics = async (userId: string) => {
+	const [user, lessonsPerCourse, completed] = await Promise.all([
+		findUserPoints(userId),
+		countLessonsPerCourse(),
+		listCompletedLessons(userId)
+	])
+
+	if (!user) {
+		throw new NotFoundError('User not found')
+	}
+
+	const completedPerCourse = new Map<string, number>()
+
+	for (const { lesson } of completed) {
+		completedPerCourse.set(lesson.courseId, (completedPerCourse.get(lesson.courseId) ?? 0) + 1)
+	}
+
+	const totalPerCourse = new Map(lessonsPerCourse.map((row) => [row.courseId, row._count._all]))
+	const totalLessons = lessonsPerCourse.reduce((sum, row) => sum + row._count._all, 0)
+
+	let completedCourses = 0
+	let coursesInProgress = 0
+
+	for (const [courseId, done] of completedPerCourse) {
+		if (done >= (totalPerCourse.get(courseId) ?? 0)) {
+			completedCourses++
+		} else {
+			coursesInProgress++
+		}
+	}
+
+	return {
+		points: user.points,
+		rank: (await countUsersAhead(user.points)) + 1,
+		completedLessons: completed.length,
+		totalLessons,
+		progress: percent(completed.length, totalLessons),
+		completedCourses,
+		coursesInProgress
+	}
+}
+
+export const getCourseProgress = async (userId: string) => {
+	const activity = await listProgressActivity(userId)
+	const completedIds = new Set(
+		activity.filter((row) => row.isCompleted).map((row) => row.lessonId)
+	)
+	const lastActivity = new Map<string, Date>()
+
+	for (const row of activity) {
+		const seen = lastActivity.get(row.lesson.courseId)
+
+		if (!seen || row.updatedAt > seen) {
+			lastActivity.set(row.lesson.courseId, row.updatedAt)
+		}
+	}
+
+	const startedCourseIds = [
+		...new Set(activity.filter((row) => row.isCompleted).map((row) => row.lesson.courseId))
+	]
+	const courses = await findCoursesWithLessons(startedCourseIds)
+
+	return courses
+		.map(({ lessons, ...course }) => {
+			const completedLessons = lessons.filter((lesson) => completedIds.has(lesson.id)).length
+			const nextLesson = lessons.find((lesson) => !completedIds.has(lesson.id)) ?? null
+
+			return {
+				...course,
+				totalLessons: lessons.length,
+				completedLessons,
+				progress: percent(completedLessons, lessons.length),
+				nextLesson,
+				lastActivityAt: lastActivity.get(course.id)?.toISOString() ?? null
+			}
+		})
+		.sort((a, b) => (b.lastActivityAt ?? '').localeCompare(a.lastActivityAt ?? ''))
+}
+
+const isPremium = (subscription: { isActive: boolean; expiresAt: Date } | null) =>
+	Boolean(subscription?.isActive && subscription.expiresAt > new Date())
+
+export const getLeaders = async () =>
+	(await cache.readThrough(LEADERS_CACHE_KEY, { ttl: LEADERS_CACHE_TTL }, async () => {
+		const leaders = await listLeaders(LEADERS_LIMIT)
+
+		return leaders.map(({ subscription, ...user }) => ({
+			...user,
+			rank: leaders.findIndex((leader) => leader.points === user.points) + 1,
+			isPremium: isPremium(subscription)
+		}))
+	})) ?? []

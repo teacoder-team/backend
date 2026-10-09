@@ -10,10 +10,10 @@ const DEFAULT_EXPIRES_IN = 60 * 60
 export const SIGNATURE_HEADER = 'crypto-pay-api-signature'
 
 export interface CryptoBotClientOptions {
-	/** Crypto Pay API token from @CryptoBot (or @CryptoTestnetBot). */
+
 	token: string
 	testnet?: boolean
-	/** Milliseconds. Default 7000. */
+
 	timeout?: number
 	logger?: HttpLogger
 }
@@ -91,7 +91,6 @@ const query = (params: Record<string, Param>) => {
 	return serialized ? `?${serialized}` : ''
 }
 
-/** https://help.crypt.bot/crypto-pay-api */
 export const createCryptoBotClient = ({
 	token,
 	testnet = false,
@@ -143,7 +142,6 @@ export const createCryptoBotClient = ({
 	const deleteInvoice = (invoiceId: number) =>
 		call<boolean>('deleteInvoice', { invoice_id: invoiceId })
 
-	/** HMAC-SHA256 of the raw body, keyed with SHA256(token). Pass the SIGNATURE_HEADER value. */
 	const verifyWebhookSignature = (rawBody: string, signature: string | undefined): boolean => {
 		if (!signature) {
 			return false

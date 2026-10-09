@@ -18,7 +18,6 @@ interface GithubEmail {
 	verified: boolean
 }
 
-/** Plain OAuth 2.0 - GitHub publishes no discovery document and issues no id_token. */
 export const github = ({
 	clientId,
 	clientSecret,

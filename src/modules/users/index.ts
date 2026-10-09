@@ -22,13 +22,15 @@ import {
 import {
 	confirmEmailChange,
 	confirmPasswordChange,
+	getCourseProgress,
 	getCurrentUser,
+	getLeaders,
+	getStatistics,
 	requestEmailChange,
 	requestPasswordChange,
 	updateAvatar,
 	updateProfile
 } from './service'
-import { getCourseProgress, getLeaders, getStatistics } from './stats'
 
 export const users = new Elysia({ prefix: '/users', tags: [TAG.users] })
 	.use(requestContext)

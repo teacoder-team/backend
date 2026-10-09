@@ -3,7 +3,6 @@ import { Api } from 'grammy'
 import type { Html } from './html'
 import { type ChatTarget, formatChatTarget } from './targets'
 
-/** Structurally satisfied by a pino logger. */
 export interface NotifierLogger {
 	warn: (context: object, message: string) => void
 }
@@ -24,7 +23,6 @@ export interface DeliveryReport {
 	failed: DeliveryFailure[]
 }
 
-/** Sends one message to every target in parallel. One unreachable chat never blocks the rest. */
 export const createTelegramNotifier = ({ botToken, targets, logger }: TelegramNotifierOptions) => {
 	const api = new Api(botToken)
 

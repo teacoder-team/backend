@@ -14,16 +14,11 @@ import {
 
 const INN_LENGTH = { company: 10, entrepreneur: 12 }
 
-/** Roubles have two decimals; float arithmetic does not. */
 const round = (value: number) => Math.round(value * 100) / 100
 
 const totalOf = (services: ServiceItem[]) =>
 	round(services.reduce((sum, service) => sum + round(service.amount * service.quantity), 0))
 
-/**
- * The service answers a malformed payload with an opaque 400, so the payload is
- * checked here where the message can actually say what is wrong.
- */
 const validate = (services: ServiceItem[], client: IncomeClient) => {
 	if (!services.length) {
 		throw new NpdError(0, 'A receipt needs at least one service line')
@@ -56,12 +51,12 @@ const validate = (services: ServiceItem[], client: IncomeClient) => {
 }
 
 export interface IssueReceiptInput {
-	/** One line per item. The total is derived, never passed in. */
+
 	services: ServiceItem[]
-	/** Defaults to an anonymous individual, which is the common case. */
+
 	client?: Partial<IncomeClient>
 	paymentType?: PaymentType
-	/** When the money actually arrived. Defaults to now. */
+
 	operationTime?: Date
 }
 
@@ -77,26 +72,17 @@ export interface CancelReceiptInput {
 	operationTime?: Date
 }
 
-/** Client for "Мой налог" (lknpd.nalog.ru) - the self-employed tax service. */
 export const createNpdClient = (options: NpdClientOptions) => {
 	const { logger } = options
 	const session = createSession(options)
 	const request = createRequest(session, logger)
 
-	/** A public link — no token needed, so it is safe to hand to the payer. */
 	const getReceiptPrintUrl = async (receiptId: string) =>
 		`${API_URL}/receipt/${await session.getAccountInn()}/${receiptId}/print`
 
 	const getReceipt = async (receiptId: string) =>
 		request<Receipt>(`/receipt/${await session.getAccountInn()}/${receiptId}/json`)
 
-	/**
-	 * Registers an income and returns the receipt.
-	 *
-	 * Not idempotent and not retried: the API has no idempotency key, so a repeat
-	 * files a second receipt and a second tax liability. A caller that cannot tell
-	 * whether this succeeded should look the receipt up, not call again.
-	 */
 	const issueReceipt = async ({
 		services,
 		client = {},

@@ -23,10 +23,8 @@ const createVerifier = (): CaptchaVerifier | null => {
 	}
 }
 
-/** The active verifier, or null when CAPTCHA_PROVIDER=none. */
 export const captcha = createVerifier()
 
-/** A no-op without a provider. An unreachable provider fails closed. */
 export const verifyCaptcha = async (token: string | undefined, remoteIp: string) => {
 	if (!captcha) {
 		return

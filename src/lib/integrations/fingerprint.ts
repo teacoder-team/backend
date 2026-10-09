@@ -3,7 +3,6 @@ import { createFingerprintClient } from '@teacoder/fingerprint'
 import { env } from '~/config/env'
 import { logger } from '~/lib/logger'
 
-/** The client calls `fp.get()` right before submitting, so a fresh event is minutes old at most. */
 const EVENT_MAX_AGE_MS = 5 * 60 * 1000
 const MIN_CONFIDENCE = 0.9
 
@@ -17,7 +16,6 @@ export const fingerprint = env.FINGERPRINT_SECRET_KEY
 		})
 	: null
 
-/** Fails open: sign-in must never depend on Fingerprint, an unverified event just means no visitor. */
 export const resolveVisitorId = async (eventId: string | undefined) => {
 	if (!fingerprint || !eventId) {
 		return null

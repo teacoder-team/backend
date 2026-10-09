@@ -1,212 +1,100 @@
+import type { PaymentMethodDetails } from '@teacoder/payments/yookassa'
+
 import {
-	WORLD_PAYMENT_METHOD_GROUPS,
-	YANDEX_SPLIT_PAYMENT_METHODS
-} from '@teacoder/payments/prodamus'
-import type { PaymentMethodType } from '@teacoder/payments/yookassa'
+	IntentStatus,
+	type PaymentIntent,
+	PaymentMethod,
+	PaymentProvider,
+	Prisma
+} from '@prisma/generated/client'
 
-import type { PaymentIntent } from '@prisma/generated/client'
-import { PaymentMethod, PaymentProvider, Prisma } from '@prisma/generated/client'
-
-import { env } from '~/config/env'
+import { PAYMENT_CATEGORIES, PAYMENT_METHODS } from '~/config/payments'
 import {
 	AppError,
 	BadRequestError,
 	ConflictError,
-	InternalError,
-	NotFoundError
+	NotFoundError,
+	ValidationError
 } from '~/lib/errors'
 import {
-	cryptoBot,
-	heleket,
-	prodamus,
-	robokassa,
-	telegramStars,
-	yookassa
+	billingMethodType,
+	type CheckoutProduct,
+	createProviderCheckout
 } from '~/lib/integrations/payments'
 import { LockTakenError, withLock } from '~/lib/lock'
 import { extendLogContext, logger } from '~/lib/logger'
+import {
+	enqueueCoursePurchaseNotification,
+	enqueueSubscriptionPurchaseNotification,
+	enqueueSubscriptionRenewalNotification
+} from '~/modules/admin-bot/service'
 import { getUserEmail } from '~/modules/auth/service'
+import { enqueueCoursePurchaseEmail } from '~/modules/course/jobs'
 import { findCoursePurchase, findPurchasableCourse } from '~/modules/course/repository'
-import { PREMIUM_PLAN, premiumAmount } from '~/modules/subscription/plan'
 import {
-	cancelSubscription as cancelSubscriptionRow,
-	findSubscription,
-	setAutoBilling
-} from '~/modules/subscription/repository'
-import { isLiveSubscription } from '~/modules/subscription/term'
+	enqueueSubscriptionPaymentFailedEmail,
+	enqueueSubscriptionPurchaseEmail,
+	enqueueSubscriptionRenewedEmail
+} from '~/modules/subscription/jobs'
+import { endSubscriptionPeriod } from '~/modules/subscription/repository'
+import { nextTerm, PREMIUM_PLAN, premiumAmount } from '~/modules/subscription/service'
 
-import {
-	CHECKOUT_TTL_SECONDS,
-	type CheckoutRequest,
-	findIdempotentReplay,
-	findReusableCheckout
-} from './checkout'
-import type { CreatePaymentInput, UpdateSubscriptionInput } from './model'
+import type {
+	CheckoutRequest,
+	CreatePaymentInput,
+	FulfillmentResult,
+	MethodDefinition,
+	ProviderPaymentUpdate,
+	ReplayableIntent,
+	SavedPaymentMethod,
+	SubscriptionInvoice
+} from './model'
 import {
 	attachProviderPayment,
+	captureCoursePayment,
+	captureSubscriptionPayment,
 	createPendingPayment,
-	findChargeableMethod,
-	markPaymentFailed
+	expireCheckouts,
+	findOpenCheckouts,
+	findPaymentByIdempotencyKey,
+	findPaymentForFulfillment,
+	type FulfillableIntent,
+	linkPaymentMethod,
+	markPaymentFailed,
+	saveUserPaymentMethod,
+	transitionPendingPayment
 } from './repository'
 
 const CURRENCY = 'RUB'
 
-const RETURN_URL = env.APP_URL
-
-type MethodCategory = 'FIAT' | 'CRYPTO' | 'STARS'
-
-interface MethodDefinition {
-	category: MethodCategory
-	name: string
-	description: string
-	providers: PaymentProvider[]
-}
-
-/** Methods left out are not on sale: `resolveProvider` reports them as unavailable. */
-const METHODS: Partial<Record<PaymentMethod, MethodDefinition>> = {
-	[PaymentMethod.BANK_CARD]: {
-		category: 'FIAT',
-		name: 'Банковская карта',
-		description: 'Оплата картой российских банков',
-		providers: [PaymentProvider.YOOKASSA]
-	},
-	[PaymentMethod.SBP]: {
-		category: 'FIAT',
-		name: 'СБП',
-		description: 'Оплата через Систему быстрых платежей',
-		providers: [PaymentProvider.YOOKASSA]
-	},
-	// [PaymentMethod.T_PAY]: {
-	// 	category: 'FIAT',
-	// 	name: 'T-Pay',
-	// 	description: 'Оплата через приложение Т-Банка',
-	// 	providers: [PaymentProvider.YOOKASSA]
-	// },
-	// [PaymentMethod.SBER_PAY]: {
-	// 	category: 'FIAT',
-	// 	name: 'SberPay',
-	// 	description: 'Оплата через приложение СберБанк Онлайн',
-	// 	providers: [PaymentProvider.YOOKASSA]
-	// },
-	// [PaymentMethod.YOOMONEY]: {
-	// 	category: 'FIAT',
-	// 	name: 'ЮMoney',
-	// 	description: 'Оплата с кошелька ЮMoney',
-	// 	providers: [PaymentProvider.YOOKASSA]
-	// },
-	[PaymentMethod.INTERNATIONAL_CARD]: {
-		category: 'FIAT',
-		name: 'Иностранные карты',
-		description: 'Оплата картами банков мира и другими международными способами',
-		providers: [PaymentProvider.PRODAMUS, PaymentProvider.ROBOKASSA]
-	},
-	// [PaymentMethod.YANDEX_SPLIT]: {
-	// 	category: 'FIAT',
-	// 	name: 'Яндекс Сплит',
-	// 	description: 'Оплата частями через Яндекс Сплит',
-	// 	providers: [PaymentProvider.PRODAMUS]
-	// },
-	[PaymentMethod.HELEKET]: {
-		category: 'CRYPTO',
-		name: 'Криптовалюта',
-		description: 'USDT, GRAM, BTC и другие',
-		providers: [PaymentProvider.HELEKET]
-	}
-	// [PaymentMethod.HELEKET]: {
-	// 	category: 'CRYPTO',
-	// 	name: 'Heleket',
-	// 	description: 'Оплата в криптовалюте через Heleket - USDT, GRAM, BTC и другие',
-	// 	providers: [PaymentProvider.HELEKET]
-	// },
-	// [PaymentMethod.TELEGRAM_STARS]: {
-	// 	category: 'STARS',
-	// 	name: 'Telegram Stars',
-	// 	description: 'Оплата звёздами Telegram, без банковской карты',
-	// 	providers: [PaymentProvider.TELEGRAM]
-	// }
-}
-
-const YOOKASSA_PAYMENT_METHOD_TYPES: Partial<Record<PaymentMethod, PaymentMethodType>> = {
-	[PaymentMethod.BANK_CARD]: 'bank_card',
-	[PaymentMethod.SBP]: 'sbp',
-	[PaymentMethod.T_PAY]: 'tinkoff_bank',
-	[PaymentMethod.YOOMONEY]: 'yoo_money',
-	[PaymentMethod.SBER_PAY]: 'sberbank'
-}
-
-export const paymentMethodName = (method: PaymentMethod) => METHODS[method]?.name ?? method
-
-export const PAYMENT_PROVIDER_NAMES: Record<PaymentProvider, string> = {
-	[PaymentProvider.YOOKASSA]: 'ЮKassa',
-	[PaymentProvider.ROBOKASSA]: 'Robokassa',
-	[PaymentProvider.PRODAMUS]: 'Prodamus',
-	[PaymentProvider.HELEKET]: 'Heleket',
-	[PaymentProvider.CRYPTO_BOT]: 'Crypto Bot',
-	[PaymentProvider.CLOUDPAYMENTS]: 'CloudPayments',
-	[PaymentProvider.TELEGRAM]: 'Telegram Stars'
-}
-
-const CATEGORY_ORDER = ['FIAT', 'CRYPTO', 'STARS'] as const
-
-const CATEGORY_NAMES: Record<MethodCategory, string> = {
-	FIAT: 'Банковские способы',
-	CRYPTO: 'Криптовалюта',
-	STARS: 'Telegram Stars'
-}
-
-const IMPLEMENTED_PROVIDERS = new Set<PaymentProvider>([
-	PaymentProvider.YOOKASSA,
-	PaymentProvider.ROBOKASSA,
-	PaymentProvider.PRODAMUS,
-	PaymentProvider.CRYPTO_BOT,
-	PaymentProvider.HELEKET,
-	PaymentProvider.TELEGRAM
-])
-
-const definitions = () => Object.entries(METHODS) as [PaymentMethod, MethodDefinition][]
-
-const resolveProvider = (method: PaymentMethod): PaymentProvider | null =>
-	METHODS[method]?.providers.find((provider) => IMPLEMENTED_PROVIDERS.has(provider)) ?? null
+const definitions = () => Object.entries(PAYMENT_METHODS) as [PaymentMethod, MethodDefinition][]
 
 export const listPaymentMethods = () => ({
-	categories: CATEGORY_ORDER.map((category) => ({
-		id: category,
-		name: CATEGORY_NAMES[category],
+	categories: PAYMENT_CATEGORIES.map(({ id, name }) => ({
+		id,
+		name,
 		methods: definitions()
-			.filter(([, definition]) => definition.category === category)
+			.filter(([, definition]) => definition.category === id)
 			.map(([id, definition]) => ({
 				id,
 				name: definition.name,
 				description: definition.description,
-				isAvailable: resolveProvider(id) !== null
+				isAvailable: true
 			}))
 	}))
 })
 
 export const listAvailablePaymentMethods = () =>
-	definitions()
-		.filter(([id]) => resolveProvider(id) !== null)
-		.map(([id, definition]) => ({
-			id,
-			name: definition.name,
-			description: definition.description
-		}))
+	definitions().map(([id, definition]) => ({
+		id,
+		name: definition.name,
+		description: definition.description
+	}))
 
-interface Product {
-	kind: 'subscription' | 'course'
-	amount: number
-	description: string
-	courseId?: string
-	/** Paid period, subscription only. */
-	months?: number
-	stars?: number
-}
-
-/** The premium price depends on the method - only courses are priced in the database. */
 const resolveProduct = async (
 	courseId: string | undefined,
 	method: PaymentMethod
-): Promise<Product> => {
+): Promise<CheckoutProduct> => {
 	if (!courseId) {
 		return {
 			kind: 'subscription',
@@ -229,128 +117,6 @@ const resolveProduct = async (
 		description: `Покупка курса «${course.title}»`,
 		courseId: course.id
 	}
-}
-
-const startAtProvider = async (payment: PaymentIntent, product: Product, email: string | null) => {
-	switch (payment.provider) {
-		case PaymentProvider.YOOKASSA: {
-			const created = await yookassa.createPayment({
-				amount: payment.amount,
-				description: product.description,
-				returnUrl: RETURN_URL,
-				metadata: {
-					paymentId: payment.id
-				},
-				paymentMethodType: YOOKASSA_PAYMENT_METHOD_TYPES[payment.method],
-				savePaymentMethod: true
-			})
-
-			const url = created.confirmation?.confirmation_url
-
-			if (!url) {
-				throw new InternalError('Provider returned no confirmation URL')
-			}
-
-			return { url, pspIntentId: created.id, raw: created }
-		}
-
-		case PaymentProvider.ROBOKASSA: {
-			const recurring = product.kind === 'subscription'
-
-			const url = robokassa.createInvoiceUrl({
-				invoiceId: payment.invoiceNumber,
-				amount: payment.amount,
-				description: product.description,
-				email: email ?? undefined,
-				recurring,
-				customParams: { paymentId: payment.id }
-			})
-
-			return { url, pspIntentId: String(payment.invoiceNumber), raw: undefined }
-		}
-
-		case PaymentProvider.PRODAMUS: {
-			const url = prodamus.createPaymentUrl({
-				orderId: payment.id,
-				products: [{ name: product.description, price: payment.amount, quantity: 1 }],
-				customerEmail: email ?? undefined,
-				paymentMethods:
-					payment.method === PaymentMethod.YANDEX_SPLIT
-						? YANDEX_SPLIT_PAYMENT_METHODS
-						: undefined,
-				paymentMethodGroups:
-					payment.method === PaymentMethod.INTERNATIONAL_CARD
-						? WORLD_PAYMENT_METHOD_GROUPS
-						: undefined,
-				successUrl: `${env.APP_URL}/payment/success`,
-				returnUrl: RETURN_URL,
-				callbackUrl: `${env.WEBHOOK_URL}/webhook/prodamus`
-			})
-
-			return { url, pspIntentId: null, raw: undefined }
-		}
-
-		case PaymentProvider.CRYPTO_BOT: {
-			const invoice = await cryptoBot.createInvoice({
-				fiat: CURRENCY,
-				amount: payment.amount,
-				description: product.description,
-				payload: payment.id,
-				returnUrl: RETURN_URL,
-				expiresIn: CHECKOUT_TTL_SECONDS
-			})
-
-			return {
-				url: invoice.bot_invoice_url,
-				pspIntentId: String(invoice.invoice_id),
-				raw: invoice
-			}
-		}
-
-		case PaymentProvider.HELEKET: {
-			const invoice = await heleket.createInvoice({
-				orderId: payment.id,
-				amount: payment.amount,
-				returnUrl: RETURN_URL,
-				callbackUrl: `${env.WEBHOOK_URL}/webhook/heleket`,
-				lifetime: CHECKOUT_TTL_SECONDS,
-				additionalData: product.description
-			})
-
-			return { url: invoice.url, pspIntentId: invoice.uuid, raw: invoice }
-		}
-
-		case PaymentProvider.TELEGRAM: {
-			if (!product.stars) {
-				throw new BadRequestError(
-					'Telegram Stars pricing is not set up for this purchase yet'
-				)
-			}
-
-			const url = await telegramStars.createInvoiceLink({
-				title: 'TeaCoder',
-				description: product.description,
-				payload: payment.id,
-				amount: product.stars
-			})
-
-			return { url, pspIntentId: null, raw: undefined }
-		}
-
-		default:
-			throw new InternalError(`No integration wired for provider ${payment.provider}`)
-	}
-}
-
-interface ReplayableIntent {
-	id: string
-	status: PaymentIntent['status']
-	provider: PaymentProvider
-	method: PaymentMethod
-	amount: number
-	currency: string
-	metadata: unknown
-	pspPayload: unknown
 }
 
 const toResponse = (payment: ReplayableIntent) => {
@@ -380,7 +146,7 @@ const isUniqueViolation = (err: unknown) =>
 const openCheckout = async (
 	request: CheckoutRequest,
 	provider: PaymentProvider,
-	product: Product,
+	product: CheckoutProduct,
 	fallbackEmail: string | undefined
 ) => {
 	const { userId, idempotencyKey } = request
@@ -409,7 +175,7 @@ const openCheckout = async (
 	})
 
 	try {
-		const { url, pspIntentId, raw } = await startAtProvider(payment, product, email)
+		const { url, pspIntentId, raw } = await createProviderCheckout(payment, product, email, CHECKOUT_TTL_SECONDS)
 
 		await attachProviderPayment(payment.id, pspIntentId, {
 			url,
@@ -467,7 +233,7 @@ const checkout = async (request: CheckoutRequest, fallbackEmail: string | undefi
 		return toResponse(replay)
 	}
 
-	const provider = resolveProvider(request.method)
+	const provider = PAYMENT_METHODS[request.method]?.provider
 
 	if (!provider) {
 		throw new BadRequestError(`Payment method ${request.method} is not available yet`)
@@ -521,73 +287,334 @@ export const createPayment = async (
 	}
 }
 
-export const cancelSubscription = async (userId: string) => {
-	const cancelled = await cancelSubscriptionRow(userId)
+const CHECKOUT_TTL_SECONDS = 60 * 60
 
-	if (cancelled) {
-		logger.info({ userId }, 'subscription_cancelled')
+const checkoutUrl = (intent: PaymentIntent) =>
+	(intent.pspPayload as { url?: string } | null)?.url ?? null
+
+const expiresAt = (intent: PaymentIntent) =>
+	new Date(intent.createdAt.getTime() + CHECKOUT_TTL_SECONDS * 1000)
+
+const productName = (courseId: string | null) => (courseId ? 'course' : 'subscription')
+
+const isStale = (intent: PaymentIntent, now: number) =>
+	intent.status === IntentStatus.REQUIRES_PAYMENT &&
+	(!checkoutUrl(intent) || expiresAt(intent).getTime() <= now)
+
+const findIdempotentReplay = async ({
+	userId,
+	method,
+	courseId,
+	idempotencyKey
+}: CheckoutRequest) => {
+	if (!idempotencyKey) {
+		return null
 	}
 
-	return { cancelled: Boolean(cancelled) }
-}
+	const previous = await findPaymentByIdempotencyKey(userId, idempotencyKey)
 
-type SubscriptionRow = Awaited<ReturnType<typeof findSubscription>>
-
-const isLive = (subscription: SubscriptionRow): subscription is NonNullable<SubscriptionRow> =>
-	isLiveSubscription(subscription)
-
-type ChargeableMethod = Awaited<ReturnType<typeof findChargeableMethod>>
-
-const toSubscriptionResponse = (subscription: SubscriptionRow, method: ChargeableMethod) => ({
-	isActive: isLive(subscription),
-	autoRenew: isLive(subscription) && subscription.isAutoBilling,
-	startedAt: subscription?.startedAt.toISOString() ?? null,
-	expiresAt: subscription?.expiresAt.toISOString() ?? null,
-	paymentMethod: method && { type: method.type, title: method.title, last4: method.last4 }
-})
-
-export const getSubscription = async (userId: string) => {
-	const [subscription, method] = await Promise.all([
-		findSubscription(userId),
-		findChargeableMethod(userId)
-	])
-
-	return toSubscriptionResponse(subscription, method)
-}
-
-export const updateSubscription = async (
-	userId: string,
-	{ autoRenew }: UpdateSubscriptionInput
-) => {
-	const [subscription, method] = await Promise.all([
-		findSubscription(userId),
-		findChargeableMethod(userId)
-	])
-
-	if (!isLive(subscription)) {
-		if (autoRenew) {
-			throw new ConflictError('No active subscription to renew')
-		}
-
-		return toSubscriptionResponse(subscription, method)
+	if (!previous) {
+		return null
 	}
 
-	if (autoRenew && !method) {
+	if (previous.method !== method || previous.courseId !== courseId) {
+		throw new ValidationError('Idempotency-Key was already used with different parameters')
+	}
+
+	return previous
+}
+
+const findReusableCheckout = async ({ userId, method, courseId }: CheckoutRequest) => {
+	const open = await findOpenCheckouts(userId, courseId)
+	const now = Date.now()
+	const stale = open.filter((intent) => isStale(intent, now))
+
+	if (stale.length) {
+		await expireCheckouts(stale.map((intent) => intent.id))
+	}
+
+	const live = open.filter((intent) => !stale.includes(intent))
+
+	if (live.some((intent) => intent.status === IntentStatus.PROCESSING)) {
 		throw new ConflictError(
-			'No saved payment method - pay for premium through YooKassa to save one'
+			`A payment for this ${productName(courseId)} is already being processed`
 		)
 	}
 
-	if (subscription.isAutoBilling === autoRenew) {
-		return toSubscriptionResponse(subscription, method)
+	const sameMethod = live.find((intent) => intent.method === method)
+
+	if (sameMethod) {
+		return sameMethod
 	}
 
-	const updated = await setAutoBilling(userId, autoRenew)
+	const other = live[0]
 
-	extendLogContext({
-		event: autoRenew ? 'subscription_auto_renew_enabled' : 'subscription_auto_renew_disabled',
-		userId
+	if (other) {
+		throw new ConflictError(
+			`An unpaid ${other.method} invoice for this ${productName(courseId)} is open until ${expiresAt(other).toISOString()} - pay it or retry after that`
+		)
+	}
+
+	return null
+}
+
+const toMinorUnits = (value: string | number) => Math.round(Number(value) * 100)
+
+const rejectionReason = (intent: FulfillableIntent | null, update: ProviderPaymentUpdate) => {
+	if (!intent) {
+		return 'unknown_payment'
+	}
+
+	if (intent.provider !== update.provider) {
+		return 'provider_mismatch'
+	}
+
+	if (intent.pspIntentId && intent.pspIntentId !== update.pspIntentId) {
+		return 'psp_intent_mismatch'
+	}
+
+	if (
+		toMinorUnits(update.amount) !== toMinorUnits(intent.amount) ||
+		update.currency !== intent.currency
+	) {
+		return 'amount_mismatch'
+	}
+
+	return null
+}
+
+const capture = async (
+	intent: FulfillableIntent & { courseId: string }
+): Promise<FulfillmentResult> => {
+	const result = await captureCoursePayment({
+		id: intent.id,
+		userId: intent.userId,
+		courseId: intent.courseId,
+		amount: intent.amount,
+		currency: intent.currency
 	})
 
-	return toSubscriptionResponse(updated, method)
+	if (result === 'already_captured') {
+		return { outcome: 'already_captured' }
+	}
+
+	if (result === 'already_owned') {
+
+		logger.warn(
+			{
+				context: 'billing',
+				paymentId: intent.id,
+				userId: intent.userId,
+				courseId: intent.courseId
+			},
+			'course_payment_captured_but_already_owned'
+		)
+
+		return { outcome: 'already_owned', courseId: intent.courseId }
+	}
+
+	await enqueueCoursePurchaseEmail({ userId: intent.userId, courseId: intent.courseId }).catch(
+		(err: unknown) => {
+			logger.warn(
+				{ context: 'billing', paymentId: intent.id, err },
+				'course_purchase_email_enqueue_failed'
+			)
+		}
+	)
+
+	await enqueueCoursePurchaseNotification({ paymentId: intent.id })
+
+	return { outcome: 'course_granted', courseId: intent.courseId }
+}
+
+const readInvoice = (metadata: unknown): SubscriptionInvoice => {
+	const raw = (metadata ?? {}) as Record<string, unknown>
+	const months = raw.months
+
+	return {
+		months:
+			typeof months === 'number' && Number.isInteger(months) && months > 0
+				? months
+				: PREMIUM_PLAN.months,
+		renewal: raw.renewal === true,
+		periodEnd: typeof raw.periodEnd === 'string' ? raw.periodEnd : null
+	}
+}
+
+const warnOnFailure = (paymentId: string, message: string) => (err: unknown) => {
+	logger.warn({ context: 'billing', paymentId, err }, message)
+}
+
+const keepPaymentMethod = async (
+	intent: FulfillableIntent,
+	invoice: SubscriptionInvoice,
+	saved: SavedPaymentMethod | undefined
+) => {
+	if (invoice.renewal) {
+		return
+	}
+
+	if (!saved) {
+		logger.warn(
+			{ context: 'billing', paymentId: intent.id, userId: intent.userId },
+			'payment_method_not_saved'
+		)
+
+		return
+	}
+
+	const method = await saveUserPaymentMethod(intent.userId, saved)
+
+	await linkPaymentMethod(intent.id, method.id)
+}
+
+const captureSubscription = async (
+	intent: FulfillableIntent,
+	update: ProviderPaymentUpdate
+): Promise<FulfillmentResult> => {
+	const invoice = readInvoice(intent.metadata)
+	const captured = await captureSubscriptionPayment(intent.id, intent.userId, (current) =>
+		nextTerm(current, invoice.months)
+	)
+
+	if (captured.result === 'already_captured') {
+		return { outcome: 'already_captured' }
+	}
+
+	const { term } = captured
+	const extended = term.kind === 'extended'
+
+	await keepPaymentMethod(intent, invoice, update.savedMethod).catch(
+		warnOnFailure(intent.id, 'payment_method_save_failed')
+	)
+
+	if (invoice.renewal) {
+		await enqueueSubscriptionRenewedEmail({ paymentId: intent.id }).catch(
+			warnOnFailure(intent.id, 'subscription_renewed_email_enqueue_failed')
+		)
+		await enqueueSubscriptionRenewalNotification({ paymentId: intent.id, outcome: 'charged' })
+	} else {
+		await enqueueSubscriptionPurchaseEmail({ userId: intent.userId, extended }).catch(
+			warnOnFailure(intent.id, 'subscription_purchase_email_enqueue_failed')
+		)
+		await enqueueSubscriptionPurchaseNotification({
+			paymentId: intent.id,
+			months: invoice.months,
+			previousExpiresAt: term.previousExpiresAt?.toISOString() ?? null
+		})
+	}
+
+	return { outcome: 'subscription_granted', expiresAt: term.expiresAt.toISOString(), extended }
+}
+
+const SETTLED_UNPAID = new Set<IntentStatus>([
+	IntentStatus.FAILED,
+	IntentStatus.CANCELLED,
+	IntentStatus.EXPIRED
+])
+
+type RenewalIntent = Pick<FulfillableIntent, 'id' | 'userId' | 'subscriptionId' | 'metadata'>
+
+export const endDeclinedRenewal = async (intent: RenewalIntent) => {
+	const { periodEnd } = readInvoice(intent.metadata)
+
+	if (!intent.subscriptionId || !periodEnd) {
+		return
+	}
+
+	if (!(await endSubscriptionPeriod(intent.subscriptionId, new Date(periodEnd)))) {
+		return
+	}
+
+	logger.info(
+		{ context: 'billing', paymentId: intent.id, userId: intent.userId },
+		'subscription_renewal_declined'
+	)
+
+	await enqueueSubscriptionPaymentFailedEmail({ userId: intent.userId }).catch(
+		warnOnFailure(intent.id, 'subscription_payment_failed_email_enqueue_failed')
+	)
+	await enqueueSubscriptionRenewalNotification({ paymentId: intent.id, outcome: 'declined' })
+}
+
+const applyToPayment = async (
+	intent: FulfillableIntent,
+	update: ProviderPaymentUpdate
+): Promise<FulfillmentResult> => {
+	if (update.status === IntentStatus.CAPTURED) {
+		return intent.courseId
+			? capture({ ...intent, courseId: intent.courseId })
+			: captureSubscription(intent, update)
+	}
+
+	if (update.status === IntentStatus.REQUIRES_PAYMENT) {
+		return { outcome: 'unchanged' }
+	}
+
+	const changed = await transitionPendingPayment(
+		intent.id,
+		update.status,
+		update.failureCode ?? null
+	)
+
+	if (changed && SETTLED_UNPAID.has(update.status) && readInvoice(intent.metadata).renewal) {
+		await endDeclinedRenewal(intent)
+	}
+
+	return changed ? { outcome: 'status_updated', status: update.status } : { outcome: 'unchanged' }
+}
+
+export const applyPaymentUpdate = async (
+	update: ProviderPaymentUpdate
+): Promise<FulfillmentResult> => {
+	const intent = await findPaymentForFulfillment(update.paymentId)
+	const reason = rejectionReason(intent, update)
+
+	if (reason || !intent) {
+		logger.error(
+			{ context: 'billing', paymentId: update.paymentId, provider: update.provider, reason },
+			'payment_update_rejected'
+		)
+
+		return { outcome: 'rejected', reason: reason ?? 'unknown_payment' }
+	}
+
+	const result = await applyToPayment(intent, update)
+
+	extendLogContext({
+		event: 'payment_update_applied',
+		paymentId: intent.id,
+		userId: intent.userId,
+		status: update.status,
+		outcome: result.outcome
+	})
+
+	return result
+}
+
+const toNumber = (value: string | undefined) => {
+	const number = Number(value)
+
+	return Number.isInteger(number) && number > 0 ? number : null
+}
+
+export const toSavedMethod = (
+	method: PaymentMethodDetails | undefined
+): SavedPaymentMethod | undefined => {
+	const type = method && billingMethodType(method.type)
+
+	if (!method?.saved || !type) {
+		return undefined
+	}
+
+	return {
+		providerId: method.id,
+		type,
+		title: method.title ?? null,
+		first6: method.card?.first6 ?? null,
+		last4: method.card?.last4 ?? null,
+		expiryMonth: toNumber(method.card?.expiry_month),
+		expiryYear: toNumber(method.card?.expiry_year),
+		cardType: method.card?.card_type ?? null
+	}
 }

@@ -1,7 +1,7 @@
 import { LessonAccess } from '@prisma/generated/client'
 
 import { ForbiddenError, NotFoundError } from '~/lib/errors'
-import { lockedReason, resolveCourseAccess } from '~/modules/course/access'
+import { lockedReason, resolveCourseAccess } from '~/modules/course/service'
 
 import type { UpdateProgressInput } from './model'
 import {

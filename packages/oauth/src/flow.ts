@@ -9,15 +9,14 @@ import {
 import type { OAuthProfile, OAuthProvider, OAuthTokens } from './types'
 
 export interface AuthorizationRequest {
-	/** Send the user here. */
+
 	url: string
-	/** Keep server-side until the callback - it identifies and protects the flow. */
+
 	state: string
-	/** Only when the provider advertises PKCE. Keep it next to `state`. */
+
 	codeVerifier?: string
 }
 
-/** openid-client codes for "the provider answered, but its tokens didn't pass our checks". */
 const VERIFICATION_CODES = new Set([
 	'OAUTH_INVALID_RESPONSE',
 	'OAUTH_PARSE_ERROR',
@@ -77,10 +76,6 @@ export const createAuthorization = async (
 	}
 }
 
-/**
- * @param callbackUrl The full URL the provider redirected to, query included. Its
- *   origin and path must equal the redirect_uri - openid-client derives it from here.
- */
 export const completeAuthorization = async (
 	provider: OAuthProvider,
 	callbackUrl: URL,

@@ -3,7 +3,6 @@ import { UserRole, UserStatus, VerificationPurpose } from '@prisma/generated/cli
 import { db } from '~/lib/db'
 import { toBytes } from '~/lib/utils/bytes'
 
-/** Always normalized by the caller - the unique index is case-sensitive. */
 export const findUserByEmail = (email: string) =>
 	db.user.findUnique({ where: { email }, include: { passwordCredential: true } })
 
@@ -55,7 +54,6 @@ export const updatePasswordHash = (userId: string, passwordHash: string) =>
 		data: { passwordHash, changedAt: new Date() }
 	})
 
-/** Creates the credential for accounts that signed up through a provider and never had a password. */
 export const savePasswordHash = (userId: string, passwordHash: string) =>
 	db.passwordCredential.upsert({
 		where: { userId },

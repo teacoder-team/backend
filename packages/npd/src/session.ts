@@ -41,7 +41,6 @@ const toSession = (response: AuthResponse): Session => ({
 
 const isUsable = (current: Session) => current.expiresAt - EXPIRY_SKEW_MS > Date.now()
 
-/** Signs in lazily on first use, refreshes before expiry, and collapses concurrent renewals into one. */
 export const createSession = ({ inn, password, deviceId, logger }: NpdClientOptions) => {
 	const sourceDeviceId =
 		deviceId || createHash('sha256').update(inn).digest('hex').slice(0, DEVICE_ID_LENGTH)
@@ -126,7 +125,7 @@ export const createSession = ({ inn, password, deviceId, logger }: NpdClientOpti
 		getAccessToken: async () => (await current()).token,
 		getProfile: async () => (await current()).profile,
 		getAccountInn: async () => (await current()).profile.inn,
-		/** Forces the next call to renew - used after the API answers 401. */
+
 		invalidateAccessToken: () => {
 			if (session) {
 				session = { ...session, expiresAt: 0 }

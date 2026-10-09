@@ -2,21 +2,18 @@ import { UAParser } from 'ua-parser-js'
 
 import { randomUUID } from 'node:crypto'
 
+import type { Session } from '@prisma/generated/client'
+
 import { env } from '~/config/env'
+import { cache } from '~/lib/cache'
 import { lookupLocation } from '~/lib/datasets/geo'
 import { BadRequestError, NotFoundError, UnauthorizedError } from '~/lib/errors'
 import { extendLogContext, logger } from '~/lib/logger'
 import { signAccessToken } from '~/lib/security/jwt'
 import { generateRefreshToken, hashRefreshToken } from '~/lib/security/refresh-token'
 
-import {
-	type CachedSession,
-	dropCachedSessions,
-	readCachedSession,
-	toCachedSession,
-	writeCachedSession
-} from './cache'
 import { enqueueNewDeviceLogin } from './jobs'
+import type { CachedSession, RequestOrigin, SessionContext, TokenPair } from './model'
 import {
 	addUserVisitor,
 	countUserVisitors,
@@ -35,17 +32,6 @@ import {
 } from './repository'
 
 const TOUCH_INTERVAL_MS = 5 * 60 * 1000
-
-export interface RequestOrigin {
-	ip: string
-	userAgent: string
-	/** Fingerprint visitor id, verified server-side. Null when the client sent none. */
-	visitorId?: string | null
-}
-
-export interface SessionContext extends RequestOrigin {
-	userId: string
-}
 
 const friendlyNameFor = (browser: string | null, os: string | null) => {
 	if (browser && os) {
@@ -116,14 +102,8 @@ export const resolveSession = async (sessionId: string) => {
 	return session
 }
 
-export interface TokenPair {
-	accessToken: string
-	refreshToken: string
-}
-
 const refreshExpiresAt = () => new Date(Date.now() + env.SESSION_TTL * 1000)
 
-/** True for a device the account has never used while it already has others - not on sign-up. */
 const rememberVisitor = async (userId: string, visitorId: string) => {
 	const isNew = await addUserVisitor(userId, visitorId)
 
@@ -184,7 +164,6 @@ export const refreshTokenPair = async (
 		throw new UnauthorizedError('Refresh token already used')
 	}
 
-	/** Only logged: Fingerprint can drift for the same browser, so this is a signal, not proof of theft. */
 	if (visitorId && session.visitorId && visitorId !== session.visitorId) {
 		logger.warn(
 			{
@@ -241,7 +220,6 @@ export const revokeSession = async (userId: string, sessionId: string) => {
 	return { revoked }
 }
 
-/** From the sessions list. The current session ends through logout, which also clears the cookie. */
 export const revokeOtherSession = async (
 	userId: string,
 	sessionId: string,
@@ -254,7 +232,6 @@ export const revokeOtherSession = async (
 	return await revokeSession(userId, sessionId)
 }
 
-/** `exceptSessionId` keeps that session alive - "sign out on all other devices". */
 export const revokeAllSessions = async (userId: string, exceptSessionId?: string) => {
 	const sessionIds = await listActiveSessionIds(userId, exceptSessionId)
 	const revoked = await revokeSessionsByUser(userId, exceptSessionId)
@@ -268,3 +245,28 @@ export const revokeAllSessions = async (userId: string, exceptSessionId?: string
 
 	return { revoked }
 }
+
+const MISS_TTL = 30
+
+const key = (sessionId: string) => `session:${sessionId}`
+
+const toCachedSession = (session: Session): CachedSession => ({
+	id: session.id,
+	userId: session.userId,
+	expiresAt: session.expiresAt.toISOString(),
+	lastSeenAt: session.lastSeenAt.toISOString()
+})
+
+const ttlFor = ({ expiresAt }: CachedSession) => {
+	const remaining = (Date.parse(expiresAt) - Date.now()) / 1000
+
+	return Math.min(env.SESSION_CACHE_TTL, remaining)
+}
+
+const readCachedSession = (sessionId: string, load: () => Promise<CachedSession | null>) =>
+	cache.readThrough<CachedSession>(key(sessionId), { ttl: ttlFor, missTtl: MISS_TTL }, load)
+
+const writeCachedSession = (session: CachedSession) =>
+	cache.write(key(session.id), session, ttlFor(session))
+
+const dropCachedSessions = (...sessionIds: string[]) => cache.drop(...sessionIds.map(key))
