@@ -39,10 +39,6 @@ export const LessonResponse = t.Object(
 				examples: ['UCSOW2TFUGL34ZWCOZSAHDFU4W']
 			})
 		),
-		courseId: t.String({
-			description: 'Курс, к которому относится урок.',
-			examples: ['b3f1c2d4-5e6f-4a7b-8c9d-0e1f2a3b4c5d']
-		}),
 		course: t.Object(
 			{
 				id: t.String({

@@ -13,9 +13,14 @@ export type QueueName = (typeof QUEUE)[keyof typeof QUEUE]
 
 const defaultJobOptions: JobsOptions = {
 	attempts: 3,
-	backoff: { type: 'exponential', delay: 2000 },
+	backoff: {
+		type: 'exponential',
+		delay: 2000
+	},
 	removeOnComplete: true,
-	removeOnFail: { age: 24 * 3600 }
+	removeOnFail: {
+		age: 24 * 3600
+	}
 }
 
 export const emailQueue = new Queue(QUEUE.EMAIL, {

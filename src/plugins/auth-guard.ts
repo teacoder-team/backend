@@ -47,17 +47,15 @@ export const optionalAuth = new Elysia({ name: 'optional-auth' }).derive(
 			return { optionalSession: null }
 		}
 
-		try {
-			const payload = await verifyAccessToken(token)
-			const session = await resolveSession(payload.sid)
+		const payload = await verifyAccessToken(token)
+		const session = await resolveSession(payload.sid)
 
-			if (!session || session.userId !== payload.sub) {
-				return { optionalSession: null }
-			}
-
-			return { optionalSession: session }
-		} catch {
-			return { optionalSession: null }
+		if (!session || session.userId !== payload.sub) {
+			throw new UnauthorizedError('Session expired or revoked')
 		}
+
+		extendLogContext({ userId: session.userId })
+
+		return { optionalSession: session }
 	}
 )

@@ -21,6 +21,7 @@ model Course {
     views Int @default(0)
 
     lessons      Lesson[]
+    sections     CourseSection[]
     purchases    CoursePurchase[]
     downloadLogs DownloadLog[]
 
@@ -53,6 +54,25 @@ model CoursePurchase {
     @@map("course_purchases")
 }
 
+model CourseSection {
+    id String @id @default(uuid())
+
+    title    String
+    position Int
+
+    course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade, map: "fk_course_sections_course_id")
+    courseId String @map("course_id")
+
+    lessons Lesson[]
+
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    @@unique([id, courseId], map: "uq_course_sections_id_course_id")
+    @@index([courseId, position], map: "ix_course_sections_course_id_position")
+    @@map("course_sections")
+}
+
 model Lesson {
     id String @id @default(uuid())
 
@@ -73,11 +93,16 @@ model Lesson {
     course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
     courseId String @map("course_id")
 
+    section         CourseSection? @relation(fields: [sectionId, sectionCourseId], references: [id, courseId], onDelete: SetNull, map: "fk_lessons_section_id_section_course_id")
+    sectionId       String?        @map("section_id")
+    sectionCourseId String?        @map("section_course_id")
+
     createdAt DateTime @default(now()) @map("created_at")
     updatedAt DateTime @updatedAt @map("updated_at")
 
     @@index([courseId, isPublished, position], map: "ix_lessons_course_id_is_published_position")
     @@index([courseId, access], map: "ix_lessons_course_id_access")
+    @@index([sectionId, isPublished, position], map: "ix_lessons_section_id_is_published_position")
     @@map("lessons")
 }
 

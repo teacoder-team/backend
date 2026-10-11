@@ -56,6 +56,7 @@ export const ModelName = {
   VerificationCode: 'VerificationCode',
   Course: 'Course',
   CoursePurchase: 'CoursePurchase',
+  CourseSection: 'CourseSection',
   Lesson: 'Lesson',
   TotpAuthenticator: 'TotpAuthenticator',
   RecoveryCode: 'RecoveryCode',
@@ -160,6 +161,18 @@ export const CoursePurchaseScalarFieldEnum = {
 export type CoursePurchaseScalarFieldEnum = (typeof CoursePurchaseScalarFieldEnum)[keyof typeof CoursePurchaseScalarFieldEnum]
 
 
+export const CourseSectionScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  position: 'position',
+  courseId: 'courseId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CourseSectionScalarFieldEnum = (typeof CourseSectionScalarFieldEnum)[keyof typeof CourseSectionScalarFieldEnum]
+
+
 export const LessonScalarFieldEnum = {
   id: 'id',
   title: 'title',
@@ -170,6 +183,8 @@ export const LessonScalarFieldEnum = {
   access: 'access',
   isPublished: 'isPublished',
   courseId: 'courseId',
+  sectionId: 'sectionId',
+  sectionCourseId: 'sectionCourseId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

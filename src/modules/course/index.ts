@@ -6,6 +6,7 @@ import { requestContext } from '~/plugins/request-context'
 
 import {
 	CourseLessonListResponse,
+	CourseLibraryResponse,
 	CourseListResponse,
 	CourseResponse,
 	CourseSlugParams,
@@ -16,6 +17,7 @@ import {
 	createMaterialsLink,
 	getCourseBySlug,
 	getCourseLessons,
+	getCourseLibrary,
 	listCourses,
 	openMaterialsDownload
 } from './service'
@@ -26,6 +28,7 @@ export const course = new Elysia({ prefix: '/courses', tags: [TAG.courses] })
 	.use(authGuard)
 	.model({
 		CourseLessonListResponse,
+		CourseLibraryResponse,
 		CourseListResponse,
 		CourseResponse,
 		CourseSlugParams,
@@ -39,6 +42,16 @@ export const course = new Elysia({ prefix: '/courses', tags: [TAG.courses] })
 				'Все опубликованные курсы, сначала новые. Только данные для карточки в каталоге: цена, режим доступа (`accessMode`) и есть ли материалы.'
 		}
 	})
+	.get('/library', async ({ session }) => await getCourseLibrary(session.userId), {
+		auth: true,
+		response: 'CourseLibraryResponse',
+		detail: {
+			summary: 'Библиотека курсов',
+			description:
+				'Курсы, доступные текущему пользователю: опубликованные Premium-курсы при активной подписке и купленные курсы независимо от наличия подписки. Покупка сохраняет доступ, даже если режим курса изменён с PURCHASE на PREMIUM. Курсы с текущим режимом FREE исключены, в том числе ранее купленные. Каждый курс возвращается один раз, сначала новые. Без доступных курсов возвращается пустой массив.',
+			security: [{ bearerAuth: [] }]
+		}
+	})
 	.get(
 		'/:slug',
 		async ({ params, ip, optionalSession }) =>
@@ -48,25 +61,21 @@ export const course = new Elysia({ prefix: '/courses', tags: [TAG.courses] })
 			response: 'CourseResponse',
 			detail: {
 				summary: 'Страница курса',
+				security: [{ bearerAuth: [] }, {}],
 				description:
 					'Полная информация об опубликованном курсе и `access` - открыт ли он текущему пользователю и почему (авторизация необязательна). Увеличивает счётчик просмотров - не чаще раза в 30 минут для одного IP.'
 			}
 		}
 	)
-	.get(
-		'/:slug/lessons',
-		async ({ params, optionalSession }) =>
-			await getCourseLessons(params.slug, optionalSession?.userId ?? null),
-		{
-			params: 'CourseSlugParams',
-			response: 'CourseLessonListResponse',
-			detail: {
-				summary: 'Программа курса',
-				description:
-					'Опубликованные уроки курса по порядку. `isLocked` показывает, откроется ли урок текущему пользователю (авторизация необязательна); само видео отдаёт `GET /lessons/{id}`.'
-			}
+	.get('/:slug/lessons', async ({ params }) => await getCourseLessons(params.slug), {
+		params: 'CourseSlugParams',
+		response: 'CourseLessonListResponse',
+		detail: {
+			summary: 'Программа курса',
+			description:
+				'Программа курса доступна без авторизации. Без секций возвращается плоский список опубликованных уроков: `id`, `title`, `slug`. При наличии секций верхний массив содержит секции `{ id, title, lessons }` и уроки без секции `{ id, title, slug }`. Они отсортированы вместе по `position`; уроки внутри каждой секции - по собственному `position`. При одинаковой позиции порядок определяется по ID. Пустые секции возвращаются с пустым массивом `lessons`. Значения `position` в ответ не включаются. Содержимое урока и проверка доступа - `GET /lessons/{id}`.'
 		}
-	)
+	})
 	.post(
 		'/:slug/materials/link',
 		async ({ params, session }) => await createMaterialsLink(params.slug, session.userId),
