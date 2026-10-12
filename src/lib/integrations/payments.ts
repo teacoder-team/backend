@@ -55,6 +55,8 @@ export const telegramStars = createTelegramStarsClient({
 
 const CURRENCY = 'RUB'
 
+const paymentPageUrl = (paymentId: string) => `${env.APP_URL}/payment/${paymentId}`
+
 export interface CheckoutProduct {
 	kind: 'subscription' | 'course'
 	amount: number
@@ -76,7 +78,7 @@ export const createProviderCheckout = async (
 			const created = await yookassa.createPayment({
 				amount: payment.amount,
 				description: product.description,
-				returnUrl: env.APP_URL,
+				returnUrl: paymentPageUrl(payment.id),
 				metadata: {
 					paymentId: payment.id
 				},
@@ -121,7 +123,7 @@ export const createProviderCheckout = async (
 					payment.method === PaymentMethod.INTERNATIONAL_CARD
 						? WORLD_PAYMENT_METHOD_GROUPS
 						: undefined,
-				successUrl: `${env.APP_URL}/payment/success`,
+				successUrl: paymentPageUrl(payment.id),
 				returnUrl: env.APP_URL,
 				callbackUrl: `${env.WEBHOOK_URL}/webhook/prodamus`
 			})
@@ -135,7 +137,7 @@ export const createProviderCheckout = async (
 				amount: payment.amount,
 				description: product.description,
 				payload: payment.id,
-				returnUrl: env.APP_URL,
+				returnUrl: paymentPageUrl(payment.id),
 				expiresIn: lifetime
 			})
 
@@ -151,6 +153,7 @@ export const createProviderCheckout = async (
 				orderId: payment.id,
 				amount: payment.amount,
 				returnUrl: env.APP_URL,
+				successUrl: paymentPageUrl(payment.id),
 				callbackUrl: `${env.WEBHOOK_URL}/webhook/heleket`,
 				lifetime,
 				additionalData: product.description

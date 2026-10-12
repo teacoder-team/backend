@@ -86,6 +86,67 @@ export const CreatePaymentResponse = t.Object(
 	{ description: 'Созданный платёж.' }
 )
 
+export const PaymentParams = t.Object({
+	id: t.String({
+		format: 'uuid',
+		description: 'Идентификатор платежа из `POST /billing/create`.',
+		error: 'Invalid payment id',
+		examples: ['0f2a1c3e-9b7d-4a51-8c62-1d4e5f6a7b8c']
+	})
+})
+
+export const PaymentResponse = t.Object(
+	{
+		id: t.String({
+			description: 'Идентификатор платежа.',
+			examples: ['0f2a1c3e-9b7d-4a51-8c62-1d4e5f6a7b8c']
+		}),
+		status: PrismaEnum(IntentStatus, {
+			description:
+				'Статус платежа: `REQUIRES_PAYMENT` - ждёт оплаты, `PROCESSING` - оплата обрабатывается, `CAPTURED` - оплачен, доступ выдан, `FAILED` - отклонён, `CANCELLED` - отменён, `EXPIRED` - ссылка на оплату истекла.',
+			examples: [IntentStatus.REQUIRES_PAYMENT]
+		}),
+		product: t.UnionEnum(['SUBSCRIPTION', 'COURSE'], {
+			description: 'Что оплачивается: `SUBSCRIPTION` - премиум-подписка, `COURSE` - курс.',
+			examples: ['SUBSCRIPTION']
+		}),
+		course: t.Nullable(
+			t.Object(
+				{
+					id: t.String({ description: 'Идентификатор курса.' }),
+					title: t.String({
+						description: 'Название курса.',
+						examples: ['Основы TypeScript']
+					}),
+					slug: t.String({
+						description: 'Идентификатор курса для URL.',
+						examples: ['osnovy-typescript']
+					})
+				},
+				{ description: 'Оплачиваемый курс. `null` для подписки.' }
+			)
+		),
+		amount: t.Number({ description: 'Сумма платежа.', examples: [449] }),
+		currency: t.String({ description: 'Валюта суммы.', examples: ['RUB'] }),
+		description: t.String({
+			description: 'Назначение платежа, как его видит плательщик.',
+			examples: ['Оплата премиум-подписки на 1 месяц']
+		}),
+		url: t.Nullable(
+			t.String({
+				description:
+					'Страница оплаты у провайдера. Есть, только пока платёж ждёт оплаты (`REQUIRES_PAYMENT`) и ссылка не истекла.',
+				examples: ['https://yoomoney.ru/checkout/payments/v2/contract?orderId=...']
+			})
+		),
+		createdAt: t.String({
+			description: 'Когда платёж создан.',
+			examples: ['2026-09-30T14:16:54.000Z']
+		})
+	},
+	{ description: 'Платёж текущего пользователя.' }
+)
+
 export const CancelSubscriptionResponse = t.Object(
 	{
 		cancelled: t.Boolean({
