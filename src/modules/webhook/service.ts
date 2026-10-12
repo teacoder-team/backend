@@ -119,9 +119,7 @@ const settle = async (eventId: string, update: ProviderPaymentUpdate) => {
 	}
 }
 
-const isHeleketPayload = (
-	payload: unknown
-): payload is HeleketPayload & Record<string, unknown> =>
+const isHeleketPayload = (payload: unknown): payload is HeleketPayload & Record<string, unknown> =>
 	Boolean(payload) &&
 	typeof payload === 'object' &&
 	!Array.isArray(payload) &&
@@ -129,10 +127,7 @@ const isHeleketPayload = (
 		(field) => typeof (payload as Record<string, unknown>)[field] === 'string'
 	)
 
-export const receiveHeleketWebhook = async (
-	rawBody: string,
-	ip: string | null
-) => {
+export const receiveHeleketWebhook = async (rawBody: string, ip: string | null) => {
 	extendLogContext({ provider: PSP_HELEKET })
 
 	assertKnownIp(ip, isHeleketIp, 'Heleket')
@@ -165,18 +160,18 @@ export const receiveHeleketWebhook = async (
 
 	const event = existing
 		? await refreshWebhookEvent(existing.id, {
-			signatureOk,
-			payload: payload as Prisma.InputJsonValue,
-			processedAt: null,
-			processError: null
-		})
+				signatureOk,
+				payload: payload as Prisma.InputJsonValue,
+				processedAt: null,
+				processError: null
+			})
 		: await createWebhookEvent({
-			pspName: PSP_HELEKET,
-			pspEventId,
-			eventType: payload.status,
-			signatureOk,
-			payload: payload as Prisma.InputJsonValue
-		})
+				pspName: PSP_HELEKET,
+				pspEventId,
+				eventType: payload.status,
+				signatureOk,
+				payload: payload as Prisma.InputJsonValue
+			})
 
 	extendLogContext({
 		event: 'webhook_received',
