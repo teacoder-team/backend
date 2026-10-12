@@ -508,13 +508,14 @@ const robokassaSavedMethod = (
 	payload: Prisma.JsonValue
 ) => {
 	const raw = payload as { raw?: { recurring?: boolean; testMode?: boolean } }
+	const isSbp = fields.PaymentMethod === 'PayButton'
 
-	return raw.raw?.recurring && fields.PaymentMethod === 'BankCard'
+	return raw.raw?.recurring && (isSbp || fields.PaymentMethod === 'BankCard')
 		? {
 				provider: PaymentProvider.ROBOKASSA,
 				providerId: invId,
-				type: PaymentMethod.BANK_CARD,
-				title: 'Банковская карта РФ',
+				type: isSbp ? PaymentMethod.SBP : PaymentMethod.BANK_CARD,
+				title: isSbp ? 'СБП' : 'Банковская карта РФ',
 				first6: null,
 				last4: null,
 				expiryMonth: null,
@@ -594,7 +595,7 @@ export const receiveRobokassaResult = async (body: Record<string, unknown>) => {
 		status: IntentStatus.CAPTURED,
 		amount: outSum,
 		currency: 'RUB',
-		method: fields.PaymentMethod === 'SBP' ? PaymentMethod.SBP : PaymentMethod.BANK_CARD,
+		method: fields.PaymentMethod === 'PayButton' ? PaymentMethod.SBP : PaymentMethod.BANK_CARD,
 		savedMethod: robokassaSavedMethod(fields, invId, intent.pspPayload)
 	})
 

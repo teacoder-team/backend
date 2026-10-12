@@ -55,6 +55,8 @@ export const telegramStars = createTelegramStarsClient({
 
 const CURRENCY = 'RUB'
 
+const ROBOKASSA_RECURRING_METHODS = ['BankCard', 'SBP']
+
 export const paymentPageUrl = (paymentId: string) => `${env.APP_URL}/payment/${paymentId}`
 
 export interface CheckoutProduct {
@@ -104,6 +106,7 @@ export const createProviderCheckout = async (
 				description: product.description,
 				email: email ?? undefined,
 				recurring,
+				paymentMethods: recurring ? ROBOKASSA_RECURRING_METHODS : undefined,
 				customParams: {
 					paymentId: payment.id
 				}
