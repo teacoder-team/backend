@@ -38,7 +38,8 @@ export const webhook = new Elysia({ prefix: '/webhook', tags: [TAG.webhooks] })
 			return { received: true }
 		},
 		{
-			body: t.Any(),
+			parse: 'text',
+			body: t.String(),
 			response: 'WebhookAckResponse',
 			detail: {
 				summary: 'Уведомления Heleket',

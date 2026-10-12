@@ -120,19 +120,30 @@ const settle = async (eventId: string, update: ProviderPaymentUpdate) => {
 }
 
 const isHeleketPayload = (
-	payload: Record<string, unknown>
+	payload: unknown
 ): payload is HeleketPayload & Record<string, unknown> =>
+	Boolean(payload) &&
+	typeof payload === 'object' &&
+	!Array.isArray(payload) &&
 	['uuid', 'type', 'status', 'order_id', 'amount', 'currency'].every(
-		(field) => typeof payload[field] === 'string'
+		(field) => typeof (payload as Record<string, unknown>)[field] === 'string'
 	)
 
 export const receiveHeleketWebhook = async (
-	payload: Record<string, unknown>,
+	rawBody: string,
 	ip: string | null
 ) => {
 	extendLogContext({ provider: PSP_HELEKET })
 
 	assertKnownIp(ip, isHeleketIp, 'Heleket')
+
+	let payload: unknown
+
+	try {
+		payload = JSON.parse(rawBody)
+	} catch {
+		throw new BadRequestError('Malformed webhook payload')
+	}
 
 	if (!isHeleketPayload(payload)) {
 		throw new BadRequestError('Malformed webhook payload')
@@ -144,23 +155,28 @@ export const receiveHeleketWebhook = async (
 
 	const existing = await findWebhookEvent(PSP_HELEKET, pspEventId)
 
-	if (existing?.processedAt) {
+	if (existing?.processedAt && existing.signatureOk) {
 		extendLogContext({ event: 'webhook_duplicate', provider: PSP_HELEKET, pspEventId })
 
 		return
 	}
 
-	const signatureOk = heleket.verifyWebhookSignature(payload)
+	const signatureOk = heleket.verifyWebhookSignature(rawBody)
 
-	const event =
-		existing ??
-		(await createWebhookEvent({
+	const event = existing
+		? await refreshWebhookEvent(existing.id, {
+			signatureOk,
+			payload: payload as Prisma.InputJsonValue,
+			processedAt: null,
+			processError: null
+		})
+		: await createWebhookEvent({
 			pspName: PSP_HELEKET,
 			pspEventId,
 			eventType: payload.status,
 			signatureOk,
 			payload: payload as Prisma.InputJsonValue
-		}))
+		})
 
 	extendLogContext({
 		event: 'webhook_received',
@@ -182,7 +198,7 @@ export const receiveHeleketWebhook = async (
 			provider: PSP_HELEKET
 		})
 
-		return markWebhookProcessed(event.id, 'invalid_signature')
+		return markWebhookFailed(event.id, 'invalid_signature')
 	}
 
 	if (payload.type !== 'payment') {

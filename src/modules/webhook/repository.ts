@@ -17,7 +17,10 @@ export const createWebhookEvent = (data: NewWebhookEvent) => db.webhookEvent.cre
 
 export const refreshWebhookEvent = (
 	id: string,
-	data: Pick<NewWebhookEvent, 'signatureOk' | 'payload'>
+	data: Pick<NewWebhookEvent, 'signatureOk' | 'payload'> & {
+		processedAt?: null
+		processError?: null
+	}
 ) => db.webhookEvent.update({ where: { id }, data })
 
 export const markWebhookProcessed = (id: string, note: string | null) =>
