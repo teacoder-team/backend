@@ -67,15 +67,21 @@ export const course = new Elysia({ prefix: '/courses', tags: [TAG.courses] })
 			}
 		}
 	)
-	.get('/:slug/lessons', async ({ params }) => await getCourseLessons(params.slug), {
-		params: 'CourseSlugParams',
-		response: 'CourseLessonListResponse',
-		detail: {
-			summary: 'Программа курса',
-			description:
-				'Программа курса доступна без авторизации. Без секций возвращается плоский список опубликованных уроков: `id`, `title`, `slug`. При наличии секций верхний массив содержит секции `{ id, title, lessons }` и уроки без секции `{ id, title, slug }`. Они отсортированы вместе по `position`; уроки внутри каждой секции - по собственному `position`. При одинаковой позиции порядок определяется по ID. Пустые секции возвращаются с пустым массивом `lessons`. Значения `position` в ответ не включаются. Содержимое урока и проверка доступа - `GET /lessons/{id}`.'
+	.get(
+		'/:slug/lessons',
+		async ({ params, optionalSession }) =>
+			await getCourseLessons(params.slug, optionalSession?.userId ?? null),
+		{
+			params: 'CourseSlugParams',
+			response: 'CourseLessonListResponse',
+			detail: {
+				summary: 'Программа курса',
+				security: [{ bearerAuth: [] }, {}],
+				description:
+					'Программа курса доступна без авторизации. Без секций возвращается плоский список опубликованных уроков: `id`, `title`, `slug` и `isCompleted` для авторизованного пользователя. При наличии секций верхний массив содержит секции `{ id, title, lessons }` и уроки без секции `{ id, title, slug }` с тем же `isCompleted`. Они отсортированы вместе по `position`; уроки внутри каждой секции - по собственному `position`. При одинаковой позиции порядок определяется по ID. Пустые секции возвращаются с пустым массивом `lessons`. Значения `position` в ответ не включаются. `isCompleted` - пройден ли урок текущим пользователем; возвращается только при авторизации, без неё поля нет. Содержимое урока и проверка доступа - `GET /lessons/{id}`.'
+			}
 		}
-	})
+	)
 	.post(
 		'/:slug/materials/link',
 		async ({ params, session }) => await createMaterialsLink(params.slug, session.userId),

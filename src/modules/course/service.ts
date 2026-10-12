@@ -7,6 +7,7 @@ import { ForbiddenError, InternalError, NotFoundError } from '~/lib/errors'
 import { orion } from '~/lib/integrations/orion'
 import { logger } from '~/lib/logger'
 import { redis } from '~/lib/redis'
+import { findCompletedLessonIds } from '~/modules/progress/repository'
 import { hasActiveSubscription } from '~/modules/subscription/repository'
 
 import type { CourseEntitlement, GatedCourse } from './model'
@@ -90,20 +91,32 @@ export const getCourseBySlug = async (slug: string, ip: string, userId: string |
 	}
 }
 
-export const getCourseLessons = async (slug: string) => {
+export const getCourseLessons = async (slug: string, userId: string | null) => {
 	const program = await findPublishedCourseProgram(slug)
 
 	if (!program) {
 		throw new NotFoundError('Course not found')
 	}
 
-	const sections = program.sections.map(({ position, ...section }) => ({
+	const lessonIds = [
+		...program.sections.flatMap((section) => section.lessons),
+		...program.lessons
+	].map((lesson) => lesson.id)
+	const completed =
+		userId && lessonIds.length > 0
+			? new Set(await findCompletedLessonIds(userId, lessonIds))
+			: null
+
+	const withProgress = <T extends { id: string }>(lesson: T) =>
+		completed ? { ...lesson, isCompleted: completed.has(lesson.id) } : lesson
+
+	const sections = program.sections.map(({ position, lessons, ...section }) => ({
 		position,
-		item: section
+		item: { ...section, lessons: lessons.map(withProgress) }
 	}))
 	const lessons = program.lessons.map(({ position, ...lesson }) => ({
 		position,
-		item: lesson
+		item: withProgress(lesson)
 	}))
 
 	return [...sections, ...lessons]

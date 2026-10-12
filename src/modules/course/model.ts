@@ -131,7 +131,14 @@ export const CourseLessonListItem = t.Object(
 		slug: t.String({
 			description: 'Идентификатор урока для URL.',
 			examples: ['peremennye-i-tipy']
-		})
+		}),
+		isCompleted: t.Optional(
+			t.Boolean({
+				description:
+					'Пройден ли урок текущим пользователем. Возвращается только при авторизации.',
+				examples: [true]
+			})
+		)
 	},
 	{ description: 'Урок в программе курса.' }
 )

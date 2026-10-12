@@ -11,6 +11,7 @@ const REQUEST_ID_HEADER = 'x-request-id'
 const LOOPBACK = '127.0.0.1'
 
 const DEVELOPMENT_IP = '5.144.116.28'
+// const DEVELOPMENT_IP = '1.1.1.1'
 
 const clientIp = (headers: Headers) =>
 	isDevelopment ? DEVELOPMENT_IP : (getForwardedIp(headers) ?? LOOPBACK)
