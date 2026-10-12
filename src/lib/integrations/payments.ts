@@ -55,7 +55,7 @@ export const telegramStars = createTelegramStarsClient({
 
 const CURRENCY = 'RUB'
 
-const paymentPageUrl = (paymentId: string) => `${env.APP_URL}/payment/${paymentId}`
+export const paymentPageUrl = (paymentId: string) => `${env.APP_URL}/payment/${paymentId}`
 
 export interface CheckoutProduct {
 	kind: 'subscription' | 'course'
@@ -96,7 +96,7 @@ export const createProviderCheckout = async (
 		}
 
 		case PaymentProvider.ROBOKASSA: {
-			const recurring = product.kind === 'subscription'
+			const recurring = env.ROBOKASSA_RECURRING_ENABLED && product.kind === 'subscription'
 
 			const url = robokassa.createInvoiceUrl({
 				invoiceId: payment.invoiceNumber,
@@ -104,10 +104,19 @@ export const createProviderCheckout = async (
 				description: product.description,
 				email: email ?? undefined,
 				recurring,
-				customParams: { paymentId: payment.id }
+				customParams: {
+					paymentId: payment.id
+				}
 			})
 
-			return { url, pspIntentId: String(payment.invoiceNumber), raw: undefined }
+			return {
+				url,
+				pspIntentId: String(payment.invoiceNumber),
+				raw: {
+					recurring,
+					testMode: env.ROBOKASSA_TEST_MODE
+				}
+			}
 		}
 
 		case PaymentProvider.PRODAMUS: {

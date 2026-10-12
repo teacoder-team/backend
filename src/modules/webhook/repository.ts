@@ -15,6 +15,13 @@ export interface NewWebhookEvent {
 
 export const createWebhookEvent = (data: NewWebhookEvent) => db.webhookEvent.create({ data })
 
+export const findOrCreateWebhookEvent = (data: NewWebhookEvent) =>
+	db.webhookEvent.upsert({
+		where: { pspName_pspEventId: { pspName: data.pspName, pspEventId: data.pspEventId } },
+		create: data,
+		update: {}
+	})
+
 export const refreshWebhookEvent = (
 	id: string,
 	data: Pick<NewWebhookEvent, 'signatureOk' | 'payload'> & {

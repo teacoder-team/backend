@@ -296,7 +296,8 @@ export const subscriptionPurchaseMessage = ({
 }: SubscriptionPurchaseMessageInput) => {
 	const { user } = purchase
 	const amount = formatMoney(purchase.amount, purchase.currency)
-	const method = PAYMENT_METHODS[purchase.method]?.name ?? purchase.method
+	const method =
+		PAYMENT_METHODS.find((entry) => entry.method === purchase.method)?.name ?? purchase.method
 	const subscription = user.subscription
 
 	const heading = previousExpiresAt
@@ -418,7 +419,8 @@ export const coursePurchaseMessage = ({
 }: CoursePurchaseMessageInput) => {
 	const { user } = purchase
 	const amount = formatMoney(purchase.amount, purchase.currency)
-	const method = PAYMENT_METHODS[purchase.method]?.name ?? purchase.method
+	const method =
+		PAYMENT_METHODS.find((entry) => entry.method === purchase.method)?.name ?? purchase.method
 	const coursePrice = course && course.price !== null ? Number(course.price) : null
 
 	const courseLine = course

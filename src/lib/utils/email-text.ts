@@ -9,7 +9,7 @@ const ENTITIES: Record<string, string> = {
 	raquo: '»',
 	mdash: '—',
 	ndash: '–',
-	hellip: '…'
+	hellip: '...'
 }
 
 const decodeEntities = (value: string) =>
@@ -104,5 +104,5 @@ export const truncateText = (text: string, max: number) => {
 	const cut = text.slice(0, max)
 	const space = cut.lastIndexOf(' ')
 
-	return `${space > max * 0.8 ? cut.slice(0, space) : cut}…`
+	return `${space > max * 0.8 ? cut.slice(0, space) : cut}...`
 }

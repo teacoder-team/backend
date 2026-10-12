@@ -1,4 +1,4 @@
-import { IntentStatus, PaymentProvider, type Prisma } from '@prisma/generated/client'
+import { IntentStatus, type PaymentMethod, PaymentProvider, type Prisma } from '@prisma/generated/client'
 
 import { db } from '~/lib/db'
 import { createCoursePurchase, findCoursePurchase } from '~/modules/course/repository'
@@ -74,7 +74,7 @@ export const captureCoursePayment = (intent: CourseCapture) =>
 	db.$transaction(async (tx) => {
 		const { count } = await tx.paymentIntent.updateMany({
 			where: { id: intent.id, status: { not: IntentStatus.CAPTURED } },
-			data: { status: IntentStatus.CAPTURED, failureCode: null }
+			data: { status: IntentStatus.CAPTURED, failureCode: null, method: intent.method }
 		})
 
 		if (count === 0) {
@@ -125,12 +125,14 @@ export type SubscriptionCapture =
 export const captureSubscriptionPayment = (
 	paymentId: string,
 	userId: string,
-	decide: (current: SubscriptionState | null) => SubscriptionTerm
+	decide: (current: SubscriptionState | null) => SubscriptionTerm,
+	method?: PaymentMethod,
+	savedMethod?: SavedPaymentMethod
 ) =>
 	db.$transaction(async (tx): Promise<SubscriptionCapture> => {
 		const { count } = await tx.paymentIntent.updateMany({
 			where: { id: paymentId, status: { not: IntentStatus.CAPTURED } },
-			data: { status: IntentStatus.CAPTURED, failureCode: null }
+			data: { status: IntentStatus.CAPTURED, failureCode: null, method }
 		})
 
 		if (count === 0) {
@@ -153,18 +155,26 @@ export const captureSubscriptionPayment = (
 			select: { id: true }
 		})
 
+		const paymentMethod = savedMethod
+			? await saveUserPaymentMethod(userId, savedMethod, tx)
+			: undefined
+
 		await tx.paymentIntent.update({
 			where: { id: paymentId },
-			data: { subscriptionId: subscription.id }
+			data: { subscriptionId: subscription.id, paymentMethodId: paymentMethod?.id }
 		})
 
 		return { result: 'granted', subscriptionId: subscription.id, term }
 	})
 
-export const saveUserPaymentMethod = (userId: string, method: SavedPaymentMethod) =>
-	db.userPaymentMethod.upsert({
+export const saveUserPaymentMethod = (
+	userId: string,
+	method: SavedPaymentMethod,
+	tx: Prisma.TransactionClient = db
+) =>
+	tx.userPaymentMethod.upsert({
 		where: { providerId: method.providerId },
-		create: { userId, provider: PaymentProvider.YOOKASSA, ...method },
+		create: { userId, ...method },
 		update: { ...method, isActive: true },
 		select: { id: true }
 	})
@@ -172,9 +182,23 @@ export const saveUserPaymentMethod = (userId: string, method: SavedPaymentMethod
 export const linkPaymentMethod = (paymentId: string, paymentMethodId: string) =>
 	db.paymentIntent.update({ where: { id: paymentId }, data: { paymentMethodId } })
 
-export const findChargeableMethod = (userId: string) =>
+const RECURRING_PROVIDERS = [PaymentProvider.YOOKASSA, PaymentProvider.ROBOKASSA]
+
+export const findChargeableMethod = (
+	userId: string,
+	provider?: PaymentProvider,
+	id?: string
+) =>
 	db.userPaymentMethod.findFirst({
-		where: { userId, provider: PaymentProvider.YOOKASSA, isActive: true },
+		where: { id, userId, provider: provider ?? { in: RECURRING_PROVIDERS }, isActive: true },
 		orderBy: { updatedAt: 'desc' },
-		select: { id: true, providerId: true, type: true, title: true, last4: true }
+		select: {
+			id: true,
+			provider: true,
+			providerId: true,
+			type: true,
+			title: true,
+			last4: true,
+			metadata: true
+		}
 	})

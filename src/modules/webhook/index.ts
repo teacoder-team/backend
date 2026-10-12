@@ -3,16 +3,22 @@ import { Elysia, t } from 'elysia'
 import { TAG } from '~/config/openapi'
 import { getForwardedIp } from '~/lib/utils/ip'
 
-import { WebhookAckResponse } from './model'
+import {
+	RobokassaNotificationPayload,
+	RobokassaResultResponse,
+	WebhookAckResponse
+} from './model'
 import {
 	receiveHeleketWebhook,
 	receiveProdamusWebhook,
 	receiveResendWebhook,
-	receiveYookassaWebhook
+	receiveRobokassaResult,
+	receiveYookassaWebhook,
+	robokassaReturnUrl
 } from './service'
 
 export const webhook = new Elysia({ prefix: '/webhook', tags: [TAG.webhooks] })
-	.model({ WebhookAckResponse })
+	.model({ RobokassaNotificationPayload, RobokassaResultResponse, WebhookAckResponse })
 	.post(
 		'/yookassa',
 		async ({ body, request }) => {
@@ -65,6 +71,43 @@ export const webhook = new Elysia({ prefix: '/webhook', tags: [TAG.webhooks] })
 				summary: 'Уведомления Prodamus',
 				description:
 					'Платёжная форма присылает уведомление на каждое изменение статуса заказа (`multipart/form-data`, подпись в заголовке `Sign`). У Prodamus нет списка IP-адресов, поэтому подпись - единственная проверка: без неё - 401, и такой запрос не сохраняется.\n\nУспешная оплата (`payment_status: success`) открывает курс или продлевает премиум, отмена и отказ банка переводят платёж в `CANCELLED` или `FAILED`.'
+			}
+		}
+	)
+	.post(
+		'/robokassa/result',
+		async ({ body }) => await receiveRobokassaResult(body),
+		{
+			body: 'RobokassaNotificationPayload',
+			response: 'RobokassaResultResponse',
+			detail: {
+				summary: 'Уведомления Робокассы (ResultURL)',
+				description:
+					'Робокасса присылает уведомление об успешной оплате методом POST (`application/x-www-form-urlencoded`): `OutSum`, `InvId`, `SignatureValue`, `PaymentMethod` и `Shp_paymentId`. Подпись проверяется Паролем #2, без неё - 400. Сумма сверяется с платежом: оплата курса открывает доступ, оплата подписки продлевает премиум, успешное автосписание продлевает подписку.\n\nПовторное уведомление по тому же `InvId` ничего не начисляет повторно и получает тот же ответ `OK{InvId}`. Оплата подписки картой сохраняет её для автопродления, если рекуррентные платежи включены.'
+			}
+		}
+	)
+	.get(
+		'/robokassa/success',
+		({ query, redirect }) => redirect(robokassaReturnUrl(query, 'success'), 302),
+		{
+			query: 'RobokassaNotificationPayload',
+			detail: {
+				summary: 'Возврат после оплаты в Робокассе (SuccessURL)',
+				description:
+					'Сюда Робокасса возвращает пользователя после оплаты (метод GET). Подпись проверяется Паролем #1, после чего пользователь перенаправляется на страницу платежа на сайте, где статус обновится после уведомления ResultURL. Сам возврат оплату не подтверждает. При неверной подписи - перенаправление на главную страницу сайта.'
+			}
+		}
+	)
+	.get(
+		'/robokassa/fail',
+		({ query, redirect }) => redirect(robokassaReturnUrl(query, 'fail'), 302),
+		{
+			query: 'RobokassaNotificationPayload',
+			detail: {
+				summary: 'Отказ от оплаты в Робокассе (FailURL)',
+				description:
+					'Сюда Робокасса возвращает пользователя, если оплата не прошла или он отказался от неё (метод GET). Пользователь перенаправляется на страницу платежа на сайте: пока ссылка не истекла, можно оплатить снова или выбрать другой способ. Статус платежа этот запрос не меняет.'
 			}
 		}
 	)

@@ -33,7 +33,7 @@ export const plannedChargeAt = (expiresAt: Date) => {
 }
 
 export const PREMIUM_PLAN = {
-	amount: 449,
+	amount: 99,
 	months: 1,
 	description: 'Оплата «TeaCoder Premium» на 1 месяц',
 	stars: 150
@@ -112,17 +112,17 @@ export const updateSubscription = async (
 		findChargeableMethod(userId)
 	])
 
-	if (!isLive(subscription)) {
-		if (autoRenew) {
-			throw new ConflictError('No active subscription to renew')
-		}
+	if (autoRenew && !isLive(subscription)) {
+		throw new ConflictError('No active subscription to renew')
+	}
 
+	if (!subscription) {
 		return toSubscriptionResponse(subscription, method)
 	}
 
 	if (autoRenew && !method) {
 		throw new ConflictError(
-			'No saved payment method - pay for premium through YooKassa to save one'
+			'No saved payment method - pay for premium by card through YooKassa or Robokassa to save one'
 		)
 	}
 
