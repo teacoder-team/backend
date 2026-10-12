@@ -23,6 +23,7 @@ export interface CreateInvoiceInput {
 	description: string
 	email?: string
 	recurring?: boolean
+	paymentMethods?: string[]
 	customParams?: Record<string, string>
 }
 
@@ -161,6 +162,10 @@ export const createRobokassaClient = ({
 			...(input.recurring ? { Recurring: 'true' } : {}),
 			...(testMode ? { IsTest: '1' } : {})
 		})
+
+		for (const method of input.paymentMethods ?? []) {
+			params.append('PaymentMethods', method)
+		}
 
 		for (const key of Object.keys(input.customParams ?? {}).sort()) {
 			params.set(`Shp_${key}`, input.customParams![key])
