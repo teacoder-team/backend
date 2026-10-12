@@ -7,6 +7,7 @@ import { ForbiddenError, InternalError, NotFoundError } from '~/lib/errors'
 import { orion } from '~/lib/integrations/orion'
 import { logger } from '~/lib/logger'
 import { redis } from '~/lib/redis'
+import { findCompletedLessonIds } from '~/modules/progress/repository'
 import { hasActiveSubscription } from '~/modules/subscription/repository'
 
 import type { CourseEntitlement, GatedCourse } from './model'
@@ -14,8 +15,9 @@ import {
 	findCourseAttachment,
 	findCoursePurchase,
 	findPublishedCourseBySlug,
-	findPublishedLessonsForCourse,
+	findPublishedCourseProgram,
 	incrementCourseViews,
+	listLibraryCourses,
 	listPublishedCourses,
 	logCourseDownload
 } from './repository'
@@ -49,15 +51,29 @@ const findCourse = async (slug: string) => {
 	return course
 }
 
+const toCourseListItem = ({
+	_count,
+	price,
+	attachment,
+	...course
+}: Awaited<ReturnType<typeof listPublishedCourses>>[number]) => ({
+	...course,
+	price: toPrice(price),
+	hasMaterials: Boolean(attachment),
+	lessons: _count.lessons
+})
+
 export const listCourses = async () => {
 	const courses = await listPublishedCourses()
 
-	return courses.map(({ _count, price, attachment, ...course }) => ({
-		...course,
-		price: toPrice(price),
-		hasMaterials: Boolean(attachment),
-		lessons: _count.lessons
-	}))
+	return courses.map(toCourseListItem)
+}
+
+export const getCourseLibrary = async (userId: string) => {
+	const hasPremium = await hasActiveSubscription(userId)
+	const courses = await listLibraryCourses(userId, hasPremium)
+
+	return courses.map(toCourseListItem)
 }
 
 export const getCourseBySlug = async (slug: string, ip: string, userId: string | null) => {
@@ -76,24 +92,39 @@ export const getCourseBySlug = async (slug: string, ip: string, userId: string |
 }
 
 export const getCourseLessons = async (slug: string, userId: string | null) => {
-	const course = await findCourse(slug)
-	const [lessons, entitlement] = await Promise.all([
-		findPublishedLessonsForCourse(course.id),
-		resolveCourseAccess(userId, course)
-	])
+	const program = await findPublishedCourseProgram(slug)
 
-	return await Promise.all(
-		lessons.map(async (lesson) => {
-			const lessonEntitlement = isLessonOpen(lesson.access, entitlement)
-				? entitlement
-				: await resolveLessonAccess(userId, course, lesson.access)
+	if (!program) {
+		throw new NotFoundError('Course not found')
+	}
 
-			return {
-				...lesson,
-				isLocked: !isLessonOpen(lesson.access, lessonEntitlement)
-			}
-		})
-	)
+	const lessonIds = [
+		...program.sections.flatMap((section) => section.lessons),
+		...program.lessons
+	].map((lesson) => lesson.id)
+	const completed =
+		userId && lessonIds.length > 0
+			? new Set(await findCompletedLessonIds(userId, lessonIds))
+			: null
+
+	const withProgress = <T extends { id: string }>(lesson: T) =>
+		completed ? { ...lesson, isCompleted: completed.has(lesson.id) } : lesson
+
+	const sections = program.sections.map(({ position, lessons, ...section }) => ({
+		position,
+		item: { ...section, lessons: lessons.map(withProgress) }
+	}))
+	const lessons = program.lessons.map(({ position, ...lesson }) => ({
+		position,
+		item: withProgress(lesson)
+	}))
+
+	return [...sections, ...lessons]
+		.sort(
+			(left, right) =>
+				left.position - right.position || left.item.id.localeCompare(right.item.id)
+		)
+		.map(({ item }) => item)
 }
 
 export const createMaterialsLink = async (slug: string, userId: string) => {

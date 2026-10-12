@@ -1,6 +1,6 @@
 import { type Static, t } from 'elysia'
 
-import { CourseAccessMode, LessonAccess } from '@prisma/generated/client'
+import { CourseAccessMode } from '@prisma/generated/client'
 
 import { PrismaEnum } from '~/lib/utils/schema'
 
@@ -68,6 +68,11 @@ export const CourseListResponse = t.Array(CourseListItem, {
 	description: 'Опубликованные курсы.'
 })
 
+export const CourseLibraryResponse = t.Array(CourseListItem, {
+	description:
+		'Библиотека пользователя: опубликованные купленные курсы и Premium-курсы при действующей подписке. Бесплатные курсы исключены.'
+})
+
 export const CourseSlugParams = t.Object({
 	slug: CourseSlug
 })
@@ -127,29 +132,38 @@ export const CourseLessonListItem = t.Object(
 			description: 'Идентификатор урока для URL.',
 			examples: ['peremennye-i-tipy']
 		}),
-		description: t.Nullable(
-			t.String({
-				description: 'Описание урока.',
-				examples: ['Разбираем базовые типы данных на примерах.']
+		isCompleted: t.Optional(
+			t.Boolean({
+				description:
+					'Пройден ли урок текущим пользователем. Возвращается только при авторизации.',
+				examples: [true]
 			})
-		),
-		position: t.Number({ description: 'Порядковый номер в курсе.', examples: [1] }),
-		access: PrismaEnum(LessonAccess, {
-			description:
-				'`FREE` - ознакомительный, открыт всем. `PREMIUM` - открывается вместе с курсом (см. `accessMode` курса). В бесплатном курсе открыты все уроки.',
-			examples: [LessonAccess.FREE]
-		}),
-		isLocked: t.Boolean({
-			description:
-				'Закрыт ли урок для текущего пользователя - `GET /lessons/{id}` ответит 403. Без входа закрыты все уроки `PREMIUM` платного курса.'
-		})
+		)
 	},
 	{ description: 'Урок в программе курса.' }
 )
 
-export const CourseLessonListResponse = t.Array(CourseLessonListItem, {
-	description: 'Уроки курса по порядку.'
-})
+export const CourseSectionListItem = t.Object(
+	{
+		id: t.String({
+			description: 'Идентификатор секции курса.',
+			examples: ['9704cd4b-d3b2-4fbc-ae81-037f9fe58659']
+		}),
+		title: t.String({ description: 'Название секции.', examples: ['Введение'] }),
+		lessons: t.Array(CourseLessonListItem, {
+			description: 'Опубликованные уроки секции в порядке их прохождения.'
+		})
+	},
+	{ description: 'Секция программы курса с вложенными уроками.' }
+)
+
+export const CourseLessonListResponse = t.Array(
+	t.Union([CourseSectionListItem, CourseLessonListItem]),
+	{
+		description:
+			'Программа курса: секции и отдельные уроки по порядку. Секция содержит массив lessons. Без секций возвращается обычный список уроков.'
+	}
+)
 
 export type CourseSlugParamsInput = Static<typeof CourseSlugParams>
 

@@ -293,6 +293,7 @@ export type CourseWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"Course"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Course"> | Date | string
   lessons?: Prisma.LessonListRelationFilter
+  sections?: Prisma.CourseSectionListRelationFilter
   purchases?: Prisma.CoursePurchaseListRelationFilter
   downloadLogs?: Prisma.DownloadLogListRelationFilter
 }
@@ -313,6 +314,7 @@ export type CourseOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   lessons?: Prisma.LessonOrderByRelationAggregateInput
+  sections?: Prisma.CourseSectionOrderByRelationAggregateInput
   purchases?: Prisma.CoursePurchaseOrderByRelationAggregateInput
   downloadLogs?: Prisma.DownloadLogOrderByRelationAggregateInput
 }
@@ -336,6 +338,7 @@ export type CourseWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"Course"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Course"> | Date | string
   lessons?: Prisma.LessonListRelationFilter
+  sections?: Prisma.CourseSectionListRelationFilter
   purchases?: Prisma.CoursePurchaseListRelationFilter
   downloadLogs?: Prisma.DownloadLogListRelationFilter
 }, "id" | "slug">
@@ -398,6 +401,7 @@ export type CourseCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   lessons?: Prisma.LessonCreateNestedManyWithoutCourseInput
+  sections?: Prisma.CourseSectionCreateNestedManyWithoutCourseInput
   purchases?: Prisma.CoursePurchaseCreateNestedManyWithoutCourseInput
   downloadLogs?: Prisma.DownloadLogCreateNestedManyWithoutCourseInput
 }
@@ -418,6 +422,7 @@ export type CourseUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   lessons?: Prisma.LessonUncheckedCreateNestedManyWithoutCourseInput
+  sections?: Prisma.CourseSectionUncheckedCreateNestedManyWithoutCourseInput
   purchases?: Prisma.CoursePurchaseUncheckedCreateNestedManyWithoutCourseInput
   downloadLogs?: Prisma.DownloadLogUncheckedCreateNestedManyWithoutCourseInput
 }
@@ -438,6 +443,7 @@ export type CourseUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lessons?: Prisma.LessonUpdateManyWithoutCourseNestedInput
+  sections?: Prisma.CourseSectionUpdateManyWithoutCourseNestedInput
   purchases?: Prisma.CoursePurchaseUpdateManyWithoutCourseNestedInput
   downloadLogs?: Prisma.DownloadLogUpdateManyWithoutCourseNestedInput
 }
@@ -458,6 +464,7 @@ export type CourseUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lessons?: Prisma.LessonUncheckedUpdateManyWithoutCourseNestedInput
+  sections?: Prisma.CourseSectionUncheckedUpdateManyWithoutCourseNestedInput
   purchases?: Prisma.CoursePurchaseUncheckedUpdateManyWithoutCourseNestedInput
   downloadLogs?: Prisma.DownloadLogUncheckedUpdateManyWithoutCourseNestedInput
 }
@@ -609,6 +616,20 @@ export type CourseUpdateOneRequiredWithoutPurchasesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.CourseUpdateToOneWithWhereWithoutPurchasesInput, Prisma.CourseUpdateWithoutPurchasesInput>, Prisma.CourseUncheckedUpdateWithoutPurchasesInput>
 }
 
+export type CourseCreateNestedOneWithoutSectionsInput = {
+  create?: Prisma.XOR<Prisma.CourseCreateWithoutSectionsInput, Prisma.CourseUncheckedCreateWithoutSectionsInput>
+  connectOrCreate?: Prisma.CourseCreateOrConnectWithoutSectionsInput
+  connect?: Prisma.CourseWhereUniqueInput
+}
+
+export type CourseUpdateOneRequiredWithoutSectionsNestedInput = {
+  create?: Prisma.XOR<Prisma.CourseCreateWithoutSectionsInput, Prisma.CourseUncheckedCreateWithoutSectionsInput>
+  connectOrCreate?: Prisma.CourseCreateOrConnectWithoutSectionsInput
+  upsert?: Prisma.CourseUpsertWithoutSectionsInput
+  connect?: Prisma.CourseWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.CourseUpdateToOneWithWhereWithoutSectionsInput, Prisma.CourseUpdateWithoutSectionsInput>, Prisma.CourseUncheckedUpdateWithoutSectionsInput>
+}
+
 export type CourseCreateNestedOneWithoutLessonsInput = {
   create?: Prisma.XOR<Prisma.CourseCreateWithoutLessonsInput, Prisma.CourseUncheckedCreateWithoutLessonsInput>
   connectOrCreate?: Prisma.CourseCreateOrConnectWithoutLessonsInput
@@ -653,6 +674,7 @@ export type CourseCreateWithoutPurchasesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   lessons?: Prisma.LessonCreateNestedManyWithoutCourseInput
+  sections?: Prisma.CourseSectionCreateNestedManyWithoutCourseInput
   downloadLogs?: Prisma.DownloadLogCreateNestedManyWithoutCourseInput
 }
 
@@ -672,6 +694,7 @@ export type CourseUncheckedCreateWithoutPurchasesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   lessons?: Prisma.LessonUncheckedCreateNestedManyWithoutCourseInput
+  sections?: Prisma.CourseSectionUncheckedCreateNestedManyWithoutCourseInput
   downloadLogs?: Prisma.DownloadLogUncheckedCreateNestedManyWithoutCourseInput
 }
 
@@ -707,6 +730,7 @@ export type CourseUpdateWithoutPurchasesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lessons?: Prisma.LessonUpdateManyWithoutCourseNestedInput
+  sections?: Prisma.CourseSectionUpdateManyWithoutCourseNestedInput
   downloadLogs?: Prisma.DownloadLogUpdateManyWithoutCourseNestedInput
 }
 
@@ -726,6 +750,103 @@ export type CourseUncheckedUpdateWithoutPurchasesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lessons?: Prisma.LessonUncheckedUpdateManyWithoutCourseNestedInput
+  sections?: Prisma.CourseSectionUncheckedUpdateManyWithoutCourseNestedInput
+  downloadLogs?: Prisma.DownloadLogUncheckedUpdateManyWithoutCourseNestedInput
+}
+
+export type CourseCreateWithoutSectionsInput = {
+  id?: string
+  title: string
+  slug: string
+  shortDescription?: string | null
+  fullDescription?: string | null
+  thumbnail?: string | null
+  youtubeUrl?: string | null
+  attachment?: string | null
+  isPublished?: boolean
+  accessMode?: $Enums.CourseAccessMode
+  price?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  views?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  lessons?: Prisma.LessonCreateNestedManyWithoutCourseInput
+  purchases?: Prisma.CoursePurchaseCreateNestedManyWithoutCourseInput
+  downloadLogs?: Prisma.DownloadLogCreateNestedManyWithoutCourseInput
+}
+
+export type CourseUncheckedCreateWithoutSectionsInput = {
+  id?: string
+  title: string
+  slug: string
+  shortDescription?: string | null
+  fullDescription?: string | null
+  thumbnail?: string | null
+  youtubeUrl?: string | null
+  attachment?: string | null
+  isPublished?: boolean
+  accessMode?: $Enums.CourseAccessMode
+  price?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  views?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  lessons?: Prisma.LessonUncheckedCreateNestedManyWithoutCourseInput
+  purchases?: Prisma.CoursePurchaseUncheckedCreateNestedManyWithoutCourseInput
+  downloadLogs?: Prisma.DownloadLogUncheckedCreateNestedManyWithoutCourseInput
+}
+
+export type CourseCreateOrConnectWithoutSectionsInput = {
+  where: Prisma.CourseWhereUniqueInput
+  create: Prisma.XOR<Prisma.CourseCreateWithoutSectionsInput, Prisma.CourseUncheckedCreateWithoutSectionsInput>
+}
+
+export type CourseUpsertWithoutSectionsInput = {
+  update: Prisma.XOR<Prisma.CourseUpdateWithoutSectionsInput, Prisma.CourseUncheckedUpdateWithoutSectionsInput>
+  create: Prisma.XOR<Prisma.CourseCreateWithoutSectionsInput, Prisma.CourseUncheckedCreateWithoutSectionsInput>
+  where?: Prisma.CourseWhereInput
+}
+
+export type CourseUpdateToOneWithWhereWithoutSectionsInput = {
+  where?: Prisma.CourseWhereInput
+  data: Prisma.XOR<Prisma.CourseUpdateWithoutSectionsInput, Prisma.CourseUncheckedUpdateWithoutSectionsInput>
+}
+
+export type CourseUpdateWithoutSectionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  shortDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fullDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  thumbnail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  youtubeUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attachment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  accessMode?: Prisma.EnumCourseAccessModeFieldUpdateOperationsInput | $Enums.CourseAccessMode
+  price?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  views?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lessons?: Prisma.LessonUpdateManyWithoutCourseNestedInput
+  purchases?: Prisma.CoursePurchaseUpdateManyWithoutCourseNestedInput
+  downloadLogs?: Prisma.DownloadLogUpdateManyWithoutCourseNestedInput
+}
+
+export type CourseUncheckedUpdateWithoutSectionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  shortDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fullDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  thumbnail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  youtubeUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attachment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  accessMode?: Prisma.EnumCourseAccessModeFieldUpdateOperationsInput | $Enums.CourseAccessMode
+  price?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  views?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lessons?: Prisma.LessonUncheckedUpdateManyWithoutCourseNestedInput
+  purchases?: Prisma.CoursePurchaseUncheckedUpdateManyWithoutCourseNestedInput
   downloadLogs?: Prisma.DownloadLogUncheckedUpdateManyWithoutCourseNestedInput
 }
 
@@ -744,6 +865,7 @@ export type CourseCreateWithoutLessonsInput = {
   views?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  sections?: Prisma.CourseSectionCreateNestedManyWithoutCourseInput
   purchases?: Prisma.CoursePurchaseCreateNestedManyWithoutCourseInput
   downloadLogs?: Prisma.DownloadLogCreateNestedManyWithoutCourseInput
 }
@@ -763,6 +885,7 @@ export type CourseUncheckedCreateWithoutLessonsInput = {
   views?: number
   createdAt?: Date | string
   updatedAt?: Date | string
+  sections?: Prisma.CourseSectionUncheckedCreateNestedManyWithoutCourseInput
   purchases?: Prisma.CoursePurchaseUncheckedCreateNestedManyWithoutCourseInput
   downloadLogs?: Prisma.DownloadLogUncheckedCreateNestedManyWithoutCourseInput
 }
@@ -798,6 +921,7 @@ export type CourseUpdateWithoutLessonsInput = {
   views?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sections?: Prisma.CourseSectionUpdateManyWithoutCourseNestedInput
   purchases?: Prisma.CoursePurchaseUpdateManyWithoutCourseNestedInput
   downloadLogs?: Prisma.DownloadLogUpdateManyWithoutCourseNestedInput
 }
@@ -817,6 +941,7 @@ export type CourseUncheckedUpdateWithoutLessonsInput = {
   views?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sections?: Prisma.CourseSectionUncheckedUpdateManyWithoutCourseNestedInput
   purchases?: Prisma.CoursePurchaseUncheckedUpdateManyWithoutCourseNestedInput
   downloadLogs?: Prisma.DownloadLogUncheckedUpdateManyWithoutCourseNestedInput
 }
@@ -837,6 +962,7 @@ export type CourseCreateWithoutDownloadLogsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   lessons?: Prisma.LessonCreateNestedManyWithoutCourseInput
+  sections?: Prisma.CourseSectionCreateNestedManyWithoutCourseInput
   purchases?: Prisma.CoursePurchaseCreateNestedManyWithoutCourseInput
 }
 
@@ -856,6 +982,7 @@ export type CourseUncheckedCreateWithoutDownloadLogsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   lessons?: Prisma.LessonUncheckedCreateNestedManyWithoutCourseInput
+  sections?: Prisma.CourseSectionUncheckedCreateNestedManyWithoutCourseInput
   purchases?: Prisma.CoursePurchaseUncheckedCreateNestedManyWithoutCourseInput
 }
 
@@ -891,6 +1018,7 @@ export type CourseUpdateWithoutDownloadLogsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lessons?: Prisma.LessonUpdateManyWithoutCourseNestedInput
+  sections?: Prisma.CourseSectionUpdateManyWithoutCourseNestedInput
   purchases?: Prisma.CoursePurchaseUpdateManyWithoutCourseNestedInput
 }
 
@@ -910,6 +1038,7 @@ export type CourseUncheckedUpdateWithoutDownloadLogsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   lessons?: Prisma.LessonUncheckedUpdateManyWithoutCourseNestedInput
+  sections?: Prisma.CourseSectionUncheckedUpdateManyWithoutCourseNestedInput
   purchases?: Prisma.CoursePurchaseUncheckedUpdateManyWithoutCourseNestedInput
 }
 
@@ -920,12 +1049,14 @@ export type CourseUncheckedUpdateWithoutDownloadLogsInput = {
 
 export type CourseCountOutputType = {
   lessons: number
+  sections: number
   purchases: number
   downloadLogs: number
 }
 
 export type CourseCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   lessons?: boolean | CourseCountOutputTypeCountLessonsArgs
+  sections?: boolean | CourseCountOutputTypeCountSectionsArgs
   purchases?: boolean | CourseCountOutputTypeCountPurchasesArgs
   downloadLogs?: boolean | CourseCountOutputTypeCountDownloadLogsArgs
 }
@@ -945,6 +1076,13 @@ export type CourseCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Exten
  */
 export type CourseCountOutputTypeCountLessonsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.LessonWhereInput
+}
+
+/**
+ * CourseCountOutputType without action
+ */
+export type CourseCountOutputTypeCountSectionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CourseSectionWhereInput
 }
 
 /**
@@ -978,6 +1116,7 @@ export type CourseSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   createdAt?: boolean
   updatedAt?: boolean
   lessons?: boolean | Prisma.Course$lessonsArgs<ExtArgs>
+  sections?: boolean | Prisma.Course$sectionsArgs<ExtArgs>
   purchases?: boolean | Prisma.Course$purchasesArgs<ExtArgs>
   downloadLogs?: boolean | Prisma.Course$downloadLogsArgs<ExtArgs>
   _count?: boolean | Prisma.CourseCountOutputTypeDefaultArgs<ExtArgs>
@@ -1037,6 +1176,7 @@ export type CourseSelectScalar = {
 export type CourseOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "slug" | "shortDescription" | "fullDescription" | "thumbnail" | "youtubeUrl" | "attachment" | "isPublished" | "accessMode" | "price" | "views" | "createdAt" | "updatedAt", ExtArgs["result"]["course"]>
 export type CourseInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   lessons?: boolean | Prisma.Course$lessonsArgs<ExtArgs>
+  sections?: boolean | Prisma.Course$sectionsArgs<ExtArgs>
   purchases?: boolean | Prisma.Course$purchasesArgs<ExtArgs>
   downloadLogs?: boolean | Prisma.Course$downloadLogsArgs<ExtArgs>
   _count?: boolean | Prisma.CourseCountOutputTypeDefaultArgs<ExtArgs>
@@ -1048,6 +1188,7 @@ export type $CoursePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
   name: "Course"
   objects: {
     lessons: Prisma.$LessonPayload<ExtArgs>[]
+    sections: Prisma.$CourseSectionPayload<ExtArgs>[]
     purchases: Prisma.$CoursePurchasePayload<ExtArgs>[]
     downloadLogs: Prisma.$DownloadLogPayload<ExtArgs>[]
   }
@@ -1059,14 +1200,8 @@ export type $CoursePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     fullDescription: string | null
     thumbnail: string | null
     youtubeUrl: string | null
-    /**
-     * Source code archive in Orion (`attachments` tag) - handed out only through download links.
-     */
     attachment: string | null
     isPublished: boolean
-    /**
-     * Who opens premium lessons and materials. Purchase always works; see CourseAccessMode.
-     */
     accessMode: $Enums.CourseAccessMode
     price: runtime.Decimal | null
     views: number
@@ -1467,6 +1602,7 @@ readonly fields: CourseFieldRefs;
 export interface Prisma__CourseClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   lessons<T extends Prisma.Course$lessonsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Course$lessonsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LessonPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  sections<T extends Prisma.Course$sectionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Course$sectionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CourseSectionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   purchases<T extends Prisma.Course$purchasesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Course$purchasesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CoursePurchasePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   downloadLogs<T extends Prisma.Course$downloadLogsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Course$downloadLogsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DownloadLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
@@ -1926,6 +2062,30 @@ export type Course$lessonsArgs<ExtArgs extends runtime.Types.Extensions.Internal
   take?: number
   skip?: number
   distinct?: Prisma.LessonScalarFieldEnum | Prisma.LessonScalarFieldEnum[]
+}
+
+/**
+ * Course.sections
+ */
+export type Course$sectionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CourseSection
+   */
+  select?: Prisma.CourseSectionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the CourseSection
+   */
+  omit?: Prisma.CourseSectionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CourseSectionInclude<ExtArgs> | null
+  where?: Prisma.CourseSectionWhereInput
+  orderBy?: Prisma.CourseSectionOrderByWithRelationInput | Prisma.CourseSectionOrderByWithRelationInput[]
+  cursor?: Prisma.CourseSectionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.CourseSectionScalarFieldEnum | Prisma.CourseSectionScalarFieldEnum[]
 }
 
 /**

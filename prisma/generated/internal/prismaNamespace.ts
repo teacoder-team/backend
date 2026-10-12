@@ -389,6 +389,7 @@ export const ModelName = {
   VerificationCode: 'VerificationCode',
   Course: 'Course',
   CoursePurchase: 'CoursePurchase',
+  CourseSection: 'CourseSection',
   Lesson: 'Lesson',
   TotpAuthenticator: 'TotpAuthenticator',
   RecoveryCode: 'RecoveryCode',
@@ -421,7 +422,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "passwordCredential" | "oAuthAccount" | "verificationCode" | "course" | "coursePurchase" | "lesson" | "totpAuthenticator" | "recoveryCode" | "webAuthnCredential" | "restriction" | "paymentIntent" | "receipt" | "userPaymentMethod" | "userProgress" | "downloadLog" | "session" | "refreshToken" | "userVisitor" | "subscription" | "user" | "webhookEvent" | "reconciliationRun"
+    modelProps: "passwordCredential" | "oAuthAccount" | "verificationCode" | "course" | "coursePurchase" | "courseSection" | "lesson" | "totpAuthenticator" | "recoveryCode" | "webAuthnCredential" | "restriction" | "paymentIntent" | "receipt" | "userPaymentMethod" | "userProgress" | "downloadLog" | "session" | "refreshToken" | "userVisitor" | "subscription" | "user" | "webhookEvent" | "reconciliationRun"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -792,6 +793,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.CoursePurchaseCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.CoursePurchaseCountAggregateOutputType> | number
+        }
+      }
+    }
+    CourseSection: {
+      payload: Prisma.$CourseSectionPayload<ExtArgs>
+      fields: Prisma.CourseSectionFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CourseSectionFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CourseSectionPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CourseSectionFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CourseSectionPayload>
+        }
+        findFirst: {
+          args: Prisma.CourseSectionFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CourseSectionPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CourseSectionFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CourseSectionPayload>
+        }
+        findMany: {
+          args: Prisma.CourseSectionFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CourseSectionPayload>[]
+        }
+        create: {
+          args: Prisma.CourseSectionCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CourseSectionPayload>
+        }
+        createMany: {
+          args: Prisma.CourseSectionCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.CourseSectionCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CourseSectionPayload>[]
+        }
+        delete: {
+          args: Prisma.CourseSectionDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CourseSectionPayload>
+        }
+        update: {
+          args: Prisma.CourseSectionUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CourseSectionPayload>
+        }
+        deleteMany: {
+          args: Prisma.CourseSectionDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CourseSectionUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.CourseSectionUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CourseSectionPayload>[]
+        }
+        upsert: {
+          args: Prisma.CourseSectionUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CourseSectionPayload>
+        }
+        aggregate: {
+          args: Prisma.CourseSectionAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCourseSection>
+        }
+        groupBy: {
+          args: Prisma.CourseSectionGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CourseSectionGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CourseSectionCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CourseSectionCountAggregateOutputType> | number
         }
       }
     }
@@ -2161,6 +2236,18 @@ export const CoursePurchaseScalarFieldEnum = {
 export type CoursePurchaseScalarFieldEnum = (typeof CoursePurchaseScalarFieldEnum)[keyof typeof CoursePurchaseScalarFieldEnum]
 
 
+export const CourseSectionScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  position: 'position',
+  courseId: 'courseId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CourseSectionScalarFieldEnum = (typeof CourseSectionScalarFieldEnum)[keyof typeof CourseSectionScalarFieldEnum]
+
+
 export const LessonScalarFieldEnum = {
   id: 'id',
   title: 'title',
@@ -2171,6 +2258,8 @@ export const LessonScalarFieldEnum = {
   access: 'access',
   isPublished: 'isPublished',
   courseId: 'courseId',
+  sectionId: 'sectionId',
+  sectionCourseId: 'sectionCourseId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -2912,6 +3001,7 @@ export type GlobalOmitConfig = {
   verificationCode?: Prisma.VerificationCodeOmit
   course?: Prisma.CourseOmit
   coursePurchase?: Prisma.CoursePurchaseOmit
+  courseSection?: Prisma.CourseSectionOmit
   lesson?: Prisma.LessonOmit
   totpAuthenticator?: Prisma.TotpAuthenticatorOmit
   recoveryCode?: Prisma.RecoveryCodeOmit

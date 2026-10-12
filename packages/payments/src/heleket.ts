@@ -118,7 +118,51 @@ const messageFor = (envelope: ErrorEnvelope) => {
 	return fieldMessages || 'Unknown error'
 }
 
-const phpCompatibleJson = (value: unknown): string => JSON.stringify(value).replace(/\//g, '\\/')
+const unsignedWebhookJson = (rawBody: string): string | null => {
+	const tokens = rawBody.match(/"(?:\\.|[^"\\])*"|[{}\[\],:]|[^\s{}\[\],:]+/g) ?? []
+	const fields: string[] = []
+	const names = new Set<string>()
+	let member: string[] = []
+	let depth = 0
+
+	for (const token of tokens) {
+		if (depth === 1 && (token === ',' || token === '}')) {
+			if (member.length > 0) {
+				const name: unknown = JSON.parse(member[0]!)
+
+				if (typeof name !== 'string' || names.has(name)) {
+					return null
+				}
+
+				names.add(name)
+
+				if (name !== 'sign') {
+					fields.push(member.join(''))
+				}
+
+				member = []
+			}
+
+			if (token === '}') {
+				depth--
+			}
+
+			continue
+		}
+
+		if (depth > 0) {
+			member.push(token)
+		}
+
+		if (token === '{' || token === '[') {
+			depth++
+		} else if (token === '}' || token === ']') {
+			depth--
+		}
+	}
+
+	return `{${fields.join(',')}}`
+}
 
 export const createHeleketClient = ({
 	merchantId,
@@ -188,15 +232,33 @@ export const createHeleketClient = ({
 			'uuid' in identifier ? { uuid: identifier.uuid } : { order_id: identifier.orderId }
 		)
 
-	const verifyWebhookSignature = (payload: Record<string, unknown>): boolean => {
-		const { sign, ...rest } = payload
+	const verifyWebhookSignature = (rawBody: string): boolean => {
+		let payload: unknown
 
-		if (typeof sign !== 'string') {
+		try {
+			payload = JSON.parse(rawBody)
+		} catch {
+			return false
+		}
+
+		if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
+			return false
+		}
+
+		const sign = 'sign' in payload ? payload.sign : undefined
+
+		if (typeof sign !== 'string' || !/^[a-f0-9]{32}$/.test(sign)) {
+			return false
+		}
+
+		const json = unsignedWebhookJson(rawBody)
+
+		if (json === null) {
 			return false
 		}
 
 		const expected = createHash('md5')
-			.update(Buffer.from(phpCompatibleJson(rest)).toString('base64') + apiKey)
+			.update(Buffer.from(json).toString('base64') + apiKey)
 			.digest('hex')
 
 		const received = Buffer.from(sign)

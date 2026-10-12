@@ -18,7 +18,7 @@ export const PAYMENT_METHODS: Partial<Record<PaymentMethod, MethodDefinition>> =
 	[PaymentMethod.INTERNATIONAL_CARD]: {
 		category: 'FIAT',
 		name: 'Иностранные карты',
-		description: 'Оплата картами банков мира и другими международными способами',
+		description: 'Оплата картами банков мира',
 		provider: PaymentProvider.PRODAMUS
 	},
 	[PaymentMethod.HELEKET]: {

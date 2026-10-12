@@ -30,7 +30,7 @@ export const courseEmailJobs: JobHandlers<CourseEmailJobs> = {
 			template: CoursePurchase({
 				username: user.displayName,
 				courseTitle: course.title,
-				courseThumbnail: course.thumbnail,
+				courseThumbnail: `${env.ORION_API_URL}/courses/${course.thumbnail}`,
 				courseUrl: `${env.APP_URL}/courses/${course.slug}`
 			}),
 			sender: 'noreply'

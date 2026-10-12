@@ -14,10 +14,12 @@ import {
 	CreatePaymentPayload,
 	CreatePaymentResponse,
 	PaymentMethodsResponse,
+	PaymentParams,
+	PaymentResponse,
 	SubscriptionResponse,
 	UpdateSubscriptionPayload
 } from './model'
-import { createPayment, listPaymentMethods } from './service'
+import { createPayment, getPayment, listPaymentMethods } from './service'
 
 export const billing = new Elysia({ prefix: '/billing', tags: [TAG.billing] })
 	.use(authGuard)
@@ -27,6 +29,8 @@ export const billing = new Elysia({ prefix: '/billing', tags: [TAG.billing] })
 		CreatePaymentResponse,
 		CancelSubscriptionResponse,
 		PaymentMethodsResponse,
+		PaymentParams,
+		PaymentResponse,
 		SubscriptionResponse,
 		UpdateSubscriptionPayload
 	})
@@ -51,6 +55,21 @@ export const billing = new Elysia({ prefix: '/billing', tags: [TAG.billing] })
 				summary: 'Создание платежа',
 				description:
 					'Возвращает ссылку на страницу оплаты - на неё нужно перенаправить пользователя. С `courseId` оплачивается курс, без него - премиум-подписка. Платёж остаётся в статусе `REQUIRES_PAYMENT`, пока провайдер не подтвердит оплату; доступ открывается автоматически.\n\n**Смена способа оплаты.** Неоплаченный счёт другим способом не мешает создать новый: можно начать оплату через Heleket, затем выбрать СБП или карту. Повторный запрос тем же способом возвращает его открытый счёт. Неоплаченные счета истекают через час.\n\n**Ответы 409:**\n- курс уже куплен;\n- по товару уже идёт оплата в статусе `PROCESSING`, например криптовалюта ждёт подтверждений;\n- параллельный запрос на этот же товар ещё выполняется - повторите через секунду.\n\n**Идемпотентность.** Заголовок `Idempotency-Key` делает запрос безопасным для повтора: тот же ключ с теми же параметрами вернёт тот же платёж, с другими - ошибку 422. При смене способа используйте новый ключ. Если провайдер не ответил, ключ не расходуется и запрос можно повторить с ним же.',
+				security: [{ bearerAuth: [] }]
+			}
+		}
+	)
+	.get(
+		'/payments/:id',
+		async ({ session, params }) => await getPayment(session.userId, params.id),
+		{
+			auth: true,
+			params: 'PaymentParams',
+			response: 'PaymentResponse',
+			detail: {
+				summary: 'Платёж',
+				description:
+					'Статус платежа текущего пользователя и что он оплачивает. Подходит для опроса после возврата со страницы оплаты: провайдер подтверждает оплату вебхуком, и после этого статус становится `CAPTURED`, а доступ уже выдан. Неоплаченная ссылка через час переводится в `EXPIRED`. Чужой или несуществующий платёж - 404.',
 				security: [{ bearerAuth: [] }]
 			}
 		}

@@ -5,7 +5,7 @@ import { resolveLessonAccess } from '~/modules/course/service'
 
 import { findPublishedLessonById } from './repository'
 
-export const getLessonById = async (id: string, userId: string | null) => {
+export const getLessonById = async (id: string, userId: string) => {
 	const lesson = await findPublishedLessonById(id)
 
 	if (!lesson) {

@@ -2,21 +2,37 @@ import { CourseAccessMode, type Prisma } from '@prisma/generated/client'
 
 import { db } from '~/lib/db'
 
+const courseListSelect = {
+	id: true,
+	title: true,
+	slug: true,
+	shortDescription: true,
+	thumbnail: true,
+	price: true,
+	accessMode: true,
+	attachment: true,
+	_count: { select: { lessons: { where: { isPublished: true } } } }
+} satisfies Prisma.CourseSelect
+
 export const listPublishedCourses = () =>
 	db.course.findMany({
 		where: { isPublished: true },
-		select: {
-			id: true,
-			title: true,
-			slug: true,
-			shortDescription: true,
-			thumbnail: true,
-			price: true,
-			accessMode: true,
-			attachment: true,
-			_count: { select: { lessons: { where: { isPublished: true } } } }
-		},
+		select: courseListSelect,
 		orderBy: { createdAt: 'desc' }
+	})
+
+export const listLibraryCourses = (userId: string, hasPremium: boolean) =>
+	db.course.findMany({
+		where: {
+			isPublished: true,
+			accessMode: { not: CourseAccessMode.FREE },
+			OR: [
+				{ purchases: { some: { userId } } },
+				...(hasPremium ? [{ accessMode: CourseAccessMode.PREMIUM }] : [])
+			]
+		},
+		select: courseListSelect,
+		orderBy: [{ createdAt: 'desc' }, { id: 'asc' }]
 	})
 
 export const findPublishedCourseBySlug = (slug: string) =>
@@ -40,18 +56,27 @@ export const findPublishedCourseBySlug = (slug: string) =>
 export const incrementCourseViews = (id: string) =>
 	db.course.update({ where: { id }, data: { views: { increment: 1 } } })
 
-export const findPublishedLessonsForCourse = (courseId: string) =>
-	db.lesson.findMany({
-		where: { courseId, isPublished: true },
+export const findPublishedCourseProgram = (slug: string) =>
+	db.course.findFirst({
+		where: { slug, isPublished: true },
 		select: {
-			id: true,
-			title: true,
-			slug: true,
-			description: true,
-			position: true,
-			access: true
-		},
-		orderBy: { position: 'asc' }
+			sections: {
+				select: {
+					id: true,
+					title: true,
+					position: true,
+					lessons: {
+						where: { isPublished: true },
+						select: { id: true, title: true, slug: true },
+						orderBy: [{ position: 'asc' }, { id: 'asc' }]
+					}
+				}
+			},
+			lessons: {
+				where: { isPublished: true, sectionId: null },
+				select: { id: true, title: true, slug: true, position: true }
+			}
+		}
 	})
 
 export const findPurchasableCourse = (courseId: string) =>

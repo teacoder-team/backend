@@ -30,7 +30,11 @@ import {
 } from '~/modules/admin-bot/service'
 import { getUserEmail } from '~/modules/auth/service'
 import { enqueueCoursePurchaseEmail } from '~/modules/course/jobs'
-import { findCoursePurchase, findPurchasableCourse } from '~/modules/course/repository'
+import {
+	findCoursePurchase,
+	findCourseSummary,
+	findPurchasableCourse
+} from '~/modules/course/repository'
 import {
 	enqueueSubscriptionPaymentFailedEmail,
 	enqueueSubscriptionPurchaseEmail,
@@ -56,6 +60,7 @@ import {
 	createPendingPayment,
 	expireCheckouts,
 	findOpenCheckouts,
+	findPaymentById,
 	findPaymentByIdempotencyKey,
 	findPaymentForFulfillment,
 	type FulfillableIntent,
@@ -315,6 +320,43 @@ const productName = (courseId: string | null) => (courseId ? 'course' : 'subscri
 const isStale = (intent: PaymentIntent, now: number) =>
 	intent.status === IntentStatus.REQUIRES_PAYMENT &&
 	(!checkoutUrl(intent) || expiresAt(intent).getTime() <= now)
+
+const settleStaleCheckout = async (payment: PaymentIntent) => {
+	if (payment.subscriptionId || !isStale(payment, Date.now())) {
+		return payment.status
+	}
+
+	await expireCheckouts([payment.id])
+
+	return IntentStatus.EXPIRED
+}
+
+export const getPayment = async (userId: string, paymentId: string) => {
+	const payment = await findPaymentById(userId, paymentId)
+
+	if (!payment) {
+		throw new NotFoundError('Payment not found')
+	}
+
+	const status = await settleStaleCheckout(payment)
+	const course = payment.courseId ? await findCourseSummary(payment.courseId) : null
+	const metadata = payment.metadata as { description?: string } | null
+
+	return {
+		id: payment.id,
+		status,
+		product: payment.courseId ? ('COURSE' as const) : ('SUBSCRIPTION' as const),
+		course:
+			payment.courseId && course
+				? { id: payment.courseId, title: course.title, slug: course.slug }
+				: null,
+		amount: payment.amount,
+		currency: payment.currency,
+		description: metadata?.description ?? '',
+		url: status === IntentStatus.REQUIRES_PAYMENT ? checkoutUrl(payment) : null,
+		createdAt: payment.createdAt.toISOString()
+	}
+}
 
 const findIdempotentReplay = async ({
 	userId,
