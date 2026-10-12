@@ -182,7 +182,7 @@ _Runs **after** the response has been sent to the client._
 
 ```ts
 new Elysia().onAfterResponse(() =>
-    console.log('âœ… response sent at', Date.now())
+    console.log('âœ... response sent at', Date.now())
 )
 ```
 

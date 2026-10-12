@@ -112,17 +112,17 @@ export const updateSubscription = async (
 		findChargeableMethod(userId)
 	])
 
-	if (!isLive(subscription)) {
-		if (autoRenew) {
-			throw new ConflictError('No active subscription to renew')
-		}
+	if (autoRenew && !isLive(subscription)) {
+		throw new ConflictError('No active subscription to renew')
+	}
 
+	if (!subscription) {
 		return toSubscriptionResponse(subscription, method)
 	}
 
 	if (autoRenew && !method) {
 		throw new ConflictError(
-			'No saved payment method - pay for premium through YooKassa to save one'
+			'No saved payment method - pay for premium by card through YooKassa or Robokassa to save one'
 		)
 	}
 

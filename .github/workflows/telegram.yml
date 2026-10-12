@@ -57,7 +57,7 @@ jobs:
                       const shorten = (value, limit = 240) => {
                           const text = String(value ?? '').replace(/\s+/g, ' ').trim()
 
-                          return text.length > limit ? `${text.slice(0, limit - 1)}…` : text
+                          return text.length > limit ? `${text.slice(0, limit - 1)}...` : text
                       }
 
                       const link = (url, label) => `<a href="${escape(url)}">${escape(label)}</a>`

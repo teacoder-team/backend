@@ -13,9 +13,17 @@ import { PrismaEnum } from '~/lib/utils/schema'
 export const CreatePaymentPayload = t.Object(
 	{
 		method: PrismaEnum(PaymentMethod, {
-			description: 'Способ оплаты. От него зависит, через какого провайдера пройдёт платёж.',
-			examples: [PaymentMethod.BANK_CARD]
+			description:
+				'Способ оплаты. CRYPTO — криптовалюта. Для Робокассы передайте BANK_CARD и provider: ROBOKASSA; фактический способ уточняется после оплаты.',
+			examples: [PaymentMethod.BANK_CARD, PaymentMethod.CRYPTO]
 		}),
+		provider: t.Optional(
+			PrismaEnum(PaymentProvider, {
+				description:
+					'Провайдер из списка способов оплаты. Без него для BANK_CARD используется YOOKASSA, для CRYPTO — HELEKET. Недоступные сочетания отклоняются.',
+				examples: [PaymentProvider.ROBOKASSA]
+			})
+		),
 		courseId: t.Optional(
 			t.String({
 				description: 'Курс для покупки. Без него оплачивается премиум-подписка.',
@@ -180,7 +188,7 @@ export const SubscriptionResponse = t.Object(
 					}),
 					title: t.Nullable(
 						t.String({
-							description: 'Название от ЮKassa.',
+							description: 'Название способа оплаты.',
 							examples: ['Bank card *4242']
 						})
 					),
@@ -215,6 +223,11 @@ const PaymentMethodCategoryId = t.Union(
 )
 
 const PaymentMethodEntry = t.Object({
+	provider: PrismaEnum(PaymentProvider, {
+		description:
+			'Передаётся в provider при создании платежа. Выбор определяется парой id и provider.',
+		examples: [PaymentProvider.ROBOKASSA]
+	}),
 	id: PrismaEnum(PaymentMethod, {
 		description: 'Идентификатор способа - передаётся в `method` при создании платежа.',
 		examples: [PaymentMethod.BANK_CARD]
@@ -249,6 +262,7 @@ export type UpdateSubscriptionInput = Static<typeof UpdateSubscriptionPayload>
 export type MethodCategory = 'FIAT' | 'CRYPTO' | 'STARS'
 
 export interface MethodDefinition {
+	method: PaymentMethod
 	category: MethodCategory
 	name: string
 	description: string
@@ -269,6 +283,7 @@ export interface ReplayableIntent {
 export interface CheckoutRequest {
 	userId: string
 	method: PaymentMethod
+	provider: PaymentProvider
 	courseId: string | null
 	idempotencyKey?: string
 }
@@ -283,6 +298,7 @@ export interface ProviderPaymentUpdate {
 	amount: string
 	currency: string
 	failureCode?: string
+	method?: PaymentMethod
 
 	savedMethod?: SavedPaymentMethod
 }
@@ -324,6 +340,7 @@ export interface NewPayment {
 }
 
 export interface CourseCapture {
+	method?: PaymentMethod
 	id: string
 	userId: string
 	courseId: string
@@ -332,6 +349,8 @@ export interface CourseCapture {
 }
 
 export interface SavedPaymentMethod {
+	metadata?: Prisma.InputJsonValue
+	provider: PaymentProvider
 	providerId: string
 	type: PaymentMethod
 	title: string | null

@@ -10,7 +10,7 @@ import {
 } from '@teacoder/payments/prodamus'
 import type { Payment as YookassaPayment } from '@teacoder/payments/yookassa'
 
-import { IntentStatus, PaymentProvider, type Prisma } from '@prisma/generated/client'
+import { IntentStatus, PaymentMethod, PaymentProvider, type Prisma } from '@prisma/generated/client'
 
 import { env } from '~/config/env'
 import {
@@ -20,7 +20,7 @@ import {
 	NotFoundError,
 	UnauthorizedError
 } from '~/lib/errors'
-import { heleket, prodamus, yookassa } from '~/lib/integrations/payments'
+import { heleket, paymentPageUrl, prodamus, robokassa, yookassa } from '~/lib/integrations/payments'
 import { resend } from '~/lib/integrations/resend'
 import { extendLogContext, logger } from '~/lib/logger'
 import { normalizeEmail } from '~/lib/utils/email'
@@ -30,10 +30,12 @@ import {
 	enqueueSupportEmailNotification
 } from '~/modules/admin-bot/service'
 import type { ProviderPaymentUpdate } from '~/modules/billing/model'
+import { findPaymentByProviderId } from '~/modules/billing/repository'
 import { applyPaymentUpdate, toSavedMethod } from '~/modules/billing/service'
 
 import {
 	createWebhookEvent,
+	findOrCreateWebhookEvent,
 	findWebhookEvent,
 	markWebhookFailed,
 	markWebhookProcessed,
@@ -43,6 +45,7 @@ import {
 const PSP_HELEKET = 'heleket'
 const PSP_PRODAMUS = 'prodamus'
 const PSP_YOOKASSA = 'yookassa'
+const PSP_ROBOKASSA = 'robokassa'
 
 const isHeleketIp = createIpAllowlist(['31.133.220.8'])
 
@@ -112,6 +115,8 @@ const settle = async (eventId: string, update: ProviderPaymentUpdate) => {
 				webhookId: eventId
 			})
 		}
+
+		return result
 	} catch (err) {
 		await markWebhookFailed(eventId, err instanceof Error ? err.message : String(err))
 
@@ -478,4 +483,140 @@ export const receiveProdamusWebhook = async (
 		currency: (notification.currency ?? 'rub').toUpperCase(),
 		failureCode: status === IntentStatus.CAPTURED ? undefined : paymentStatus
 	})
+}
+
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
+const toStringFields = (fields: Record<string, unknown>) =>
+	Object.fromEntries(
+		Object.entries(fields).filter(
+			(entry): entry is [string, string] => typeof entry[1] === 'string'
+		)
+	)
+
+const robokassaPaymentId = (fields: Record<string, string>) => {
+	const paymentId = Object.entries(fields).find(
+		([key]) => key.toLowerCase() === 'shp_paymentid'
+	)?.[1]
+
+	return paymentId && UUID_PATTERN.test(paymentId) ? paymentId : null
+}
+
+const robokassaSavedMethod = (
+	fields: Record<string, string>,
+	invId: string,
+	payload: Prisma.JsonValue
+) => {
+	const raw = payload as { raw?: { recurring?: boolean; testMode?: boolean } }
+
+	return raw.raw?.recurring && fields.PaymentMethod === 'BankCard'
+		? {
+				provider: PaymentProvider.ROBOKASSA,
+				providerId: invId,
+				type: PaymentMethod.BANK_CARD,
+				title: 'Банковская карта РФ',
+				first6: null,
+				last4: null,
+				expiryMonth: null,
+				expiryYear: null,
+				cardType: null,
+				metadata: { testMode: raw.raw.testMode === true }
+			}
+		: undefined
+}
+
+export const receiveRobokassaResult = async (body: Record<string, unknown>) => {
+	extendLogContext({ provider: PSP_ROBOKASSA })
+
+	const fields = toStringFields(body ?? {})
+	const { OutSum: outSum, InvId: invId } = fields
+
+	if (
+		!outSum ||
+		!/^\d+(?:\.\d{1,2}0*)?$/.test(outSum) ||
+		!invId ||
+		!/^\d+$/.test(invId) ||
+		!Number.isSafeInteger(Number(invId)) ||
+		Number(invId) <= 0
+	) {
+		throw new BadRequestError('Malformed webhook payload')
+	}
+
+	extendLogContext({ pspIntentId: invId })
+
+	if (!robokassa.verifyResultSignature(fields)) {
+		throw new BadRequestError('Invalid Robokassa signature')
+	}
+
+	const response = `OK${invId}`
+	const intent = await findPaymentByProviderId(PaymentProvider.ROBOKASSA, invId)
+	const paymentId = robokassaPaymentId(fields)
+
+	if (
+		!intent ||
+		!paymentId ||
+		paymentId !== intent.id ||
+		intent.currency !== 'RUB' ||
+		Math.round(Number(outSum) * 100) !== Math.round(intent.amount * 100)
+	) {
+		throw new BadRequestError('Robokassa payment reference or amount mismatch')
+	}
+
+	const existing = await findWebhookEvent(PSP_ROBOKASSA, invId)
+
+	if (existing?.processedAt && !existing.processError) {
+		extendLogContext({ event: 'webhook_duplicate', provider: PSP_ROBOKASSA, pspEventId: invId })
+
+		return response
+	}
+
+	const event =
+		existing ??
+		(await findOrCreateWebhookEvent({
+			pspName: PSP_ROBOKASSA,
+			pspEventId: invId,
+			eventType: 'result',
+			signatureOk: true,
+			payload: {
+				OutSum: outSum,
+				InvId: invId,
+				Shp_paymentId: paymentId,
+				PaymentMethod: fields.PaymentMethod ?? ''
+			}
+		}))
+
+	extendLogContext({ event: 'webhook_received', provider: PSP_ROBOKASSA, eventType: 'result' })
+
+	const result = await settle(event.id, {
+		provider: PaymentProvider.ROBOKASSA,
+		paymentId,
+		pspIntentId: invId,
+		status: IntentStatus.CAPTURED,
+		amount: outSum,
+		currency: 'RUB',
+		method: fields.PaymentMethod === 'SBP' ? PaymentMethod.SBP : PaymentMethod.BANK_CARD,
+		savedMethod: robokassaSavedMethod(fields, invId, intent.pspPayload)
+	})
+
+	if (result.outcome === 'rejected') {
+		throw new BadRequestError(`Robokassa payment rejected: ${result.reason}`)
+	}
+
+	return response
+}
+
+export const robokassaReturnUrl = (query: Record<string, unknown>, outcome: 'success' | 'fail') => {
+	const fields = toStringFields(query ?? {})
+	const paymentId = robokassaPaymentId(fields)
+
+	if (outcome === 'success' && !robokassa.verifyRedirectSignature(fields)) {
+		logger.warn(
+			{ context: 'webhook', provider: PSP_ROBOKASSA, invId: fields.InvId },
+			'robokassa_redirect_signature_invalid'
+		)
+
+		return env.APP_URL
+	}
+
+	return paymentId ? paymentPageUrl(paymentId) : env.APP_URL
 }

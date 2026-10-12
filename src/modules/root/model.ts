@@ -1,6 +1,6 @@
 import { t } from 'elysia'
 
-import { PaymentMethod } from '@prisma/generated/client'
+import { PaymentMethod, PaymentProvider } from '@prisma/generated/client'
 
 import { PrismaEnum } from '~/lib/utils/schema'
 
@@ -23,6 +23,11 @@ const AuthFeature = t.Object(
 )
 
 const PaymentMethodSummary = t.Object({
+	provider: PrismaEnum(PaymentProvider, {
+		description:
+			'Провайдер для поля provider при создании платежа. Выбор определяется парой id и provider.',
+		examples: [PaymentProvider.ROBOKASSA]
+	}),
 	id: PrismaEnum(PaymentMethod, {
 		description: 'Идентификатор способа - передаётся в `method` при создании платежа.',
 		examples: [PaymentMethod.BANK_CARD]

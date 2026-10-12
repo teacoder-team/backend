@@ -2,32 +2,43 @@ import { PaymentMethod, PaymentProvider } from '@prisma/generated/client'
 
 import type { MethodDefinition } from '~/modules/billing/model'
 
-export const PAYMENT_METHODS: Partial<Record<PaymentMethod, MethodDefinition>> = {
-	[PaymentMethod.BANK_CARD]: {
+export const PAYMENT_METHODS: MethodDefinition[] = [
+	{
+		method: PaymentMethod.BANK_CARD,
 		category: 'FIAT',
 		name: 'Банковская карта',
 		description: 'Оплата картой российских банков',
 		provider: PaymentProvider.YOOKASSA
 	},
-	[PaymentMethod.SBP]: {
+	{
+		method: PaymentMethod.SBP,
 		category: 'FIAT',
 		name: 'СБП',
 		description: 'Оплата через Систему быстрых платежей',
 		provider: PaymentProvider.YOOKASSA
 	},
-	[PaymentMethod.INTERNATIONAL_CARD]: {
+	{
+		method: PaymentMethod.BANK_CARD,
+		category: 'FIAT',
+		name: 'Банковские карты РФ и СБП (резервный)',
+		description: 'Если основной способ недоступен',
+		provider: PaymentProvider.ROBOKASSA
+	},
+	{
+		method: PaymentMethod.INTERNATIONAL_CARD,
 		category: 'FIAT',
 		name: 'Иностранные карты',
 		description: 'Оплата картами банков мира',
 		provider: PaymentProvider.PRODAMUS
 	},
-	[PaymentMethod.HELEKET]: {
+	{
+		method: PaymentMethod.CRYPTO,
 		category: 'CRYPTO',
 		name: 'Криптовалюта',
 		description: 'USDT, GRAM, BTC и другие',
 		provider: PaymentProvider.HELEKET
 	}
-}
+]
 
 export const PAYMENT_PROVIDER_NAMES: Record<PaymentProvider, string> = {
 	[PaymentProvider.YOOKASSA]: 'ЮKassa',

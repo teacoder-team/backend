@@ -1,23 +1,19 @@
 import { createHash, timingSafeEqual } from 'node:crypto'
 
-const PAYMENT_URL = 'https://auth.robokassa.ru/Merchant/Payment/Index'
+const PAYMENT_URL = 'https://auth.robokassa.ru/Merchant/Index.aspx'
 const RECURRING_URL = 'https://auth.robokassa.ru/Merchant/Recurring'
+const OPERATION_STATE_URL = 'https://auth.robokassa.ru/Merchant/WebService/Service.asmx/OpStateExt'
 
-const CARD_ONLY = 'BankCard'
+const OPERATION_NOT_FOUND = 3
 
 export type RobokassaHashAlgorithm = 'md5' | 'ripemd160' | 'sha1' | 'sha256' | 'sha384' | 'sha512'
 
 export interface RobokassaClientOptions {
 	merchantLogin: string
-
 	password1: string
-
 	password2: string
-
 	hashAlgorithm: RobokassaHashAlgorithm
-
 	testMode?: boolean
-
 	timeout?: number
 }
 
@@ -42,7 +38,12 @@ export interface ChargeRecurringInput {
 	previousInvoiceId: number
 	amount: number
 	description: string
+	customParams?: Record<string, string>
 }
+
+export type OperationState =
+	| { found: false }
+	| { found: true; stateCode: number; amount: string | null; currency: string | null }
 
 export class RobokassaError extends Error {
 	constructor(
@@ -79,15 +80,41 @@ const extractCustomParams = (data: Params): Record<string, string> => {
 	)
 }
 
+const xmlCode = (xml: string, element: string): number | null => {
+	const match = new RegExp(`<${element}>\\s*<Code>(\\d+)</Code>`).exec(xml)
+
+	return match ? Number(match[1]) : null
+}
+
 const read = (data: Params, key: string) =>
 	data instanceof URLSearchParams ? data.get(key) : data[key]
+
+const validateInvoiceId = (invoiceId: number) => {
+	if (!Number.isSafeInteger(invoiceId) || invoiceId <= 0) {
+		throw new RobokassaError('', 'Invoice ID must be a positive safe integer')
+	}
+}
+
+const formatAmount = (amount: number) => {
+	const minorUnits = Math.round(amount * 100)
+
+	if (
+		!Number.isSafeInteger(minorUnits) ||
+		minorUnits <= 0 ||
+		Math.abs(amount * 100 - minorUnits) > 0.000001
+	) {
+		throw new RobokassaError('', 'Amount must be positive with at most two decimal places')
+	}
+
+	return (minorUnits / 100).toFixed(2)
+}
 
 export const createRobokassaClient = ({
 	merchantLogin,
 	password1,
 	password2,
 	hashAlgorithm,
-	testMode = false,
+	testMode = true,
 	timeout = 15_000
 }: RobokassaClientOptions) => {
 	const signRequest = (parts: (string | number)[], customParams?: Record<string, string>) =>
@@ -110,7 +137,13 @@ export const createRobokassaClient = ({
 	}
 
 	const createInvoiceUrl = (input: CreateInvoiceInput): string => {
-		const outSum = input.amount.toFixed(2)
+		validateInvoiceId(input.invoiceId)
+
+		if (!merchantLogin || !password1) {
+			throw new RobokassaError('', 'Robokassa payment credentials are missing')
+		}
+
+		const outSum = formatAmount(input.amount)
 
 		const signature = signRequest(
 			[merchantLogin, outSum, input.invoiceId, password1],
@@ -124,7 +157,6 @@ export const createRobokassaClient = ({
 			Description: input.description.slice(0, 100),
 			SignatureValue: signature,
 			Culture: 'ru',
-			IncCurrLabel: CARD_ONLY,
 			...(input.email ? { Email: input.email } : {}),
 			...(input.recurring ? { Recurring: 'true' } : {}),
 			...(testMode ? { IsTest: '1' } : {})
@@ -142,9 +174,19 @@ export const createRobokassaClient = ({
 	const verifyRedirectSignature = (query: Params) => verifySignature(query, password1)
 
 	const chargeRecurring = async (input: ChargeRecurringInput): Promise<void> => {
-		const outSum = input.amount.toFixed(2)
+		if (testMode) {
+			throw new RobokassaError('', 'Recurring charges have no test mode')
+		}
 
-		const signature = signRequest([merchantLogin, outSum, input.invoiceId, password1])
+		validateInvoiceId(input.invoiceId)
+		validateInvoiceId(input.previousInvoiceId)
+
+		const outSum = formatAmount(input.amount)
+
+		const signature = signRequest(
+			[merchantLogin, outSum, input.invoiceId, password1],
+			input.customParams
+		)
 
 		const body = new URLSearchParams({
 			MerchantLogin: merchantLogin,
@@ -152,9 +194,12 @@ export const createRobokassaClient = ({
 			PreviousInvoiceID: String(input.previousInvoiceId),
 			Description: input.description.slice(0, 100),
 			OutSum: outSum,
-			SignatureValue: signature,
-			...(testMode ? { IsTest: '1' } : {})
+			SignatureValue: signature
 		})
+
+		for (const key of Object.keys(input.customParams ?? {}).sort()) {
+			body.set(`Shp_${key}`, input.customParams![key])
+		}
 
 		const response = await fetch(RECURRING_URL, {
 			method: 'POST',
@@ -166,11 +211,62 @@ export const createRobokassaClient = ({
 		const text = await response.text()
 
 		if (!response.ok || text.trim() !== `OK${input.invoiceId}`) {
-			throw new RobokassaError(text, `Recurring charge request was rejected: ${text}`)
+			throw new RobokassaError(
+				'',
+				`Recurring charge request was rejected: ${response.status}`
+			)
 		}
 	}
 
-	return { createInvoiceUrl, verifyResultSignature, verifyRedirectSignature, chargeRecurring }
+	const getOperationState = async (invoiceId: number): Promise<OperationState> => {
+		if (testMode) {
+			throw new RobokassaError('', 'Operation state is unavailable in test mode')
+		}
+
+		validateInvoiceId(invoiceId)
+
+		const params = new URLSearchParams({
+			MerchantLogin: merchantLogin,
+			InvoiceID: String(invoiceId),
+			Signature: signRequest([merchantLogin, invoiceId, password2])
+		})
+
+		const response = await fetch(`${OPERATION_STATE_URL}?${params.toString()}`, {
+			signal: AbortSignal.timeout(timeout)
+		})
+
+		const text = await response.text()
+		const resultCode = xmlCode(text, 'Result')
+
+		if (!response.ok || resultCode === null) {
+			throw new RobokassaError('', `Operation state request failed: ${response.status}`)
+		}
+
+		if (resultCode === OPERATION_NOT_FOUND) {
+			return { found: false }
+		}
+
+		const stateCode = xmlCode(text, 'State')
+
+		if (resultCode !== 0 || stateCode === null) {
+			throw new RobokassaError('', `Operation state request was rejected: ${resultCode}`)
+		}
+
+		return {
+			found: true,
+			stateCode,
+			amount: /<OutSum>\s*([0-9]+(?:\.[0-9]+)?)\s*<\/OutSum>/.exec(text)?.[1] ?? null,
+			currency: /<OutCurrLabel>\s*([A-Z]+)\s*<\/OutCurrLabel>/.exec(text)?.[1] ?? null
+		}
+	}
+
+	return {
+		createInvoiceUrl,
+		verifyResultSignature,
+		verifyRedirectSignature,
+		chargeRecurring,
+		getOperationState
+	}
 }
 
 export type RobokassaClient = ReturnType<typeof createRobokassaClient>

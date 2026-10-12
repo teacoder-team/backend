@@ -121,7 +121,8 @@ const envSchema = t.Object({
 	ROBOKASSA_PASSWORD_2: t.String(),
 	ROBOKASSA_TEST_PASSWORD_1: t.String({ default: '' }),
 	ROBOKASSA_TEST_PASSWORD_2: t.String({ default: '' }),
-	ROBOKASSA_TEST_MODE: t.Boolean({ default: false }),
+	ROBOKASSA_TEST_MODE: t.Boolean({ default: true }),
+	ROBOKASSA_RECURRING_ENABLED: t.Boolean({ default: false }),
 	ROBOKASSA_HASH_ALGORITHM: t.Union(
 		[
 			t.Literal('md5'),
@@ -131,7 +132,7 @@ const envSchema = t.Object({
 			t.Literal('sha384'),
 			t.Literal('sha512')
 		],
-		{ default: 'md5' }
+		{ default: 'sha512' }
 	),
 
 	HELEKET_MERCHANT_ID: t.String(),

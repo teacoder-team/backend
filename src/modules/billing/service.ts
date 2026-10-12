@@ -40,14 +40,13 @@ import {
 	enqueueSubscriptionPurchaseEmail,
 	enqueueSubscriptionRenewedEmail
 } from '~/modules/subscription/jobs'
-import { endSubscriptionPeriod } from '~/modules/subscription/repository'
+import { endSubscriptionPeriod, setAutoBilling } from '~/modules/subscription/repository'
 import { nextTerm, PREMIUM_PLAN, premiumAmount } from '~/modules/subscription/service'
 
 import type {
 	CheckoutRequest,
 	CreatePaymentInput,
 	FulfillmentResult,
-	MethodDefinition,
 	ProviderPaymentUpdate,
 	ReplayableIntent,
 	SavedPaymentMethod,
@@ -72,26 +71,26 @@ import {
 
 const CURRENCY = 'RUB'
 
-const definitions = () => Object.entries(PAYMENT_METHODS) as [PaymentMethod, MethodDefinition][]
-
 export const listPaymentMethods = () => ({
 	categories: PAYMENT_CATEGORIES.map(({ id, name }) => ({
 		id,
 		name,
-		methods: definitions()
-			.filter(([, definition]) => definition.category === id)
-			.map(([id, definition]) => ({
-				id,
+		methods: PAYMENT_METHODS.filter((definition) => definition.category === id).map(
+			(definition) => ({
+				id: definition.method,
+				provider: definition.provider,
 				name: definition.name,
 				description: definition.description,
 				isAvailable: true
-			}))
+			})
+		)
 	}))
 })
 
 export const listAvailablePaymentMethods = () =>
-	definitions().map(([id, definition]) => ({
-		id,
+	PAYMENT_METHODS.map((definition) => ({
+		id: definition.method,
+		provider: definition.provider,
 		name: definition.name,
 		description: definition.description
 	}))
@@ -169,6 +168,7 @@ const openCheckout = async (
 		courseId: product.courseId,
 		idempotencyKey,
 		metadata: {
+			checkoutMethod: request.method,
 			email,
 			description: product.description,
 			...(product.courseId ? { courseId: product.courseId } : {}),
@@ -251,11 +251,7 @@ const checkout = async (request: CheckoutRequest, fallbackEmail: string | undefi
 		return toResponse(replay)
 	}
 
-	const provider = PAYMENT_METHODS[request.method]?.provider
-
-	if (!provider) {
-		throw new BadRequestError(`Payment method ${request.method} is not available yet`)
-	}
+	const provider = request.provider
 
 	const product = await resolveProduct(request.courseId ?? undefined, request.method)
 
@@ -283,14 +279,25 @@ export const createPayment = async (
 	input: CreatePaymentInput,
 	idempotencyKey?: string
 ) => {
+	const definition = PAYMENT_METHODS.find(
+		(method) =>
+			method.method === input.method &&
+			(!input.provider || method.provider === input.provider)
+	)
+
+	if (!definition) {
+		throw new BadRequestError('Payment method and provider combination is not available')
+	}
+
 	const request: CheckoutRequest = {
 		userId,
 		method: input.method,
+		provider: definition.provider,
 		courseId: input.courseId ?? null,
 		idempotencyKey
 	}
 
-	extendLogContext({ userId, provider: PAYMENT_METHODS[input.method]?.provider })
+	extendLogContext({ userId, provider: request.provider })
 
 	try {
 		return await withLock(checkoutLockKey(request), CHECKOUT_LOCK_TTL_MS, () =>
@@ -361,6 +368,7 @@ export const getPayment = async (userId: string, paymentId: string) => {
 const findIdempotentReplay = async ({
 	userId,
 	method,
+	provider,
 	courseId,
 	idempotencyKey
 }: CheckoutRequest) => {
@@ -374,14 +382,20 @@ const findIdempotentReplay = async ({
 		return null
 	}
 
-	if (previous.method !== method || previous.courseId !== courseId) {
+	const metadata = previous.metadata as { checkoutMethod?: string } | null
+
+	if (
+		(metadata?.checkoutMethod ?? previous.method) !== method ||
+		previous.provider !== provider ||
+		previous.courseId !== courseId
+	) {
 		throw new ValidationError('Idempotency-Key was already used with different parameters')
 	}
 
 	return previous
 }
 
-const findReusableCheckout = async ({ userId, method, courseId }: CheckoutRequest) => {
+const findReusableCheckout = async ({ userId, method, provider, courseId }: CheckoutRequest) => {
 	const open = await findOpenCheckouts(userId, courseId)
 	const now = Date.now()
 	const stale = open.filter((intent) => isStale(intent, now))
@@ -398,7 +412,9 @@ const findReusableCheckout = async ({ userId, method, courseId }: CheckoutReques
 		)
 	}
 
-	const sameMethod = live.find((intent) => intent.method === method)
+	const sameMethod = live.find(
+		(intent) => intent.method === method && intent.provider === provider
+	)
 
 	if (sameMethod) {
 		return sameMethod
@@ -433,9 +449,11 @@ const rejectionReason = (intent: FulfillableIntent | null, update: ProviderPayme
 }
 
 const capture = async (
-	intent: FulfillableIntent & { courseId: string }
+	intent: FulfillableIntent & { courseId: string },
+	method?: PaymentMethod
 ): Promise<FulfillmentResult> => {
 	const result = await captureCoursePayment({
+		method,
 		id: intent.id,
 		userId: intent.userId,
 		courseId: intent.courseId,
@@ -498,7 +516,7 @@ const keepPaymentMethod = async (
 	invoice: SubscriptionInvoice,
 	saved: SavedPaymentMethod | undefined
 ) => {
-	if (invoice.renewal) {
+	if (invoice.renewal || saved?.provider === PaymentProvider.ROBOKASSA) {
 		return
 	}
 
@@ -514,6 +532,9 @@ const keepPaymentMethod = async (
 	const method = await saveUserPaymentMethod(intent.userId, saved)
 
 	await linkPaymentMethod(intent.id, method.id)
+	await setAutoBilling(intent.userId, true)
+
+	extendLogContext({ event: 'subscription_auto_renew_enabled', userId: intent.userId })
 }
 
 const captureSubscription = async (
@@ -521,8 +542,14 @@ const captureSubscription = async (
 	update: ProviderPaymentUpdate
 ): Promise<FulfillmentResult> => {
 	const invoice = readInvoice(intent.metadata)
-	const captured = await captureSubscriptionPayment(intent.id, intent.userId, (current) =>
-		nextTerm(current, invoice.months)
+	const captured = await captureSubscriptionPayment(
+		intent.id,
+		intent.userId,
+		(current) => nextTerm(current, invoice.months),
+		update.method,
+		!invoice.renewal && update.savedMethod?.provider === PaymentProvider.ROBOKASSA
+			? update.savedMethod
+			: undefined
 	)
 
 	if (captured.result === 'already_captured') {
@@ -591,7 +618,7 @@ const applyToPayment = async (
 ): Promise<FulfillmentResult> => {
 	if (update.status === IntentStatus.CAPTURED) {
 		return intent.courseId
-			? capture({ ...intent, courseId: intent.courseId })
+			? capture({ ...intent, courseId: intent.courseId }, update.method)
 			: captureSubscription(intent, update)
 	}
 
@@ -656,6 +683,7 @@ export const toSavedMethod = (
 	}
 
 	return {
+		provider: PaymentProvider.YOOKASSA,
 		providerId: method.id,
 		type,
 		title: method.title ?? null,
