@@ -3,11 +3,7 @@ import { Elysia, t } from 'elysia'
 import { TAG } from '~/config/openapi'
 import { getForwardedIp } from '~/lib/utils/ip'
 
-import {
-	RobokassaNotificationPayload,
-	RobokassaResultResponse,
-	WebhookAckResponse
-} from './model'
+import { RobokassaNotificationPayload, RobokassaResultResponse, WebhookAckResponse } from './model'
 import {
 	receiveHeleketWebhook,
 	receiveProdamusWebhook,
@@ -74,19 +70,15 @@ export const webhook = new Elysia({ prefix: '/webhook', tags: [TAG.webhooks] })
 			}
 		}
 	)
-	.post(
-		'/robokassa/result',
-		async ({ body }) => await receiveRobokassaResult(body),
-		{
-			body: 'RobokassaNotificationPayload',
-			response: 'RobokassaResultResponse',
-			detail: {
-				summary: 'Уведомления Робокассы (ResultURL)',
-				description:
-					'Робокасса присылает уведомление об успешной оплате методом POST (`application/x-www-form-urlencoded`): `OutSum`, `InvId`, `SignatureValue`, `PaymentMethod` и `Shp_paymentId`. Подпись проверяется Паролем #2, без неё - 400. Сумма сверяется с платежом: оплата курса открывает доступ, оплата подписки продлевает премиум, успешное автосписание продлевает подписку.\n\nПовторное уведомление по тому же `InvId` ничего не начисляет повторно и получает тот же ответ `OK{InvId}`. Оплата подписки картой сохраняет её для автопродления, если рекуррентные платежи включены.'
-			}
+	.post('/robokassa/result', async ({ body }) => await receiveRobokassaResult(body), {
+		body: 'RobokassaNotificationPayload',
+		response: 'RobokassaResultResponse',
+		detail: {
+			summary: 'Уведомления Робокассы (ResultURL)',
+			description:
+				'Робокасса присылает уведомление об успешной оплате методом POST (`application/x-www-form-urlencoded`): `OutSum`, `InvId`, `SignatureValue`, `PaymentMethod` и `Shp_paymentId`. Подпись проверяется Паролем #2, без неё - 400. Сумма сверяется с платежом: оплата курса открывает доступ, оплата подписки продлевает премиум, успешное автосписание продлевает подписку.\n\nПовторное уведомление по тому же `InvId` ничего не начисляет повторно и получает тот же ответ `OK{InvId}`. Оплата подписки картой сохраняет её для автопродления, если рекуррентные платежи включены.'
 		}
-	)
+	})
 	.get(
 		'/robokassa/success',
 		({ query, redirect }) => redirect(robokassaReturnUrl(query, 'success'), 302),

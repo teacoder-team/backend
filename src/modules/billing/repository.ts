@@ -1,4 +1,9 @@
-import { IntentStatus, type PaymentMethod, PaymentProvider, type Prisma } from '@prisma/generated/client'
+import {
+	IntentStatus,
+	type PaymentMethod,
+	PaymentProvider,
+	type Prisma
+} from '@prisma/generated/client'
 
 import { db } from '~/lib/db'
 import { createCoursePurchase, findCoursePurchase } from '~/modules/course/repository'
@@ -184,11 +189,7 @@ export const linkPaymentMethod = (paymentId: string, paymentMethodId: string) =>
 
 const RECURRING_PROVIDERS = [PaymentProvider.YOOKASSA, PaymentProvider.ROBOKASSA]
 
-export const findChargeableMethod = (
-	userId: string,
-	provider?: PaymentProvider,
-	id?: string
-) =>
+export const findChargeableMethod = (userId: string, provider?: PaymentProvider, id?: string) =>
 	db.userPaymentMethod.findFirst({
 		where: { id, userId, provider: provider ?? { in: RECURRING_PROVIDERS }, isActive: true },
 		orderBy: { updatedAt: 'desc' },

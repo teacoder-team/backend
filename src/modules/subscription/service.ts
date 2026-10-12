@@ -33,7 +33,7 @@ export const plannedChargeAt = (expiresAt: Date) => {
 }
 
 export const PREMIUM_PLAN = {
-	amount: 99,
+	amount: 449,
 	months: 1,
 	description: 'Оплата «TeaCoder Premium» на 1 месяц',
 	stars: 150

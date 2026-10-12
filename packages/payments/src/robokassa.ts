@@ -211,7 +211,10 @@ export const createRobokassaClient = ({
 		const text = await response.text()
 
 		if (!response.ok || text.trim() !== `OK${input.invoiceId}`) {
-			throw new RobokassaError('', `Recurring charge request was rejected: ${response.status}`)
+			throw new RobokassaError(
+				'',
+				`Recurring charge request was rejected: ${response.status}`
+			)
 		}
 	}
 

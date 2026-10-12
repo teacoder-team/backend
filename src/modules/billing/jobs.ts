@@ -413,9 +413,7 @@ const startRobokassaAttempt = async (
 	}
 
 	const firstAttempt =
-		attempt > 1
-			? await findPaymentByIdempotencyKey(subscription.userId, renewalKey(job))
-			: null
+		attempt > 1 ? await findPaymentByIdempotencyKey(subscription.userId, renewalKey(job)) : null
 	const method =
 		attempt === 1 || firstAttempt?.paymentMethodId
 			? await findChargeableMethod(

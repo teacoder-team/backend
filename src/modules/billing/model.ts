@@ -13,12 +13,14 @@ import { PrismaEnum } from '~/lib/utils/schema'
 export const CreatePaymentPayload = t.Object(
 	{
 		method: PrismaEnum(PaymentMethod, {
-			description: 'Способ оплаты. CRYPTO — криптовалюта. Для Робокассы передайте BANK_CARD и provider: ROBOKASSA; фактический способ уточняется после оплаты.',
+			description:
+				'Способ оплаты. CRYPTO — криптовалюта. Для Робокассы передайте BANK_CARD и provider: ROBOKASSA; фактический способ уточняется после оплаты.',
 			examples: [PaymentMethod.BANK_CARD, PaymentMethod.CRYPTO]
 		}),
 		provider: t.Optional(
 			PrismaEnum(PaymentProvider, {
-				description: 'Провайдер из списка способов оплаты. Без него для BANK_CARD используется YOOKASSA, для CRYPTO — HELEKET. Недоступные сочетания отклоняются.',
+				description:
+					'Провайдер из списка способов оплаты. Без него для BANK_CARD используется YOOKASSA, для CRYPTO — HELEKET. Недоступные сочетания отклоняются.',
 				examples: [PaymentProvider.ROBOKASSA]
 			})
 		),
@@ -222,7 +224,8 @@ const PaymentMethodCategoryId = t.Union(
 
 const PaymentMethodEntry = t.Object({
 	provider: PrismaEnum(PaymentProvider, {
-		description: 'Передаётся в provider при создании платежа. Выбор определяется парой id и provider.',
+		description:
+			'Передаётся в provider при создании платежа. Выбор определяется парой id и provider.',
 		examples: [PaymentProvider.ROBOKASSA]
 	}),
 	id: PrismaEnum(PaymentMethod, {

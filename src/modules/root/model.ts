@@ -24,7 +24,8 @@ const AuthFeature = t.Object(
 
 const PaymentMethodSummary = t.Object({
 	provider: PrismaEnum(PaymentProvider, {
-		description: 'Провайдер для поля provider при создании платежа. Выбор определяется парой id и provider.',
+		description:
+			'Провайдер для поля provider при создании платежа. Выбор определяется парой id и provider.',
 		examples: [PaymentProvider.ROBOKASSA]
 	}),
 	id: PrismaEnum(PaymentMethod, {

@@ -75,15 +75,15 @@ export const listPaymentMethods = () => ({
 	categories: PAYMENT_CATEGORIES.map(({ id, name }) => ({
 		id,
 		name,
-		methods: PAYMENT_METHODS
-			.filter((definition) => definition.category === id)
-			.map((definition) => ({
+		methods: PAYMENT_METHODS.filter((definition) => definition.category === id).map(
+			(definition) => ({
 				id: definition.method,
 				provider: definition.provider,
 				name: definition.name,
 				description: definition.description,
 				isAvailable: true
-			}))
+			})
+		)
 	}))
 })
 
@@ -281,7 +281,8 @@ export const createPayment = async (
 ) => {
 	const definition = PAYMENT_METHODS.find(
 		(method) =>
-			method.method === input.method && (!input.provider || method.provider === input.provider)
+			method.method === input.method &&
+			(!input.provider || method.provider === input.provider)
 	)
 
 	if (!definition) {
@@ -411,7 +412,9 @@ const findReusableCheckout = async ({ userId, method, provider, courseId }: Chec
 		)
 	}
 
-	const sameMethod = live.find((intent) => intent.method === method && intent.provider === provider)
+	const sameMethod = live.find(
+		(intent) => intent.method === method && intent.provider === provider
+	)
 
 	if (sameMethod) {
 		return sameMethod
