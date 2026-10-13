@@ -47,7 +47,10 @@ const CourseDiscountPrice = t.Nullable(
 )
 
 const CourseLearningOutcomes = t.Array(
-	t.String({ description: 'Чему научится студент.', examples: ['Типизировать функции и классы'] }),
+	t.String({
+		description: 'Чему научится студент.',
+		examples: ['Типизировать функции и классы']
+	}),
 	{
 		description:
 			'Что вы узнаете на курсе: пункты списка в порядке показа. Пустой массив, если не заполнено.'
