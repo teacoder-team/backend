@@ -54,12 +54,6 @@ export const confirmUserEmail = (userId: string, email: string) =>
 export const updateLastLogin = (userId: string) =>
 	db.user.update({ where: { id: userId }, data: { lastLoginAt: new Date() } })
 
-export const updatePasswordHash = (userId: string, passwordHash: string) =>
-	db.passwordCredential.update({
-		where: { userId },
-		data: { passwordHash, changedAt: new Date() }
-	})
-
 export const savePasswordHash = (userId: string, passwordHash: string) =>
 	db.passwordCredential.upsert({
 		where: { userId },

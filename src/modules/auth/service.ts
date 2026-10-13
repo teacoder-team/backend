@@ -53,8 +53,8 @@ import {
 	findUserByEmail,
 	findUserEmail,
 	incrementVerificationAttempts,
-	updateLastLogin,
-	updatePasswordHash
+	savePasswordHash,
+	updateLastLogin
 } from './repository'
 
 export const VERIFICATION_TTL = 15 * 60
@@ -299,7 +299,7 @@ export const resetPassword = async (input: ResetPasswordInput, origin: RequestOr
 		throw new BadRequestError('Reset link expired or invalid')
 	}
 
-	await updatePasswordHash(userId, await hashPassword(input.newPassword))
+	await savePasswordHash(userId, await hashPassword(input.newPassword))
 
 	await revokeAllSessions(userId)
 
