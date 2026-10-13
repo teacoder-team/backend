@@ -281,10 +281,6 @@ export const forgotPassword = async (input: ForgotPasswordInput, ip: string) => 
 		throw new NotFoundError('No account with this email')
 	}
 
-	if (!user.passwordCredential) {
-		throw new BadRequestError('This account has no password - sign in with a social provider')
-	}
-
 	const token = await issuePasswordResetToken(user.id)
 	const url = `${env.APP_URL}/auth/recovery/${token}`
 
