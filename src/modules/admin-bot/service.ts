@@ -422,7 +422,9 @@ export const coursePurchaseMessage = ({
 	const amount = formatMoney(purchase.amount, purchase.currency)
 	const method =
 		PAYMENT_METHODS.find((entry) => entry.method === purchase.method)?.name ?? purchase.method
-	const coursePrice = course ? resolveCoursePrice(course.price, course.discountPrice).payable : null
+	const coursePrice = course
+		? resolveCoursePrice(course.price, course.discountPrice).payable
+		: null
 
 	const courseLine = course
 		? tg`📚 <b><a href="${env.APP_URL}/courses/${course.slug}">${course.title}</a></b>`

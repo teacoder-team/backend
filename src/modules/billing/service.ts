@@ -30,12 +30,12 @@ import {
 } from '~/modules/admin-bot/service'
 import { getUserEmail } from '~/modules/auth/service'
 import { enqueueCoursePurchaseEmail } from '~/modules/course/jobs'
-import { resolveCoursePrice } from '~/modules/course/service'
 import {
 	findCoursePurchase,
 	findCourseSummary,
 	findPurchasableCourse
 } from '~/modules/course/repository'
+import { resolveCoursePrice } from '~/modules/course/service'
 import {
 	enqueueSubscriptionPaymentFailedEmail,
 	enqueueSubscriptionPurchaseEmail,
