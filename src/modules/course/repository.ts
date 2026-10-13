@@ -9,6 +9,7 @@ const courseListSelect = {
 	shortDescription: true,
 	thumbnail: true,
 	price: true,
+	discountPrice: true,
 	accessMode: true,
 	attachment: true,
 	_count: { select: { lessons: { where: { isPublished: true } } } }
@@ -47,6 +48,8 @@ export const findPublishedCourseBySlug = (slug: string) =>
 			thumbnail: true,
 			youtubeUrl: true,
 			price: true,
+			discountPrice: true,
+			learningOutcomes: true,
 			accessMode: true,
 			attachment: true,
 			views: true
@@ -92,7 +95,8 @@ export const findPurchasableCourse = (courseId: string) =>
 		select: {
 			id: true,
 			title: true,
-			price: true
+			price: true,
+			discountPrice: true
 		}
 	})
 

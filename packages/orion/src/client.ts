@@ -45,6 +45,9 @@ export const createOrionClient = ({
 
 	const fileUrl = (tag: OrionTag, fileId: string) => `${baseUrl}/${tag}/${fileId}`
 
+	const resolveUrl = (tag: OrionTag, value: string) =>
+		/^https?:\/\//i.test(value) ? value : fileUrl(tag, value)
+
 	const upload = async (tag: OrionTag, file: File): Promise<UploadedFile> => {
 		const form = new FormData()
 
@@ -76,7 +79,7 @@ export const createOrionClient = ({
 		}
 	}
 
-	return { upload, fileUrl }
+	return { upload, fileUrl, resolveUrl }
 }
 
 export type OrionClient = ReturnType<typeof createOrionClient>

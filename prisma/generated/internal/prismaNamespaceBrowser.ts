@@ -140,6 +140,8 @@ export const CourseScalarFieldEnum = {
   isPublished: 'isPublished',
   accessMode: 'accessMode',
   price: 'price',
+  discountPrice: 'discountPrice',
+  learningOutcomes: 'learningOutcomes',
   views: 'views',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
