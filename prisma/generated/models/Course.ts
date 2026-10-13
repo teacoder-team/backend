@@ -28,11 +28,13 @@ export type AggregateCourse = {
 
 export type CourseAvgAggregateOutputType = {
   price: runtime.Decimal | null
+  discountPrice: runtime.Decimal | null
   views: number | null
 }
 
 export type CourseSumAggregateOutputType = {
   price: runtime.Decimal | null
+  discountPrice: runtime.Decimal | null
   views: number | null
 }
 
@@ -48,6 +50,7 @@ export type CourseMinAggregateOutputType = {
   isPublished: boolean | null
   accessMode: $Enums.CourseAccessMode | null
   price: runtime.Decimal | null
+  discountPrice: runtime.Decimal | null
   views: number | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -65,6 +68,7 @@ export type CourseMaxAggregateOutputType = {
   isPublished: boolean | null
   accessMode: $Enums.CourseAccessMode | null
   price: runtime.Decimal | null
+  discountPrice: runtime.Decimal | null
   views: number | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -82,6 +86,8 @@ export type CourseCountAggregateOutputType = {
   isPublished: number
   accessMode: number
   price: number
+  discountPrice: number
+  learningOutcomes: number
   views: number
   createdAt: number
   updatedAt: number
@@ -91,11 +97,13 @@ export type CourseCountAggregateOutputType = {
 
 export type CourseAvgAggregateInputType = {
   price?: true
+  discountPrice?: true
   views?: true
 }
 
 export type CourseSumAggregateInputType = {
   price?: true
+  discountPrice?: true
   views?: true
 }
 
@@ -111,6 +119,7 @@ export type CourseMinAggregateInputType = {
   isPublished?: true
   accessMode?: true
   price?: true
+  discountPrice?: true
   views?: true
   createdAt?: true
   updatedAt?: true
@@ -128,6 +137,7 @@ export type CourseMaxAggregateInputType = {
   isPublished?: true
   accessMode?: true
   price?: true
+  discountPrice?: true
   views?: true
   createdAt?: true
   updatedAt?: true
@@ -145,6 +155,8 @@ export type CourseCountAggregateInputType = {
   isPublished?: true
   accessMode?: true
   price?: true
+  discountPrice?: true
+  learningOutcomes?: true
   views?: true
   createdAt?: true
   updatedAt?: true
@@ -249,6 +261,8 @@ export type CourseGroupByOutputType = {
   isPublished: boolean
   accessMode: $Enums.CourseAccessMode
   price: runtime.Decimal | null
+  discountPrice: runtime.Decimal | null
+  learningOutcomes: string[]
   views: number
   createdAt: Date
   updatedAt: Date
@@ -289,6 +303,8 @@ export type CourseWhereInput = {
   isPublished?: Prisma.BoolFilter<"Course"> | boolean
   accessMode?: Prisma.EnumCourseAccessModeFilter<"Course"> | $Enums.CourseAccessMode
   price?: Prisma.DecimalNullableFilter<"Course"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  discountPrice?: Prisma.DecimalNullableFilter<"Course"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  learningOutcomes?: Prisma.StringNullableListFilter<"Course">
   views?: Prisma.IntFilter<"Course"> | number
   createdAt?: Prisma.DateTimeFilter<"Course"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Course"> | Date | string
@@ -310,6 +326,8 @@ export type CourseOrderByWithRelationInput = {
   isPublished?: Prisma.SortOrder
   accessMode?: Prisma.SortOrder
   price?: Prisma.SortOrderInput | Prisma.SortOrder
+  discountPrice?: Prisma.SortOrderInput | Prisma.SortOrder
+  learningOutcomes?: Prisma.SortOrder
   views?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -334,6 +352,8 @@ export type CourseWhereUniqueInput = Prisma.AtLeast<{
   isPublished?: Prisma.BoolFilter<"Course"> | boolean
   accessMode?: Prisma.EnumCourseAccessModeFilter<"Course"> | $Enums.CourseAccessMode
   price?: Prisma.DecimalNullableFilter<"Course"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  discountPrice?: Prisma.DecimalNullableFilter<"Course"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  learningOutcomes?: Prisma.StringNullableListFilter<"Course">
   views?: Prisma.IntFilter<"Course"> | number
   createdAt?: Prisma.DateTimeFilter<"Course"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Course"> | Date | string
@@ -355,6 +375,8 @@ export type CourseOrderByWithAggregationInput = {
   isPublished?: Prisma.SortOrder
   accessMode?: Prisma.SortOrder
   price?: Prisma.SortOrderInput | Prisma.SortOrder
+  discountPrice?: Prisma.SortOrderInput | Prisma.SortOrder
+  learningOutcomes?: Prisma.SortOrder
   views?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -380,6 +402,8 @@ export type CourseScalarWhereWithAggregatesInput = {
   isPublished?: Prisma.BoolWithAggregatesFilter<"Course"> | boolean
   accessMode?: Prisma.EnumCourseAccessModeWithAggregatesFilter<"Course"> | $Enums.CourseAccessMode
   price?: Prisma.DecimalNullableWithAggregatesFilter<"Course"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  discountPrice?: Prisma.DecimalNullableWithAggregatesFilter<"Course"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  learningOutcomes?: Prisma.StringNullableListFilter<"Course">
   views?: Prisma.IntWithAggregatesFilter<"Course"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Course"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Course"> | Date | string
@@ -397,6 +421,8 @@ export type CourseCreateInput = {
   isPublished?: boolean
   accessMode?: $Enums.CourseAccessMode
   price?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  discountPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  learningOutcomes?: Prisma.CourseCreatelearningOutcomesInput | string[]
   views?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -418,6 +444,8 @@ export type CourseUncheckedCreateInput = {
   isPublished?: boolean
   accessMode?: $Enums.CourseAccessMode
   price?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  discountPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  learningOutcomes?: Prisma.CourseCreatelearningOutcomesInput | string[]
   views?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -439,6 +467,8 @@ export type CourseUpdateInput = {
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
   accessMode?: Prisma.EnumCourseAccessModeFieldUpdateOperationsInput | $Enums.CourseAccessMode
   price?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  discountPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  learningOutcomes?: Prisma.CourseUpdatelearningOutcomesInput | string[]
   views?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -460,6 +490,8 @@ export type CourseUncheckedUpdateInput = {
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
   accessMode?: Prisma.EnumCourseAccessModeFieldUpdateOperationsInput | $Enums.CourseAccessMode
   price?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  discountPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  learningOutcomes?: Prisma.CourseUpdatelearningOutcomesInput | string[]
   views?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -481,6 +513,8 @@ export type CourseCreateManyInput = {
   isPublished?: boolean
   accessMode?: $Enums.CourseAccessMode
   price?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  discountPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  learningOutcomes?: Prisma.CourseCreatelearningOutcomesInput | string[]
   views?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -498,6 +532,8 @@ export type CourseUpdateManyMutationInput = {
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
   accessMode?: Prisma.EnumCourseAccessModeFieldUpdateOperationsInput | $Enums.CourseAccessMode
   price?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  discountPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  learningOutcomes?: Prisma.CourseUpdatelearningOutcomesInput | string[]
   views?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -515,9 +551,19 @@ export type CourseUncheckedUpdateManyInput = {
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
   accessMode?: Prisma.EnumCourseAccessModeFieldUpdateOperationsInput | $Enums.CourseAccessMode
   price?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  discountPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  learningOutcomes?: Prisma.CourseUpdatelearningOutcomesInput | string[]
   views?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type StringNullableListFilter<$PrismaModel = never> = {
+  equals?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel> | null
+  has?: string | Prisma.StringFieldRefInput<$PrismaModel> | null
+  hasEvery?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
+  hasSome?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
+  isEmpty?: boolean
 }
 
 export type CourseCountOrderByAggregateInput = {
@@ -532,6 +578,8 @@ export type CourseCountOrderByAggregateInput = {
   isPublished?: Prisma.SortOrder
   accessMode?: Prisma.SortOrder
   price?: Prisma.SortOrder
+  discountPrice?: Prisma.SortOrder
+  learningOutcomes?: Prisma.SortOrder
   views?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -539,6 +587,7 @@ export type CourseCountOrderByAggregateInput = {
 
 export type CourseAvgOrderByAggregateInput = {
   price?: Prisma.SortOrder
+  discountPrice?: Prisma.SortOrder
   views?: Prisma.SortOrder
 }
 
@@ -554,6 +603,7 @@ export type CourseMaxOrderByAggregateInput = {
   isPublished?: Prisma.SortOrder
   accessMode?: Prisma.SortOrder
   price?: Prisma.SortOrder
+  discountPrice?: Prisma.SortOrder
   views?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -571,6 +621,7 @@ export type CourseMinOrderByAggregateInput = {
   isPublished?: Prisma.SortOrder
   accessMode?: Prisma.SortOrder
   price?: Prisma.SortOrder
+  discountPrice?: Prisma.SortOrder
   views?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -578,12 +629,17 @@ export type CourseMinOrderByAggregateInput = {
 
 export type CourseSumOrderByAggregateInput = {
   price?: Prisma.SortOrder
+  discountPrice?: Prisma.SortOrder
   views?: Prisma.SortOrder
 }
 
 export type CourseScalarRelationFilter = {
   is?: Prisma.CourseWhereInput
   isNot?: Prisma.CourseWhereInput
+}
+
+export type CourseCreatelearningOutcomesInput = {
+  set: string[]
 }
 
 export type NullableStringFieldUpdateOperationsInput = {
@@ -600,6 +656,11 @@ export type NullableDecimalFieldUpdateOperationsInput = {
   decrement?: runtime.Decimal | runtime.DecimalJsLike | number | string
   multiply?: runtime.Decimal | runtime.DecimalJsLike | number | string
   divide?: runtime.Decimal | runtime.DecimalJsLike | number | string
+}
+
+export type CourseUpdatelearningOutcomesInput = {
+  set?: string[]
+  push?: string | string[]
 }
 
 export type CourseCreateNestedOneWithoutPurchasesInput = {
@@ -670,6 +731,8 @@ export type CourseCreateWithoutPurchasesInput = {
   isPublished?: boolean
   accessMode?: $Enums.CourseAccessMode
   price?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  discountPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  learningOutcomes?: Prisma.CourseCreatelearningOutcomesInput | string[]
   views?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -690,6 +753,8 @@ export type CourseUncheckedCreateWithoutPurchasesInput = {
   isPublished?: boolean
   accessMode?: $Enums.CourseAccessMode
   price?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  discountPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  learningOutcomes?: Prisma.CourseCreatelearningOutcomesInput | string[]
   views?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -726,6 +791,8 @@ export type CourseUpdateWithoutPurchasesInput = {
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
   accessMode?: Prisma.EnumCourseAccessModeFieldUpdateOperationsInput | $Enums.CourseAccessMode
   price?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  discountPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  learningOutcomes?: Prisma.CourseUpdatelearningOutcomesInput | string[]
   views?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -746,6 +813,8 @@ export type CourseUncheckedUpdateWithoutPurchasesInput = {
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
   accessMode?: Prisma.EnumCourseAccessModeFieldUpdateOperationsInput | $Enums.CourseAccessMode
   price?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  discountPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  learningOutcomes?: Prisma.CourseUpdatelearningOutcomesInput | string[]
   views?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -766,6 +835,8 @@ export type CourseCreateWithoutSectionsInput = {
   isPublished?: boolean
   accessMode?: $Enums.CourseAccessMode
   price?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  discountPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  learningOutcomes?: Prisma.CourseCreatelearningOutcomesInput | string[]
   views?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -786,6 +857,8 @@ export type CourseUncheckedCreateWithoutSectionsInput = {
   isPublished?: boolean
   accessMode?: $Enums.CourseAccessMode
   price?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  discountPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  learningOutcomes?: Prisma.CourseCreatelearningOutcomesInput | string[]
   views?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -822,6 +895,8 @@ export type CourseUpdateWithoutSectionsInput = {
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
   accessMode?: Prisma.EnumCourseAccessModeFieldUpdateOperationsInput | $Enums.CourseAccessMode
   price?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  discountPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  learningOutcomes?: Prisma.CourseUpdatelearningOutcomesInput | string[]
   views?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -842,6 +917,8 @@ export type CourseUncheckedUpdateWithoutSectionsInput = {
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
   accessMode?: Prisma.EnumCourseAccessModeFieldUpdateOperationsInput | $Enums.CourseAccessMode
   price?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  discountPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  learningOutcomes?: Prisma.CourseUpdatelearningOutcomesInput | string[]
   views?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -862,6 +939,8 @@ export type CourseCreateWithoutLessonsInput = {
   isPublished?: boolean
   accessMode?: $Enums.CourseAccessMode
   price?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  discountPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  learningOutcomes?: Prisma.CourseCreatelearningOutcomesInput | string[]
   views?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -882,6 +961,8 @@ export type CourseUncheckedCreateWithoutLessonsInput = {
   isPublished?: boolean
   accessMode?: $Enums.CourseAccessMode
   price?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  discountPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  learningOutcomes?: Prisma.CourseCreatelearningOutcomesInput | string[]
   views?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -918,6 +999,8 @@ export type CourseUpdateWithoutLessonsInput = {
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
   accessMode?: Prisma.EnumCourseAccessModeFieldUpdateOperationsInput | $Enums.CourseAccessMode
   price?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  discountPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  learningOutcomes?: Prisma.CourseUpdatelearningOutcomesInput | string[]
   views?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -938,6 +1021,8 @@ export type CourseUncheckedUpdateWithoutLessonsInput = {
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
   accessMode?: Prisma.EnumCourseAccessModeFieldUpdateOperationsInput | $Enums.CourseAccessMode
   price?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  discountPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  learningOutcomes?: Prisma.CourseUpdatelearningOutcomesInput | string[]
   views?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -958,6 +1043,8 @@ export type CourseCreateWithoutDownloadLogsInput = {
   isPublished?: boolean
   accessMode?: $Enums.CourseAccessMode
   price?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  discountPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  learningOutcomes?: Prisma.CourseCreatelearningOutcomesInput | string[]
   views?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -978,6 +1065,8 @@ export type CourseUncheckedCreateWithoutDownloadLogsInput = {
   isPublished?: boolean
   accessMode?: $Enums.CourseAccessMode
   price?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  discountPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  learningOutcomes?: Prisma.CourseCreatelearningOutcomesInput | string[]
   views?: number
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1014,6 +1103,8 @@ export type CourseUpdateWithoutDownloadLogsInput = {
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
   accessMode?: Prisma.EnumCourseAccessModeFieldUpdateOperationsInput | $Enums.CourseAccessMode
   price?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  discountPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  learningOutcomes?: Prisma.CourseUpdatelearningOutcomesInput | string[]
   views?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1034,6 +1125,8 @@ export type CourseUncheckedUpdateWithoutDownloadLogsInput = {
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
   accessMode?: Prisma.EnumCourseAccessModeFieldUpdateOperationsInput | $Enums.CourseAccessMode
   price?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  discountPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  learningOutcomes?: Prisma.CourseUpdatelearningOutcomesInput | string[]
   views?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1112,6 +1205,8 @@ export type CourseSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   isPublished?: boolean
   accessMode?: boolean
   price?: boolean
+  discountPrice?: boolean
+  learningOutcomes?: boolean
   views?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1134,6 +1229,8 @@ export type CourseSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   isPublished?: boolean
   accessMode?: boolean
   price?: boolean
+  discountPrice?: boolean
+  learningOutcomes?: boolean
   views?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1151,6 +1248,8 @@ export type CourseSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   isPublished?: boolean
   accessMode?: boolean
   price?: boolean
+  discountPrice?: boolean
+  learningOutcomes?: boolean
   views?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1168,12 +1267,14 @@ export type CourseSelectScalar = {
   isPublished?: boolean
   accessMode?: boolean
   price?: boolean
+  discountPrice?: boolean
+  learningOutcomes?: boolean
   views?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type CourseOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "slug" | "shortDescription" | "fullDescription" | "thumbnail" | "youtubeUrl" | "attachment" | "isPublished" | "accessMode" | "price" | "views" | "createdAt" | "updatedAt", ExtArgs["result"]["course"]>
+export type CourseOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "slug" | "shortDescription" | "fullDescription" | "thumbnail" | "youtubeUrl" | "attachment" | "isPublished" | "accessMode" | "price" | "discountPrice" | "learningOutcomes" | "views" | "createdAt" | "updatedAt", ExtArgs["result"]["course"]>
 export type CourseInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   lessons?: boolean | Prisma.Course$lessonsArgs<ExtArgs>
   sections?: boolean | Prisma.Course$sectionsArgs<ExtArgs>
@@ -1204,6 +1305,8 @@ export type $CoursePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     isPublished: boolean
     accessMode: $Enums.CourseAccessMode
     price: runtime.Decimal | null
+    discountPrice: runtime.Decimal | null
+    learningOutcomes: string[]
     views: number
     createdAt: Date
     updatedAt: Date
@@ -1645,6 +1748,8 @@ export interface CourseFieldRefs {
   readonly isPublished: Prisma.FieldRef<"Course", 'Boolean'>
   readonly accessMode: Prisma.FieldRef<"Course", 'CourseAccessMode'>
   readonly price: Prisma.FieldRef<"Course", 'Decimal'>
+  readonly discountPrice: Prisma.FieldRef<"Course", 'Decimal'>
+  readonly learningOutcomes: Prisma.FieldRef<"Course", 'String[]'>
   readonly views: Prisma.FieldRef<"Course", 'Int'>
   readonly createdAt: Prisma.FieldRef<"Course", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Course", 'DateTime'>

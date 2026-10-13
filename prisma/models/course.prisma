@@ -16,7 +16,10 @@ model Course {
 
     accessMode CourseAccessMode @default(PREMIUM) @map("access_mode")
 
-    price Decimal? @db.Decimal(10, 2)
+    price         Decimal? @db.Decimal(10, 2)
+    discountPrice Decimal? @map("discount_price") @db.Decimal(10, 2)
+
+    learningOutcomes String[] @default([]) @map("learning_outcomes")
 
     views Int @default(0)
 

@@ -4,7 +4,7 @@ import { CourseAccessMode, LessonAccess, type Prisma } from '@prisma/generated/c
 
 import { env } from '~/config/env'
 import { ForbiddenError, InternalError, NotFoundError } from '~/lib/errors'
-import { orion } from '~/lib/integrations/orion'
+import { orion, orionUrl } from '~/lib/integrations/orion'
 import { logger } from '~/lib/logger'
 import { redis } from '~/lib/redis'
 import { findCompletedLessonIds } from '~/modules/progress/repository'
@@ -26,7 +26,30 @@ const VIEW_DEDUP_TTL = 30 * 60
 const DOWNLOAD_LINK_TTL = 5 * 60
 const UPSTREAM_TIMEOUT_MS = 30_000
 
-const toPrice = (price: Prisma.Decimal | null) => (price?.gt(0) ? price.toNumber() : null)
+export const resolveCoursePrice = (
+	price: Prisma.Decimal | null,
+	discountPrice: Prisma.Decimal | null
+) => {
+	if (!price?.gt(0)) {
+		return { price: null, discountPrice: null, payable: null }
+	}
+
+	if (discountPrice?.gt(0) && discountPrice.lt(price)) {
+		return {
+			price: price.toNumber(),
+			discountPrice: discountPrice.toNumber(),
+			payable: discountPrice.toNumber()
+		}
+	}
+
+	return { price: price.toNumber(), discountPrice: null, payable: price.toNumber() }
+}
+
+const publicPrices = (price: Prisma.Decimal | null, discountPrice: Prisma.Decimal | null) => {
+	const resolved = resolveCoursePrice(price, discountPrice)
+
+	return { price: resolved.price, discountPrice: resolved.discountPrice }
+}
 
 const viewDedupKey = (courseId: string, ip: string) => `course:view:${courseId}:${ip}`
 const downloadKey = (token: string) => `course:materials:${token}`
@@ -54,11 +77,13 @@ const findCourse = async (slug: string) => {
 const toCourseListItem = ({
 	_count,
 	price,
+	discountPrice,
 	attachment,
 	...course
 }: Awaited<ReturnType<typeof listPublishedCourses>>[number]) => ({
 	...course,
-	price: toPrice(price),
+	thumbnail: orionUrl('courses', course.thumbnail),
+	...publicPrices(price, discountPrice),
 	hasMaterials: Boolean(attachment),
 	lessons: _count.lessons
 })
@@ -77,7 +102,7 @@ export const getCourseLibrary = async (userId: string) => {
 }
 
 export const getCourseBySlug = async (slug: string, ip: string, userId: string | null) => {
-	const { attachment, price, ...course } = await findCourse(slug)
+	const { attachment, price, discountPrice, ...course } = await findCourse(slug)
 
 	void registerView(course.id, ip).catch((err) => {
 		logger.warn({ err, courseId: course.id }, 'course_view_increment_failed')
@@ -85,7 +110,8 @@ export const getCourseBySlug = async (slug: string, ip: string, userId: string |
 
 	return {
 		...course,
-		price: toPrice(price),
+		thumbnail: orionUrl('courses', course.thumbnail),
+		...publicPrices(price, discountPrice),
 		hasMaterials: Boolean(attachment),
 		access: await resolveCourseAccess(userId, course)
 	}
@@ -178,9 +204,7 @@ export const openMaterialsDownload = async (token: string, ip: string, userAgent
 		throw new NotFoundError('This course has no materials')
 	}
 
-	const source = course.attachment.startsWith('http')
-		? course.attachment
-		: orion.fileUrl('attachments', course.attachment)
+	const source = orion.resolveUrl('attachments', course.attachment)
 
 	const upstream = await fetch(source, {
 		signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS)

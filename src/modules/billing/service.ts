@@ -30,6 +30,7 @@ import {
 } from '~/modules/admin-bot/service'
 import { getUserEmail } from '~/modules/auth/service'
 import { enqueueCoursePurchaseEmail } from '~/modules/course/jobs'
+import { resolveCoursePrice } from '~/modules/course/service'
 import {
 	findCoursePurchase,
 	findCourseSummary,
@@ -115,9 +116,15 @@ const resolveProduct = async (
 		throw new NotFoundError('Course not found or not for sale')
 	}
 
+	const { payable: price } = resolveCoursePrice(course.price, course.discountPrice)
+
+	if (price === null) {
+		throw new NotFoundError('Course not found or not for sale')
+	}
+
 	return {
 		kind: 'course',
-		amount: Number(course.price),
+		amount: price,
 		description: `Покупка курса «${course.title}»`,
 		courseId: course.id
 	}

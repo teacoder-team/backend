@@ -4,7 +4,7 @@ import { isProduction } from '~/config/env'
 import { cache } from '~/lib/cache'
 import { isDisposableEmail } from '~/lib/datasets/disposable-emails'
 import { BadRequestError, ConflictError, NotFoundError, UnauthorizedError } from '~/lib/errors'
-import { orion } from '~/lib/integrations/orion'
+import { orion, orionUrl } from '~/lib/integrations/orion'
 import { extendLogContext } from '~/lib/logger'
 import { redis } from '~/lib/redis'
 import { hashPassword, verifyPassword } from '~/lib/security/hash'
@@ -65,7 +65,7 @@ export const getCurrentUser = async (userId: string) => {
 		id: user.id,
 		username: user.username,
 		displayName: user.displayName,
-		avatar: user.avatar,
+		avatar: orionUrl('avatars', user.avatar),
 		email,
 		role: user.role,
 		status: user.status,
@@ -197,9 +197,9 @@ export const confirmPasswordChange = async (
 }
 
 export const updateAvatar = async (userId: string, input: AvatarUploadInput) => {
-	const { url: avatar } = await orion.upload('avatars', input.file)
+	const { fileId, url: avatar } = await orion.upload('avatars', input.file)
 
-	await updateAvatarRecord(userId, avatar)
+	await updateAvatarRecord(userId, fileId)
 
 	extendLogContext({ event: 'avatar_updated', userId })
 
@@ -281,6 +281,7 @@ export const getCourseProgress = async (userId: string) => {
 
 			return {
 				...course,
+				thumbnail: orionUrl('courses', course.thumbnail),
 				totalLessons: lessons.length,
 				completedLessons,
 				progress: percent(completedLessons, lessons.length),
@@ -300,6 +301,7 @@ export const getLeaders = async () =>
 
 		return leaders.map(({ subscription, ...user }) => ({
 			...user,
+			avatar: orionUrl('avatars', user.avatar),
 			rank: leaders.findIndex((leader) => leader.points === user.points) + 1,
 			isPremium: isPremium(subscription)
 		}))

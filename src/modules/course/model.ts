@@ -33,9 +33,25 @@ const CourseThumbnail = t.Nullable(
 const CoursePrice = t.Nullable(
 	t.Number({
 		description:
-			'Цена разовой покупки в рублях, если курс платный. `null` - бесплатный курс (платные уроки в нём, если есть, открываются подпиской).',
+			'Цена разовой покупки в рублях без скидки, если курс платный. Пока действует скидка, списывается `discountPrice`. `null` - бесплатный курс (платные уроки в нём, если есть, открываются подпиской).',
 		examples: [1990]
 	})
+)
+
+const CourseDiscountPrice = t.Nullable(
+	t.Number({
+		description:
+			'Цена со скидкой в рублях: именно она списывается при оплате, пока скидка действует, и всегда ниже `price`. `null` - скидки нет, платите `price`.',
+		examples: [1490]
+	})
+)
+
+const CourseLearningOutcomes = t.Array(
+	t.String({ description: 'Чему научится студент.', examples: ['Типизировать функции и классы'] }),
+	{
+		description:
+			'Что вы узнаете на курсе: пункты списка в порядке показа. Пустой массив, если не заполнено.'
+	}
 )
 
 const CourseAccessModeSchema = PrismaEnum(CourseAccessMode, {
@@ -57,6 +73,7 @@ export const CourseListItem = t.Object(
 		shortDescription: CourseShortDescription,
 		thumbnail: CourseThumbnail,
 		price: CoursePrice,
+		discountPrice: CourseDiscountPrice,
 		accessMode: CourseAccessModeSchema,
 		hasMaterials: HasMaterials,
 		lessons: t.Number({ description: 'Количество опубликованных уроков.', examples: [10] })
@@ -113,6 +130,8 @@ export const CourseResponse = t.Object(
 			})
 		),
 		price: CoursePrice,
+		discountPrice: CourseDiscountPrice,
+		learningOutcomes: CourseLearningOutcomes,
 		accessMode: CourseAccessModeSchema,
 		hasMaterials: HasMaterials,
 		access: CourseAccessResponse,

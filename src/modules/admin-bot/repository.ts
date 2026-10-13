@@ -45,7 +45,7 @@ export type PurchaseDetails = NonNullable<Awaited<ReturnType<typeof findPurchase
 export const findPurchasedCourse = (courseId: string) =>
 	db.course.findUnique({
 		where: { id: courseId },
-		select: { title: true, slug: true, price: true }
+		select: { title: true, slug: true, price: true, discountPrice: true }
 	})
 
 export type PurchasedCourse = NonNullable<Awaited<ReturnType<typeof findPurchasedCourse>>>

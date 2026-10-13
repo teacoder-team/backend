@@ -1,4 +1,5 @@
 import { env } from '~/config/env'
+import { orionUrl } from '~/lib/integrations/orion'
 import { sendMail } from '~/lib/mail/client'
 import CoursePurchase from '~/lib/mail/templates/CoursePurchase'
 import { emailQueue } from '~/lib/queue/queues'
@@ -30,7 +31,7 @@ export const courseEmailJobs: JobHandlers<CourseEmailJobs> = {
 			template: CoursePurchase({
 				username: user.displayName,
 				courseTitle: course.title,
-				courseThumbnail: `${env.ORION_API_URL}/courses/${course.thumbnail}`,
+				courseThumbnail: orionUrl('courses', course.thumbnail) ?? undefined,
 				courseUrl: `${env.APP_URL}/courses/${course.slug}`
 			}),
 			sender: 'noreply'
