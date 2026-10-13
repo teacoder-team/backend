@@ -168,7 +168,7 @@ export const auth = new Elysia({ prefix: '/auth', tags: [TAG.auth] })
 		async ({ body, ip }) => {
 			await forgotPassword(body, ip)
 
-			return { message: 'If that email exists, a reset code has been sent' }
+			return { message: 'Password reset link has been sent to your email' }
 		},
 		{
 			body: 'ForgotPasswordPayload',
@@ -176,7 +176,7 @@ export const auth = new Elysia({ prefix: '/auth', tags: [TAG.auth] })
 			detail: {
 				summary: 'Запрос сброса пароля',
 				description:
-					'Отправляет на почту ссылку для сброса пароля: `{APP_URL}/auth/recovery/{token}`, действует 30 минут, новая ссылка отменяет прежнюю. Отвечает одинаково независимо от того, есть ли такой аккаунт, - так нельзя узнать, зарегистрирована ли почта. Требует токен капчи, если она включена.'
+					'Отправляет на почту ссылку для сброса пароля: `{APP_URL}/auth/recovery/{token}`, действует 30 минут, новая ссылка отменяет прежнюю. Если аккаунта с такой почтой нет - 404, если почта не подтверждена или у аккаунта нет пароля (вход только через соцсеть) - 400. Требует токен капчи, если она включена.'
 			}
 		}
 	)

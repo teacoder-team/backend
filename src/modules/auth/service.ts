@@ -277,8 +277,12 @@ export const forgotPassword = async (input: ForgotPasswordInput, ip: string) => 
 	const email = normalizeEmail(input.email)
 	const user = await findUserByEmail(email)
 
-	if (!user || user.status !== UserStatus.ACTIVE || !user.passwordCredential) {
-		return
+	if (!user) {
+		throw new NotFoundError('No account with this email')
+	}
+
+	if (!user.passwordCredential) {
+		throw new BadRequestError('This account has no password - sign in with a social provider')
 	}
 
 	const token = await issuePasswordResetToken(user.id)
