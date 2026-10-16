@@ -41,6 +41,7 @@ export type LessonMinAggregateOutputType = {
   description: string | null
   position: number | null
   kinescopeId: string | null
+  homeworkTask: string | null
   access: $Enums.LessonAccess | null
   isPublished: boolean | null
   courseId: string | null
@@ -57,6 +58,7 @@ export type LessonMaxAggregateOutputType = {
   description: string | null
   position: number | null
   kinescopeId: string | null
+  homeworkTask: string | null
   access: $Enums.LessonAccess | null
   isPublished: boolean | null
   courseId: string | null
@@ -73,6 +75,9 @@ export type LessonCountAggregateOutputType = {
   description: number
   position: number
   kinescopeId: number
+  resources: number
+  homeworkTask: number
+  homeworkChecklist: number
   access: number
   isPublished: number
   courseId: number
@@ -99,6 +104,7 @@ export type LessonMinAggregateInputType = {
   description?: true
   position?: true
   kinescopeId?: true
+  homeworkTask?: true
   access?: true
   isPublished?: true
   courseId?: true
@@ -115,6 +121,7 @@ export type LessonMaxAggregateInputType = {
   description?: true
   position?: true
   kinescopeId?: true
+  homeworkTask?: true
   access?: true
   isPublished?: true
   courseId?: true
@@ -131,6 +138,9 @@ export type LessonCountAggregateInputType = {
   description?: true
   position?: true
   kinescopeId?: true
+  resources?: true
+  homeworkTask?: true
+  homeworkChecklist?: true
   access?: true
   isPublished?: true
   courseId?: true
@@ -234,6 +244,9 @@ export type LessonGroupByOutputType = {
   description: string | null
   position: number
   kinescopeId: string | null
+  resources: runtime.JsonValue
+  homeworkTask: string | null
+  homeworkChecklist: string[]
   access: $Enums.LessonAccess
   isPublished: boolean
   courseId: string
@@ -273,6 +286,9 @@ export type LessonWhereInput = {
   description?: Prisma.StringNullableFilter<"Lesson"> | string | null
   position?: Prisma.IntFilter<"Lesson"> | number
   kinescopeId?: Prisma.StringNullableFilter<"Lesson"> | string | null
+  resources?: Prisma.JsonFilter<"Lesson">
+  homeworkTask?: Prisma.StringNullableFilter<"Lesson"> | string | null
+  homeworkChecklist?: Prisma.StringNullableListFilter<"Lesson">
   access?: Prisma.EnumLessonAccessFilter<"Lesson"> | $Enums.LessonAccess
   isPublished?: Prisma.BoolFilter<"Lesson"> | boolean
   courseId?: Prisma.StringFilter<"Lesson"> | string
@@ -292,6 +308,9 @@ export type LessonOrderByWithRelationInput = {
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   position?: Prisma.SortOrder
   kinescopeId?: Prisma.SortOrderInput | Prisma.SortOrder
+  resources?: Prisma.SortOrder
+  homeworkTask?: Prisma.SortOrderInput | Prisma.SortOrder
+  homeworkChecklist?: Prisma.SortOrder
   access?: Prisma.SortOrder
   isPublished?: Prisma.SortOrder
   courseId?: Prisma.SortOrder
@@ -314,6 +333,9 @@ export type LessonWhereUniqueInput = Prisma.AtLeast<{
   description?: Prisma.StringNullableFilter<"Lesson"> | string | null
   position?: Prisma.IntFilter<"Lesson"> | number
   kinescopeId?: Prisma.StringNullableFilter<"Lesson"> | string | null
+  resources?: Prisma.JsonFilter<"Lesson">
+  homeworkTask?: Prisma.StringNullableFilter<"Lesson"> | string | null
+  homeworkChecklist?: Prisma.StringNullableListFilter<"Lesson">
   access?: Prisma.EnumLessonAccessFilter<"Lesson"> | $Enums.LessonAccess
   isPublished?: Prisma.BoolFilter<"Lesson"> | boolean
   courseId?: Prisma.StringFilter<"Lesson"> | string
@@ -333,6 +355,9 @@ export type LessonOrderByWithAggregationInput = {
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   position?: Prisma.SortOrder
   kinescopeId?: Prisma.SortOrderInput | Prisma.SortOrder
+  resources?: Prisma.SortOrder
+  homeworkTask?: Prisma.SortOrderInput | Prisma.SortOrder
+  homeworkChecklist?: Prisma.SortOrder
   access?: Prisma.SortOrder
   isPublished?: Prisma.SortOrder
   courseId?: Prisma.SortOrder
@@ -357,6 +382,9 @@ export type LessonScalarWhereWithAggregatesInput = {
   description?: Prisma.StringNullableWithAggregatesFilter<"Lesson"> | string | null
   position?: Prisma.IntWithAggregatesFilter<"Lesson"> | number
   kinescopeId?: Prisma.StringNullableWithAggregatesFilter<"Lesson"> | string | null
+  resources?: Prisma.JsonWithAggregatesFilter<"Lesson">
+  homeworkTask?: Prisma.StringNullableWithAggregatesFilter<"Lesson"> | string | null
+  homeworkChecklist?: Prisma.StringNullableListFilter<"Lesson">
   access?: Prisma.EnumLessonAccessWithAggregatesFilter<"Lesson"> | $Enums.LessonAccess
   isPublished?: Prisma.BoolWithAggregatesFilter<"Lesson"> | boolean
   courseId?: Prisma.StringWithAggregatesFilter<"Lesson"> | string
@@ -373,6 +401,9 @@ export type LessonCreateInput = {
   description?: string | null
   position: number
   kinescopeId?: string | null
+  resources?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  homeworkTask?: string | null
+  homeworkChecklist?: Prisma.LessonCreatehomeworkChecklistInput | string[]
   access?: $Enums.LessonAccess
   isPublished?: boolean
   createdAt?: Date | string
@@ -389,6 +420,9 @@ export type LessonUncheckedCreateInput = {
   description?: string | null
   position: number
   kinescopeId?: string | null
+  resources?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  homeworkTask?: string | null
+  homeworkChecklist?: Prisma.LessonCreatehomeworkChecklistInput | string[]
   access?: $Enums.LessonAccess
   isPublished?: boolean
   courseId: string
@@ -406,6 +440,9 @@ export type LessonUpdateInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
   kinescopeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resources?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  homeworkTask?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  homeworkChecklist?: Prisma.LessonUpdatehomeworkChecklistInput | string[]
   access?: Prisma.EnumLessonAccessFieldUpdateOperationsInput | $Enums.LessonAccess
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -422,6 +459,9 @@ export type LessonUncheckedUpdateInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
   kinescopeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resources?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  homeworkTask?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  homeworkChecklist?: Prisma.LessonUpdatehomeworkChecklistInput | string[]
   access?: Prisma.EnumLessonAccessFieldUpdateOperationsInput | $Enums.LessonAccess
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
   courseId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -439,6 +479,9 @@ export type LessonCreateManyInput = {
   description?: string | null
   position: number
   kinescopeId?: string | null
+  resources?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  homeworkTask?: string | null
+  homeworkChecklist?: Prisma.LessonCreatehomeworkChecklistInput | string[]
   access?: $Enums.LessonAccess
   isPublished?: boolean
   courseId: string
@@ -455,6 +498,9 @@ export type LessonUpdateManyMutationInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
   kinescopeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resources?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  homeworkTask?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  homeworkChecklist?: Prisma.LessonUpdatehomeworkChecklistInput | string[]
   access?: Prisma.EnumLessonAccessFieldUpdateOperationsInput | $Enums.LessonAccess
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -468,6 +514,9 @@ export type LessonUncheckedUpdateManyInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
   kinescopeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resources?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  homeworkTask?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  homeworkChecklist?: Prisma.LessonUpdatehomeworkChecklistInput | string[]
   access?: Prisma.EnumLessonAccessFieldUpdateOperationsInput | $Enums.LessonAccess
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
   courseId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -494,6 +543,9 @@ export type LessonCountOrderByAggregateInput = {
   description?: Prisma.SortOrder
   position?: Prisma.SortOrder
   kinescopeId?: Prisma.SortOrder
+  resources?: Prisma.SortOrder
+  homeworkTask?: Prisma.SortOrder
+  homeworkChecklist?: Prisma.SortOrder
   access?: Prisma.SortOrder
   isPublished?: Prisma.SortOrder
   courseId?: Prisma.SortOrder
@@ -514,6 +566,7 @@ export type LessonMaxOrderByAggregateInput = {
   description?: Prisma.SortOrder
   position?: Prisma.SortOrder
   kinescopeId?: Prisma.SortOrder
+  homeworkTask?: Prisma.SortOrder
   access?: Prisma.SortOrder
   isPublished?: Prisma.SortOrder
   courseId?: Prisma.SortOrder
@@ -530,6 +583,7 @@ export type LessonMinOrderByAggregateInput = {
   description?: Prisma.SortOrder
   position?: Prisma.SortOrder
   kinescopeId?: Prisma.SortOrder
+  homeworkTask?: Prisma.SortOrder
   access?: Prisma.SortOrder
   isPublished?: Prisma.SortOrder
   courseId?: Prisma.SortOrder
@@ -632,6 +686,15 @@ export type LessonUncheckedUpdateManyWithoutSectionNestedInput = {
   deleteMany?: Prisma.LessonScalarWhereInput | Prisma.LessonScalarWhereInput[]
 }
 
+export type LessonCreatehomeworkChecklistInput = {
+  set: string[]
+}
+
+export type LessonUpdatehomeworkChecklistInput = {
+  set?: string[]
+  push?: string | string[]
+}
+
 export type EnumLessonAccessFieldUpdateOperationsInput = {
   set?: $Enums.LessonAccess
 }
@@ -657,6 +720,9 @@ export type LessonCreateWithoutCourseInput = {
   description?: string | null
   position: number
   kinescopeId?: string | null
+  resources?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  homeworkTask?: string | null
+  homeworkChecklist?: Prisma.LessonCreatehomeworkChecklistInput | string[]
   access?: $Enums.LessonAccess
   isPublished?: boolean
   createdAt?: Date | string
@@ -672,6 +738,9 @@ export type LessonUncheckedCreateWithoutCourseInput = {
   description?: string | null
   position: number
   kinescopeId?: string | null
+  resources?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  homeworkTask?: string | null
+  homeworkChecklist?: Prisma.LessonCreatehomeworkChecklistInput | string[]
   access?: $Enums.LessonAccess
   isPublished?: boolean
   sectionId?: string | null
@@ -717,6 +786,9 @@ export type LessonScalarWhereInput = {
   description?: Prisma.StringNullableFilter<"Lesson"> | string | null
   position?: Prisma.IntFilter<"Lesson"> | number
   kinescopeId?: Prisma.StringNullableFilter<"Lesson"> | string | null
+  resources?: Prisma.JsonFilter<"Lesson">
+  homeworkTask?: Prisma.StringNullableFilter<"Lesson"> | string | null
+  homeworkChecklist?: Prisma.StringNullableListFilter<"Lesson">
   access?: Prisma.EnumLessonAccessFilter<"Lesson"> | $Enums.LessonAccess
   isPublished?: Prisma.BoolFilter<"Lesson"> | boolean
   courseId?: Prisma.StringFilter<"Lesson"> | string
@@ -733,6 +805,9 @@ export type LessonCreateWithoutSectionInput = {
   description?: string | null
   position: number
   kinescopeId?: string | null
+  resources?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  homeworkTask?: string | null
+  homeworkChecklist?: Prisma.LessonCreatehomeworkChecklistInput | string[]
   access?: $Enums.LessonAccess
   isPublished?: boolean
   createdAt?: Date | string
@@ -748,6 +823,9 @@ export type LessonUncheckedCreateWithoutSectionInput = {
   description?: string | null
   position: number
   kinescopeId?: string | null
+  resources?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  homeworkTask?: string | null
+  homeworkChecklist?: Prisma.LessonCreatehomeworkChecklistInput | string[]
   access?: $Enums.LessonAccess
   isPublished?: boolean
   courseId: string
@@ -789,6 +867,9 @@ export type LessonCreateWithoutUserProgressInput = {
   description?: string | null
   position: number
   kinescopeId?: string | null
+  resources?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  homeworkTask?: string | null
+  homeworkChecklist?: Prisma.LessonCreatehomeworkChecklistInput | string[]
   access?: $Enums.LessonAccess
   isPublished?: boolean
   createdAt?: Date | string
@@ -804,6 +885,9 @@ export type LessonUncheckedCreateWithoutUserProgressInput = {
   description?: string | null
   position: number
   kinescopeId?: string | null
+  resources?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  homeworkTask?: string | null
+  homeworkChecklist?: Prisma.LessonCreatehomeworkChecklistInput | string[]
   access?: $Enums.LessonAccess
   isPublished?: boolean
   courseId: string
@@ -836,6 +920,9 @@ export type LessonUpdateWithoutUserProgressInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
   kinescopeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resources?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  homeworkTask?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  homeworkChecklist?: Prisma.LessonUpdatehomeworkChecklistInput | string[]
   access?: Prisma.EnumLessonAccessFieldUpdateOperationsInput | $Enums.LessonAccess
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -851,6 +938,9 @@ export type LessonUncheckedUpdateWithoutUserProgressInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
   kinescopeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resources?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  homeworkTask?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  homeworkChecklist?: Prisma.LessonUpdatehomeworkChecklistInput | string[]
   access?: Prisma.EnumLessonAccessFieldUpdateOperationsInput | $Enums.LessonAccess
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
   courseId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -867,6 +957,9 @@ export type LessonCreateManyCourseInput = {
   description?: string | null
   position: number
   kinescopeId?: string | null
+  resources?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  homeworkTask?: string | null
+  homeworkChecklist?: Prisma.LessonCreatehomeworkChecklistInput | string[]
   access?: $Enums.LessonAccess
   isPublished?: boolean
   sectionId?: string | null
@@ -882,6 +975,9 @@ export type LessonUpdateWithoutCourseInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
   kinescopeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resources?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  homeworkTask?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  homeworkChecklist?: Prisma.LessonUpdatehomeworkChecklistInput | string[]
   access?: Prisma.EnumLessonAccessFieldUpdateOperationsInput | $Enums.LessonAccess
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -897,6 +993,9 @@ export type LessonUncheckedUpdateWithoutCourseInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
   kinescopeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resources?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  homeworkTask?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  homeworkChecklist?: Prisma.LessonUpdatehomeworkChecklistInput | string[]
   access?: Prisma.EnumLessonAccessFieldUpdateOperationsInput | $Enums.LessonAccess
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sectionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -913,6 +1012,9 @@ export type LessonUncheckedUpdateManyWithoutCourseInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
   kinescopeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resources?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  homeworkTask?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  homeworkChecklist?: Prisma.LessonUpdatehomeworkChecklistInput | string[]
   access?: Prisma.EnumLessonAccessFieldUpdateOperationsInput | $Enums.LessonAccess
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sectionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -928,6 +1030,9 @@ export type LessonCreateManySectionInput = {
   description?: string | null
   position: number
   kinescopeId?: string | null
+  resources?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  homeworkTask?: string | null
+  homeworkChecklist?: Prisma.LessonCreatehomeworkChecklistInput | string[]
   access?: $Enums.LessonAccess
   isPublished?: boolean
   courseId: string
@@ -942,6 +1047,9 @@ export type LessonUpdateWithoutSectionInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
   kinescopeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resources?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  homeworkTask?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  homeworkChecklist?: Prisma.LessonUpdatehomeworkChecklistInput | string[]
   access?: Prisma.EnumLessonAccessFieldUpdateOperationsInput | $Enums.LessonAccess
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -957,6 +1065,9 @@ export type LessonUncheckedUpdateWithoutSectionInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
   kinescopeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resources?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  homeworkTask?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  homeworkChecklist?: Prisma.LessonUpdatehomeworkChecklistInput | string[]
   access?: Prisma.EnumLessonAccessFieldUpdateOperationsInput | $Enums.LessonAccess
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
   courseId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -972,6 +1083,9 @@ export type LessonUncheckedUpdateManyWithoutSectionInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
   kinescopeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resources?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  homeworkTask?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  homeworkChecklist?: Prisma.LessonUpdatehomeworkChecklistInput | string[]
   access?: Prisma.EnumLessonAccessFieldUpdateOperationsInput | $Enums.LessonAccess
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
   courseId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1017,6 +1131,9 @@ export type LessonSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   description?: boolean
   position?: boolean
   kinescopeId?: boolean
+  resources?: boolean
+  homeworkTask?: boolean
+  homeworkChecklist?: boolean
   access?: boolean
   isPublished?: boolean
   courseId?: boolean
@@ -1037,6 +1154,9 @@ export type LessonSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   description?: boolean
   position?: boolean
   kinescopeId?: boolean
+  resources?: boolean
+  homeworkTask?: boolean
+  homeworkChecklist?: boolean
   access?: boolean
   isPublished?: boolean
   courseId?: boolean
@@ -1055,6 +1175,9 @@ export type LessonSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   description?: boolean
   position?: boolean
   kinescopeId?: boolean
+  resources?: boolean
+  homeworkTask?: boolean
+  homeworkChecklist?: boolean
   access?: boolean
   isPublished?: boolean
   courseId?: boolean
@@ -1073,6 +1196,9 @@ export type LessonSelectScalar = {
   description?: boolean
   position?: boolean
   kinescopeId?: boolean
+  resources?: boolean
+  homeworkTask?: boolean
+  homeworkChecklist?: boolean
   access?: boolean
   isPublished?: boolean
   courseId?: boolean
@@ -1082,7 +1208,7 @@ export type LessonSelectScalar = {
   updatedAt?: boolean
 }
 
-export type LessonOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "slug" | "description" | "position" | "kinescopeId" | "access" | "isPublished" | "courseId" | "sectionId" | "sectionCourseId" | "createdAt" | "updatedAt", ExtArgs["result"]["lesson"]>
+export type LessonOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "slug" | "description" | "position" | "kinescopeId" | "resources" | "homeworkTask" | "homeworkChecklist" | "access" | "isPublished" | "courseId" | "sectionId" | "sectionCourseId" | "createdAt" | "updatedAt", ExtArgs["result"]["lesson"]>
 export type LessonInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   userProgress?: boolean | Prisma.Lesson$userProgressArgs<ExtArgs>
   course?: boolean | Prisma.CourseDefaultArgs<ExtArgs>
@@ -1112,6 +1238,9 @@ export type $LessonPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     description: string | null
     position: number
     kinescopeId: string | null
+    resources: runtime.JsonValue
+    homeworkTask: string | null
+    homeworkChecklist: string[]
     access: $Enums.LessonAccess
     isPublished: boolean
     courseId: string
@@ -1551,6 +1680,9 @@ export interface LessonFieldRefs {
   readonly description: Prisma.FieldRef<"Lesson", 'String'>
   readonly position: Prisma.FieldRef<"Lesson", 'Int'>
   readonly kinescopeId: Prisma.FieldRef<"Lesson", 'String'>
+  readonly resources: Prisma.FieldRef<"Lesson", 'Json'>
+  readonly homeworkTask: Prisma.FieldRef<"Lesson", 'String'>
+  readonly homeworkChecklist: Prisma.FieldRef<"Lesson", 'String[]'>
   readonly access: Prisma.FieldRef<"Lesson", 'LessonAccess'>
   readonly isPublished: Prisma.FieldRef<"Lesson", 'Boolean'>
   readonly courseId: Prisma.FieldRef<"Lesson", 'String'>

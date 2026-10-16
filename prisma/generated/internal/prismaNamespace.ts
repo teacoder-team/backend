@@ -2257,6 +2257,9 @@ export const LessonScalarFieldEnum = {
   description: 'description',
   position: 'position',
   kinescopeId: 'kinescopeId',
+  resources: 'resources',
+  homeworkTask: 'homeworkTask',
+  homeworkChecklist: 'homeworkChecklist',
   access: 'access',
   isPublished: 'isPublished',
   courseId: 'courseId',
@@ -2694,6 +2697,20 @@ export type ListDecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaMo
 
 
 /**
+ * Reference to a field of type 'Json'
+ */
+export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
+    
+
+
+/**
+ * Reference to a field of type 'QueryMode'
+ */
+export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
+    
+
+
+/**
  * Reference to a field of type 'LessonAccess'
  */
 export type EnumLessonAccessFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'LessonAccess'>
@@ -2816,20 +2833,6 @@ export type EnumPaymentProviderFieldRefInput<$PrismaModel> = FieldRefInputType<$
  * Reference to a field of type 'PaymentProvider[]'
  */
 export type ListEnumPaymentProviderFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentProvider[]'>
-    
-
-
-/**
- * Reference to a field of type 'Json'
- */
-export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
-    
-
-
-/**
- * Reference to a field of type 'QueryMode'
- */
-export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
     
 
 

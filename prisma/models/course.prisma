@@ -87,6 +87,11 @@ model Lesson {
 
     kinescopeId String? @map("kinescope_id")
 
+    resources Json @default("[]")
+
+    homeworkTask      String?  @map("homework_task")
+    homeworkChecklist String[] @default([]) @map("homework_checklist")
+
     access LessonAccess @default(FREE)
 
     isPublished Boolean @default(false) @map("is_published")
