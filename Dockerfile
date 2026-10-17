@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM oven/bun:1.3.10-slim AS base
+FROM oven/bun:1.4.2-slim AS base
 
 WORKDIR /app
 
@@ -23,7 +23,7 @@ COPY src ./src/
 
 RUN bun run build
 
-FROM oven/bun:1.3.10-slim AS geo
+FROM oven/bun:1.4.2-slim AS geo
 
 WORKDIR /resources
 
@@ -44,7 +44,7 @@ RUN --mount=type=cache,id=geoip,target=/cache,sharing=locked \
     sh ./docker-geoip.sh /tmp/geolite-releases.atom /cache geo/city.mmdb
 
 
-FROM oven/bun:1.3.10-slim AS release
+FROM oven/bun:1.4.2-slim AS release
 
 WORKDIR /app
 
