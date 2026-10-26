@@ -26,7 +26,8 @@ export const CreatePaymentPayload = t.Object(
 		),
 		courseId: t.Optional(
 			t.String({
-				description: 'Курс для покупки. Без него оплачивается премиум-подписка.',
+				description:
+					'Курс для покупки. Без него оплачивается премиум-подписка. Курс должен продаваться отдельно прямо сейчас - это `entitlements.purchase: true` на странице курса; иначе 404.',
 				examples: ['b3f1c2d4-5e6f-4a7b-8c9d-0e1f2a3b4c5d']
 			})
 		),

@@ -208,6 +208,13 @@ export type StringNullableFilter<$PrismaModel = never> = {
   not?: Prisma.NestedStringNullableFilter<$PrismaModel> | string | null
 }
 
+export type EnumCourseStageFilter<$PrismaModel = never> = {
+  equals?: $Enums.CourseStage | Prisma.EnumCourseStageFieldRefInput<$PrismaModel>
+  in?: $Enums.CourseStage[] | Prisma.ListEnumCourseStageFieldRefInput<$PrismaModel>
+  notIn?: $Enums.CourseStage[] | Prisma.ListEnumCourseStageFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumCourseStageFilter<$PrismaModel> | $Enums.CourseStage
+}
+
 export type EnumCourseAccessModeFilter<$PrismaModel = never> = {
   equals?: $Enums.CourseAccessMode | Prisma.EnumCourseAccessModeFieldRefInput<$PrismaModel>
   in?: $Enums.CourseAccessMode[] | Prisma.ListEnumCourseAccessModeFieldRefInput<$PrismaModel>
@@ -242,6 +249,16 @@ export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
   _min?: Prisma.NestedStringNullableFilter<$PrismaModel>
   _max?: Prisma.NestedStringNullableFilter<$PrismaModel>
+}
+
+export type EnumCourseStageWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.CourseStage | Prisma.EnumCourseStageFieldRefInput<$PrismaModel>
+  in?: $Enums.CourseStage[] | Prisma.ListEnumCourseStageFieldRefInput<$PrismaModel>
+  notIn?: $Enums.CourseStage[] | Prisma.ListEnumCourseStageFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumCourseStageWithAggregatesFilter<$PrismaModel> | $Enums.CourseStage
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumCourseStageFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumCourseStageFilter<$PrismaModel>
 }
 
 export type EnumCourseAccessModeWithAggregatesFilter<$PrismaModel = never> = {
@@ -902,6 +919,13 @@ export type NestedStringNullableFilter<$PrismaModel = never> = {
   not?: Prisma.NestedStringNullableFilter<$PrismaModel> | string | null
 }
 
+export type NestedEnumCourseStageFilter<$PrismaModel = never> = {
+  equals?: $Enums.CourseStage | Prisma.EnumCourseStageFieldRefInput<$PrismaModel>
+  in?: $Enums.CourseStage[] | Prisma.ListEnumCourseStageFieldRefInput<$PrismaModel>
+  notIn?: $Enums.CourseStage[] | Prisma.ListEnumCourseStageFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumCourseStageFilter<$PrismaModel> | $Enums.CourseStage
+}
+
 export type NestedEnumCourseAccessModeFilter<$PrismaModel = never> = {
   equals?: $Enums.CourseAccessMode | Prisma.EnumCourseAccessModeFieldRefInput<$PrismaModel>
   in?: $Enums.CourseAccessMode[] | Prisma.ListEnumCourseAccessModeFieldRefInput<$PrismaModel>
@@ -935,6 +959,16 @@ export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
   _min?: Prisma.NestedStringNullableFilter<$PrismaModel>
   _max?: Prisma.NestedStringNullableFilter<$PrismaModel>
+}
+
+export type NestedEnumCourseStageWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.CourseStage | Prisma.EnumCourseStageFieldRefInput<$PrismaModel>
+  in?: $Enums.CourseStage[] | Prisma.ListEnumCourseStageFieldRefInput<$PrismaModel>
+  notIn?: $Enums.CourseStage[] | Prisma.ListEnumCourseStageFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumCourseStageWithAggregatesFilter<$PrismaModel> | $Enums.CourseStage
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumCourseStageFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumCourseStageFilter<$PrismaModel>
 }
 
 export type NestedEnumCourseAccessModeWithAggregatesFilter<$PrismaModel = never> = {

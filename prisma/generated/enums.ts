@@ -42,10 +42,21 @@ export type LessonAccess = (typeof LessonAccess)[keyof typeof LessonAccess]
 export const CourseAccessMode = {
   FREE: 'FREE',
   PREMIUM: 'PREMIUM',
-  PURCHASE: 'PURCHASE'
+  PURCHASE: 'PURCHASE',
+  PREMIUM_OR_PURCHASE: 'PREMIUM_OR_PURCHASE'
 } as const
 
 export type CourseAccessMode = (typeof CourseAccessMode)[keyof typeof CourseAccessMode]
+
+
+export const CourseStage = {
+  DRAFT: 'DRAFT',
+  IN_PRODUCTION: 'IN_PRODUCTION',
+  COMPLETED: 'COMPLETED',
+  ARCHIVED: 'ARCHIVED'
+} as const
+
+export type CourseStage = (typeof CourseStage)[keyof typeof CourseStage]
 
 
 export const WebAuthnDeviceType = {

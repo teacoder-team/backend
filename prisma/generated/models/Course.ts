@@ -48,6 +48,7 @@ export type CourseMinAggregateOutputType = {
   youtubeUrl: string | null
   attachment: string | null
   isPublished: boolean | null
+  stage: $Enums.CourseStage | null
   accessMode: $Enums.CourseAccessMode | null
   price: runtime.Decimal | null
   discountPrice: runtime.Decimal | null
@@ -66,6 +67,7 @@ export type CourseMaxAggregateOutputType = {
   youtubeUrl: string | null
   attachment: string | null
   isPublished: boolean | null
+  stage: $Enums.CourseStage | null
   accessMode: $Enums.CourseAccessMode | null
   price: runtime.Decimal | null
   discountPrice: runtime.Decimal | null
@@ -84,6 +86,7 @@ export type CourseCountAggregateOutputType = {
   youtubeUrl: number
   attachment: number
   isPublished: number
+  stage: number
   accessMode: number
   price: number
   discountPrice: number
@@ -117,6 +120,7 @@ export type CourseMinAggregateInputType = {
   youtubeUrl?: true
   attachment?: true
   isPublished?: true
+  stage?: true
   accessMode?: true
   price?: true
   discountPrice?: true
@@ -135,6 +139,7 @@ export type CourseMaxAggregateInputType = {
   youtubeUrl?: true
   attachment?: true
   isPublished?: true
+  stage?: true
   accessMode?: true
   price?: true
   discountPrice?: true
@@ -153,6 +158,7 @@ export type CourseCountAggregateInputType = {
   youtubeUrl?: true
   attachment?: true
   isPublished?: true
+  stage?: true
   accessMode?: true
   price?: true
   discountPrice?: true
@@ -259,6 +265,7 @@ export type CourseGroupByOutputType = {
   youtubeUrl: string | null
   attachment: string | null
   isPublished: boolean
+  stage: $Enums.CourseStage
   accessMode: $Enums.CourseAccessMode
   price: runtime.Decimal | null
   discountPrice: runtime.Decimal | null
@@ -301,6 +308,7 @@ export type CourseWhereInput = {
   youtubeUrl?: Prisma.StringNullableFilter<"Course"> | string | null
   attachment?: Prisma.StringNullableFilter<"Course"> | string | null
   isPublished?: Prisma.BoolFilter<"Course"> | boolean
+  stage?: Prisma.EnumCourseStageFilter<"Course"> | $Enums.CourseStage
   accessMode?: Prisma.EnumCourseAccessModeFilter<"Course"> | $Enums.CourseAccessMode
   price?: Prisma.DecimalNullableFilter<"Course"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   discountPrice?: Prisma.DecimalNullableFilter<"Course"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -324,6 +332,7 @@ export type CourseOrderByWithRelationInput = {
   youtubeUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   attachment?: Prisma.SortOrderInput | Prisma.SortOrder
   isPublished?: Prisma.SortOrder
+  stage?: Prisma.SortOrder
   accessMode?: Prisma.SortOrder
   price?: Prisma.SortOrderInput | Prisma.SortOrder
   discountPrice?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -350,6 +359,7 @@ export type CourseWhereUniqueInput = Prisma.AtLeast<{
   youtubeUrl?: Prisma.StringNullableFilter<"Course"> | string | null
   attachment?: Prisma.StringNullableFilter<"Course"> | string | null
   isPublished?: Prisma.BoolFilter<"Course"> | boolean
+  stage?: Prisma.EnumCourseStageFilter<"Course"> | $Enums.CourseStage
   accessMode?: Prisma.EnumCourseAccessModeFilter<"Course"> | $Enums.CourseAccessMode
   price?: Prisma.DecimalNullableFilter<"Course"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   discountPrice?: Prisma.DecimalNullableFilter<"Course"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -373,6 +383,7 @@ export type CourseOrderByWithAggregationInput = {
   youtubeUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   attachment?: Prisma.SortOrderInput | Prisma.SortOrder
   isPublished?: Prisma.SortOrder
+  stage?: Prisma.SortOrder
   accessMode?: Prisma.SortOrder
   price?: Prisma.SortOrderInput | Prisma.SortOrder
   discountPrice?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -400,6 +411,7 @@ export type CourseScalarWhereWithAggregatesInput = {
   youtubeUrl?: Prisma.StringNullableWithAggregatesFilter<"Course"> | string | null
   attachment?: Prisma.StringNullableWithAggregatesFilter<"Course"> | string | null
   isPublished?: Prisma.BoolWithAggregatesFilter<"Course"> | boolean
+  stage?: Prisma.EnumCourseStageWithAggregatesFilter<"Course"> | $Enums.CourseStage
   accessMode?: Prisma.EnumCourseAccessModeWithAggregatesFilter<"Course"> | $Enums.CourseAccessMode
   price?: Prisma.DecimalNullableWithAggregatesFilter<"Course"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   discountPrice?: Prisma.DecimalNullableWithAggregatesFilter<"Course"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -419,6 +431,7 @@ export type CourseCreateInput = {
   youtubeUrl?: string | null
   attachment?: string | null
   isPublished?: boolean
+  stage?: $Enums.CourseStage
   accessMode?: $Enums.CourseAccessMode
   price?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   discountPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -442,6 +455,7 @@ export type CourseUncheckedCreateInput = {
   youtubeUrl?: string | null
   attachment?: string | null
   isPublished?: boolean
+  stage?: $Enums.CourseStage
   accessMode?: $Enums.CourseAccessMode
   price?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   discountPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -465,6 +479,7 @@ export type CourseUpdateInput = {
   youtubeUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attachment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  stage?: Prisma.EnumCourseStageFieldUpdateOperationsInput | $Enums.CourseStage
   accessMode?: Prisma.EnumCourseAccessModeFieldUpdateOperationsInput | $Enums.CourseAccessMode
   price?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   discountPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -488,6 +503,7 @@ export type CourseUncheckedUpdateInput = {
   youtubeUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attachment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  stage?: Prisma.EnumCourseStageFieldUpdateOperationsInput | $Enums.CourseStage
   accessMode?: Prisma.EnumCourseAccessModeFieldUpdateOperationsInput | $Enums.CourseAccessMode
   price?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   discountPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -511,6 +527,7 @@ export type CourseCreateManyInput = {
   youtubeUrl?: string | null
   attachment?: string | null
   isPublished?: boolean
+  stage?: $Enums.CourseStage
   accessMode?: $Enums.CourseAccessMode
   price?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   discountPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -530,6 +547,7 @@ export type CourseUpdateManyMutationInput = {
   youtubeUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attachment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  stage?: Prisma.EnumCourseStageFieldUpdateOperationsInput | $Enums.CourseStage
   accessMode?: Prisma.EnumCourseAccessModeFieldUpdateOperationsInput | $Enums.CourseAccessMode
   price?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   discountPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -549,6 +567,7 @@ export type CourseUncheckedUpdateManyInput = {
   youtubeUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attachment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  stage?: Prisma.EnumCourseStageFieldUpdateOperationsInput | $Enums.CourseStage
   accessMode?: Prisma.EnumCourseAccessModeFieldUpdateOperationsInput | $Enums.CourseAccessMode
   price?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   discountPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -576,6 +595,7 @@ export type CourseCountOrderByAggregateInput = {
   youtubeUrl?: Prisma.SortOrder
   attachment?: Prisma.SortOrder
   isPublished?: Prisma.SortOrder
+  stage?: Prisma.SortOrder
   accessMode?: Prisma.SortOrder
   price?: Prisma.SortOrder
   discountPrice?: Prisma.SortOrder
@@ -601,6 +621,7 @@ export type CourseMaxOrderByAggregateInput = {
   youtubeUrl?: Prisma.SortOrder
   attachment?: Prisma.SortOrder
   isPublished?: Prisma.SortOrder
+  stage?: Prisma.SortOrder
   accessMode?: Prisma.SortOrder
   price?: Prisma.SortOrder
   discountPrice?: Prisma.SortOrder
@@ -619,6 +640,7 @@ export type CourseMinOrderByAggregateInput = {
   youtubeUrl?: Prisma.SortOrder
   attachment?: Prisma.SortOrder
   isPublished?: Prisma.SortOrder
+  stage?: Prisma.SortOrder
   accessMode?: Prisma.SortOrder
   price?: Prisma.SortOrder
   discountPrice?: Prisma.SortOrder
@@ -644,6 +666,10 @@ export type CourseCreatelearningOutcomesInput = {
 
 export type NullableStringFieldUpdateOperationsInput = {
   set?: string | null
+}
+
+export type EnumCourseStageFieldUpdateOperationsInput = {
+  set?: $Enums.CourseStage
 }
 
 export type EnumCourseAccessModeFieldUpdateOperationsInput = {
@@ -729,6 +755,7 @@ export type CourseCreateWithoutPurchasesInput = {
   youtubeUrl?: string | null
   attachment?: string | null
   isPublished?: boolean
+  stage?: $Enums.CourseStage
   accessMode?: $Enums.CourseAccessMode
   price?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   discountPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -751,6 +778,7 @@ export type CourseUncheckedCreateWithoutPurchasesInput = {
   youtubeUrl?: string | null
   attachment?: string | null
   isPublished?: boolean
+  stage?: $Enums.CourseStage
   accessMode?: $Enums.CourseAccessMode
   price?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   discountPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -789,6 +817,7 @@ export type CourseUpdateWithoutPurchasesInput = {
   youtubeUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attachment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  stage?: Prisma.EnumCourseStageFieldUpdateOperationsInput | $Enums.CourseStage
   accessMode?: Prisma.EnumCourseAccessModeFieldUpdateOperationsInput | $Enums.CourseAccessMode
   price?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   discountPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -811,6 +840,7 @@ export type CourseUncheckedUpdateWithoutPurchasesInput = {
   youtubeUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attachment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  stage?: Prisma.EnumCourseStageFieldUpdateOperationsInput | $Enums.CourseStage
   accessMode?: Prisma.EnumCourseAccessModeFieldUpdateOperationsInput | $Enums.CourseAccessMode
   price?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   discountPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -833,6 +863,7 @@ export type CourseCreateWithoutSectionsInput = {
   youtubeUrl?: string | null
   attachment?: string | null
   isPublished?: boolean
+  stage?: $Enums.CourseStage
   accessMode?: $Enums.CourseAccessMode
   price?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   discountPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -855,6 +886,7 @@ export type CourseUncheckedCreateWithoutSectionsInput = {
   youtubeUrl?: string | null
   attachment?: string | null
   isPublished?: boolean
+  stage?: $Enums.CourseStage
   accessMode?: $Enums.CourseAccessMode
   price?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   discountPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -893,6 +925,7 @@ export type CourseUpdateWithoutSectionsInput = {
   youtubeUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attachment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  stage?: Prisma.EnumCourseStageFieldUpdateOperationsInput | $Enums.CourseStage
   accessMode?: Prisma.EnumCourseAccessModeFieldUpdateOperationsInput | $Enums.CourseAccessMode
   price?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   discountPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -915,6 +948,7 @@ export type CourseUncheckedUpdateWithoutSectionsInput = {
   youtubeUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attachment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  stage?: Prisma.EnumCourseStageFieldUpdateOperationsInput | $Enums.CourseStage
   accessMode?: Prisma.EnumCourseAccessModeFieldUpdateOperationsInput | $Enums.CourseAccessMode
   price?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   discountPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -937,6 +971,7 @@ export type CourseCreateWithoutLessonsInput = {
   youtubeUrl?: string | null
   attachment?: string | null
   isPublished?: boolean
+  stage?: $Enums.CourseStage
   accessMode?: $Enums.CourseAccessMode
   price?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   discountPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -959,6 +994,7 @@ export type CourseUncheckedCreateWithoutLessonsInput = {
   youtubeUrl?: string | null
   attachment?: string | null
   isPublished?: boolean
+  stage?: $Enums.CourseStage
   accessMode?: $Enums.CourseAccessMode
   price?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   discountPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -997,6 +1033,7 @@ export type CourseUpdateWithoutLessonsInput = {
   youtubeUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attachment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  stage?: Prisma.EnumCourseStageFieldUpdateOperationsInput | $Enums.CourseStage
   accessMode?: Prisma.EnumCourseAccessModeFieldUpdateOperationsInput | $Enums.CourseAccessMode
   price?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   discountPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -1019,6 +1056,7 @@ export type CourseUncheckedUpdateWithoutLessonsInput = {
   youtubeUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attachment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  stage?: Prisma.EnumCourseStageFieldUpdateOperationsInput | $Enums.CourseStage
   accessMode?: Prisma.EnumCourseAccessModeFieldUpdateOperationsInput | $Enums.CourseAccessMode
   price?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   discountPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -1041,6 +1079,7 @@ export type CourseCreateWithoutDownloadLogsInput = {
   youtubeUrl?: string | null
   attachment?: string | null
   isPublished?: boolean
+  stage?: $Enums.CourseStage
   accessMode?: $Enums.CourseAccessMode
   price?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   discountPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -1063,6 +1102,7 @@ export type CourseUncheckedCreateWithoutDownloadLogsInput = {
   youtubeUrl?: string | null
   attachment?: string | null
   isPublished?: boolean
+  stage?: $Enums.CourseStage
   accessMode?: $Enums.CourseAccessMode
   price?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   discountPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -1101,6 +1141,7 @@ export type CourseUpdateWithoutDownloadLogsInput = {
   youtubeUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attachment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  stage?: Prisma.EnumCourseStageFieldUpdateOperationsInput | $Enums.CourseStage
   accessMode?: Prisma.EnumCourseAccessModeFieldUpdateOperationsInput | $Enums.CourseAccessMode
   price?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   discountPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -1123,6 +1164,7 @@ export type CourseUncheckedUpdateWithoutDownloadLogsInput = {
   youtubeUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attachment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  stage?: Prisma.EnumCourseStageFieldUpdateOperationsInput | $Enums.CourseStage
   accessMode?: Prisma.EnumCourseAccessModeFieldUpdateOperationsInput | $Enums.CourseAccessMode
   price?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   discountPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -1203,6 +1245,7 @@ export type CourseSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   youtubeUrl?: boolean
   attachment?: boolean
   isPublished?: boolean
+  stage?: boolean
   accessMode?: boolean
   price?: boolean
   discountPrice?: boolean
@@ -1227,6 +1270,7 @@ export type CourseSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   youtubeUrl?: boolean
   attachment?: boolean
   isPublished?: boolean
+  stage?: boolean
   accessMode?: boolean
   price?: boolean
   discountPrice?: boolean
@@ -1246,6 +1290,7 @@ export type CourseSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   youtubeUrl?: boolean
   attachment?: boolean
   isPublished?: boolean
+  stage?: boolean
   accessMode?: boolean
   price?: boolean
   discountPrice?: boolean
@@ -1265,6 +1310,7 @@ export type CourseSelectScalar = {
   youtubeUrl?: boolean
   attachment?: boolean
   isPublished?: boolean
+  stage?: boolean
   accessMode?: boolean
   price?: boolean
   discountPrice?: boolean
@@ -1274,7 +1320,7 @@ export type CourseSelectScalar = {
   updatedAt?: boolean
 }
 
-export type CourseOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "slug" | "shortDescription" | "fullDescription" | "thumbnail" | "youtubeUrl" | "attachment" | "isPublished" | "accessMode" | "price" | "discountPrice" | "learningOutcomes" | "views" | "createdAt" | "updatedAt", ExtArgs["result"]["course"]>
+export type CourseOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "slug" | "shortDescription" | "fullDescription" | "thumbnail" | "youtubeUrl" | "attachment" | "isPublished" | "stage" | "accessMode" | "price" | "discountPrice" | "learningOutcomes" | "views" | "createdAt" | "updatedAt", ExtArgs["result"]["course"]>
 export type CourseInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   lessons?: boolean | Prisma.Course$lessonsArgs<ExtArgs>
   sections?: boolean | Prisma.Course$sectionsArgs<ExtArgs>
@@ -1303,6 +1349,7 @@ export type $CoursePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     youtubeUrl: string | null
     attachment: string | null
     isPublished: boolean
+    stage: $Enums.CourseStage
     accessMode: $Enums.CourseAccessMode
     price: runtime.Decimal | null
     discountPrice: runtime.Decimal | null
@@ -1746,6 +1793,7 @@ export interface CourseFieldRefs {
   readonly youtubeUrl: Prisma.FieldRef<"Course", 'String'>
   readonly attachment: Prisma.FieldRef<"Course", 'String'>
   readonly isPublished: Prisma.FieldRef<"Course", 'Boolean'>
+  readonly stage: Prisma.FieldRef<"Course", 'CourseStage'>
   readonly accessMode: Prisma.FieldRef<"Course", 'CourseAccessMode'>
   readonly price: Prisma.FieldRef<"Course", 'Decimal'>
   readonly discountPrice: Prisma.FieldRef<"Course", 'Decimal'>

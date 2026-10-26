@@ -1,6 +1,6 @@
 import { type Static, t } from 'elysia'
 
-import { CourseAccessMode } from '@prisma/generated/client'
+import { CourseAccessMode, CourseStage, type Prisma } from '@prisma/generated/client'
 
 import { PrismaEnum } from '~/lib/utils/schema'
 
@@ -59,9 +59,68 @@ const CourseLearningOutcomes = t.Array(
 
 const CourseAccessModeSchema = PrismaEnum(CourseAccessMode, {
 	description:
-		'Как открываются закрытые уроки и материалы: `FREE` - курс полностью бесплатный, `PREMIUM` - по премиум-подписке или покупке курса, `PURCHASE` - только покупкой. Купленный курс открыт навсегда в любом режиме.',
+		'Как открываются закрытые уроки и материалы: `FREE` - курс полностью бесплатный, `PREMIUM` - только по премиум-подписке, `PURCHASE` - только покупкой курса, `PREMIUM_OR_PURCHASE` - по подписке или покупке на выбор. Купленный курс открыт навсегда в любом режиме, даже если режим потом изменили.',
 	examples: [CourseAccessMode.PREMIUM]
 })
+
+const CourseStageSchema = PrismaEnum(CourseStage, {
+	description:
+		'Стадия производства курса: `DRAFT` - готовится, публично недоступен, `IN_PRODUCTION` - записывается и выходит поэтапно, `COMPLETED` - записан и собран полностью, `ARCHIVED` - больше не развивается и убран из каталога. Стадия не отвечает за оплату: за неё отвечает `accessMode`.',
+	examples: [CourseStage.IN_PRODUCTION]
+})
+
+const CourseStatusSchema = t.UnionEnum(
+	[
+		'DRAFT',
+		'IN_PRODUCTION',
+		'EARLY_ACCESS',
+		'COMPLETED',
+		'PUBLICLY_RELEASED',
+		'ARCHIVED'
+	] as const,
+	{
+		description:
+			'Главный статус курса - его и показывайте, остальные признаки идут отдельными полями. Считается на сервере: `DRAFT` - «В разработке» (публично не отдаётся), `IN_PRODUCTION` - «Выходит поэтапно», `EARLY_ACCESS` - «Ранний доступ» (выходит поэтапно и доступен по подписке или покупке), `COMPLETED` - «Курс завершён», `PUBLICLY_RELEASED` - «Полная версия на YouTube», `ARCHIVED` - «В архиве».',
+		examples: ['EARLY_ACCESS']
+	}
+)
+
+const CourseRelease = t.Object(
+	{
+		status: CourseStatusSchema,
+		stage: CourseStageSchema,
+		isReleasing: t.Boolean({
+			description:
+				'Выходят ли ещё новые уроки. `true` - курс записывается прямо сейчас, в программе могут быть уроки со статусом «скоро».',
+			examples: [true]
+		}),
+		publishedLessons: t.Number({
+			description: 'Сколько уроков уже открыто - считается по реальным урокам курса.',
+			examples: [12]
+		}),
+		upcomingLessons: t.Number({
+			description:
+				'Сколько уроков анонсировано, но ещё не вышло. Не включает уроки, которые ещё не анонсированы, поэтому это не план по всему курсу.',
+			examples: [3]
+		})
+	},
+	{ description: 'Стадия выпуска курса и прогресс выхода уроков.' }
+)
+
+const CourseEntitlements = t.Object(
+	{
+		premium: t.Boolean({
+			description: 'Открывает ли курс премиум-подписка - «Доступно по Premium».',
+			examples: [true]
+		}),
+		purchase: t.Boolean({
+			description:
+				'Можно ли купить курс отдельно прямо сейчас - показывайте «Купить курс». Учитывает режим доступа, цену, публикацию и архив: если `false`, `POST /billing/create` с этим курсом вернёт 404.',
+			examples: [true]
+		})
+	},
+	{ description: 'Как курс можно открыть: подписка, разовая покупка или оба способа.' }
+)
 
 const HasMaterials = t.Boolean({
 	description:
@@ -78,14 +137,19 @@ export const CourseListItem = t.Object(
 		price: CoursePrice,
 		discountPrice: CourseDiscountPrice,
 		accessMode: CourseAccessModeSchema,
+		status: CourseStatusSchema,
 		hasMaterials: HasMaterials,
-		lessons: t.Number({ description: 'Количество опубликованных уроков.', examples: [10] })
+		lessons: t.Number({ description: 'Количество опубликованных уроков.', examples: [10] }),
+		upcomingLessons: t.Number({
+			description: 'Сколько уроков анонсировано, но ещё не вышло.',
+			examples: [3]
+		})
 	},
 	{ description: 'Карточка курса в каталоге.' }
 )
 
 export const CourseListResponse = t.Array(CourseListItem, {
-	description: 'Опубликованные курсы.'
+	description: 'Опубликованные курсы, кроме архивных.'
 })
 
 export const CourseLibraryResponse = t.Array(CourseListItem, {
@@ -128,7 +192,8 @@ export const CourseResponse = t.Object(
 		thumbnail: CourseThumbnail,
 		youtubeUrl: t.Nullable(
 			t.String({
-				description: 'Ссылка на видео курса на YouTube.',
+				description:
+					'Ссылка на бесплатную полную версию курса на YouTube. Пока ссылки нет - `null`. Выход на YouTube не отменяет платный доступ к урокам и материалам на сайте: уроки, программа и исходники остаются по текущему `accessMode`.',
 				examples: ['https://youtube.com/watch?v=...']
 			})
 		),
@@ -136,6 +201,8 @@ export const CourseResponse = t.Object(
 		discountPrice: CourseDiscountPrice,
 		learningOutcomes: CourseLearningOutcomes,
 		accessMode: CourseAccessModeSchema,
+		release: CourseRelease,
+		entitlements: CourseEntitlements,
 		hasMaterials: HasMaterials,
 		access: CourseAccessResponse,
 		views: t.Number({ description: 'Сколько раз открывали страницу курса.', examples: [4213] })
@@ -154,15 +221,27 @@ export const CourseLessonListItem = t.Object(
 			description: 'Идентификатор урока для URL.',
 			examples: ['peremennye-i-tipy']
 		}),
+		isAvailable: t.Boolean({
+			description:
+				'Открыт ли урок. `false` - урок анонсирован, но ещё не вышел: показывайте его как «скоро» и не ведите на страницу урока, `GET /lessons/{id}` ответит 404.',
+			examples: [true]
+		}),
+		plannedReleaseAt: t.Nullable(
+			t.String({
+				description:
+					'Когда урок планируют открыть. `null` - дата не назначена, даже если урок ещё не вышел.',
+				examples: ['2026-11-01T09:00:00.000Z']
+			})
+		),
 		isCompleted: t.Optional(
 			t.Boolean({
 				description:
-					'Пройден ли урок текущим пользователем. Возвращается только при авторизации.',
+					'Пройден ли урок текущим пользователем. Возвращается только при авторизации. У невышедшего урока всегда `false`.',
 				examples: [true]
 			})
 		)
 	},
-	{ description: 'Урок в программе курса.' }
+	{ description: 'Урок в программе курса: вышедший или анонсированный.' }
 )
 
 export const CourseSectionListItem = t.Object(
@@ -173,7 +252,8 @@ export const CourseSectionListItem = t.Object(
 		}),
 		title: t.String({ description: 'Название секции.', examples: ['Введение'] }),
 		lessons: t.Array(CourseLessonListItem, {
-			description: 'Опубликованные уроки секции в порядке их прохождения.'
+			description:
+				'Уроки секции в порядке прохождения: вышедшие и анонсированные, см. `isAvailable`.'
 		})
 	},
 	{ description: 'Секция программы курса с вложенными уроками.' }
@@ -183,7 +263,7 @@ export const CourseLessonListResponse = t.Array(
 	t.Union([CourseSectionListItem, CourseLessonListItem]),
 	{
 		description:
-			'Программа курса: секции и отдельные уроки по порядку. Секция содержит массив lessons. Без секций возвращается обычный список уроков.'
+			'Программа курса: секции и отдельные уроки по порядку. Секция содержит массив lessons. Без секций возвращается обычный список уроков.\n\nПомимо вышедших уроков в программу попадают анонсированные - у них `isAvailable: false` и, если назначена, дата в `plannedReleaseAt`. Неанонсированные черновики не отдаются никому.'
 	}
 )
 
@@ -225,4 +305,31 @@ export interface CourseEntitlement {
 export interface GatedCourse {
 	id: string
 	accessMode: CourseAccessMode
+}
+
+export type CourseStatus = Static<typeof CourseStatusSchema>
+
+export const PREMIUM_ACCESS_MODES: CourseAccessMode[] = [
+	CourseAccessMode.PREMIUM,
+	CourseAccessMode.PREMIUM_OR_PURCHASE
+]
+
+export const PURCHASABLE_ACCESS_MODES: CourseAccessMode[] = [
+	CourseAccessMode.PURCHASE,
+	CourseAccessMode.PREMIUM_OR_PURCHASE
+]
+
+export interface CourseReleaseState {
+	isPublished: boolean
+	stage: CourseStage
+	accessMode: CourseAccessMode
+	youtubeUrl: string | null
+}
+
+export interface PurchasableCourse {
+	isPublished: boolean
+	stage: CourseStage
+	accessMode: CourseAccessMode
+	price: Prisma.Decimal | null
+	discountPrice: Prisma.Decimal | null
 }

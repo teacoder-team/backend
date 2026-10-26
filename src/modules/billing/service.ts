@@ -33,9 +33,9 @@ import { enqueueCoursePurchaseEmail } from '~/modules/course/jobs'
 import {
 	findCoursePurchase,
 	findCourseSummary,
-	findPurchasableCourse
+	findCourseForPurchase
 } from '~/modules/course/repository'
-import { resolveCoursePrice } from '~/modules/course/service'
+import { isCoursePurchasable, resolveCoursePrice } from '~/modules/course/service'
 import {
 	enqueueSubscriptionPaymentFailedEmail,
 	enqueueSubscriptionPurchaseEmail,
@@ -110,9 +110,9 @@ const resolveProduct = async (
 		}
 	}
 
-	const course = await findPurchasableCourse(courseId)
+	const course = await findCourseForPurchase(courseId)
 
-	if (!course) {
+	if (!course || !isCoursePurchasable(course)) {
 		throw new NotFoundError('Course not found or not for sale')
 	}
 

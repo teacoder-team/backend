@@ -90,3 +90,6 @@ resources/geo/*.mmdb
 
 premium-subscribers.json
 premium-subscribers.ts
+
+# Local seeders
+seed-*.ts
