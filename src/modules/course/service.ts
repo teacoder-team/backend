@@ -16,8 +16,8 @@ import {
 	type CourseStatus,
 	type GatedCourse,
 	PREMIUM_ACCESS_MODES,
-	type PurchasableCourse,
-	PURCHASABLE_ACCESS_MODES
+	PURCHASABLE_ACCESS_MODES,
+	type PurchasableCourse
 } from './model'
 import {
 	findCourseAttachment,

@@ -31,9 +31,9 @@ import {
 import { getUserEmail } from '~/modules/auth/service'
 import { enqueueCoursePurchaseEmail } from '~/modules/course/jobs'
 import {
+	findCourseForPurchase,
 	findCoursePurchase,
-	findCourseSummary,
-	findCourseForPurchase
+	findCourseSummary
 } from '~/modules/course/repository'
 import { isCoursePurchasable, resolveCoursePrice } from '~/modules/course/service'
 import {
