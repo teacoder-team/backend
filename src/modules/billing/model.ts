@@ -14,13 +14,13 @@ export const CreatePaymentPayload = t.Object(
 	{
 		method: PrismaEnum(PaymentMethod, {
 			description:
-				'Способ оплаты. CRYPTO — криптовалюта. Для Робокассы передайте BANK_CARD и provider: ROBOKASSA; фактический способ уточняется после оплаты.',
+				'Способ оплаты. CRYPTO - криптовалюта. Для Робокассы передайте BANK_CARD и provider: ROBOKASSA; фактический способ уточняется после оплаты. YANDEX_SPLIT - Яндекс Сплит, работает только при покупке курса: без `courseId` вернёт 400.',
 			examples: [PaymentMethod.BANK_CARD, PaymentMethod.CRYPTO]
 		}),
 		provider: t.Optional(
 			PrismaEnum(PaymentProvider, {
 				description:
-					'Провайдер из списка способов оплаты. Без него для BANK_CARD используется YOOKASSA, для CRYPTO — HELEKET. Недоступные сочетания отклоняются.',
+					'Провайдер из списка способов оплаты. Без него для BANK_CARD используется YOOKASSA, для CRYPTO - HELEKET. Недоступные сочетания отклоняются.',
 				examples: [PaymentProvider.ROBOKASSA]
 			})
 		),

@@ -140,7 +140,6 @@ const envSchema = t.Object({
 
 	PRODAMUS_FORM_URL: t.String({ format: 'uri' }),
 	PRODAMUS_SECRET_KEY: t.String(),
-
 	PRODAMUS_DEMO_MODE: t.Boolean({ default: false }),
 
 	NPD_INN: t.String(),

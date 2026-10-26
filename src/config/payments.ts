@@ -32,6 +32,13 @@ export const PAYMENT_METHODS: MethodDefinition[] = [
 		provider: PaymentProvider.PRODAMUS
 	},
 	{
+		method: PaymentMethod.YANDEX_SPLIT,
+		category: 'FIAT',
+		name: 'Яндекс Сплит',
+		description: 'Оплата курса частями, без переплаты',
+		provider: PaymentProvider.PRODAMUS
+	},
+	{
 		method: PaymentMethod.CRYPTO,
 		category: 'CRYPTO',
 		name: 'Криптовалюта',

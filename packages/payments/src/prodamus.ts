@@ -16,18 +16,11 @@ export const INTERNATIONAL_PAYMENT_METHODS = [
 	'yottapay'
 ] as const
 
-export const YANDEX_SPLIT_PAYMENT_METHODS = [
-	'yandex_installment_0_0_2',
-	'yandex_installment_0_0_4',
-	'yandex_installment_0_0_6',
-	'yandex_installment_0_0_12'
-] as const
+export const YANDEX_SPLIT_PAYMENT_METHODS = ['yandex_installment_0_0_2'] as const
 
 export interface ProdamusClientOptions {
 	formUrl: string
-
 	secretKey: string
-
 	demoMode?: boolean
 }
 

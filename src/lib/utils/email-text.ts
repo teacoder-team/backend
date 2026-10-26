@@ -7,7 +7,7 @@ const ENTITIES: Record<string, string> = {
 	nbsp: ' ',
 	laquo: '«',
 	raquo: '»',
-	mdash: '—',
+	mdash: '-',
 	ndash: '–',
 	hellip: '...'
 }

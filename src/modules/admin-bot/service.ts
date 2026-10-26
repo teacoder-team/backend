@@ -252,7 +252,7 @@ const signInMethods = (user: PurchaseDetails['user']) => {
 		...user.oauthAccounts.map((account) => AUTH_PROVIDER_TITLES[account.provider])
 	].filter(Boolean)
 
-	return methods.length ? methods.join(', ') : '—'
+	return methods.length ? methods.join(', ') : '-'
 }
 
 const buyerSection = (user: PurchaseDetails['user'], email: string | null) =>
@@ -353,7 +353,7 @@ const DECLINE_REASONS: Record<string, string> = {
 	no_saved_payment_method: 'нет сохранённой карты'
 }
 
-const declineReason = (code: string | null) => (code ? (DECLINE_REASONS[code] ?? code) : '—')
+const declineReason = (code: string | null) => (code ? (DECLINE_REASONS[code] ?? code) : '-')
 
 const cardLabel = (method: PurchaseDetails['paymentMethod']) =>
 	method && (method.title ?? (method.last4 ? `карта •••• ${method.last4}` : null))

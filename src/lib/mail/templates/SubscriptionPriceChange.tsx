@@ -23,7 +23,7 @@ interface SubscriptionPriceChangeEmailProps {
 
 const Point = ({ children }: { children: React.ReactNode }) => (
 	<Text className="m-0 mb-3 text-sm leading-relaxed text-gray-600 text-left">
-		<span className="text-gray-400">—</span> {children}
+		<span className="text-gray-400">-</span> {children}
 	</Text>
 )
 

@@ -281,11 +281,17 @@ const checkout = async (request: CheckoutRequest, fallbackEmail: string | undefi
 	return openCheckout(request, provider, product, fallbackEmail)
 }
 
+const COURSE_ONLY_METHODS = new Set<PaymentMethod>([PaymentMethod.YANDEX_SPLIT])
+
 export const createPayment = async (
 	userId: string,
 	input: CreatePaymentInput,
 	idempotencyKey?: string
 ) => {
+	if (COURSE_ONLY_METHODS.has(input.method) && !input.courseId) {
+		throw new BadRequestError(`Payment method ${input.method} is available only for courses`)
+	}
+
 	const definition = PAYMENT_METHODS.find(
 		(method) =>
 			method.method === input.method &&
