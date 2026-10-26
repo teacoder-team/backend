@@ -50,10 +50,10 @@ export const findOpenCheckouts = (userId: string, courseId: string | null) =>
 		orderBy: { createdAt: 'desc' }
 	})
 
-export const expireCheckouts = (paymentIds: string[]) =>
+export const expireCheckouts = (paymentIds: string[], failureCode = 'checkout_expired') =>
 	db.paymentIntent.updateMany({
 		where: { id: { in: paymentIds }, status: IntentStatus.REQUIRES_PAYMENT },
-		data: { status: IntentStatus.EXPIRED, failureCode: 'checkout_expired' }
+		data: { status: IntentStatus.EXPIRED, failureCode }
 	})
 
 export const findPaymentForFulfillment = (paymentId: string) =>

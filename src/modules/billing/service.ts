@@ -266,7 +266,7 @@ const checkout = async (request: CheckoutRequest, fallbackEmail: string | undefi
 		throw new ConflictError('Course already purchased')
 	}
 
-	const reusable = await findReusableCheckout(request)
+	const reusable = await findReusableCheckout(request, product.amount)
 
 	if (reusable) {
 		extendLogContext({
@@ -408,7 +408,10 @@ const findIdempotentReplay = async ({
 	return previous
 }
 
-const findReusableCheckout = async ({ userId, method, provider, courseId }: CheckoutRequest) => {
+const findReusableCheckout = async (
+	{ userId, method, provider, courseId }: CheckoutRequest,
+	amount: number
+) => {
 	const open = await findOpenCheckouts(userId, courseId)
 	const now = Date.now()
 	const stale = open.filter((intent) => isStale(intent, now))
@@ -429,9 +432,23 @@ const findReusableCheckout = async ({ userId, method, provider, courseId }: Chec
 		(intent) => intent.method === method && intent.provider === provider
 	)
 
-	if (sameMethod) {
+	if (!sameMethod) {
+		return null
+	}
+
+	if (toMinorUnits(sameMethod.amount) === toMinorUnits(amount)) {
 		return sameMethod
 	}
+
+	await expireCheckouts([sameMethod.id], 'price_changed')
+
+	extendLogContext({
+		event: 'checkout_price_changed',
+		userId,
+		paymentId: sameMethod.id,
+		previousAmount: sameMethod.amount,
+		amount
+	})
 
 	return null
 }
