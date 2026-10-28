@@ -2213,6 +2213,7 @@ export const CourseScalarFieldEnum = {
   youtubeUrl: 'youtubeUrl',
   attachment: 'attachment',
   isPublished: 'isPublished',
+  stage: 'stage',
   accessMode: 'accessMode',
   price: 'price',
   discountPrice: 'discountPrice',
@@ -2257,8 +2258,13 @@ export const LessonScalarFieldEnum = {
   description: 'description',
   position: 'position',
   kinescopeId: 'kinescopeId',
+  resources: 'resources',
+  homeworkTask: 'homeworkTask',
+  homeworkChecklist: 'homeworkChecklist',
   access: 'access',
   isPublished: 'isPublished',
+  isAnnounced: 'isAnnounced',
+  plannedReleaseAt: 'plannedReleaseAt',
   courseId: 'courseId',
   sectionId: 'sectionId',
   sectionCourseId: 'sectionCourseId',
@@ -2666,6 +2672,20 @@ export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel,
 
 
 /**
+ * Reference to a field of type 'CourseStage'
+ */
+export type EnumCourseStageFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CourseStage'>
+    
+
+
+/**
+ * Reference to a field of type 'CourseStage[]'
+ */
+export type ListEnumCourseStageFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CourseStage[]'>
+    
+
+
+/**
  * Reference to a field of type 'CourseAccessMode'
  */
 export type EnumCourseAccessModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CourseAccessMode'>
@@ -2690,6 +2710,20 @@ export type DecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel,
  * Reference to a field of type 'Decimal[]'
  */
 export type ListDecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Json'
+ */
+export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
+    
+
+
+/**
+ * Reference to a field of type 'QueryMode'
+ */
+export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
     
 
 
@@ -2816,20 +2850,6 @@ export type EnumPaymentProviderFieldRefInput<$PrismaModel> = FieldRefInputType<$
  * Reference to a field of type 'PaymentProvider[]'
  */
 export type ListEnumPaymentProviderFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentProvider[]'>
-    
-
-
-/**
- * Reference to a field of type 'Json'
- */
-export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
-    
-
-
-/**
- * Reference to a field of type 'QueryMode'
- */
-export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
     
 
 

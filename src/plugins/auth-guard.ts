@@ -1,9 +1,12 @@
 import { Elysia } from 'elysia'
 
-import { UnauthorizedError } from '~/lib/errors'
+import { UserRole } from '@prisma/generated/client'
+
+import { ForbiddenError, UnauthorizedError } from '~/lib/errors'
 import { extendLogContext } from '~/lib/logger'
 import { verifyAccessToken } from '~/lib/security/jwt'
 import { resolveSession } from '~/modules/session/service'
+import { findUserRole } from '~/modules/users/repository'
 
 const BEARER_PREFIX = 'Bearer '
 
@@ -15,23 +18,38 @@ export const readBearerToken = (authorization: string | undefined) => {
 	return authorization.slice(BEARER_PREFIX.length)
 }
 
+const requireSession = async (authorization: string | undefined) => {
+	const token = readBearerToken(authorization)
+
+	if (!token) {
+		throw new UnauthorizedError('Authentication required')
+	}
+
+	const payload = await verifyAccessToken(token)
+	const session = await resolveSession(payload.sid)
+
+	if (!session || session.userId !== payload.sub) {
+		throw new UnauthorizedError('Session expired or revoked')
+	}
+
+	extendLogContext({ userId: session.userId })
+
+	return session
+}
+
 export const authGuard = new Elysia({ name: 'auth-guard' }).macro({
 	auth: {
 		async resolve({ headers }) {
-			const token = readBearerToken(headers.authorization)
+			return { session: await requireSession(headers.authorization) }
+		}
+	},
+	admin: {
+		async resolve({ headers }) {
+			const session = await requireSession(headers.authorization)
 
-			if (!token) {
-				throw new UnauthorizedError('Authentication required')
+			if ((await findUserRole(session.userId)) !== UserRole.ADMIN) {
+				throw new ForbiddenError('Administrator access required')
 			}
-
-			const payload = await verifyAccessToken(token)
-			const session = await resolveSession(payload.sid)
-
-			if (!session || session.userId !== payload.sub) {
-				throw new UnauthorizedError('Session expired or revoked')
-			}
-
-			extendLogContext({ userId: session.userId })
 
 			return { session }
 		}

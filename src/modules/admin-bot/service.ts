@@ -70,6 +70,10 @@ export const enqueueSubscriptionRenewalNotification = (
 export const enqueueSupportEmailNotification = (payload: NotificationJobs['notifySupportEmail']) =>
 	enqueue('notifySupportEmail', payload)
 
+export const enqueueLessonsReleasedNotification = (
+	payload: NotificationJobs['notifyLessonsReleased']
+) => enqueue('notifyLessonsReleased', payload)
+
 const errorDetails = (error: unknown) => {
 	const cause = error instanceof Error && error.cause instanceof Error ? error.cause : error
 	const errorName = cause instanceof Error ? cause.name : 'UnknownError'
@@ -252,7 +256,7 @@ const signInMethods = (user: PurchaseDetails['user']) => {
 		...user.oauthAccounts.map((account) => AUTH_PROVIDER_TITLES[account.provider])
 	].filter(Boolean)
 
-	return methods.length ? methods.join(', ') : '—'
+	return methods.length ? methods.join(', ') : '-'
 }
 
 const buyerSection = (user: PurchaseDetails['user'], email: string | null) =>
@@ -353,7 +357,7 @@ const DECLINE_REASONS: Record<string, string> = {
 	no_saved_payment_method: 'нет сохранённой карты'
 }
 
-const declineReason = (code: string | null) => (code ? (DECLINE_REASONS[code] ?? code) : '—')
+const declineReason = (code: string | null) => (code ? (DECLINE_REASONS[code] ?? code) : '-')
 
 const cardLabel = (method: PurchaseDetails['paymentMethod']) =>
 	method && (method.title ?? (method.last4 ? `карта •••• ${method.last4}` : null))
@@ -532,6 +536,65 @@ export const startMessage = (input: StartMessageInput) =>
 				['ID', code(formatChatTarget(input.target))]
 			]),
 			tg`🌐 <a href="${env.APP_URL}">Сайт</a> · окружение: <code>${env.NODE_ENV}</code>`
+		],
+		'\n\n'
+	)
+
+interface LessonsReleasedInput {
+	course: { title: string; slug: string } | null
+	lessons: readonly { title: string }[]
+	recipients: number
+}
+
+export const lessonsReleasedMessage = ({ course, lessons, recipients }: LessonsReleasedInput) =>
+	joinHtml(
+		[
+			tg`🎬 <b>${lessons.length === 1 ? 'Опубликован новый урок' : 'Опубликованы новые уроки'}</b>`,
+			course
+				? tg`📚 <b><a href="${env.APP_URL}/courses/${course.slug}">${course.title}</a></b>`
+				: tg`📚 <i>Курс удалён</i>`,
+			joinHtml(
+				lessons.map((lesson) => tg`• ${lesson.title}`),
+				'\n'
+			),
+			section('📬 Письма', [
+				['Уроков', lessons.length],
+				['Получателей', recipients || 'никого - курс ещё не купили']
+			]),
+			tg`#публикация #курс`
+		],
+		'\n\n'
+	)
+
+interface ReleaseSyncInput {
+	releases: readonly {
+		courseTitle: string | null
+		releaseAt: string
+		lessons: number
+		isDue: boolean
+	}[]
+	lessons: number
+	dueNow: number
+}
+
+export const releasesSyncedMessage = ({ releases, lessons, dueNow }: ReleaseSyncInput) =>
+	joinHtml(
+		[
+			tg`🗓 <b>Публикации уроков запланированы</b>`,
+			releases.length === 0
+				? tg`<i>Уроков с датой выхода нет - всё опубликовано.</i>`
+				: joinHtml(
+						releases.map(
+							(release) =>
+								tg`• <b>${release.courseTitle ?? 'Курс удалён'}</b> - ${release.lessons} шт., ${release.isDue ? 'публикуется сейчас' : formatDateTime(new Date(release.releaseAt))}`
+						),
+						'\n'
+					),
+			section('📊 Итого', [
+				['Групп', releases.length],
+				['Уроков', lessons],
+				['Выходит сейчас', dueNow || null]
+			])
 		],
 		'\n\n'
 	)

@@ -79,7 +79,7 @@ ALTER TYPE "PasswordResetStatus" RENAME TO "password_reset_statuses";
 -- Give the remaining default-named unique indexes explicit names. These are
 -- plain unique indexes rather than named table constraints, so the index
 -- itself is what gets renamed (ALTER TABLE ... RENAME CONSTRAINT does not
--- apply — there is no separately-named constraint object here).
+-- apply - there is no separately-named constraint object here).
 ALTER INDEX "courses_slug_key" RENAME TO "uq_courses_slug";
 ALTER INDEX "lessons_slug_key" RENAME TO "uq_lessons_slug";
 ALTER INDEX "password_reset_tokens_token_key" RENAME TO "uq_password_reset_tokens_token";

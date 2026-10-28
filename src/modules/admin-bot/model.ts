@@ -16,6 +16,8 @@ export type NotificationJobs = {
 	}
 	notifyRegistration: { userId: string; via: SignUpMethod }
 
+	notifyLessonsReleased: { courseId: string; lessonIds: string[]; recipients: number }
+
 	notifySupportEmail: { emailId: string }
 	notifyPaymentError: PaymentErrorNotification
 }

@@ -1,6 +1,5 @@
 export interface ChatTarget {
 	chatId: number
-
 	threadId?: number
 }
 

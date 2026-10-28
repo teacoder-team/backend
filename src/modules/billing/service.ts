@@ -1,6 +1,7 @@
 import type { PaymentMethodDetails } from '@teacoder/payments/yookassa'
 
 import {
+	CourseStage,
 	IntentStatus,
 	type PaymentIntent,
 	PaymentMethod,
@@ -31,11 +32,11 @@ import {
 import { getUserEmail } from '~/modules/auth/service'
 import { enqueueCoursePurchaseEmail } from '~/modules/course/jobs'
 import {
+	findCourseForPurchase,
 	findCoursePurchase,
-	findCourseSummary,
-	findPurchasableCourse
+	findCourseSummary
 } from '~/modules/course/repository'
-import { resolveCoursePrice } from '~/modules/course/service'
+import { isCoursePurchasable, resolveCoursePrice } from '~/modules/course/service'
 import {
 	enqueueSubscriptionPaymentFailedEmail,
 	enqueueSubscriptionPurchaseEmail,
@@ -110,10 +111,12 @@ const resolveProduct = async (
 		}
 	}
 
-	const course = await findPurchasableCourse(courseId)
+	const course = await findCourseForPurchase(courseId)
 
-	if (!course) {
-		throw new NotFoundError('Course not found or not for sale')
+	if (!course || !isCoursePurchasable(course)) {
+		throw course?.stage === CourseStage.ANNOUNCED
+			? new ConflictError('Course sales have not started yet')
+			: new NotFoundError('Course not found or not for sale')
 	}
 
 	const { payable: price } = resolveCoursePrice(course.price, course.discountPrice)
@@ -266,7 +269,7 @@ const checkout = async (request: CheckoutRequest, fallbackEmail: string | undefi
 		throw new ConflictError('Course already purchased')
 	}
 
-	const reusable = await findReusableCheckout(request)
+	const reusable = await findReusableCheckout(request, product.amount)
 
 	if (reusable) {
 		extendLogContext({
@@ -281,11 +284,17 @@ const checkout = async (request: CheckoutRequest, fallbackEmail: string | undefi
 	return openCheckout(request, provider, product, fallbackEmail)
 }
 
+const COURSE_ONLY_METHODS = new Set<PaymentMethod>([PaymentMethod.YANDEX_SPLIT])
+
 export const createPayment = async (
 	userId: string,
 	input: CreatePaymentInput,
 	idempotencyKey?: string
 ) => {
+	if (COURSE_ONLY_METHODS.has(input.method) && !input.courseId) {
+		throw new BadRequestError(`Payment method ${input.method} is available only for courses`)
+	}
+
 	const definition = PAYMENT_METHODS.find(
 		(method) =>
 			method.method === input.method &&
@@ -402,7 +411,10 @@ const findIdempotentReplay = async ({
 	return previous
 }
 
-const findReusableCheckout = async ({ userId, method, provider, courseId }: CheckoutRequest) => {
+const findReusableCheckout = async (
+	{ userId, method, provider, courseId }: CheckoutRequest,
+	amount: number
+) => {
 	const open = await findOpenCheckouts(userId, courseId)
 	const now = Date.now()
 	const stale = open.filter((intent) => isStale(intent, now))
@@ -423,9 +435,23 @@ const findReusableCheckout = async ({ userId, method, provider, courseId }: Chec
 		(intent) => intent.method === method && intent.provider === provider
 	)
 
-	if (sameMethod) {
+	if (!sameMethod) {
+		return null
+	}
+
+	if (toMinorUnits(sameMethod.amount) === toMinorUnits(amount)) {
 		return sameMethod
 	}
+
+	await expireCheckouts([sameMethod.id], 'price_changed')
+
+	extendLogContext({
+		event: 'checkout_price_changed',
+		userId,
+		paymentId: sameMethod.id,
+		previousAmount: sameMethod.amount,
+		amount
+	})
 
 	return null
 }

@@ -11,7 +11,7 @@ import { startAdminBot, stopAdminBot } from '~/modules/admin-bot/index'
 import { notificationJobs } from '~/modules/admin-bot/jobs'
 import { emailJobs } from '~/modules/auth/jobs'
 import { billingJobs, billingMaintenanceJobs, scheduleNightlyBilling } from '~/modules/billing/jobs'
-import { courseEmailJobs } from '~/modules/course/jobs'
+import { courseEmailJobs, courseReleaseJobs, syncLessonReleases } from '~/modules/course/jobs'
 import { oauthEmailJobs } from '~/modules/oauth/jobs'
 import { maintenanceJobs, scheduleMaintenance, sessionEmailJobs } from '~/modules/session/jobs'
 import { subscriptionEmailJobs } from '~/modules/subscription/jobs'
@@ -37,13 +37,21 @@ export const bootstrap = async () => {
 				...oauthEmailJobs,
 				...subscriptionEmailJobs
 			}),
-			startWorker(QUEUE.MAINTENANCE, { ...maintenanceJobs, ...billingMaintenanceJobs }),
+			startWorker(QUEUE.MAINTENANCE, {
+				...maintenanceJobs,
+				...billingMaintenanceJobs,
+				...courseReleaseJobs
+			}),
 			startWorker(QUEUE.BILLING, billingJobs),
 			startWorker(QUEUE.NOTIFICATIONS, notificationJobs)
 		]
 
 		await scheduleMaintenance()
 		await scheduleNightlyBilling()
+
+		await syncLessonReleases().catch((err: unknown) => {
+			logger.error({ context: 'bootstrap', err }, 'lesson_releases_sync_failed')
+		})
 
 		startAdminBot()
 

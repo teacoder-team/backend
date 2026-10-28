@@ -12,7 +12,8 @@ model Course {
     youtubeUrl String? @map("youtube_url")
     attachment String?
 
-    isPublished Boolean @default(false) @map("is_published")
+    isPublished Boolean     @default(false) @map("is_published")
+    stage       CourseStage @default(DRAFT)
 
     accessMode CourseAccessMode @default(PREMIUM) @map("access_mode")
 
@@ -31,7 +32,7 @@ model Course {
     createdAt DateTime @default(now()) @map("created_at")
     updatedAt DateTime @updatedAt @map("updated_at")
 
-    @@index([isPublished, createdAt(sort: Desc)], map: "ix_courses_is_published_created_at")
+    @@index([isPublished, stage, createdAt(sort: Desc)], map: "ix_courses_is_published_stage_created_at")
     @@map("courses")
 }
 
@@ -87,9 +88,17 @@ model Lesson {
 
     kinescopeId String? @map("kinescope_id")
 
+    resources Json @default("[]")
+
+    homeworkTask      String?  @map("homework_task")
+    homeworkChecklist String[] @default([]) @map("homework_checklist")
+
     access LessonAccess @default(FREE)
 
     isPublished Boolean @default(false) @map("is_published")
+    isAnnounced Boolean @default(false) @map("is_announced")
+
+    plannedReleaseAt DateTime? @map("planned_release_at")
 
     userProgress UserProgress[]
 
@@ -104,6 +113,7 @@ model Lesson {
     updatedAt DateTime @updatedAt @map("updated_at")
 
     @@index([courseId, isPublished, position], map: "ix_lessons_course_id_is_published_position")
+    @@index([courseId, isAnnounced, position], map: "ix_lessons_course_id_is_announced_position")
     @@index([courseId, access], map: "ix_lessons_course_id_access")
     @@index([sectionId, isPublished, position], map: "ix_lessons_section_id_is_published_position")
     @@map("lessons")
@@ -117,9 +127,20 @@ enum LessonAccess {
 }
 
 enum CourseAccessMode {
-    FREE     @map("free")
-    PREMIUM  @map("premium")
-    PURCHASE @map("purchase")
+    FREE                @map("free")
+    PREMIUM             @map("premium")
+    PURCHASE            @map("purchase")
+    PREMIUM_OR_PURCHASE @map("premium_or_purchase")
 
     @@map("course_access_modes")
+}
+
+enum CourseStage {
+    DRAFT         @map("draft")
+    ANNOUNCED     @map("announced")
+    IN_PRODUCTION @map("in_production")
+    COMPLETED     @map("completed")
+    ARCHIVED      @map("archived")
+
+    @@map("course_stages")
 }

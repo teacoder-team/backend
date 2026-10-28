@@ -8,6 +8,12 @@ export const findUserById = (userId: string) =>
 		include: { passwordCredential: { select: { userId: true } } }
 	})
 
+export const findUserRole = async (userId: string) => {
+	const user = await db.user.findUnique({ where: { id: userId }, select: { role: true } })
+
+	return user?.role ?? null
+}
+
 export const updateAvatar = (userId: string, avatarUrl: string) =>
 	db.user.update({ where: { id: userId }, data: { avatar: avatarUrl } })
 

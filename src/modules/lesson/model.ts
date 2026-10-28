@@ -13,6 +13,43 @@ export const LessonParams = t.Object({
 	id: LessonId
 })
 
+const LessonResourceSchema = t.Object(
+	{
+		title: t.String({
+			description: 'Название ссылки - как её показывать в списке.',
+			examples: ['Bun runtime']
+		}),
+		url: t.String({
+			description: 'Адрес материала, всегда `http(s)`.',
+			examples: ['https://bun.com/docs/runtime']
+		})
+	},
+	{ description: 'Ссылка на дополнительный материал к уроку.' }
+)
+
+const LessonHomework = t.Object(
+	{
+		task: t.String({
+			description: 'Описание задания: что нужно сделать после урока.',
+			examples: ['Собрать CLI с aliases, JSON/TOML config и отчётом о watch/hot.']
+		}),
+		checklist: t.Array(
+			t.String({
+				description: 'Пункт, по которому можно самому проверить работу.',
+				examples: ['Невалидный порт отклоняется до побочных эффектов.']
+			}),
+			{
+				description:
+					'Чеклист для самопроверки в порядке показа. Пустой массив, если чеклиста нет.'
+			}
+		)
+	},
+	{
+		description:
+			'Домашнее задание после урока. Сдачи и проверки в API нет - задание только для самостоятельной работы.'
+	}
+)
+
 export const LessonResponse = t.Object(
 	{
 		id: LessonId,
@@ -39,6 +76,11 @@ export const LessonResponse = t.Object(
 				examples: ['UCSOW2TFUGL34ZWCOZSAHDFU4W']
 			})
 		),
+		homework: t.Nullable(LessonHomework),
+		resources: t.Array(LessonResourceSchema, {
+			description:
+				'Материалы к уроку: официальная документация, статьи, первоисточники - в том порядке, в котором их нужно показывать. Пустой массив, если материалов нет.'
+		}),
 		course: t.Object(
 			{
 				id: t.String({
@@ -65,3 +107,4 @@ export const LessonResponse = t.Object(
 )
 
 export type LessonParamsInput = Static<typeof LessonParams>
+export type LessonResource = Static<typeof LessonResourceSchema>

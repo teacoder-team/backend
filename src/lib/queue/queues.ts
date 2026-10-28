@@ -11,6 +11,8 @@ export const QUEUE = {
 
 export type QueueName = (typeof QUEUE)[keyof typeof QUEUE]
 
+export const QUEUE_NAMES = Object.values(QUEUE) as [QueueName, ...QueueName[]]
+
 const defaultJobOptions: JobsOptions = {
 	attempts: 3,
 	backoff: {

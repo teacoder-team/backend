@@ -2,6 +2,7 @@ import { openapi } from '@elysiajs/openapi'
 import { Elysia } from 'elysia'
 
 import { documentation } from '~/config/openapi'
+import { admin } from '~/modules/admin'
 import { auth } from '~/modules/auth'
 import { billing } from '~/modules/billing'
 import { course, downloads } from '~/modules/course'
@@ -34,6 +35,7 @@ export const createApp = () =>
 		.use(requestContext)
 		.use(requestLogger)
 		.use(root)
+		.use(admin)
 		.use(auth)
 		.use(oauth)
 		.use(session)

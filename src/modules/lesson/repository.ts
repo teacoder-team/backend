@@ -11,6 +11,9 @@ export const findPublishedLessonById = (id: string) =>
 			position: true,
 			access: true,
 			kinescopeId: true,
+			resources: true,
+			homeworkTask: true,
+			homeworkChecklist: true,
 			course: { select: { id: true, title: true, slug: true, accessMode: true } }
 		}
 	})

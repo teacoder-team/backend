@@ -136,7 +136,7 @@ export const createProviderCheckout = async (
 						? WORLD_PAYMENT_METHOD_GROUPS
 						: undefined,
 				successUrl: paymentPageUrl(payment.id),
-				returnUrl: env.APP_URL,
+				returnUrl: paymentPageUrl(payment.id),
 				callbackUrl: `${env.WEBHOOK_URL}/webhook/prodamus`
 			})
 

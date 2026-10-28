@@ -56,20 +56,23 @@ export const errorHandler = new Elysia({ name: 'error-handler' })
 							? 404
 							: 500
 
-			await enqueuePaymentErrorNotification({
-				source: path === '/billing/create' ? 'CREATE_PAYMENT' : 'WEBHOOK',
-				error,
-				status,
-				path,
-				provider:
-					field('provider') ??
-					(path.startsWith('/webhook/') ? path.split('/').pop() : undefined),
-				paymentId: field('paymentId'),
-				webhookId: field('webhookId'),
-				pspIntentId: field('pspIntentId'),
-				userId: field('userId'),
-				requestId: field('requestId')
-			})
+			// 4xx (400, 401, 404, 429...) are client errors, not worth pinging the admin bot
+			if (status >= 500) {
+				await enqueuePaymentErrorNotification({
+					source: path === '/billing/create' ? 'CREATE_PAYMENT' : 'WEBHOOK',
+					error,
+					status,
+					path,
+					provider:
+						field('provider') ??
+						(path.startsWith('/webhook/') ? path.split('/').pop() : undefined),
+					paymentId: field('paymentId'),
+					webhookId: field('webhookId'),
+					pspIntentId: field('pspIntentId'),
+					userId: field('userId'),
+					requestId: field('requestId')
+				})
+			}
 		}
 
 		if (code === 'VALIDATION') {

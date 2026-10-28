@@ -14,7 +14,8 @@ export const TAG = {
 	lessons: 'Уроки',
 	progress: 'Прогресс',
 	billing: 'Оплата',
-	webhooks: 'Вебхуки'
+	webhooks: 'Вебхуки',
+	admin: 'Администрирование'
 } as const
 
 const DESCRIPTION = `
