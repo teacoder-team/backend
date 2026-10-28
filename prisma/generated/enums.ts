@@ -51,6 +51,7 @@ export type CourseAccessMode = (typeof CourseAccessMode)[keyof typeof CourseAcce
 
 export const CourseStage = {
   DRAFT: 'DRAFT',
+  ANNOUNCED: 'ANNOUNCED',
   IN_PRODUCTION: 'IN_PRODUCTION',
   COMPLETED: 'COMPLETED',
   ARCHIVED: 'ARCHIVED'

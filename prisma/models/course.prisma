@@ -137,6 +137,7 @@ enum CourseAccessMode {
 
 enum CourseStage {
     DRAFT         @map("draft")
+    ANNOUNCED     @map("announced")
     IN_PRODUCTION @map("in_production")
     COMPLETED     @map("completed")
     ARCHIVED      @map("archived")

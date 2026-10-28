@@ -1,37 +1,58 @@
-import type { Bot } from 'grammy'
+import type { Bot, CommandContext, Context } from 'grammy'
 
-import { type ChatTarget, isSameTarget } from '@teacoder/telegram'
+import { type ChatTarget, type Html, isSameTarget } from '@teacoder/telegram'
 
 import { ADMIN_CHAT_TARGETS, adminBot } from '~/lib/integrations/telegram'
 import { logger } from '~/lib/logger'
+import { syncLessonReleases } from '~/modules/course/jobs'
 
-import { accessDeniedMessage, startMessage } from './service'
+import { accessDeniedMessage, releasesSyncedMessage, startMessage } from './service'
 
-const COMMANDS = [{ command: 'start', description: 'О боте и ID этого чата' }]
+const COMMANDS = [
+	{ command: 'start', description: 'О боте и ID этого чата' },
+	{ command: 'releases', description: 'Запланировать публикацию уроков по датам' }
+]
+
+const chatTargetOf = ({ chat, msg }: CommandContext<Context>): ChatTarget =>
+	msg.is_topic_message && msg.message_thread_id
+		? { chatId: chat.id, threadId: msg.message_thread_id }
+		: { chatId: chat.id }
+
+const isAdminChat = (target: ChatTarget) =>
+	ADMIN_CHAT_TARGETS.some((entry) => entry.chatId === target.chatId)
+
+const reply = (ctx: CommandContext<Context>, message: Html) =>
+	ctx.reply(message.value, {
+		parse_mode: 'HTML',
+		link_preview_options: { is_disabled: true }
+	})
 
 const registerCommands = (bot: Bot) => {
 	bot.command('start', async (ctx) => {
-		const { msg } = ctx
+		const target = chatTargetOf(ctx)
 
-		const target: ChatTarget =
-			msg.is_topic_message && msg.message_thread_id
-				? { chatId: ctx.chat.id, threadId: msg.message_thread_id }
-				: { chatId: ctx.chat.id }
+		await reply(
+			ctx,
+			isAdminChat(target)
+				? startMessage({
+						target,
+						chatType: ctx.chat.type,
+						delivers: ADMIN_CHAT_TARGETS.some((entry) => isSameTarget(entry, target))
+					})
+				: accessDeniedMessage(target)
+		)
+	})
 
-		const allowed = ADMIN_CHAT_TARGETS.some((entry) => entry.chatId === target.chatId)
+	bot.command('releases', async (ctx) => {
+		const target = chatTargetOf(ctx)
 
-		const message = allowed
-			? startMessage({
-					target,
-					chatType: ctx.chat.type,
-					delivers: ADMIN_CHAT_TARGETS.some((entry) => isSameTarget(entry, target))
-				})
-			: accessDeniedMessage(target)
+		if (!isAdminChat(target)) {
+			await reply(ctx, accessDeniedMessage(target))
 
-		await ctx.reply(message.value, {
-			parse_mode: 'HTML',
-			link_preview_options: { is_disabled: true }
-		})
+			return
+		}
+
+		await reply(ctx, releasesSyncedMessage(await syncLessonReleases()))
 	})
 
 	bot.catch(({ error, ctx }) => {

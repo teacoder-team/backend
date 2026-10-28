@@ -6,6 +6,7 @@ import type { JobHandlers } from '~/lib/queue/runner'
 import { normalizeEmail } from '~/lib/utils/email'
 import { displayNameOf, htmlToText, stripQuotedReply } from '~/lib/utils/email-text'
 import { getUserEmail } from '~/modules/auth/service'
+import { findReleasedLessons } from '~/modules/course/repository'
 import { hasActiveSubscription } from '~/modules/subscription/repository'
 
 import type { NotificationJobs, SupportEmail } from './model'
@@ -18,6 +19,7 @@ import {
 } from './repository'
 import {
 	coursePurchaseMessage,
+	lessonsReleasedMessage,
 	paymentErrorMessage,
 	registrationMessage,
 	subscriptionPurchaseMessage,
@@ -133,6 +135,19 @@ export const notificationJobs: JobHandlers<NotificationJobs> = {
 
 		await deliver(registrationMessage({ user, email, via, sameDevice }))
 	},
+	notifyLessonsReleased: async ({ courseId, lessonIds, recipients }) => {
+		const [course, lessons] = await Promise.all([
+			findPurchasedCourse(courseId),
+			findReleasedLessons(courseId, lessonIds)
+		])
+
+		if (lessons.length === 0) {
+			return
+		}
+
+		await deliver(lessonsReleasedMessage({ course, lessons, recipients }))
+	},
+
 	notifySupportEmail: async ({ emailId }) => {
 		const email = await fetchSupportEmail(emailId)
 

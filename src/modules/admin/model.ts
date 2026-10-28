@@ -140,6 +140,46 @@ export const QueueListResponse = t.Array(
 	{ description: 'Все очереди приложения.' }
 )
 
+export const ReleaseSyncResponse = t.Object(
+	{
+		releases: t.Array(
+			t.Object({
+				courseId: t.String({
+					description: 'Курс, в котором выходят уроки.',
+					examples: ['b3f1c2d4-5e6f-4a7b-8c9d-0e1f2a3b4c5d']
+				}),
+				courseTitle: t.Nullable(
+					t.String({
+						description: 'Название курса. `null`, если курс успели удалить.',
+						examples: ['Полный курс по Bun']
+					})
+				),
+				releaseAt: t.String({
+					description: 'Дата и время выхода, общие для всей группы уроков.',
+					examples: ['2026-10-30T07:00:00.000Z']
+				}),
+				lessons: t.Number({
+					description: 'Сколько уроков выйдет в этот момент.',
+					examples: [12]
+				}),
+				isDue: t.Boolean({
+					description:
+						'Дата уже прошла - группа публикуется сразу, не дожидаясь расписания.',
+					examples: [false]
+				})
+			}),
+			{ description: 'Запланированные публикации, сначала ближайшие.' }
+		),
+		scheduled: t.Number({ description: 'Сколько групп поставлено в очередь.', examples: [3] }),
+		lessons: t.Number({ description: 'Сколько уроков ждёт публикации.', examples: [27] }),
+		dueNow: t.Number({
+			description: 'Сколько групп публикуется прямо сейчас.',
+			examples: [1]
+		})
+	},
+	{ description: 'Что поставлено в расписание публикаций.' }
+)
+
 export type JobListInput = Static<typeof JobListQuery>
 export type JobQueueName = Static<typeof QueueName>
 export type JobStatusFilter = Static<typeof JobStatus>

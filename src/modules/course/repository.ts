@@ -125,6 +125,48 @@ export const findCourseForPurchase = (courseId: string) =>
 		}
 	})
 
+export const listPendingLessonReleases = () =>
+	db.lesson.groupBy({
+		by: ['courseId', 'plannedReleaseAt'],
+		where: { isPublished: false, plannedReleaseAt: { not: null } },
+		_count: { _all: true },
+		orderBy: { plannedReleaseAt: 'asc' }
+	})
+
+export interface ReleasedLesson {
+	id: string
+	title: string
+	position: number
+}
+
+export const publishDueLessons = (courseId: string, releaseAt: Date) =>
+	db.$queryRaw<ReleasedLesson[]>`
+		UPDATE "lessons"
+		SET "is_published" = true, "is_announced" = false, "updated_at" = now()
+		WHERE "course_id" = ${courseId}
+			AND "planned_release_at" = ${releaseAt}
+			AND NOT "is_published"
+		RETURNING "id", "title", "position"
+	`
+
+export const findReleasedLessons = (courseId: string, lessonIds: string[]) =>
+	db.lesson.findMany({
+		where: { id: { in: lessonIds }, courseId },
+		select: { id: true, title: true },
+		orderBy: [{ position: 'asc' }, { id: 'asc' }]
+	})
+
+export const listCourseBuyerIds = (courseId: string) =>
+	db.coursePurchase
+		.findMany({ where: { courseId }, select: { userId: true } })
+		.then((rows) => rows.map((row) => row.userId))
+
+export const listCourseTitles = (courseIds: string[]) =>
+	db.course.findMany({
+		where: { id: { in: courseIds } },
+		select: { id: true, title: true, slug: true }
+	})
+
 export const findCourseSummary = (courseId: string) =>
 	db.course.findUnique({
 		where: { id: courseId },

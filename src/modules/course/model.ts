@@ -65,13 +65,14 @@ const CourseAccessModeSchema = PrismaEnum(CourseAccessMode, {
 
 const CourseStageSchema = PrismaEnum(CourseStage, {
 	description:
-		'Стадия производства курса: `DRAFT` - готовится, публично недоступен, `IN_PRODUCTION` - записывается и выходит поэтапно, `COMPLETED` - записан и собран полностью, `ARCHIVED` - больше не развивается и убран из каталога. Стадия не отвечает за оплату: за неё отвечает `accessMode`.',
+		'Стадия производства курса: `DRAFT` - готовится, публично недоступен, `ANNOUNCED` - анонсирован, виден в каталоге, но уроки ещё не выходят и продажи не открыты, `IN_PRODUCTION` - записывается и выходит поэтапно, `COMPLETED` - записан и собран полностью, `ARCHIVED` - больше не развивается и убран из каталога. Стадия не отвечает за оплату: за неё отвечает `accessMode`.',
 	examples: [CourseStage.IN_PRODUCTION]
 })
 
 const CourseStatusSchema = t.UnionEnum(
 	[
 		'DRAFT',
+		'ANNOUNCED',
 		'IN_PRODUCTION',
 		'EARLY_ACCESS',
 		'COMPLETED',
@@ -80,7 +81,7 @@ const CourseStatusSchema = t.UnionEnum(
 	] as const,
 	{
 		description:
-			'Главный статус курса - его и показывайте, остальные признаки идут отдельными полями. Считается на сервере: `DRAFT` - «В разработке» (публично не отдаётся), `IN_PRODUCTION` - «Выходит поэтапно», `EARLY_ACCESS` - «Ранний доступ» (выходит поэтапно и доступен по подписке или покупке), `COMPLETED` - «Курс завершён», `PUBLICLY_RELEASED` - «Полная версия на YouTube», `ARCHIVED` - «В архиве».',
+			'Главный статус курса - его и показывайте, остальные признаки идут отдельными полями. Считается на сервере: `DRAFT` - «В разработке» (публично не отдаётся), `ANNOUNCED` - «Скоро»: курс анонсирован, уроки ещё не выходят и купить его нельзя, `IN_PRODUCTION` - «Выходит поэтапно», `EARLY_ACCESS` - «Ранний доступ» (выходит поэтапно и доступен по подписке или покупке), `COMPLETED` - «Курс завершён», `PUBLICLY_RELEASED` - «Полная версия на YouTube», `ARCHIVED` - «В архиве».',
 		examples: ['EARLY_ACCESS']
 	}
 )

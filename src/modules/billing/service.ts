@@ -1,6 +1,7 @@
 import type { PaymentMethodDetails } from '@teacoder/payments/yookassa'
 
 import {
+	CourseStage,
 	IntentStatus,
 	type PaymentIntent,
 	PaymentMethod,
@@ -113,7 +114,9 @@ const resolveProduct = async (
 	const course = await findCourseForPurchase(courseId)
 
 	if (!course || !isCoursePurchasable(course)) {
-		throw new NotFoundError('Course not found or not for sale')
+		throw course?.stage === CourseStage.ANNOUNCED
+			? new ConflictError('Course sales have not started yet')
+			: new NotFoundError('Course not found or not for sale')
 	}
 
 	const { payable: price } = resolveCoursePrice(course.price, course.discountPrice)

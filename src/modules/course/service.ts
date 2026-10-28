@@ -68,6 +68,10 @@ export const resolveCourseStatus = (course: CourseReleaseState): CourseStatus =>
 		return 'ARCHIVED'
 	}
 
+	if (course.stage === CourseStage.ANNOUNCED) {
+		return 'ANNOUNCED'
+	}
+
 	if (course.youtubeUrl) {
 		return 'PUBLICLY_RELEASED'
 	}
@@ -79,11 +83,17 @@ export const resolveCourseStatus = (course: CourseReleaseState): CourseStatus =>
 	return course.accessMode === CourseAccessMode.FREE ? 'IN_PRODUCTION' : 'EARLY_ACCESS'
 }
 
+const UNSELLABLE_STAGES: CourseStage[] = [
+	CourseStage.DRAFT,
+	CourseStage.ANNOUNCED,
+	CourseStage.ARCHIVED
+]
+
 export const isCoursePurchasable = (course: PurchasableCourse) =>
 	course.isPublished &&
-	course.stage !== CourseStage.ARCHIVED &&
 	PURCHASABLE_ACCESS_MODES.includes(course.accessMode) &&
-	resolveCoursePrice(course.price, course.discountPrice).payable !== null
+	resolveCoursePrice(course.price, course.discountPrice).payable !== null &&
+	!UNSELLABLE_STAGES.includes(course.stage)
 
 const countLessons = (lessons: { isPublished: boolean }[]) => {
 	const published = lessons.filter((lesson) => lesson.isPublished).length

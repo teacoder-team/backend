@@ -1,6 +1,7 @@
 import { Elysia } from 'elysia'
 
 import { TAG } from '~/config/openapi'
+import { syncLessonReleases } from '~/modules/course/jobs'
 import { authGuard } from '~/plugins/auth-guard'
 
 import {
@@ -8,13 +9,31 @@ import {
 	JobListResponse,
 	JobParams,
 	JobResponse,
-	QueueListResponse
+	QueueListResponse,
+	ReleaseSyncResponse
 } from './model'
 import { getJob, listJobs, listQueues } from './service'
 
 export const admin = new Elysia({ prefix: '/admin', tags: [TAG.admin] })
 	.use(authGuard)
-	.model({ JobListQuery, JobListResponse, JobParams, JobResponse, QueueListResponse })
+	.model({
+		JobListQuery,
+		JobListResponse,
+		JobParams,
+		JobResponse,
+		QueueListResponse,
+		ReleaseSyncResponse
+	})
+	.post('/releases/sync', async () => await syncLessonReleases(), {
+		admin: true,
+		response: 'ReleaseSyncResponse',
+		detail: {
+			summary: 'Синхронизация публикаций уроков',
+			description:
+				'Находит уроки с проставленной датой выхода (`planned_release_at`), которые ещё не опубликованы, и ставит их публикацию в очередь. Уроки одного курса с одинаковой датой выходят вместе и попадают в одно письмо подписчикам курса.\n\nВызывайте после того, как проставили даты в базе. Запрос идемпотентный: повторный вызов не создаёт дублей и не публикует ничего дважды. Группы с уже прошедшей датой публикуются сразу (`isDue: true`).\n\nТо же самое делает команда `/releases` в админ-боте.',
+			security: [{ bearerAuth: [] }]
+		}
+	})
 	.get('/queues', async () => await listQueues(), {
 		admin: true,
 		response: 'QueueListResponse',
