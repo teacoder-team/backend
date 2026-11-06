@@ -14,7 +14,7 @@ export const CreatePaymentPayload = t.Object(
 	{
 		method: PrismaEnum(PaymentMethod, {
 			description:
-				'Способ оплаты. CRYPTO - криптовалюта. Для Робокассы передайте BANK_CARD и provider: ROBOKASSA; фактический способ уточняется после оплаты. YANDEX_SPLIT - Яндекс Сплит, работает только при покупке курса: без `courseId` вернёт 400.',
+				'Способ оплаты. CRYPTO - криптовалюта. Для Робокассы передайте BANK_CARD и provider: ROBOKASSA; фактический способ уточняется после оплаты. YANDEX_SPLIT (Яндекс Сплит) и ALFA_PAY (Alfa Pay) работают только при покупке курса: без `courseId` вернут 400.',
 			examples: [PaymentMethod.BANK_CARD, PaymentMethod.CRYPTO]
 		}),
 		provider: t.Optional(
