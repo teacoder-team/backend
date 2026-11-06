@@ -2,7 +2,13 @@ import { createHttpClient, type HttpLogger } from '@teacoder/http'
 
 const CURRENCY = 'RUB'
 
-export type PaymentMethodType = 'bank_card' | 'sbp' | 'tinkoff_bank' | 'yoo_money' | 'sberbank'
+export type PaymentMethodType =
+	| 'bank_card'
+	| 'sbp'
+	| 'tinkoff_bank'
+	| 'yoo_money'
+	| 'sberbank'
+	| 'alfa_pay'
 
 export interface YookassaClientOptions {
 	shopId: string
