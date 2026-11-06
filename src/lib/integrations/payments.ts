@@ -85,7 +85,7 @@ export const createProviderCheckout = async (
 					paymentId: payment.id
 				},
 				paymentMethodType: yookassaMethodType(payment.method),
-				savePaymentMethod: true
+				savePaymentMethod: product.kind === 'subscription'
 			})
 
 			const url = created.confirmation?.confirmation_url

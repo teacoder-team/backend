@@ -284,7 +284,10 @@ const checkout = async (request: CheckoutRequest, fallbackEmail: string | undefi
 	return openCheckout(request, provider, product, fallbackEmail)
 }
 
-const COURSE_ONLY_METHODS = new Set<PaymentMethod>([PaymentMethod.YANDEX_SPLIT])
+const COURSE_ONLY_METHODS = new Set<PaymentMethod>([
+	PaymentMethod.YANDEX_SPLIT,
+	PaymentMethod.ALFA_PAY
+])
 
 export const createPayment = async (
 	userId: string,
