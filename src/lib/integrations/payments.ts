@@ -208,6 +208,8 @@ const yookassaMethodType = (method: PaymentMethod): PaymentMethodType | undefine
 			return 'yoo_money'
 		case PaymentMethod.SBER_PAY:
 			return 'sberbank'
+		case PaymentMethod.ALFA_PAY:
+			return 'alfa_pay'
 		default:
 			return undefined
 	}

@@ -18,11 +18,11 @@ export const PAYMENT_METHODS: MethodDefinition[] = [
 		provider: PaymentProvider.YOOKASSA
 	},
 	{
-		method: PaymentMethod.BANK_CARD,
+		method: PaymentMethod.ALFA_PAY,
 		category: 'FIAT',
-		name: 'Банковские карты РФ и СБП (резервный)',
-		description: 'Если основной способ недоступен',
-		provider: PaymentProvider.ROBOKASSA
+		name: 'Alfa Pay',
+		description: 'Оплата через приложение Альфа-Банка',
+		provider: PaymentProvider.YOOKASSA
 	},
 	{
 		method: PaymentMethod.INTERNATIONAL_CARD,
@@ -30,6 +30,13 @@ export const PAYMENT_METHODS: MethodDefinition[] = [
 		name: 'Иностранные карты',
 		description: 'Оплата картами банков мира',
 		provider: PaymentProvider.PRODAMUS
+	},
+	{
+		method: PaymentMethod.INTERNATIONAL_CARD,
+		category: 'FIAT',
+		name: 'Иностранные карты (резерв)',
+		description: 'Запасной способ, если основной не работает',
+		provider: PaymentProvider.ROBOKASSA
 	},
 	{
 		method: PaymentMethod.YANDEX_SPLIT,
