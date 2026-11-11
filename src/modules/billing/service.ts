@@ -474,11 +474,12 @@ const rejectionReason = (intent: FulfillableIntent | null, update: ProviderPayme
 		return 'psp_intent_mismatch'
 	}
 
-	if (
-		toMinorUnits(update.amount) !== toMinorUnits(intent.amount) ||
-		update.currency !== intent.currency
-	) {
+	if (toMinorUnits(update.amount) !== toMinorUnits(intent.amount)) {
 		return 'amount_mismatch'
+	}
+
+	if (update.currency && update.currency !== intent.currency) {
+		return 'currency_mismatch'
 	}
 
 	return null
