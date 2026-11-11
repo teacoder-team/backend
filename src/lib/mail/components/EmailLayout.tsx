@@ -14,7 +14,7 @@ import {
 } from '@react-email/components'
 import { Fragment, type ReactNode } from 'react'
 
-const BASE_URL = process.env.APP_URL ?? 'https://teacoder.ru'
+const BASE_URL = 'https://teacoder.ru'
 const SUPPORT_EMAIL = process.env.SUPPORT_EMAIL ?? 'support@teacoder.ru'
 
 const SOCIAL_LINKS = [

@@ -480,7 +480,6 @@ export const receiveProdamusWebhook = async (
 		pspIntentId: notification.order_id,
 		status,
 		amount: notification.sum,
-		currency: (notification.currency ?? 'rub').toUpperCase(),
 		failureCode: status === IntentStatus.CAPTURED ? undefined : paymentStatus
 	})
 }

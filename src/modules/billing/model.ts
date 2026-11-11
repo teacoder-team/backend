@@ -297,7 +297,7 @@ export interface ProviderPaymentUpdate {
 	status: IntentStatus
 
 	amount: string
-	currency: string
+	currency?: string
 	failureCode?: string
 	method?: PaymentMethod
 
