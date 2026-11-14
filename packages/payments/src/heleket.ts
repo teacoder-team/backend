@@ -171,7 +171,7 @@ export const createHeleketClient = ({
 	logger
 }: HeleketClientOptions) => {
 	const http = createHttpClient({
-		baseURL: 'https://api.heleket.com/v1',
+		baseURL: 'https://api.heleket.hk/v1',
 		timeout,
 		logger,
 		headers: { 'Content-Type': 'application/json', merchant: merchantId },
