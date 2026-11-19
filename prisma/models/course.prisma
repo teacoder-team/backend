@@ -88,6 +88,8 @@ model Lesson {
 
     kinescopeId String? @map("kinescope_id")
 
+    attachment String?
+
     resources Json @default("[]")
 
     homeworkTask      String?  @map("homework_task")
@@ -101,6 +103,7 @@ model Lesson {
     plannedReleaseAt DateTime? @map("planned_release_at")
 
     userProgress UserProgress[]
+    downloadLogs DownloadLog[]
 
     course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
     courseId String @map("course_id")

@@ -183,6 +183,7 @@ export const LessonScalarFieldEnum = {
   description: 'description',
   position: 'position',
   kinescopeId: 'kinescopeId',
+  attachment: 'attachment',
   resources: 'resources',
   homeworkTask: 'homeworkTask',
   homeworkChecklist: 'homeworkChecklist',
@@ -337,6 +338,7 @@ export const DownloadLogScalarFieldEnum = {
   downloadedAt: 'downloadedAt',
   userId: 'userId',
   courseId: 'courseId',
+  lessonId: 'lessonId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
