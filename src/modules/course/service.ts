@@ -7,6 +7,7 @@ import { ForbiddenError, InternalError, NotFoundError } from '~/lib/errors'
 import { orion, orionUrl } from '~/lib/integrations/orion'
 import { logger } from '~/lib/logger'
 import { redis } from '~/lib/redis'
+import { findLessonAttachment } from '~/modules/lesson/repository'
 import { findCompletedLessonIds } from '~/modules/progress/repository'
 import { hasActiveSubscription } from '~/modules/subscription/repository'
 
@@ -248,6 +249,20 @@ export const getCourseLessons = async (slug: string, userId: string | null) => {
 		.map(({ item }) => item)
 }
 
+export interface DownloadTicket {
+	userId: string
+	courseId: string
+	lessonId?: string
+}
+
+export const issueDownloadLink = async (ticket: DownloadTicket) => {
+	const token = randomBytes(32).toString('base64url')
+
+	await redis.set(downloadKey(token), JSON.stringify(ticket), 'EX', DOWNLOAD_LINK_TTL)
+
+	return { url: `${env.GATEWAY_URL}/downloads/${token}`, expiresIn: DOWNLOAD_LINK_TTL }
+}
+
 export const createMaterialsLink = async (slug: string, userId: string) => {
 	const course = await findCourse(slug)
 
@@ -259,16 +274,7 @@ export const createMaterialsLink = async (slug: string, userId: string) => {
 		throw new ForbiddenError(MATERIALS_LOCKED_REASON[course.accessMode])
 	}
 
-	const token = randomBytes(32).toString('base64url')
-
-	await redis.set(
-		downloadKey(token),
-		JSON.stringify({ courseId: course.id, userId }),
-		'EX',
-		DOWNLOAD_LINK_TTL
-	)
-
-	return { url: `${env.GATEWAY_URL}/downloads/${token}`, expiresIn: DOWNLOAD_LINK_TTL }
+	return issueDownloadLink({ userId, courseId: course.id })
 }
 
 const EXTENSION = /\.[a-z0-9]{1,8}$/i
@@ -288,14 +294,16 @@ export const openMaterialsDownload = async (token: string, ip: string, userAgent
 		throw new NotFoundError('Download link is invalid or expired')
 	}
 
-	const { courseId, userId } = JSON.parse(parked) as { courseId: string; userId: string }
-	const course = await findCourseAttachment(courseId)
+	const { courseId, lessonId, userId } = JSON.parse(parked) as DownloadTicket
+	const materials = lessonId
+		? await findLessonAttachment(lessonId)
+		: await findCourseAttachment(courseId)
 
-	if (!course?.attachment) {
-		throw new NotFoundError('This course has no materials')
+	if (!materials?.attachment) {
+		throw new NotFoundError('These materials are no longer available')
 	}
 
-	const source = orion.resolveUrl('attachments', course.attachment)
+	const source = orion.resolveUrl('attachments', materials.attachment)
 
 	const upstream = await fetch(source, {
 		signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS)
@@ -314,9 +322,11 @@ export const openMaterialsDownload = async (token: string, ip: string, userAgent
 		throw new InternalError('Course materials are temporarily unavailable')
 	}
 
-	await logCourseDownload({ token, userId, courseId, ip, userAgent }).catch((err: unknown) => {
-		logger.warn({ context: 'course', courseId, err }, 'course_download_log_failed')
-	})
+	await logCourseDownload({ token, userId, courseId, lessonId, ip, userAgent }).catch(
+		(err: unknown) => {
+			logger.warn({ context: 'course', courseId, lessonId, err }, 'course_download_log_failed')
+		}
+	)
 
 	const contentType = upstream.headers.get('content-type')
 
@@ -324,7 +334,7 @@ export const openMaterialsDownload = async (token: string, ip: string, userAgent
 		body: upstream.body,
 		contentType: contentType ?? 'application/octet-stream',
 		contentLength: upstream.headers.get('content-length'),
-		filename: archiveName(course.slug, course.attachment, contentType)
+		filename: archiveName(materials.slug, materials.attachment, contentType)
 	}
 }
 

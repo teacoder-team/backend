@@ -206,6 +206,7 @@ export interface NewDownloadLog {
 	token: string
 	userId: string
 	courseId: string
+	lessonId?: string
 	ip: string
 	userAgent: string
 }

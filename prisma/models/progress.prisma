@@ -33,9 +33,13 @@ model DownloadLog {
     course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
     courseId String @map("course_id")
 
+    lesson   Lesson? @relation(fields: [lessonId], references: [id], onDelete: Cascade, map: "fk_download_logs_lesson_id")
+    lessonId String? @map("lesson_id")
+
     createdAt DateTime @default(now()) @map("created_at")
     updatedAt DateTime @updatedAt @map("updated_at")
 
     @@index([courseId, downloadedAt(sort: Desc)], map: "ix_download_logs_course_id_downloaded_at")
+    @@index([lessonId, downloadedAt(sort: Desc)], map: "ix_download_logs_lesson_id_downloaded_at")
     @@map("download_logs")
 }

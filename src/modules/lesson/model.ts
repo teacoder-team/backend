@@ -77,6 +77,11 @@ export const LessonResponse = t.Object(
 			})
 		),
 		homework: t.Nullable(LessonHomework),
+		hasMaterials: t.Boolean({
+			description:
+				'Есть ли у урока материалы - архив с исходниками к этому уроку. Скачать: `POST /lessons/{id}/materials/link`.',
+			examples: [true]
+		}),
 		resources: t.Array(LessonResourceSchema, {
 			description:
 				'Материалы к уроку: официальная документация, статьи, первоисточники - в том порядке, в котором их нужно показывать. Пустой массив, если материалов нет.'
@@ -104,6 +109,23 @@ export const LessonResponse = t.Object(
 		)
 	},
 	{ description: 'Урок.' }
+)
+
+export const LessonMaterialsLinkResponse = t.Object(
+	{
+		url: t.String({
+			description:
+				'Ссылка на архив с материалами урока - откройте её в браузере, начнётся скачивание. Действует 5 минут.',
+			examples: [
+				'https://api.teacoder.ru/downloads/q2fSx1Gd0Yk7uJ9ZlQm3cW8vB4nR6tHpE5aT1oKyL0s'
+			]
+		}),
+		expiresIn: t.Number({
+			description: 'Через сколько секунд ссылка перестанет работать.',
+			examples: [300]
+		})
+	},
+	{ description: 'Временная ссылка на материалы урока.' }
 )
 
 export type LessonParamsInput = Static<typeof LessonParams>

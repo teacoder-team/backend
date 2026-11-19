@@ -32,6 +32,7 @@ export type DownloadLogMinAggregateOutputType = {
   downloadedAt: Date | null
   userId: string | null
   courseId: string | null
+  lessonId: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -44,6 +45,7 @@ export type DownloadLogMaxAggregateOutputType = {
   downloadedAt: Date | null
   userId: string | null
   courseId: string | null
+  lessonId: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -56,6 +58,7 @@ export type DownloadLogCountAggregateOutputType = {
   downloadedAt: number
   userId: number
   courseId: number
+  lessonId: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -70,6 +73,7 @@ export type DownloadLogMinAggregateInputType = {
   downloadedAt?: true
   userId?: true
   courseId?: true
+  lessonId?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -82,6 +86,7 @@ export type DownloadLogMaxAggregateInputType = {
   downloadedAt?: true
   userId?: true
   courseId?: true
+  lessonId?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -94,6 +99,7 @@ export type DownloadLogCountAggregateInputType = {
   downloadedAt?: true
   userId?: true
   courseId?: true
+  lessonId?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -179,6 +185,7 @@ export type DownloadLogGroupByOutputType = {
   downloadedAt: Date
   userId: string
   courseId: string
+  lessonId: string | null
   createdAt: Date
   updatedAt: Date
   _count: DownloadLogCountAggregateOutputType | null
@@ -212,10 +219,12 @@ export type DownloadLogWhereInput = {
   downloadedAt?: Prisma.DateTimeFilter<"DownloadLog"> | Date | string
   userId?: Prisma.StringFilter<"DownloadLog"> | string
   courseId?: Prisma.StringFilter<"DownloadLog"> | string
+  lessonId?: Prisma.StringNullableFilter<"DownloadLog"> | string | null
   createdAt?: Prisma.DateTimeFilter<"DownloadLog"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"DownloadLog"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   course?: Prisma.XOR<Prisma.CourseScalarRelationFilter, Prisma.CourseWhereInput>
+  lesson?: Prisma.XOR<Prisma.LessonNullableScalarRelationFilter, Prisma.LessonWhereInput> | null
 }
 
 export type DownloadLogOrderByWithRelationInput = {
@@ -226,10 +235,12 @@ export type DownloadLogOrderByWithRelationInput = {
   downloadedAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   courseId?: Prisma.SortOrder
+  lessonId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
   course?: Prisma.CourseOrderByWithRelationInput
+  lesson?: Prisma.LessonOrderByWithRelationInput
 }
 
 export type DownloadLogWhereUniqueInput = Prisma.AtLeast<{
@@ -243,10 +254,12 @@ export type DownloadLogWhereUniqueInput = Prisma.AtLeast<{
   downloadedAt?: Prisma.DateTimeFilter<"DownloadLog"> | Date | string
   userId?: Prisma.StringFilter<"DownloadLog"> | string
   courseId?: Prisma.StringFilter<"DownloadLog"> | string
+  lessonId?: Prisma.StringNullableFilter<"DownloadLog"> | string | null
   createdAt?: Prisma.DateTimeFilter<"DownloadLog"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"DownloadLog"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   course?: Prisma.XOR<Prisma.CourseScalarRelationFilter, Prisma.CourseWhereInput>
+  lesson?: Prisma.XOR<Prisma.LessonNullableScalarRelationFilter, Prisma.LessonWhereInput> | null
 }, "id">
 
 export type DownloadLogOrderByWithAggregationInput = {
@@ -257,6 +270,7 @@ export type DownloadLogOrderByWithAggregationInput = {
   downloadedAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   courseId?: Prisma.SortOrder
+  lessonId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.DownloadLogCountOrderByAggregateInput
@@ -275,6 +289,7 @@ export type DownloadLogScalarWhereWithAggregatesInput = {
   downloadedAt?: Prisma.DateTimeWithAggregatesFilter<"DownloadLog"> | Date | string
   userId?: Prisma.StringWithAggregatesFilter<"DownloadLog"> | string
   courseId?: Prisma.StringWithAggregatesFilter<"DownloadLog"> | string
+  lessonId?: Prisma.StringNullableWithAggregatesFilter<"DownloadLog"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"DownloadLog"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"DownloadLog"> | Date | string
 }
@@ -289,6 +304,7 @@ export type DownloadLogCreateInput = {
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutDownloadLogsInput
   course: Prisma.CourseCreateNestedOneWithoutDownloadLogsInput
+  lesson?: Prisma.LessonCreateNestedOneWithoutDownloadLogsInput
 }
 
 export type DownloadLogUncheckedCreateInput = {
@@ -299,6 +315,7 @@ export type DownloadLogUncheckedCreateInput = {
   downloadedAt?: Date | string
   userId: string
   courseId: string
+  lessonId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -313,6 +330,7 @@ export type DownloadLogUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutDownloadLogsNestedInput
   course?: Prisma.CourseUpdateOneRequiredWithoutDownloadLogsNestedInput
+  lesson?: Prisma.LessonUpdateOneWithoutDownloadLogsNestedInput
 }
 
 export type DownloadLogUncheckedUpdateInput = {
@@ -323,6 +341,7 @@ export type DownloadLogUncheckedUpdateInput = {
   downloadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   courseId?: Prisma.StringFieldUpdateOperationsInput | string
+  lessonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -335,6 +354,7 @@ export type DownloadLogCreateManyInput = {
   downloadedAt?: Date | string
   userId: string
   courseId: string
+  lessonId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -357,6 +377,7 @@ export type DownloadLogUncheckedUpdateManyInput = {
   downloadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   courseId?: Prisma.StringFieldUpdateOperationsInput | string
+  lessonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -379,6 +400,7 @@ export type DownloadLogCountOrderByAggregateInput = {
   downloadedAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   courseId?: Prisma.SortOrder
+  lessonId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -391,6 +413,7 @@ export type DownloadLogMaxOrderByAggregateInput = {
   downloadedAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   courseId?: Prisma.SortOrder
+  lessonId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -403,6 +426,7 @@ export type DownloadLogMinOrderByAggregateInput = {
   downloadedAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   courseId?: Prisma.SortOrder
+  lessonId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -446,6 +470,48 @@ export type DownloadLogUncheckedUpdateManyWithoutCourseNestedInput = {
   connect?: Prisma.DownloadLogWhereUniqueInput | Prisma.DownloadLogWhereUniqueInput[]
   update?: Prisma.DownloadLogUpdateWithWhereUniqueWithoutCourseInput | Prisma.DownloadLogUpdateWithWhereUniqueWithoutCourseInput[]
   updateMany?: Prisma.DownloadLogUpdateManyWithWhereWithoutCourseInput | Prisma.DownloadLogUpdateManyWithWhereWithoutCourseInput[]
+  deleteMany?: Prisma.DownloadLogScalarWhereInput | Prisma.DownloadLogScalarWhereInput[]
+}
+
+export type DownloadLogCreateNestedManyWithoutLessonInput = {
+  create?: Prisma.XOR<Prisma.DownloadLogCreateWithoutLessonInput, Prisma.DownloadLogUncheckedCreateWithoutLessonInput> | Prisma.DownloadLogCreateWithoutLessonInput[] | Prisma.DownloadLogUncheckedCreateWithoutLessonInput[]
+  connectOrCreate?: Prisma.DownloadLogCreateOrConnectWithoutLessonInput | Prisma.DownloadLogCreateOrConnectWithoutLessonInput[]
+  createMany?: Prisma.DownloadLogCreateManyLessonInputEnvelope
+  connect?: Prisma.DownloadLogWhereUniqueInput | Prisma.DownloadLogWhereUniqueInput[]
+}
+
+export type DownloadLogUncheckedCreateNestedManyWithoutLessonInput = {
+  create?: Prisma.XOR<Prisma.DownloadLogCreateWithoutLessonInput, Prisma.DownloadLogUncheckedCreateWithoutLessonInput> | Prisma.DownloadLogCreateWithoutLessonInput[] | Prisma.DownloadLogUncheckedCreateWithoutLessonInput[]
+  connectOrCreate?: Prisma.DownloadLogCreateOrConnectWithoutLessonInput | Prisma.DownloadLogCreateOrConnectWithoutLessonInput[]
+  createMany?: Prisma.DownloadLogCreateManyLessonInputEnvelope
+  connect?: Prisma.DownloadLogWhereUniqueInput | Prisma.DownloadLogWhereUniqueInput[]
+}
+
+export type DownloadLogUpdateManyWithoutLessonNestedInput = {
+  create?: Prisma.XOR<Prisma.DownloadLogCreateWithoutLessonInput, Prisma.DownloadLogUncheckedCreateWithoutLessonInput> | Prisma.DownloadLogCreateWithoutLessonInput[] | Prisma.DownloadLogUncheckedCreateWithoutLessonInput[]
+  connectOrCreate?: Prisma.DownloadLogCreateOrConnectWithoutLessonInput | Prisma.DownloadLogCreateOrConnectWithoutLessonInput[]
+  upsert?: Prisma.DownloadLogUpsertWithWhereUniqueWithoutLessonInput | Prisma.DownloadLogUpsertWithWhereUniqueWithoutLessonInput[]
+  createMany?: Prisma.DownloadLogCreateManyLessonInputEnvelope
+  set?: Prisma.DownloadLogWhereUniqueInput | Prisma.DownloadLogWhereUniqueInput[]
+  disconnect?: Prisma.DownloadLogWhereUniqueInput | Prisma.DownloadLogWhereUniqueInput[]
+  delete?: Prisma.DownloadLogWhereUniqueInput | Prisma.DownloadLogWhereUniqueInput[]
+  connect?: Prisma.DownloadLogWhereUniqueInput | Prisma.DownloadLogWhereUniqueInput[]
+  update?: Prisma.DownloadLogUpdateWithWhereUniqueWithoutLessonInput | Prisma.DownloadLogUpdateWithWhereUniqueWithoutLessonInput[]
+  updateMany?: Prisma.DownloadLogUpdateManyWithWhereWithoutLessonInput | Prisma.DownloadLogUpdateManyWithWhereWithoutLessonInput[]
+  deleteMany?: Prisma.DownloadLogScalarWhereInput | Prisma.DownloadLogScalarWhereInput[]
+}
+
+export type DownloadLogUncheckedUpdateManyWithoutLessonNestedInput = {
+  create?: Prisma.XOR<Prisma.DownloadLogCreateWithoutLessonInput, Prisma.DownloadLogUncheckedCreateWithoutLessonInput> | Prisma.DownloadLogCreateWithoutLessonInput[] | Prisma.DownloadLogUncheckedCreateWithoutLessonInput[]
+  connectOrCreate?: Prisma.DownloadLogCreateOrConnectWithoutLessonInput | Prisma.DownloadLogCreateOrConnectWithoutLessonInput[]
+  upsert?: Prisma.DownloadLogUpsertWithWhereUniqueWithoutLessonInput | Prisma.DownloadLogUpsertWithWhereUniqueWithoutLessonInput[]
+  createMany?: Prisma.DownloadLogCreateManyLessonInputEnvelope
+  set?: Prisma.DownloadLogWhereUniqueInput | Prisma.DownloadLogWhereUniqueInput[]
+  disconnect?: Prisma.DownloadLogWhereUniqueInput | Prisma.DownloadLogWhereUniqueInput[]
+  delete?: Prisma.DownloadLogWhereUniqueInput | Prisma.DownloadLogWhereUniqueInput[]
+  connect?: Prisma.DownloadLogWhereUniqueInput | Prisma.DownloadLogWhereUniqueInput[]
+  update?: Prisma.DownloadLogUpdateWithWhereUniqueWithoutLessonInput | Prisma.DownloadLogUpdateWithWhereUniqueWithoutLessonInput[]
+  updateMany?: Prisma.DownloadLogUpdateManyWithWhereWithoutLessonInput | Prisma.DownloadLogUpdateManyWithWhereWithoutLessonInput[]
   deleteMany?: Prisma.DownloadLogScalarWhereInput | Prisma.DownloadLogScalarWhereInput[]
 }
 
@@ -500,6 +566,7 @@ export type DownloadLogCreateWithoutCourseInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutDownloadLogsInput
+  lesson?: Prisma.LessonCreateNestedOneWithoutDownloadLogsInput
 }
 
 export type DownloadLogUncheckedCreateWithoutCourseInput = {
@@ -509,6 +576,7 @@ export type DownloadLogUncheckedCreateWithoutCourseInput = {
   userAgent?: string | null
   downloadedAt?: Date | string
   userId: string
+  lessonId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -550,8 +618,59 @@ export type DownloadLogScalarWhereInput = {
   downloadedAt?: Prisma.DateTimeFilter<"DownloadLog"> | Date | string
   userId?: Prisma.StringFilter<"DownloadLog"> | string
   courseId?: Prisma.StringFilter<"DownloadLog"> | string
+  lessonId?: Prisma.StringNullableFilter<"DownloadLog"> | string | null
   createdAt?: Prisma.DateTimeFilter<"DownloadLog"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"DownloadLog"> | Date | string
+}
+
+export type DownloadLogCreateWithoutLessonInput = {
+  id?: string
+  token: string
+  ip?: string | null
+  userAgent?: string | null
+  downloadedAt?: Date | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutDownloadLogsInput
+  course: Prisma.CourseCreateNestedOneWithoutDownloadLogsInput
+}
+
+export type DownloadLogUncheckedCreateWithoutLessonInput = {
+  id?: string
+  token: string
+  ip?: string | null
+  userAgent?: string | null
+  downloadedAt?: Date | string
+  userId: string
+  courseId: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type DownloadLogCreateOrConnectWithoutLessonInput = {
+  where: Prisma.DownloadLogWhereUniqueInput
+  create: Prisma.XOR<Prisma.DownloadLogCreateWithoutLessonInput, Prisma.DownloadLogUncheckedCreateWithoutLessonInput>
+}
+
+export type DownloadLogCreateManyLessonInputEnvelope = {
+  data: Prisma.DownloadLogCreateManyLessonInput | Prisma.DownloadLogCreateManyLessonInput[]
+  skipDuplicates?: boolean
+}
+
+export type DownloadLogUpsertWithWhereUniqueWithoutLessonInput = {
+  where: Prisma.DownloadLogWhereUniqueInput
+  update: Prisma.XOR<Prisma.DownloadLogUpdateWithoutLessonInput, Prisma.DownloadLogUncheckedUpdateWithoutLessonInput>
+  create: Prisma.XOR<Prisma.DownloadLogCreateWithoutLessonInput, Prisma.DownloadLogUncheckedCreateWithoutLessonInput>
+}
+
+export type DownloadLogUpdateWithWhereUniqueWithoutLessonInput = {
+  where: Prisma.DownloadLogWhereUniqueInput
+  data: Prisma.XOR<Prisma.DownloadLogUpdateWithoutLessonInput, Prisma.DownloadLogUncheckedUpdateWithoutLessonInput>
+}
+
+export type DownloadLogUpdateManyWithWhereWithoutLessonInput = {
+  where: Prisma.DownloadLogScalarWhereInput
+  data: Prisma.XOR<Prisma.DownloadLogUpdateManyMutationInput, Prisma.DownloadLogUncheckedUpdateManyWithoutLessonInput>
 }
 
 export type DownloadLogCreateWithoutUserInput = {
@@ -563,6 +682,7 @@ export type DownloadLogCreateWithoutUserInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   course: Prisma.CourseCreateNestedOneWithoutDownloadLogsInput
+  lesson?: Prisma.LessonCreateNestedOneWithoutDownloadLogsInput
 }
 
 export type DownloadLogUncheckedCreateWithoutUserInput = {
@@ -572,6 +692,7 @@ export type DownloadLogUncheckedCreateWithoutUserInput = {
   userAgent?: string | null
   downloadedAt?: Date | string
   courseId: string
+  lessonId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -609,6 +730,7 @@ export type DownloadLogCreateManyCourseInput = {
   userAgent?: string | null
   downloadedAt?: Date | string
   userId: string
+  lessonId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -622,6 +744,7 @@ export type DownloadLogUpdateWithoutCourseInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutDownloadLogsNestedInput
+  lesson?: Prisma.LessonUpdateOneWithoutDownloadLogsNestedInput
 }
 
 export type DownloadLogUncheckedUpdateWithoutCourseInput = {
@@ -631,6 +754,7 @@ export type DownloadLogUncheckedUpdateWithoutCourseInput = {
   userAgent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   downloadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
+  lessonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -642,6 +766,55 @@ export type DownloadLogUncheckedUpdateManyWithoutCourseInput = {
   userAgent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   downloadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
+  lessonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type DownloadLogCreateManyLessonInput = {
+  id?: string
+  token: string
+  ip?: string | null
+  userAgent?: string | null
+  downloadedAt?: Date | string
+  userId: string
+  courseId: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type DownloadLogUpdateWithoutLessonInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  token?: Prisma.StringFieldUpdateOperationsInput | string
+  ip?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userAgent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  downloadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutDownloadLogsNestedInput
+  course?: Prisma.CourseUpdateOneRequiredWithoutDownloadLogsNestedInput
+}
+
+export type DownloadLogUncheckedUpdateWithoutLessonInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  token?: Prisma.StringFieldUpdateOperationsInput | string
+  ip?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userAgent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  downloadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  courseId?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type DownloadLogUncheckedUpdateManyWithoutLessonInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  token?: Prisma.StringFieldUpdateOperationsInput | string
+  ip?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userAgent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  downloadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  courseId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -653,6 +826,7 @@ export type DownloadLogCreateManyUserInput = {
   userAgent?: string | null
   downloadedAt?: Date | string
   courseId: string
+  lessonId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -666,6 +840,7 @@ export type DownloadLogUpdateWithoutUserInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   course?: Prisma.CourseUpdateOneRequiredWithoutDownloadLogsNestedInput
+  lesson?: Prisma.LessonUpdateOneWithoutDownloadLogsNestedInput
 }
 
 export type DownloadLogUncheckedUpdateWithoutUserInput = {
@@ -675,6 +850,7 @@ export type DownloadLogUncheckedUpdateWithoutUserInput = {
   userAgent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   downloadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   courseId?: Prisma.StringFieldUpdateOperationsInput | string
+  lessonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -686,6 +862,7 @@ export type DownloadLogUncheckedUpdateManyWithoutUserInput = {
   userAgent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   downloadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   courseId?: Prisma.StringFieldUpdateOperationsInput | string
+  lessonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -700,10 +877,12 @@ export type DownloadLogSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   downloadedAt?: boolean
   userId?: boolean
   courseId?: boolean
+  lessonId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   course?: boolean | Prisma.CourseDefaultArgs<ExtArgs>
+  lesson?: boolean | Prisma.DownloadLog$lessonArgs<ExtArgs>
 }, ExtArgs["result"]["downloadLog"]>
 
 export type DownloadLogSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -714,10 +893,12 @@ export type DownloadLogSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   downloadedAt?: boolean
   userId?: boolean
   courseId?: boolean
+  lessonId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   course?: boolean | Prisma.CourseDefaultArgs<ExtArgs>
+  lesson?: boolean | Prisma.DownloadLog$lessonArgs<ExtArgs>
 }, ExtArgs["result"]["downloadLog"]>
 
 export type DownloadLogSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -728,10 +909,12 @@ export type DownloadLogSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   downloadedAt?: boolean
   userId?: boolean
   courseId?: boolean
+  lessonId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   course?: boolean | Prisma.CourseDefaultArgs<ExtArgs>
+  lesson?: boolean | Prisma.DownloadLog$lessonArgs<ExtArgs>
 }, ExtArgs["result"]["downloadLog"]>
 
 export type DownloadLogSelectScalar = {
@@ -742,22 +925,26 @@ export type DownloadLogSelectScalar = {
   downloadedAt?: boolean
   userId?: boolean
   courseId?: boolean
+  lessonId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type DownloadLogOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "token" | "ip" | "userAgent" | "downloadedAt" | "userId" | "courseId" | "createdAt" | "updatedAt", ExtArgs["result"]["downloadLog"]>
+export type DownloadLogOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "token" | "ip" | "userAgent" | "downloadedAt" | "userId" | "courseId" | "lessonId" | "createdAt" | "updatedAt", ExtArgs["result"]["downloadLog"]>
 export type DownloadLogInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   course?: boolean | Prisma.CourseDefaultArgs<ExtArgs>
+  lesson?: boolean | Prisma.DownloadLog$lessonArgs<ExtArgs>
 }
 export type DownloadLogIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   course?: boolean | Prisma.CourseDefaultArgs<ExtArgs>
+  lesson?: boolean | Prisma.DownloadLog$lessonArgs<ExtArgs>
 }
 export type DownloadLogIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   course?: boolean | Prisma.CourseDefaultArgs<ExtArgs>
+  lesson?: boolean | Prisma.DownloadLog$lessonArgs<ExtArgs>
 }
 
 export type $DownloadLogPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -765,6 +952,7 @@ export type $DownloadLogPayload<ExtArgs extends runtime.Types.Extensions.Interna
   objects: {
     user: Prisma.$UserPayload<ExtArgs>
     course: Prisma.$CoursePayload<ExtArgs>
+    lesson: Prisma.$LessonPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -774,6 +962,7 @@ export type $DownloadLogPayload<ExtArgs extends runtime.Types.Extensions.Interna
     downloadedAt: Date
     userId: string
     courseId: string
+    lessonId: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["downloadLog"]>
@@ -1172,6 +1361,7 @@ export interface Prisma__DownloadLogClient<T, Null = never, ExtArgs extends runt
   readonly [Symbol.toStringTag]: "PrismaPromise"
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   course<T extends Prisma.CourseDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CourseDefaultArgs<ExtArgs>>): Prisma.Prisma__CourseClient<runtime.Types.Result.GetResult<Prisma.$CoursePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  lesson<T extends Prisma.DownloadLog$lessonArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DownloadLog$lessonArgs<ExtArgs>>): Prisma.Prisma__LessonClient<runtime.Types.Result.GetResult<Prisma.$LessonPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1208,6 +1398,7 @@ export interface DownloadLogFieldRefs {
   readonly downloadedAt: Prisma.FieldRef<"DownloadLog", 'DateTime'>
   readonly userId: Prisma.FieldRef<"DownloadLog", 'String'>
   readonly courseId: Prisma.FieldRef<"DownloadLog", 'String'>
+  readonly lessonId: Prisma.FieldRef<"DownloadLog", 'String'>
   readonly createdAt: Prisma.FieldRef<"DownloadLog", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"DownloadLog", 'DateTime'>
 }
@@ -1608,6 +1799,25 @@ export type DownloadLogDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.I
    * Limit how many DownloadLogs to delete.
    */
   limit?: number
+}
+
+/**
+ * DownloadLog.lesson
+ */
+export type DownloadLog$lessonArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Lesson
+   */
+  select?: Prisma.LessonSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Lesson
+   */
+  omit?: Prisma.LessonOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.LessonInclude<ExtArgs> | null
+  where?: Prisma.LessonWhereInput
 }
 
 /**

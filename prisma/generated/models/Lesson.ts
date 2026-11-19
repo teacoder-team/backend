@@ -41,6 +41,7 @@ export type LessonMinAggregateOutputType = {
   description: string | null
   position: number | null
   kinescopeId: string | null
+  attachment: string | null
   homeworkTask: string | null
   access: $Enums.LessonAccess | null
   isPublished: boolean | null
@@ -60,6 +61,7 @@ export type LessonMaxAggregateOutputType = {
   description: string | null
   position: number | null
   kinescopeId: string | null
+  attachment: string | null
   homeworkTask: string | null
   access: $Enums.LessonAccess | null
   isPublished: boolean | null
@@ -79,6 +81,7 @@ export type LessonCountAggregateOutputType = {
   description: number
   position: number
   kinescopeId: number
+  attachment: number
   resources: number
   homeworkTask: number
   homeworkChecklist: number
@@ -110,6 +113,7 @@ export type LessonMinAggregateInputType = {
   description?: true
   position?: true
   kinescopeId?: true
+  attachment?: true
   homeworkTask?: true
   access?: true
   isPublished?: true
@@ -129,6 +133,7 @@ export type LessonMaxAggregateInputType = {
   description?: true
   position?: true
   kinescopeId?: true
+  attachment?: true
   homeworkTask?: true
   access?: true
   isPublished?: true
@@ -148,6 +153,7 @@ export type LessonCountAggregateInputType = {
   description?: true
   position?: true
   kinescopeId?: true
+  attachment?: true
   resources?: true
   homeworkTask?: true
   homeworkChecklist?: true
@@ -256,6 +262,7 @@ export type LessonGroupByOutputType = {
   description: string | null
   position: number
   kinescopeId: string | null
+  attachment: string | null
   resources: runtime.JsonValue
   homeworkTask: string | null
   homeworkChecklist: string[]
@@ -300,6 +307,7 @@ export type LessonWhereInput = {
   description?: Prisma.StringNullableFilter<"Lesson"> | string | null
   position?: Prisma.IntFilter<"Lesson"> | number
   kinescopeId?: Prisma.StringNullableFilter<"Lesson"> | string | null
+  attachment?: Prisma.StringNullableFilter<"Lesson"> | string | null
   resources?: Prisma.JsonFilter<"Lesson">
   homeworkTask?: Prisma.StringNullableFilter<"Lesson"> | string | null
   homeworkChecklist?: Prisma.StringNullableListFilter<"Lesson">
@@ -313,6 +321,7 @@ export type LessonWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"Lesson"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Lesson"> | Date | string
   userProgress?: Prisma.UserProgressListRelationFilter
+  downloadLogs?: Prisma.DownloadLogListRelationFilter
   course?: Prisma.XOR<Prisma.CourseScalarRelationFilter, Prisma.CourseWhereInput>
   section?: Prisma.XOR<Prisma.CourseSectionNullableScalarRelationFilter, Prisma.CourseSectionWhereInput> | null
 }
@@ -324,6 +333,7 @@ export type LessonOrderByWithRelationInput = {
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   position?: Prisma.SortOrder
   kinescopeId?: Prisma.SortOrderInput | Prisma.SortOrder
+  attachment?: Prisma.SortOrderInput | Prisma.SortOrder
   resources?: Prisma.SortOrder
   homeworkTask?: Prisma.SortOrderInput | Prisma.SortOrder
   homeworkChecklist?: Prisma.SortOrder
@@ -337,6 +347,7 @@ export type LessonOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   userProgress?: Prisma.UserProgressOrderByRelationAggregateInput
+  downloadLogs?: Prisma.DownloadLogOrderByRelationAggregateInput
   course?: Prisma.CourseOrderByWithRelationInput
   section?: Prisma.CourseSectionOrderByWithRelationInput
 }
@@ -351,6 +362,7 @@ export type LessonWhereUniqueInput = Prisma.AtLeast<{
   description?: Prisma.StringNullableFilter<"Lesson"> | string | null
   position?: Prisma.IntFilter<"Lesson"> | number
   kinescopeId?: Prisma.StringNullableFilter<"Lesson"> | string | null
+  attachment?: Prisma.StringNullableFilter<"Lesson"> | string | null
   resources?: Prisma.JsonFilter<"Lesson">
   homeworkTask?: Prisma.StringNullableFilter<"Lesson"> | string | null
   homeworkChecklist?: Prisma.StringNullableListFilter<"Lesson">
@@ -364,6 +376,7 @@ export type LessonWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"Lesson"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Lesson"> | Date | string
   userProgress?: Prisma.UserProgressListRelationFilter
+  downloadLogs?: Prisma.DownloadLogListRelationFilter
   course?: Prisma.XOR<Prisma.CourseScalarRelationFilter, Prisma.CourseWhereInput>
   section?: Prisma.XOR<Prisma.CourseSectionNullableScalarRelationFilter, Prisma.CourseSectionWhereInput> | null
 }, "id" | "slug">
@@ -375,6 +388,7 @@ export type LessonOrderByWithAggregationInput = {
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   position?: Prisma.SortOrder
   kinescopeId?: Prisma.SortOrderInput | Prisma.SortOrder
+  attachment?: Prisma.SortOrderInput | Prisma.SortOrder
   resources?: Prisma.SortOrder
   homeworkTask?: Prisma.SortOrderInput | Prisma.SortOrder
   homeworkChecklist?: Prisma.SortOrder
@@ -404,6 +418,7 @@ export type LessonScalarWhereWithAggregatesInput = {
   description?: Prisma.StringNullableWithAggregatesFilter<"Lesson"> | string | null
   position?: Prisma.IntWithAggregatesFilter<"Lesson"> | number
   kinescopeId?: Prisma.StringNullableWithAggregatesFilter<"Lesson"> | string | null
+  attachment?: Prisma.StringNullableWithAggregatesFilter<"Lesson"> | string | null
   resources?: Prisma.JsonWithAggregatesFilter<"Lesson">
   homeworkTask?: Prisma.StringNullableWithAggregatesFilter<"Lesson"> | string | null
   homeworkChecklist?: Prisma.StringNullableListFilter<"Lesson">
@@ -425,6 +440,7 @@ export type LessonCreateInput = {
   description?: string | null
   position: number
   kinescopeId?: string | null
+  attachment?: string | null
   resources?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   homeworkTask?: string | null
   homeworkChecklist?: Prisma.LessonCreatehomeworkChecklistInput | string[]
@@ -435,6 +451,7 @@ export type LessonCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   userProgress?: Prisma.UserProgressCreateNestedManyWithoutLessonInput
+  downloadLogs?: Prisma.DownloadLogCreateNestedManyWithoutLessonInput
   course: Prisma.CourseCreateNestedOneWithoutLessonsInput
   section?: Prisma.CourseSectionCreateNestedOneWithoutLessonsInput
 }
@@ -446,6 +463,7 @@ export type LessonUncheckedCreateInput = {
   description?: string | null
   position: number
   kinescopeId?: string | null
+  attachment?: string | null
   resources?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   homeworkTask?: string | null
   homeworkChecklist?: Prisma.LessonCreatehomeworkChecklistInput | string[]
@@ -459,6 +477,7 @@ export type LessonUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   userProgress?: Prisma.UserProgressUncheckedCreateNestedManyWithoutLessonInput
+  downloadLogs?: Prisma.DownloadLogUncheckedCreateNestedManyWithoutLessonInput
 }
 
 export type LessonUpdateInput = {
@@ -468,6 +487,7 @@ export type LessonUpdateInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
   kinescopeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attachment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resources?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   homeworkTask?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   homeworkChecklist?: Prisma.LessonUpdatehomeworkChecklistInput | string[]
@@ -478,6 +498,7 @@ export type LessonUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userProgress?: Prisma.UserProgressUpdateManyWithoutLessonNestedInput
+  downloadLogs?: Prisma.DownloadLogUpdateManyWithoutLessonNestedInput
   course?: Prisma.CourseUpdateOneRequiredWithoutLessonsNestedInput
   section?: Prisma.CourseSectionUpdateOneWithoutLessonsNestedInput
 }
@@ -489,6 +510,7 @@ export type LessonUncheckedUpdateInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
   kinescopeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attachment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resources?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   homeworkTask?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   homeworkChecklist?: Prisma.LessonUpdatehomeworkChecklistInput | string[]
@@ -502,6 +524,7 @@ export type LessonUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userProgress?: Prisma.UserProgressUncheckedUpdateManyWithoutLessonNestedInput
+  downloadLogs?: Prisma.DownloadLogUncheckedUpdateManyWithoutLessonNestedInput
 }
 
 export type LessonCreateManyInput = {
@@ -511,6 +534,7 @@ export type LessonCreateManyInput = {
   description?: string | null
   position: number
   kinescopeId?: string | null
+  attachment?: string | null
   resources?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   homeworkTask?: string | null
   homeworkChecklist?: Prisma.LessonCreatehomeworkChecklistInput | string[]
@@ -532,6 +556,7 @@ export type LessonUpdateManyMutationInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
   kinescopeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attachment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resources?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   homeworkTask?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   homeworkChecklist?: Prisma.LessonUpdatehomeworkChecklistInput | string[]
@@ -550,6 +575,7 @@ export type LessonUncheckedUpdateManyInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
   kinescopeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attachment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resources?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   homeworkTask?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   homeworkChecklist?: Prisma.LessonUpdatehomeworkChecklistInput | string[]
@@ -581,6 +607,7 @@ export type LessonCountOrderByAggregateInput = {
   description?: Prisma.SortOrder
   position?: Prisma.SortOrder
   kinescopeId?: Prisma.SortOrder
+  attachment?: Prisma.SortOrder
   resources?: Prisma.SortOrder
   homeworkTask?: Prisma.SortOrder
   homeworkChecklist?: Prisma.SortOrder
@@ -606,6 +633,7 @@ export type LessonMaxOrderByAggregateInput = {
   description?: Prisma.SortOrder
   position?: Prisma.SortOrder
   kinescopeId?: Prisma.SortOrder
+  attachment?: Prisma.SortOrder
   homeworkTask?: Prisma.SortOrder
   access?: Prisma.SortOrder
   isPublished?: Prisma.SortOrder
@@ -625,6 +653,7 @@ export type LessonMinOrderByAggregateInput = {
   description?: Prisma.SortOrder
   position?: Prisma.SortOrder
   kinescopeId?: Prisma.SortOrder
+  attachment?: Prisma.SortOrder
   homeworkTask?: Prisma.SortOrder
   access?: Prisma.SortOrder
   isPublished?: Prisma.SortOrder
@@ -644,6 +673,11 @@ export type LessonSumOrderByAggregateInput = {
 export type LessonScalarRelationFilter = {
   is?: Prisma.LessonWhereInput
   isNot?: Prisma.LessonWhereInput
+}
+
+export type LessonNullableScalarRelationFilter = {
+  is?: Prisma.LessonWhereInput | null
+  isNot?: Prisma.LessonWhereInput | null
 }
 
 export type LessonCreateNestedManyWithoutCourseInput = {
@@ -757,6 +791,22 @@ export type LessonUpdateOneRequiredWithoutUserProgressNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.LessonUpdateToOneWithWhereWithoutUserProgressInput, Prisma.LessonUpdateWithoutUserProgressInput>, Prisma.LessonUncheckedUpdateWithoutUserProgressInput>
 }
 
+export type LessonCreateNestedOneWithoutDownloadLogsInput = {
+  create?: Prisma.XOR<Prisma.LessonCreateWithoutDownloadLogsInput, Prisma.LessonUncheckedCreateWithoutDownloadLogsInput>
+  connectOrCreate?: Prisma.LessonCreateOrConnectWithoutDownloadLogsInput
+  connect?: Prisma.LessonWhereUniqueInput
+}
+
+export type LessonUpdateOneWithoutDownloadLogsNestedInput = {
+  create?: Prisma.XOR<Prisma.LessonCreateWithoutDownloadLogsInput, Prisma.LessonUncheckedCreateWithoutDownloadLogsInput>
+  connectOrCreate?: Prisma.LessonCreateOrConnectWithoutDownloadLogsInput
+  upsert?: Prisma.LessonUpsertWithoutDownloadLogsInput
+  disconnect?: Prisma.LessonWhereInput | boolean
+  delete?: Prisma.LessonWhereInput | boolean
+  connect?: Prisma.LessonWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.LessonUpdateToOneWithWhereWithoutDownloadLogsInput, Prisma.LessonUpdateWithoutDownloadLogsInput>, Prisma.LessonUncheckedUpdateWithoutDownloadLogsInput>
+}
+
 export type LessonCreateWithoutCourseInput = {
   id?: string
   title: string
@@ -764,6 +814,7 @@ export type LessonCreateWithoutCourseInput = {
   description?: string | null
   position: number
   kinescopeId?: string | null
+  attachment?: string | null
   resources?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   homeworkTask?: string | null
   homeworkChecklist?: Prisma.LessonCreatehomeworkChecklistInput | string[]
@@ -774,6 +825,7 @@ export type LessonCreateWithoutCourseInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   userProgress?: Prisma.UserProgressCreateNestedManyWithoutLessonInput
+  downloadLogs?: Prisma.DownloadLogCreateNestedManyWithoutLessonInput
   section?: Prisma.CourseSectionCreateNestedOneWithoutLessonsInput
 }
 
@@ -784,6 +836,7 @@ export type LessonUncheckedCreateWithoutCourseInput = {
   description?: string | null
   position: number
   kinescopeId?: string | null
+  attachment?: string | null
   resources?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   homeworkTask?: string | null
   homeworkChecklist?: Prisma.LessonCreatehomeworkChecklistInput | string[]
@@ -796,6 +849,7 @@ export type LessonUncheckedCreateWithoutCourseInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   userProgress?: Prisma.UserProgressUncheckedCreateNestedManyWithoutLessonInput
+  downloadLogs?: Prisma.DownloadLogUncheckedCreateNestedManyWithoutLessonInput
 }
 
 export type LessonCreateOrConnectWithoutCourseInput = {
@@ -834,6 +888,7 @@ export type LessonScalarWhereInput = {
   description?: Prisma.StringNullableFilter<"Lesson"> | string | null
   position?: Prisma.IntFilter<"Lesson"> | number
   kinescopeId?: Prisma.StringNullableFilter<"Lesson"> | string | null
+  attachment?: Prisma.StringNullableFilter<"Lesson"> | string | null
   resources?: Prisma.JsonFilter<"Lesson">
   homeworkTask?: Prisma.StringNullableFilter<"Lesson"> | string | null
   homeworkChecklist?: Prisma.StringNullableListFilter<"Lesson">
@@ -855,6 +910,7 @@ export type LessonCreateWithoutSectionInput = {
   description?: string | null
   position: number
   kinescopeId?: string | null
+  attachment?: string | null
   resources?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   homeworkTask?: string | null
   homeworkChecklist?: Prisma.LessonCreatehomeworkChecklistInput | string[]
@@ -865,6 +921,7 @@ export type LessonCreateWithoutSectionInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   userProgress?: Prisma.UserProgressCreateNestedManyWithoutLessonInput
+  downloadLogs?: Prisma.DownloadLogCreateNestedManyWithoutLessonInput
   course: Prisma.CourseCreateNestedOneWithoutLessonsInput
 }
 
@@ -875,6 +932,7 @@ export type LessonUncheckedCreateWithoutSectionInput = {
   description?: string | null
   position: number
   kinescopeId?: string | null
+  attachment?: string | null
   resources?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   homeworkTask?: string | null
   homeworkChecklist?: Prisma.LessonCreatehomeworkChecklistInput | string[]
@@ -886,6 +944,7 @@ export type LessonUncheckedCreateWithoutSectionInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   userProgress?: Prisma.UserProgressUncheckedCreateNestedManyWithoutLessonInput
+  downloadLogs?: Prisma.DownloadLogUncheckedCreateNestedManyWithoutLessonInput
 }
 
 export type LessonCreateOrConnectWithoutSectionInput = {
@@ -921,6 +980,7 @@ export type LessonCreateWithoutUserProgressInput = {
   description?: string | null
   position: number
   kinescopeId?: string | null
+  attachment?: string | null
   resources?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   homeworkTask?: string | null
   homeworkChecklist?: Prisma.LessonCreatehomeworkChecklistInput | string[]
@@ -930,6 +990,7 @@ export type LessonCreateWithoutUserProgressInput = {
   plannedReleaseAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  downloadLogs?: Prisma.DownloadLogCreateNestedManyWithoutLessonInput
   course: Prisma.CourseCreateNestedOneWithoutLessonsInput
   section?: Prisma.CourseSectionCreateNestedOneWithoutLessonsInput
 }
@@ -941,6 +1002,7 @@ export type LessonUncheckedCreateWithoutUserProgressInput = {
   description?: string | null
   position: number
   kinescopeId?: string | null
+  attachment?: string | null
   resources?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   homeworkTask?: string | null
   homeworkChecklist?: Prisma.LessonCreatehomeworkChecklistInput | string[]
@@ -953,6 +1015,7 @@ export type LessonUncheckedCreateWithoutUserProgressInput = {
   sectionCourseId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  downloadLogs?: Prisma.DownloadLogUncheckedCreateNestedManyWithoutLessonInput
 }
 
 export type LessonCreateOrConnectWithoutUserProgressInput = {
@@ -978,6 +1041,7 @@ export type LessonUpdateWithoutUserProgressInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
   kinescopeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attachment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resources?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   homeworkTask?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   homeworkChecklist?: Prisma.LessonUpdatehomeworkChecklistInput | string[]
@@ -987,6 +1051,7 @@ export type LessonUpdateWithoutUserProgressInput = {
   plannedReleaseAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  downloadLogs?: Prisma.DownloadLogUpdateManyWithoutLessonNestedInput
   course?: Prisma.CourseUpdateOneRequiredWithoutLessonsNestedInput
   section?: Prisma.CourseSectionUpdateOneWithoutLessonsNestedInput
 }
@@ -998,6 +1063,7 @@ export type LessonUncheckedUpdateWithoutUserProgressInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
   kinescopeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attachment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resources?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   homeworkTask?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   homeworkChecklist?: Prisma.LessonUpdatehomeworkChecklistInput | string[]
@@ -1010,6 +1076,113 @@ export type LessonUncheckedUpdateWithoutUserProgressInput = {
   sectionCourseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  downloadLogs?: Prisma.DownloadLogUncheckedUpdateManyWithoutLessonNestedInput
+}
+
+export type LessonCreateWithoutDownloadLogsInput = {
+  id?: string
+  title: string
+  slug: string
+  description?: string | null
+  position: number
+  kinescopeId?: string | null
+  attachment?: string | null
+  resources?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  homeworkTask?: string | null
+  homeworkChecklist?: Prisma.LessonCreatehomeworkChecklistInput | string[]
+  access?: $Enums.LessonAccess
+  isPublished?: boolean
+  isAnnounced?: boolean
+  plannedReleaseAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  userProgress?: Prisma.UserProgressCreateNestedManyWithoutLessonInput
+  course: Prisma.CourseCreateNestedOneWithoutLessonsInput
+  section?: Prisma.CourseSectionCreateNestedOneWithoutLessonsInput
+}
+
+export type LessonUncheckedCreateWithoutDownloadLogsInput = {
+  id?: string
+  title: string
+  slug: string
+  description?: string | null
+  position: number
+  kinescopeId?: string | null
+  attachment?: string | null
+  resources?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  homeworkTask?: string | null
+  homeworkChecklist?: Prisma.LessonCreatehomeworkChecklistInput | string[]
+  access?: $Enums.LessonAccess
+  isPublished?: boolean
+  isAnnounced?: boolean
+  plannedReleaseAt?: Date | string | null
+  courseId: string
+  sectionId?: string | null
+  sectionCourseId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  userProgress?: Prisma.UserProgressUncheckedCreateNestedManyWithoutLessonInput
+}
+
+export type LessonCreateOrConnectWithoutDownloadLogsInput = {
+  where: Prisma.LessonWhereUniqueInput
+  create: Prisma.XOR<Prisma.LessonCreateWithoutDownloadLogsInput, Prisma.LessonUncheckedCreateWithoutDownloadLogsInput>
+}
+
+export type LessonUpsertWithoutDownloadLogsInput = {
+  update: Prisma.XOR<Prisma.LessonUpdateWithoutDownloadLogsInput, Prisma.LessonUncheckedUpdateWithoutDownloadLogsInput>
+  create: Prisma.XOR<Prisma.LessonCreateWithoutDownloadLogsInput, Prisma.LessonUncheckedCreateWithoutDownloadLogsInput>
+  where?: Prisma.LessonWhereInput
+}
+
+export type LessonUpdateToOneWithWhereWithoutDownloadLogsInput = {
+  where?: Prisma.LessonWhereInput
+  data: Prisma.XOR<Prisma.LessonUpdateWithoutDownloadLogsInput, Prisma.LessonUncheckedUpdateWithoutDownloadLogsInput>
+}
+
+export type LessonUpdateWithoutDownloadLogsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  position?: Prisma.IntFieldUpdateOperationsInput | number
+  kinescopeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attachment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resources?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  homeworkTask?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  homeworkChecklist?: Prisma.LessonUpdatehomeworkChecklistInput | string[]
+  access?: Prisma.EnumLessonAccessFieldUpdateOperationsInput | $Enums.LessonAccess
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isAnnounced?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  plannedReleaseAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  userProgress?: Prisma.UserProgressUpdateManyWithoutLessonNestedInput
+  course?: Prisma.CourseUpdateOneRequiredWithoutLessonsNestedInput
+  section?: Prisma.CourseSectionUpdateOneWithoutLessonsNestedInput
+}
+
+export type LessonUncheckedUpdateWithoutDownloadLogsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  position?: Prisma.IntFieldUpdateOperationsInput | number
+  kinescopeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attachment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resources?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  homeworkTask?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  homeworkChecklist?: Prisma.LessonUpdatehomeworkChecklistInput | string[]
+  access?: Prisma.EnumLessonAccessFieldUpdateOperationsInput | $Enums.LessonAccess
+  isPublished?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isAnnounced?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  plannedReleaseAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  courseId?: Prisma.StringFieldUpdateOperationsInput | string
+  sectionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sectionCourseId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  userProgress?: Prisma.UserProgressUncheckedUpdateManyWithoutLessonNestedInput
 }
 
 export type LessonCreateManyCourseInput = {
@@ -1019,6 +1192,7 @@ export type LessonCreateManyCourseInput = {
   description?: string | null
   position: number
   kinescopeId?: string | null
+  attachment?: string | null
   resources?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   homeworkTask?: string | null
   homeworkChecklist?: Prisma.LessonCreatehomeworkChecklistInput | string[]
@@ -1039,6 +1213,7 @@ export type LessonUpdateWithoutCourseInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
   kinescopeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attachment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resources?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   homeworkTask?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   homeworkChecklist?: Prisma.LessonUpdatehomeworkChecklistInput | string[]
@@ -1049,6 +1224,7 @@ export type LessonUpdateWithoutCourseInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userProgress?: Prisma.UserProgressUpdateManyWithoutLessonNestedInput
+  downloadLogs?: Prisma.DownloadLogUpdateManyWithoutLessonNestedInput
   section?: Prisma.CourseSectionUpdateOneWithoutLessonsNestedInput
 }
 
@@ -1059,6 +1235,7 @@ export type LessonUncheckedUpdateWithoutCourseInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
   kinescopeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attachment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resources?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   homeworkTask?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   homeworkChecklist?: Prisma.LessonUpdatehomeworkChecklistInput | string[]
@@ -1071,6 +1248,7 @@ export type LessonUncheckedUpdateWithoutCourseInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userProgress?: Prisma.UserProgressUncheckedUpdateManyWithoutLessonNestedInput
+  downloadLogs?: Prisma.DownloadLogUncheckedUpdateManyWithoutLessonNestedInput
 }
 
 export type LessonUncheckedUpdateManyWithoutCourseInput = {
@@ -1080,6 +1258,7 @@ export type LessonUncheckedUpdateManyWithoutCourseInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
   kinescopeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attachment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resources?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   homeworkTask?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   homeworkChecklist?: Prisma.LessonUpdatehomeworkChecklistInput | string[]
@@ -1100,6 +1279,7 @@ export type LessonCreateManySectionInput = {
   description?: string | null
   position: number
   kinescopeId?: string | null
+  attachment?: string | null
   resources?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   homeworkTask?: string | null
   homeworkChecklist?: Prisma.LessonCreatehomeworkChecklistInput | string[]
@@ -1119,6 +1299,7 @@ export type LessonUpdateWithoutSectionInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
   kinescopeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attachment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resources?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   homeworkTask?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   homeworkChecklist?: Prisma.LessonUpdatehomeworkChecklistInput | string[]
@@ -1129,6 +1310,7 @@ export type LessonUpdateWithoutSectionInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userProgress?: Prisma.UserProgressUpdateManyWithoutLessonNestedInput
+  downloadLogs?: Prisma.DownloadLogUpdateManyWithoutLessonNestedInput
   course?: Prisma.CourseUpdateOneRequiredWithoutLessonsNestedInput
 }
 
@@ -1139,6 +1321,7 @@ export type LessonUncheckedUpdateWithoutSectionInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
   kinescopeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attachment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resources?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   homeworkTask?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   homeworkChecklist?: Prisma.LessonUpdatehomeworkChecklistInput | string[]
@@ -1150,6 +1333,7 @@ export type LessonUncheckedUpdateWithoutSectionInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userProgress?: Prisma.UserProgressUncheckedUpdateManyWithoutLessonNestedInput
+  downloadLogs?: Prisma.DownloadLogUncheckedUpdateManyWithoutLessonNestedInput
 }
 
 export type LessonUncheckedUpdateManyWithoutSectionInput = {
@@ -1159,6 +1343,7 @@ export type LessonUncheckedUpdateManyWithoutSectionInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   position?: Prisma.IntFieldUpdateOperationsInput | number
   kinescopeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attachment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   resources?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   homeworkTask?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   homeworkChecklist?: Prisma.LessonUpdatehomeworkChecklistInput | string[]
@@ -1178,10 +1363,12 @@ export type LessonUncheckedUpdateManyWithoutSectionInput = {
 
 export type LessonCountOutputType = {
   userProgress: number
+  downloadLogs: number
 }
 
 export type LessonCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   userProgress?: boolean | LessonCountOutputTypeCountUserProgressArgs
+  downloadLogs?: boolean | LessonCountOutputTypeCountDownloadLogsArgs
 }
 
 /**
@@ -1201,6 +1388,13 @@ export type LessonCountOutputTypeCountUserProgressArgs<ExtArgs extends runtime.T
   where?: Prisma.UserProgressWhereInput
 }
 
+/**
+ * LessonCountOutputType without action
+ */
+export type LessonCountOutputTypeCountDownloadLogsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.DownloadLogWhereInput
+}
+
 
 export type LessonSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1209,6 +1403,7 @@ export type LessonSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   description?: boolean
   position?: boolean
   kinescopeId?: boolean
+  attachment?: boolean
   resources?: boolean
   homeworkTask?: boolean
   homeworkChecklist?: boolean
@@ -1222,6 +1417,7 @@ export type LessonSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   createdAt?: boolean
   updatedAt?: boolean
   userProgress?: boolean | Prisma.Lesson$userProgressArgs<ExtArgs>
+  downloadLogs?: boolean | Prisma.Lesson$downloadLogsArgs<ExtArgs>
   course?: boolean | Prisma.CourseDefaultArgs<ExtArgs>
   section?: boolean | Prisma.Lesson$sectionArgs<ExtArgs>
   _count?: boolean | Prisma.LessonCountOutputTypeDefaultArgs<ExtArgs>
@@ -1234,6 +1430,7 @@ export type LessonSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   description?: boolean
   position?: boolean
   kinescopeId?: boolean
+  attachment?: boolean
   resources?: boolean
   homeworkTask?: boolean
   homeworkChecklist?: boolean
@@ -1257,6 +1454,7 @@ export type LessonSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   description?: boolean
   position?: boolean
   kinescopeId?: boolean
+  attachment?: boolean
   resources?: boolean
   homeworkTask?: boolean
   homeworkChecklist?: boolean
@@ -1280,6 +1478,7 @@ export type LessonSelectScalar = {
   description?: boolean
   position?: boolean
   kinescopeId?: boolean
+  attachment?: boolean
   resources?: boolean
   homeworkTask?: boolean
   homeworkChecklist?: boolean
@@ -1294,9 +1493,10 @@ export type LessonSelectScalar = {
   updatedAt?: boolean
 }
 
-export type LessonOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "slug" | "description" | "position" | "kinescopeId" | "resources" | "homeworkTask" | "homeworkChecklist" | "access" | "isPublished" | "isAnnounced" | "plannedReleaseAt" | "courseId" | "sectionId" | "sectionCourseId" | "createdAt" | "updatedAt", ExtArgs["result"]["lesson"]>
+export type LessonOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "slug" | "description" | "position" | "kinescopeId" | "attachment" | "resources" | "homeworkTask" | "homeworkChecklist" | "access" | "isPublished" | "isAnnounced" | "plannedReleaseAt" | "courseId" | "sectionId" | "sectionCourseId" | "createdAt" | "updatedAt", ExtArgs["result"]["lesson"]>
 export type LessonInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   userProgress?: boolean | Prisma.Lesson$userProgressArgs<ExtArgs>
+  downloadLogs?: boolean | Prisma.Lesson$downloadLogsArgs<ExtArgs>
   course?: boolean | Prisma.CourseDefaultArgs<ExtArgs>
   section?: boolean | Prisma.Lesson$sectionArgs<ExtArgs>
   _count?: boolean | Prisma.LessonCountOutputTypeDefaultArgs<ExtArgs>
@@ -1314,6 +1514,7 @@ export type $LessonPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
   name: "Lesson"
   objects: {
     userProgress: Prisma.$UserProgressPayload<ExtArgs>[]
+    downloadLogs: Prisma.$DownloadLogPayload<ExtArgs>[]
     course: Prisma.$CoursePayload<ExtArgs>
     section: Prisma.$CourseSectionPayload<ExtArgs> | null
   }
@@ -1324,6 +1525,7 @@ export type $LessonPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     description: string | null
     position: number
     kinescopeId: string | null
+    attachment: string | null
     resources: runtime.JsonValue
     homeworkTask: string | null
     homeworkChecklist: string[]
@@ -1731,6 +1933,7 @@ readonly fields: LessonFieldRefs;
 export interface Prisma__LessonClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   userProgress<T extends Prisma.Lesson$userProgressArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Lesson$userProgressArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserProgressPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  downloadLogs<T extends Prisma.Lesson$downloadLogsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Lesson$downloadLogsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DownloadLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   course<T extends Prisma.CourseDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CourseDefaultArgs<ExtArgs>>): Prisma.Prisma__CourseClient<runtime.Types.Result.GetResult<Prisma.$CoursePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   section<T extends Prisma.Lesson$sectionArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Lesson$sectionArgs<ExtArgs>>): Prisma.Prisma__CourseSectionClient<runtime.Types.Result.GetResult<Prisma.$CourseSectionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
@@ -1768,6 +1971,7 @@ export interface LessonFieldRefs {
   readonly description: Prisma.FieldRef<"Lesson", 'String'>
   readonly position: Prisma.FieldRef<"Lesson", 'Int'>
   readonly kinescopeId: Prisma.FieldRef<"Lesson", 'String'>
+  readonly attachment: Prisma.FieldRef<"Lesson", 'String'>
   readonly resources: Prisma.FieldRef<"Lesson", 'Json'>
   readonly homeworkTask: Prisma.FieldRef<"Lesson", 'String'>
   readonly homeworkChecklist: Prisma.FieldRef<"Lesson", 'String[]'>
@@ -2202,6 +2406,30 @@ export type Lesson$userProgressArgs<ExtArgs extends runtime.Types.Extensions.Int
   take?: number
   skip?: number
   distinct?: Prisma.UserProgressScalarFieldEnum | Prisma.UserProgressScalarFieldEnum[]
+}
+
+/**
+ * Lesson.downloadLogs
+ */
+export type Lesson$downloadLogsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the DownloadLog
+   */
+  select?: Prisma.DownloadLogSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the DownloadLog
+   */
+  omit?: Prisma.DownloadLogOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DownloadLogInclude<ExtArgs> | null
+  where?: Prisma.DownloadLogWhereInput
+  orderBy?: Prisma.DownloadLogOrderByWithRelationInput | Prisma.DownloadLogOrderByWithRelationInput[]
+  cursor?: Prisma.DownloadLogWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.DownloadLogScalarFieldEnum | Prisma.DownloadLogScalarFieldEnum[]
 }
 
 /**
