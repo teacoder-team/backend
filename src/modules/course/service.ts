@@ -324,7 +324,10 @@ export const openMaterialsDownload = async (token: string, ip: string, userAgent
 
 	await logCourseDownload({ token, userId, courseId, lessonId, ip, userAgent }).catch(
 		(err: unknown) => {
-			logger.warn({ context: 'course', courseId, lessonId, err }, 'course_download_log_failed')
+			logger.warn(
+				{ context: 'course', courseId, lessonId, err },
+				'course_download_log_failed'
+			)
 		}
 	)
 
